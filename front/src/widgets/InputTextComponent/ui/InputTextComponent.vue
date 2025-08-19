@@ -4,12 +4,13 @@
       class="field field--medium"
       :class="{ 'field--filled': isFilled, 'field--focus': isFocused }"
     >
-      <label class="field__label">{{ props.placeholder }}</label>
+      <label :for="inputId" class="field__label">{{ props.placeholder }}</label>
       <input
+        :id="inputId"
         type="text"
         class="field__input"
-        tabindex="4"
-        maxlength="64"
+        :aria-label="props.placeholder"
+        :maxlength="maxLength"
         v-model="inputValue"
         @focus="handleFocus"
         @blur="handleBlur"
@@ -21,38 +22,40 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { defineEmits } from 'vue'
 import { parseInput } from '@/features'
 
-const props = defineProps({
-  placeholder: {
-    type: String,
-    required: true
-  },
-  width: {
-    type: Number,
-    required: false,
-    default: 100
-  },
-  value: {
-    type: String,
-    required: false,
-    default: ''
-  }
+interface InputTextProps {
+  placeholder: string
+  width?: number
+  value?: string
+}
+
+const props = withDefaults(defineProps<InputTextProps>(), {
+  width: 100,
+  value: ''
 })
 
+const emit = defineEmits<{
+  'update:value': [value: string]
+}>()
+
+const inputId = computed(() => `input-${Math.random().toString(36).substr(2, 9)}`)
 const inputValue = ref(props.value)
 const isFocused = ref(false)
-const emit = defineEmits(['update:value'])
+const maxLength = 64
 
 const isFilled = computed(() => inputValue.value.trim() !== '')
 
-watch(inputValue, (newValue) => {
-  inputValue.value = parseInput(newValue)
-  if (inputValue.value === newValue) {
-    emit('update:value', newValue)
+watch(
+  () => inputValue.value,
+  (newValue) => {
+    const parsedValue = parseInput(newValue)
+    inputValue.value = parsedValue
+    if (parsedValue === newValue) {
+      emit('update:value', newValue)
+    }
   }
-})
+)
 
 const handleFocus = () => {
   isFocused.value = true

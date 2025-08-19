@@ -104,7 +104,6 @@ import axios from 'axios'
 const router = useRouter()
 
 const newFighter = {
-  // id: -1,
   surname: ref<string>(''),
   name: ref<string>(''),
   patronymic: ref<string>(''),
@@ -119,6 +118,11 @@ const newFighter = {
 }
 
 const showAlert = ref(false)
+
+const countries = ref<Country[]>([])
+const cities = ref<City[]>([])
+const clubs = ref<Club[]>([])
+
 let emptyFields = ''
 
 const alertData = {
@@ -134,10 +138,6 @@ const alertData = {
 }
 
 const commonDataStore = useCommonDataStore()
-
-const countries = ref<Country[]>([])
-const cities = ref<City[]>([])
-const clubs = ref<Club[]>([])
 
 onMounted(async () => {
   countries.value = await commonDataStore.fetchCountries()

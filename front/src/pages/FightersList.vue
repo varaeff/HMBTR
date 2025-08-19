@@ -80,7 +80,6 @@ watch(seachString, () => {
   gap: 20px;
   justify-content: flex-start;
   width: 100%;
-  box-sizing: border-box;
   padding: 20px;
 }
 
@@ -88,6 +87,5 @@ watch(seachString, () => {
   flex: 0 1 calc((100% - 80px) / 5);
   min-width: 200px;
   max-width: calc((100% - 80px) / 5);
-  box-sizing: border-box;
 }
 </style>

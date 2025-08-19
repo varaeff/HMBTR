@@ -1,4 +1,6 @@
-﻿# Node.js
+﻿# =========================
+# Node.js
+# =========================
 node_modules/
 npm-debug.log*
 yarn-debug.log*
@@ -8,6 +10,28 @@ package-lock.json
 yarn.lock
 .pnpm-debug.log
 
-# env
+# =========================
+# Environment files
+# =========================
 .env
 .env.*.local
+
+# =========================
+# Cypress
+# =========================
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/
+
+# =========================
+# VSCode
+# =========================
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# =========================
+# System / OS files
+# =========================
+.DS_Store
+Thumbs.db
