@@ -1,0 +1,17 @@
+{
+  "name": "hmbtr",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "docker": "cd back && docker-compose up -d",
+    "dev:back": "cd back && npm run dev",
+    "dev:front": "cd front && npm run dev",
+    "dev": "concurrently \"npm run docker\" \"npm run dev:front\" \"npm run dev:back\""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

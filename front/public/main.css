@@ -1,0 +1,14 @@
+.title {
+  text-align: center;
+  vertical-align: middle;
+}
+.bottom-btn {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 3rem;
+  z-index: 100;
+}

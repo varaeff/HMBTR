@@ -1,0 +1,24 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "include": [
+    "env.d.ts",
+    "src/**/*",
+    "src/**/*.vue",
+    "src/custom.d.ts",
+    "src/**/*.ts",
+    "src/**/**/*",
+    "src/**/**/*.vue",
+    "types/*.d.ts",
+    "types/**/*.d.ts"
+  ],
+  "exclude": ["src/**/__tests__/*"],
+  "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "typeRoots": ["./node_modules/@types", "./types"],
+    "baseUrl": "src/",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  }
+}

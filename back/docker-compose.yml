@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  db:
+    container_name: db_hmbtr
+    image: postgres:16.3-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "8080:5432"
+    networks:
+      - hmbtr
+
+  pgadmin:
+    container_name: pgadmin_hmbtr
+    image: dpage/pgadmin4:7.2
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - hmbtr
+
+volumes:
+  postgres_data:
+  pgadmin-data:
+
+networks:
+  hmbtr:
+    name: hmbtr
+    driver: bridge
