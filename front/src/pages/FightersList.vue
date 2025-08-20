@@ -15,7 +15,7 @@
         v-for="fighter in fightersList"
         :key="fighter.id"
         :name="`${fighter.surname} ${fighter.name}`"
-        :description="`${fighter.city} ${fighter.club}`"
+        :description="`${fighter.city} ${fighter.club || ''}`"
         :pic="fighter.pic"
         @click="router.push(`/fighter/${fighter.id}`)"
       />

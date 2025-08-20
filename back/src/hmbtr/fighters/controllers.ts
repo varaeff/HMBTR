@@ -27,10 +27,9 @@ const getFighter = (req: Request, res: Response) => {
 const checkFighterExists = async (
   name: string,
   surname: string,
-  patronymic: string,
-  city_id: number
+  country_id: number
 ) => {
-  const values = [name, surname, patronymic, city_id];
+  const values = [name, surname, country_id];
 
   const result: QueryResult<any> = await pool.query(checkFighterQuery, values);
   return result.rows[0].exists;
@@ -49,15 +48,10 @@ const addFighter = async (req: Request, res: Response) => {
   } = req.body;
 
   try {
-    const exists: boolean = await checkFighterExists(
-      name,
-      surname,
-      patronymic,
-      city_id
-    );
+    const exists: boolean = await checkFighterExists(name, surname, country_id);
 
     if (exists) {
-      return res.status(400).json({ error: "Fighter already exists" });
+      throw new Error("Такой боец уже существует");
     }
 
     const values = [

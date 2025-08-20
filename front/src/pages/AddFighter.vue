@@ -2,9 +2,10 @@
   <h1 class="title">Добавление нового бойца</h1>
   <ButtonAlert
     v-show="showAlert"
-    :title="alertData.title"
+    :title="alertData.title.value"
     :mainText="alertData.mainText.value"
     :buttonText="alertData.buttonText"
+    :showInput="alertData.showInput.value"
     :buttonAction="alertData.buttonAction"
     :closeAction="alertData.closeAction"
   />
@@ -33,7 +34,9 @@
                   :values="countryNames"
                   v-model:value="newFighter.country.value"
                 />
-                <button type="button" class="btn btn-link btn-medium">Добавить страну</button>
+                <button type="button" class="btn btn-link btn-medium" @click="addCountry">
+                  Добавить страну
+                </button>
               </div>
               <div class="fieldsets-batch fieldsets-batch--with-single-field">
                 <SelectComponent
@@ -126,9 +129,10 @@ const clubs = ref<Club[]>([])
 let emptyFields = ''
 
 const alertData = {
-  title: 'Заполнены не все обязательные поля!',
+  title: ref(''),
   mainText: ref(''),
   buttonText: 'ОК',
+  showInput: ref(false),
   buttonAction: () => {
     showAlert.value = false
   },
@@ -155,32 +159,28 @@ const clubsNames = computed(() => {
   return clubs.value.map((club) => club.name)
 })
 
-const countryIds = computed(() => {
-  return countries.value.reduce((acc, country) => {
-    // @ts-ignore: error
+const countryIds = computed<Record<string, number>>(() => {
+  return countries.value.reduce<Record<string, number>>((acc, country) => {
     acc[country.name] = country.id
     return acc
   }, {})
 })
 
-const cityIds = computed(() => {
-  return cities.value.reduce((acc, city) => {
-    // @ts-ignore: error
+const cityIds = computed<Record<string, number>>(() => {
+  return cities.value.reduce<Record<string, number>>((acc, city) => {
     acc[city.name] = city.id
     return acc
   }, {})
 })
 
-const clubIds = computed(() => {
-  return clubs.value.reduce((acc, club) => {
-    // @ts-ignore: error
+const clubIds = computed<Record<string, number>>(() => {
+  return clubs.value.reduce<Record<string, number>>((acc, club) => {
     acc[club.name] = club.id
     return acc
   }, {})
 })
 
 watch(newFighter.country, async (newValue: string) => {
-  // @ts-ignore: error
   const countryId = countryIds.value[newValue]
   newFighter.cuuntryID.value = countryId
   console.log('countryId:', countryId)
@@ -190,7 +190,6 @@ watch(newFighter.country, async (newValue: string) => {
 })
 
 watch(newFighter.city, async (newValue: string) => {
-  // @ts-ignore: error
   const cityId = cityIds.value[newValue]
   newFighter.cityID.value = cityId
   console.log('cityId:', cityId)
@@ -199,7 +198,6 @@ watch(newFighter.city, async (newValue: string) => {
 })
 
 watch(newFighter.club, (newValue: string) => {
-  // @ts-ignore: error
   const clubId = clubIds.value[newValue]
   newFighter.clubID.value = clubId
   console.log('clubId:', clubId)
@@ -215,6 +213,7 @@ const saveNewFighter = async () => {
 
   if (errorMsg.length) {
     emptyFields = errorMsg.join(', ') + '.'
+    alertData.title.value = 'Заполнены не все обязательные поля!'
     alertData.mainText.value = `Обязательны к заполнению следующие поля: ${emptyFields}`
     showAlert.value = true
     return
@@ -236,8 +235,36 @@ const saveNewFighter = async () => {
     pic: photo
   }
   console.log('saveData:', saveData)
-  await axios.post('http://localhost:3000/api/hmbtr/v1/fighters', saveData)
-  router.push('/fighters')
+
+  try {
+    await axios.post('http://localhost:3000/api/hmbtr/v1/fighters', saveData)
+    router.push('/fighters')
+  } catch (error: any) {
+    alertData.title.value = error.response?.data.error
+    alertData.mainText.value = 'Сохранение отменено.'
+    showAlert.value = true
+  }
+}
+
+const addCountry = () => {
+  commonDataStore.alertData = ''
+  alertData.title.value = 'Добавление страны'
+  alertData.mainText.value = ''
+  alertData.buttonText = 'Добавить страну'
+  alertData.showInput.value = true
+  alertData.buttonAction = async () => {
+    const newCountry = commonDataStore.alertData.trim()
+    if (newCountry) {
+      await axios.post('http://localhost:3000/api/hmbtr/v1/countries', { name: newCountry })
+      commonDataStore.alertData = ''
+      countries.value = await commonDataStore.fetchCountries()
+      alertData.showInput.value = false
+      showAlert.value = false
+    } else {
+      alertData.mainText.value = 'Введите название страны.'
+    }
+  }
+  showAlert.value = true
 }
 </script>
 

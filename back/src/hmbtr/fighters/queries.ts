@@ -24,7 +24,7 @@ export const getFighterQuery = `
 export const checkFighterQuery = `
     SELECT EXISTS (
         SELECT 1 FROM fighters 
-        WHERE name = $1 AND surname = $2 AND patronymic = $3 AND city_id = $4
+        WHERE name = $1 AND surname = $2 AND country_id = $3
     );
 `;
 

@@ -21,6 +21,13 @@
               <div class="cta-block">
                 <div class="cta-block__central">
                   <div class="cta-block__title">{{ props.title }}</div>
+                  <InputTextComponent
+                    v-if="props.showInput"
+                    v-focus
+                    class="input input--primary input--medium"
+                    :placeholder="'Введите название'"
+                    v-model:value="commonDataStore.alertData"
+                  />
                   <div class="cta-block__content">{{ props.mainText }}</div>
                 </div>
                 <div class="cta-block__cta">
@@ -52,13 +59,19 @@
 </template>
 
 <script setup lang="ts">
+import { useCommonDataStore } from '@/app/stores/commonData'
+import InputTextComponent from '@/widgets/InputTextComponent'
+
 const props = defineProps<{
   title: string
   mainText: string
   buttonText: string
+  showInput: boolean
   buttonAction: (event: MouseEvent) => void
   closeAction: (event: MouseEvent) => void
 }>()
+
+const commonDataStore = useCommonDataStore()
 </script>
 
 <style scoped>

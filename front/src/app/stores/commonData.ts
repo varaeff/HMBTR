@@ -8,6 +8,7 @@ interface CommonDataState {
   clubs: Club[]
   selectedCountry: number
   selectedCity: number
+  alertData: string
 }
 
 export const useCommonDataStore = defineStore({
@@ -17,7 +18,8 @@ export const useCommonDataStore = defineStore({
     cities: [],
     clubs: [],
     selectedCountry: 0,
-    selectedCity: 0
+    selectedCity: 0,
+    alertData: ''
   }),
   actions: {
     async fetchCountries(this: CommonDataState) {
