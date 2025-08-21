@@ -6,7 +6,7 @@
         <div class="a-card__paddings">
           <div class="iconable-block iconable-block--hide-in-mobile iconable-block--error">
             <div class="iconable-block__infographics">
-              <span class="iconable-block__icon">
+              <span v-show="isError" class="iconable-block__icon">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 70" focusable="false">
                   <path
                     d="M34.5 67C16.58 67 2 52.42 2 34.5S16.58 2 34.5 2 67 16.58 67 34.5 52.42 67 34.5 67zm0-62C18.23 5 5 18.23 5 34.5S18.23 64 34.5 64 64 50.77 64 34.5 50.77 5 34.5 5z"
@@ -27,6 +27,7 @@
                     class="input input--primary input--medium"
                     :placeholder="'Введите название'"
                     v-model:value="commonDataStore.alertData"
+                    @keyup.enter="props.buttonAction"
                   />
                   <div class="cta-block__content">{{ props.mainText }}</div>
                 </div>
@@ -63,6 +64,7 @@ import { useCommonDataStore } from '@/app/stores/commonData'
 import InputTextComponent from '@/widgets/InputTextComponent'
 
 const props = defineProps<{
+  isError: boolean
   title: string
   mainText: string
   buttonText: string
@@ -97,32 +99,3 @@ const commonDataStore = useCommonDataStore()
   z-index: 200;
 }
 </style>
-
-<!-- ****************************************** -->
-
-<!-- Пример вызова и настройки компонента: -->
-
-<!-- ****************************************** -->
-
-<!-- <ButtonAlert
-    v-if="!fightersList.length"
-    :title="alertData.title"
-    :mainText="alertData.mainText"
-    :buttonText="alertData.buttonText"
-    :buttonAction="alertData.buttonAction"
-    :closeAction="alertData.closeAction"
-  /> -->
-
-<!-- const alertData = {
-  title: 'Боец не найден!',
-  mainText:
-    'Боец с запрашиваемыми данными не найден в базе данных. Введите корректный поисковый запрос или добавьте нового бойца.',
-  buttonText: 'Добавить бойца',
-  buttonAction: () => {
-    fightersListStore.$state.seachString = ''
-    router.push(`/addFighter`)
-  },
-  closeAction: () => {
-    fightersListStore.$state.seachString = ''
-  }
-} -->
