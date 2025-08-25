@@ -24,7 +24,7 @@ export const useCommonDataStore = defineStore({
   actions: {
     async fetchCountries(this: CommonDataState) {
       try {
-        const response = await axios.get('http://localhost:3000/api/hmbtr/v1/countries')
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/countries`)
         const data = response.data
         this.countries = []
         this.countries.push(...data)
@@ -36,7 +36,7 @@ export const useCommonDataStore = defineStore({
     },
     async fetchCities(this: CommonDataState, id: number) {
       try {
-        const response = await axios.get(`http://localhost:3000/api/hmbtr/v1/cities/${id}`)
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/cities/${id}`)
         const data = response.data
         this.cities = []
         this.cities.push(...data)
@@ -48,7 +48,7 @@ export const useCommonDataStore = defineStore({
     },
     async fetchClubs(this: CommonDataState, id: number) {
       try {
-        const response = await axios.get(`http://localhost:3000/api/hmbtr/v1/clubs/${id}`)
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/clubs/${id}`)
         const data = response.data
         this.clubs = []
         this.clubs.push(...data)

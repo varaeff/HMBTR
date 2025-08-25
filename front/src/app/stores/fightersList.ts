@@ -12,17 +12,17 @@ interface FightersListState {
 }
 
 async function getCountryNameById(id: number): Promise<string> {
-  const response = await axios.get(`http://localhost:3000/api/hmbtr/v1/country/${id}`)
+  const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/country/${id}`)
   return response.data[0].name
 }
 
 async function getCityNameById(id: number): Promise<string> {
-  const response = await axios.get(`http://localhost:3000/api/hmbtr/v1/city/${id}`)
+  const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/city/${id}`)
   return response.data[0].name
 }
 
 async function getClubNameById(id: number): Promise<string> {
-  const response = await axios.get(`http://localhost:3000/api/hmbtr/v1/club/${id}`)
+  const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/club/${id}`)
   return response.data[0].name
 }
 
@@ -77,7 +77,7 @@ export const useFightersListStore = defineStore({
 
     async getFightersList(this: FightersListState) {
       const data: Array<FighterDB> = (
-        await axios.get(`http://localhost:3000/api/hmbtr/v1/fighters`)
+        await axios.get(`${import.meta.env.VITE_API_BASE_URL}/fighters`)
       ).data
 
       const fighters: Array<Fighter> = await Promise.all(

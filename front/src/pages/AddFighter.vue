@@ -23,46 +23,16 @@
               <InputTextComponent :placeholder="'Фамилия'" v-model:value="newFighter.surname" />
               <InputTextComponent :placeholder="'Имя'" v-model:value="newFighter.name" />
               <InputTextComponent :placeholder="'Отчество'" v-model:value="newFighter.patronymic" />
-              <div class="fieldsets-batch fieldsets-batch--with-single-field">
-                <SelectComponent
-                  :placeholder="'Страна'"
-                  :values="countryNames"
-                  v-model:value="newFighter.country"
-                />
-                <button type="button" class="btn btn-link btn-medium" @click="addCountry">
-                  Добавить страну
-                </button>
-              </div>
-              <div class="fieldsets-batch fieldsets-batch--with-single-field">
-                <SelectComponent
-                  :placeholder="'Город'"
-                  :values="cityNames"
-                  v-model:value="newFighter.city"
-                />
-                <button
-                  v-show="newFighter.country"
-                  type="button"
-                  class="btn btn-link btn-medium"
-                  @click="addCity"
-                >
-                  Добавить город
-                </button>
-              </div>
-              <div class="fieldsets-batch fieldsets-batch--with-single-field">
-                <SelectComponent
-                  :placeholder="'Клуб'"
-                  :values="clubsNames"
-                  v-model:value="newFighter.club"
-                />
-                <button
-                  v-show="newFighter.city"
-                  type="button"
-                  class="btn btn-link btn-medium"
-                  @click="addClub"
-                >
-                  Добавить клуб
-                </button>
-              </div>
+              <SelectLocationBlock
+                v-model:country="newFighter.country"
+                v-model:city="newFighter.city"
+                v-model:club="newFighter.club"
+                v-model:countryID="newFighter.countryID"
+                v-model:cityID="newFighter.cityID"
+                v-model:clubID="newFighter.clubID"
+                :needClub="true"
+                @request-add="handleRequestAdd"
+              />
               <VueCtkDateTimePicker
                 :onlyDate="true"
                 :right="true"
@@ -88,18 +58,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch, reactive } from 'vue'
+import { ref, reactive } from 'vue'
 import { useCommonDataStore } from '@/app/stores/commonData'
 import { useRouter } from 'vue-router'
 import ButtonAlert from '@/widgets/ButtonAlert'
 import ImageUpload from '@/widgets/ImageUpload'
 import InputTextComponent from '@/widgets/InputTextComponent'
-import SelectComponent from '@/widgets/SelectComponent'
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker'
 import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css'
 import { getDate, parseDateString } from '@/features/getDates'
-import type { City, Club, Country } from '@/shared/model'
 import axios from 'axios'
+import SelectLocationBlock from '@/widgets/SelectLocationBlock/ui/SelectLocationBlock.vue'
 
 const router = useRouter()
 
@@ -120,10 +89,6 @@ const newFighter = reactive({
 const showAlert = ref(false)
 const loading = ref(false)
 
-const countries = ref<Country[]>([])
-const cities = ref<City[]>([])
-const clubs = ref<Club[]>([])
-
 const alertData = {
   isError: ref(true),
   title: ref(''),
@@ -142,106 +107,6 @@ const alertData = {
 }
 
 const commonDataStore = useCommonDataStore()
-
-onMounted(async () => {
-  try {
-    countries.value = await commonDataStore.fetchCountries()
-  } catch (e) {
-    console.error('Failed to fetch countries', e)
-    alertData.title.value = 'Ошибка'
-    alertData.mainText.value = 'Не удалось загрузить список стран.'
-    alertData.isError.value = true
-    showAlert.value = true
-  }
-})
-
-const countryNames = computed(() => {
-  return countries.value.map((country) => country.name)
-})
-
-const cityNames = computed(() => {
-  return cities.value.map((city) => city.name)
-})
-
-const clubsNames = computed(() => {
-  return clubs.value.map((club) => club.name)
-})
-
-const countryIds = computed<Record<string, number>>(() => {
-  return countries.value.reduce<Record<string, number>>((acc, country) => {
-    if (country && country.name) acc[country.name] = country.id
-    return acc
-  }, {})
-})
-
-const cityIds = computed<Record<string, number>>(() => {
-  return cities.value.reduce<Record<string, number>>((acc, city) => {
-    acc[city.name] = city.id
-    return acc
-  }, {})
-})
-
-const clubIds = computed<Record<string, number>>(() => {
-  return clubs.value.reduce<Record<string, number>>((acc, club) => {
-    acc[club.name] = club.id
-    return acc
-  }, {})
-})
-
-watch(
-  () => newFighter.country,
-  async (newValue: string) => {
-    const countryId = countryIds.value[newValue]
-    newFighter.countryID = countryId ?? 0
-    if (!countryId) {
-      cities.value = []
-      newFighter.city = ''
-      newFighter.cityID = 0
-      return
-    }
-    try {
-      cities.value = await commonDataStore.fetchCities(countryId)
-      newFighter.city = ''
-      newFighter.club = ''
-    } catch (e) {
-      console.error('Failed to fetch cities', e)
-    }
-  }
-)
-
-watch(
-  () => newFighter.city,
-  async (newValue: string) => {
-    if (!newValue) {
-      newFighter.cityID = 0
-      clubs.value = []
-      newFighter.club = ''
-      return
-    }
-    const cityId = cityIds.value[newValue]
-    newFighter.cityID = cityId ?? 0
-    if (!cityId) {
-      clubs.value = []
-      newFighter.club = ''
-      return
-    }
-    try {
-      clubs.value = await commonDataStore.fetchClubs(cityId)
-      newFighter.club = ''
-    } catch (e) {
-      console.error('Failed to fetch clubs', e)
-    }
-  }
-)
-
-watch(
-  () => newFighter.club,
-  (newValue: string) => {
-    const clubId = clubIds.value[newValue]
-    newFighter.clubID = clubId
-    console.log('clubId:', clubId)
-  }
-)
 
 const saveNewFighter = async () => {
   if (loading.value) return
@@ -283,7 +148,7 @@ const saveNewFighter = async () => {
   loading.value = true
 
   try {
-    await axios.post('http://localhost:3000/api/hmbtr/v1/fighters', saveData)
+    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/fighters`, saveData)
     router.push('/fighters')
   } catch (error: any) {
     alertData.title.value = error?.response?.data?.error ?? 'Ошибка'
@@ -294,89 +159,43 @@ const saveNewFighter = async () => {
   }
 }
 
-const addCountry = () => {
-  alertPrefetch('Добавление страны')
-  alertData.buttonAction = async () => {
-    const newCountry = commonDataStore.alertData.trim()
-    if (newCountry) {
-      try {
-        await axios.post('http://localhost:3000/api/hmbtr/v1/countries', { name: newCountry })
-        countries.value = await commonDataStore.fetchCountries()
-        postFetch()
-      } catch (error: any) {
-        errorFetch('страны')
-      }
-    } else {
-      alertData.mainText.value = 'Введите название страны.'
-    }
-  }
-  showAlert.value = true
-}
-
-const addCity = () => {
-  alertPrefetch('Добавление города')
-  alertData.buttonAction = async () => {
-    const newCity = commonDataStore.alertData.trim()
-    if (newCity) {
-      try {
-        await axios.post('http://localhost:3000/api/hmbtr/v1/cities', {
-          name: newCity,
-          id: Number(newFighter.countryID)
-        })
-        cities.value = await commonDataStore.fetchCities(newFighter.countryID)
-        postFetch()
-      } catch (error: any) {
-        errorFetch('города')
-      }
-    } else {
-      alertData.mainText.value = 'Введите название города.'
-    }
-  }
-  showAlert.value = true
-}
-
-const addClub = () => {
-  alertPrefetch('Добавление клуба')
-  alertData.buttonAction = async () => {
-    const newClub = commonDataStore.alertData.trim()
-    if (newClub) {
-      try {
-        await axios.post('http://localhost:3000/api/hmbtr/v1/clubs', {
-          name: newClub,
-          id: Number(newFighter.cityID)
-        })
-        clubs.value = await commonDataStore.fetchClubs(newFighter.cityID)
-        postFetch()
-      } catch (error: any) {
-        errorFetch('клуба')
-      }
-    } else {
-      alertData.mainText.value = 'Введите название клуба.'
-    }
-  }
-  showAlert.value = true
-}
-
-const alertPrefetch = (title: string) => {
+// Handle request-add emitted by SelectLocationBlock.
+// payload: { title, performAdd }
+const handleRequestAdd = ({
+  title,
+  performAdd
+}: {
+  title: string
+  performAdd: (name: string) => Promise<void>
+}) => {
   alertData.isError.value = false
-  alertData.title.value = `${title}`
+  alertData.title.value = title
   alertData.mainText.value = ''
   alertData.buttonText = 'ОК'
   alertData.showInput.value = true
-}
 
-const postFetch = () => {
-  commonDataStore.alertData = ''
-  alertData.showInput.value = false
-  alertData.isError.value = true
-  showAlert.value = false
-}
+  alertData.buttonAction = async () => {
+    const newName = commonDataStore.alertData?.trim() ?? ''
+    if (!newName) {
+      alertData.mainText.value = 'Введите название.'
+      return
+    }
+    try {
+      await performAdd(newName)
+      // success: clear input and close
+      commonDataStore.alertData = ''
+      alertData.showInput.value = false
+      alertData.isError.value = true
+      showAlert.value = false
+    } catch (err: any) {
+      alertData.title.value = 'Ошибка'
+      alertData.mainText.value = err?.response?.data?.error ?? 'Произошла ошибка при добавлении.'
+      alertData.showInput.value = false
+      alertData.isError.value = true
+      showAlert.value = true
+    }
+  }
 
-const errorFetch = (entity: string) => {
-  alertData.title.value = 'Ошибка'
-  alertData.mainText.value = `Произошла ошибка при добавлении ${entity}.`
-  alertData.showInput.value = false
-  alertData.isError.value = true
   showAlert.value = true
 }
 </script>
