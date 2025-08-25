@@ -8,6 +8,7 @@
         :clearBtn="true"
         :btnTitle="'Очистить поиск'"
         :width="30"
+        :store="useFightersListStore"
       />
     </div>
     <div class="fightersList">

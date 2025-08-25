@@ -9,6 +9,7 @@ import {
   initTableCitiesQuery,
   initTableClubsQuery,
 } from "./hmbtr/common/queries";
+import { createTableTournamentsQuery } from "./hmbtr/tournaments/queries";
 
 const createTable = async (
   tableName: string,
@@ -34,6 +35,7 @@ const createTable = async (
 
 const initDB = async (): Promise<void> => {
   await createTable("fighters", createTableFightersQuery);
+  await createTable("tournaments", createTableTournamentsQuery);
   await createTable(
     "countries",
     createTableCountriesQuery,

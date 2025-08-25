@@ -16,6 +16,10 @@ const links = [
   {
     title: 'Список бойцов',
     url: '/fighters'
+  },
+  {
+    title: 'Турниры',
+    url: '/tournaments'
   }
 ]
 </script>

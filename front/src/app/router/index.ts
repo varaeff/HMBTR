@@ -22,6 +22,21 @@ const router = createRouter({
       path: '/addFighter',
       name: 'addFighter',
       component: () => import('@/pages/AddFighter.vue')
+    },
+    {
+      path: '/tournaments',
+      name: 'tournaments',
+      component: () => import('@/pages/TournamentsList.vue')
+    },
+    {
+      path: '/tournament/:id',
+      name: 'tournament',
+      component: () => import('@/pages/TournamentPage.vue')
+    },
+    {
+      path: '/addTournament',
+      name: 'addTournament',
+      component: () => import('@/pages/AddTournament.vue')
     }
   ]
 })

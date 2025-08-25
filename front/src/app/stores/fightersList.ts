@@ -5,25 +5,11 @@ import type { Fighter, FighterDB } from '@/shared/model'
 import Ukolov from '@/entities/Ukolov.png'
 import Namazov from '@/entities/Namazov.jpeg'
 import Golovina from '@/entities/Golovina.jpeg'
+import { getCityNameById, getClubNameById, getCountryNameById } from '@/features/getLocations'
 
 interface FightersListState {
   fighters: Fighter[]
   seachString: string
-}
-
-async function getCountryNameById(id: number): Promise<string> {
-  const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/country/${id}`)
-  return response.data[0].name
-}
-
-async function getCityNameById(id: number): Promise<string> {
-  const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/city/${id}`)
-  return response.data[0].name
-}
-
-async function getClubNameById(id: number): Promise<string> {
-  const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/club/${id}`)
-  return response.data[0].name
 }
 
 export const useFightersListStore = defineStore({

@@ -24,8 +24,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { useFightersListStore } from '@/app/stores/fightersList'
-import { parseInput } from '@/features'
+import { parseInput } from '@/features/parseInput'
 
 const props = defineProps({
   placeholder: {
@@ -46,6 +45,10 @@ const props = defineProps({
     type: Number,
     reqired: false,
     default: 100
+  },
+  store: {
+    type: Function,
+    required: true
   }
 })
 
@@ -54,12 +57,12 @@ const isFocused = ref(false)
 
 const isFilled = computed(() => inputValue.value.trim() !== '')
 
-const fightersListStore = useFightersListStore()
+const store = props.store()
 
 watch(inputValue, (newValue) => {
   inputValue.value = parseInput(newValue)
   if (inputValue.value === newValue) {
-    fightersListStore.$state.seachString = newValue
+    store.$state.seachString = newValue
   }
 })
 

@@ -6,12 +6,21 @@ import {
   addCountry,
   addData,
 } from "./common/controllers";
+import {
+  addTournament,
+  getTournament,
+  getTournaments,
+} from "./tournaments/controllers";
 
 const router = Router();
 
 router.get("/fighters", getFighters);
 router.get("/fighter/:id", getFighter);
 router.post("/fighters", addFighter);
+
+router.get("/tournaments", getTournaments);
+router.get("/tournament/:id", getTournament);
+router.post("/tournaments", addTournament);
 
 router.get("/countries", getCountries);
 router.get("/country/:id", getData("countries", "id"));

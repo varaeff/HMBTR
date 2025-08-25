@@ -22,6 +22,22 @@ export interface FighterDB {
   pic?: string
 }
 
+export interface Tournament {
+  id: number
+  name: string
+  event_date: Date
+  country: string
+  city: string
+}
+
+export interface TournamentDB {
+  id: number
+  name: string
+  event_date: Date
+  country_id: number
+  city_id: number
+}
+
 export interface Country {
   id: number
   name: string
