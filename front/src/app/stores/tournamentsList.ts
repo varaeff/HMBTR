@@ -18,21 +18,14 @@ export const useTournamentsListStore = defineStore({
         event_date: new Date(),
         country: '',
         city: ''
-      },
-      {
-        id: 1,
-        name: 'Залупинская сеча',
-        event_date: new Date(),
-        country: 'Россия',
-        city: 'Залупинск'
       }
     ],
     seachString: ''
   }),
   actions: {
     showTournamentDetails(this: TournamentsListState, id: number) {
-      const fighter = this.tournaments.find((tournament) => tournament.id === id)
-      return fighter ? fighter : this.tournaments[0]
+      const tournament = this.tournaments.find((tournament) => tournament.id === id)
+      return tournament ? tournament : this.tournaments[0]
     },
 
     async getTournamentsList(this: TournamentsListState) {
@@ -68,7 +61,9 @@ export const useTournamentsListStore = defineStore({
             tournament.city.toLowerCase().includes(state.seachString.toLowerCase())
         )
 
-      return filtered.length > 0 ? filtered : [state.tournaments[0]]
+      return filtered.length > 0
+        ? filtered.sort((a, b) => b.event_date.getTime() - a.event_date.getTime())
+        : [state.tournaments[0]]
     },
     getMaxId(state) {
       return (

@@ -12,18 +12,28 @@
       />
     </div>
     <div class="tournamentsList">
-      <span v-for="tournament in tournamentsList" :key="tournament.id">
-        {{ tournament.name }} - {{ tournament.country }} - {{ tournament.city }} -
-        {{ new Date(tournament.event_date).toLocaleDateString() }}
-      </span>
+      <div
+        v-for="tournament in tournamentsList"
+        :key="tournament.id"
+        class="tournamentItem"
+        @click="router.push(`/tournament/${tournament.id}`)"
+      >
+        <b>{{ tournament.name }}</b>
+        <span v-if="tournament.id !== 0">
+          {{ tournament.country }}, {{ tournament.city }},
+          {{
+            new Date(tournament.event_date).toLocaleDateString('ru-RU', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })
+          }}
+        </span>
+      </div>
     </div>
   </div>
   <div class="bottom-btn">
-    <Suspense>
-      <button class="btn btn-primary-accent btn-large" @click="addTournament">
-        Добавить турнир
-      </button>
-    </Suspense>
+    <button class="btn btn-primary-accent btn-large" @click="addTournament">Добавить турнир</button>
   </div>
 </template>
 
@@ -75,5 +85,38 @@ watch(seachString, () => {
 .tournamentsList {
   width: 100%;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.tournamentItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 8px;
+  box-shadow: 3px 3px 8px 1px rgba(151, 149, 149, 0.75);
+  padding: 5px;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+  width: 60%;
+}
+
+.tournamentItem span {
+  font-size: 1rem;
+}
+
+.tournamentItem:hover {
+  box-shadow: 3px 3px 12px 3px rgba(151, 149, 149, 0.75);
+  padding: 7px;
+  transition: box-shadow 0.1s ease-in-out;
+  cursor: pointer;
+}
+
+.tournamentItem:active {
+  box-shadow: inset 3px 3px 8px 1px rgba(151, 149, 149, 0.75);
+  padding: 5px;
+  transition: box-shadow 0.1s ease-in-out;
 }
 </style>

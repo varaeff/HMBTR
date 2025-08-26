@@ -25,7 +25,7 @@ export const checkTournamentQuery = `
 `;
 
 export const addTournamentQuery = `
-    INSERT INTO fighters (name, event_date, country_id, city_id)
+    INSERT INTO tournaments (name, event_date, country_id, city_id)
     VALUES ($1, $2, $3, $4)
     RETURNING *;
 `;

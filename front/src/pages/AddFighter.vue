@@ -44,7 +44,6 @@
                 :formatted="'ll'"
                 :label="'Дата рождения'"
                 v-model="newFighter.birthday"
-                @click="newFighter.birthday = getDate(30)"
               />
             </div>
           </div>
@@ -66,7 +65,7 @@ import ImageUpload from '@/widgets/ImageUpload'
 import InputTextComponent from '@/widgets/InputTextComponent'
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker'
 import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css'
-import { getDate, parseDateString } from '@/features/getDates'
+import { parseDateString } from '@/features/getDates'
 import axios from 'axios'
 import SelectLocationBlock from '@/widgets/SelectLocationBlock/ui/SelectLocationBlock.vue'
 
@@ -83,7 +82,7 @@ const newFighter = reactive({
   cityID: 0,
   clubID: 0,
   pic: '',
-  birthday: ''
+  birthday: null
 })
 
 const showAlert = ref(false)
@@ -129,9 +128,14 @@ const saveNewFighter = async () => {
     return
   }
 
-  const saveDate = newFighter.birthday.length
-    ? parseDateString(newFighter.birthday).toISOString().split('T')[0]
-    : null
+  let saveDate = null
+
+  if (newFighter.birthday) {
+    const raw: any = newFighter.birthday
+    const dateObj = raw instanceof Date ? raw : parseDateString(String(raw))
+    const pad = (n: number) => String(n).padStart(2, '0')
+    saveDate = `${dateObj.getFullYear()}-${pad(dateObj.getMonth() + 1)}-${pad(dateObj.getDate())}`
+  }
 
   const photo = newFighter.pic ? newFighter.pic : ''
   const saveData = {

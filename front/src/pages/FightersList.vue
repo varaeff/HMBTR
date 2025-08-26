@@ -23,9 +23,7 @@
     </div>
   </div>
   <div class="bottom-btn">
-    <Suspense>
-      <button class="btn btn-primary-accent btn-large" @click="addFighter">Добавить бойца</button>
-    </Suspense>
+    <button class="btn btn-primary-accent btn-large" @click="addFighter">Добавить бойца</button>
   </div>
 </template>
 

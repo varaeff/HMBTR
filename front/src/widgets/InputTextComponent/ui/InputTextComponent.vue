@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { parseInput } from '@/features'
+import { parseInput } from '@/features/parseInput'
 
 interface InputTextProps {
   placeholder: string
