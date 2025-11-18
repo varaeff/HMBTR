@@ -2,9 +2,6 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 import type { Fighter, FighterDB } from '@/shared/model'
 
-import Ukolov from '@/entities/Ukolov.png'
-import Namazov from '@/entities/Namazov.jpeg'
-import Golovina from '@/entities/Golovina.jpeg'
 import { getCityNameById, getClubNameById, getCountryNameById } from '@/features/getLocations'
 
 interface FightersListState {
@@ -24,33 +21,6 @@ export const useFightersListStore = defineStore({
         city: '',
         club: '',
         pic: ''
-      },
-      {
-        id: 1,
-        name: 'Сергей',
-        surname: 'Уколов',
-        country: 'Россия',
-        city: 'Москва',
-        club: 'Байард',
-        pic: Ukolov
-      },
-      {
-        id: 2,
-        name: 'Рафаэль',
-        surname: 'Намазов',
-        country: 'Россия',
-        city: 'Нижний Новгород',
-        club: 'Берн',
-        pic: Namazov
-      },
-      {
-        id: 3,
-        name: 'Марина',
-        surname: 'Головина',
-        country: 'Россия',
-        city: 'Москва',
-        club: 'Тверд',
-        pic: Golovina
       }
     ],
     seachString: ''
@@ -80,12 +50,11 @@ export const useFightersListStore = defineStore({
         }))
       )
 
-      const newFighters = fighters.filter(
-        (newFighter) =>
-          !this.fighters.some((existingFighter) => existingFighter.id === newFighter.id)
-      )
+      this.fighters.push(...fighters)
+    },
 
-      this.fighters.push(...newFighters)
+    addNewFighter(this: FightersListState, fighter: Fighter) {
+      this.fighters.push(fighter)
     }
   },
   getters: {

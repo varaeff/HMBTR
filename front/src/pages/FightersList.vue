@@ -43,25 +43,26 @@ const fightersList = ref([] as Fighter[])
 const fightersListStore = useFightersListStore()
 
 const getFighters = async () => {
-  try {
-    await fightersListStore.getFightersList()
-    const data = fightersListStore.filteredFightersList
-    isLoading.value = false
-    return data
-  } catch (error) {
-    console.error('Error loading fighters:', error)
-    isLoading.value = false
-    return []
+  if (fightersListStore.fighters.length < 2) {
+    try {
+      await fightersListStore.getFightersList()
+    } catch (error) {
+      console.error('Error loading fighters:', error)
+    }
   }
+
+  const data: Fighter[] = fightersListStore.filteredFightersList
+  isLoading.value = false
+  return data
 }
 
 onMounted(async () => {
-  fightersListStore.$state.seachString = ''
+  fightersListStore.seachString = ''
   isLoading.value = true
   fightersList.value = await getFighters()
 })
 
-const seachString = computed(() => fightersListStore.$state.seachString)
+const seachString = computed(() => fightersListStore.seachString)
 
 const addFighter = () => {
   router.push('/addFighter')

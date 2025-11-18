@@ -59,6 +59,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { useCommonDataStore } from '@/app/stores/commonData'
+import { useFightersListStore } from '@/app/stores/fightersList'
 import { useRouter } from 'vue-router'
 import ButtonAlert from '@/widgets/ButtonAlert'
 import ImageUpload from '@/widgets/ImageUpload'
@@ -68,6 +69,7 @@ import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css'
 import { parseDateString } from '@/features/getDates'
 import axios from 'axios'
 import SelectLocationBlock from '@/widgets/SelectLocationBlock/ui/SelectLocationBlock.vue'
+import type { Fighter } from '@/shared/model'
 
 const router = useRouter()
 
@@ -106,6 +108,7 @@ const alertData = {
 }
 
 const commonDataStore = useCommonDataStore()
+const fightersListStore = useFightersListStore()
 
 const saveNewFighter = async () => {
   if (loading.value) return
@@ -149,10 +152,25 @@ const saveNewFighter = async () => {
     pic: photo
   }
 
+  const storeId = fightersListStore.getMaxId
+
+  const storeData: Fighter = {
+    id: storeId,
+    surname: newFighter.surname,
+    name: newFighter.name,
+    patronymic: newFighter.patronymic,
+    birthday: newFighter.birthday,
+    country: newFighter.country,
+    city: newFighter.city,
+    club: newFighter.club,
+    pic: photo
+  }
+
   loading.value = true
 
   try {
     await axios.post(`${import.meta.env.VITE_API_BASE_URL}/fighters`, saveData)
+    fightersListStore.addNewFighter(storeData)
     router.push('/fighters')
   } catch (error: any) {
     alertData.title.value = error?.response?.data?.error ?? 'Ошибка'
