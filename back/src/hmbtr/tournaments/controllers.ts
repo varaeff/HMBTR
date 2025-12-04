@@ -1,66 +1,83 @@
 import { Request, Response } from "express";
-import pool from "../../db";
-import {
-  getTournamentsQuery,
-  getTournamentQuery,
-  checkTournamentQuery,
-  addTournamentQuery,
-} from "./queries";
-import { QueryResult } from "pg";
+import { prisma } from "../../prismaClient";
 
-const getTournaments = (req: Request, res: Response) => {
-  pool.query(getTournamentsQuery, (error, results) => {
-    if (error) throw error;
-    res.status(200).json(results.rows);
-  });
+const getTournaments = async (req: Request, res: Response) => {
+  try {
+    const tournaments = await prisma.tournaments.findMany();
+    res.status(200).json(tournaments);
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "Unknown error" });
+    }
+  }
 };
 
-const getTournament = (req: Request, res: Response) => {
-  const id: number = parseInt(req.params.id);
+const getTournament = async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
 
-  pool.query(getTournamentQuery, [id], (error, results) => {
-    if (error) throw error;
-    res.status(200).json(results.rows);
-  });
+  try {
+    const tournament = await prisma.tournaments.findUnique({
+      where: { id },
+    });
+
+    if (!tournament) {
+      return res.status(404).json({ error: "Tournament not found" });
+    }
+
+    res.status(200).json(tournament);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch tournament" });
+  }
 };
 
 const checkTournamentExists = async (
   name: string,
-  event_date: Date,
+  event_date: Date | null,
   city_id: number
 ) => {
-  const values = [name, event_date, city_id];
+  const tournament = await prisma.tournaments.findFirst({
+    where: {
+      name,
+      event_date,
+      city_id,
+    },
+    select: { id: true },
+  });
 
-  const result: QueryResult<any> = await pool.query(
-    checkTournamentQuery,
-    values
-  );
-  return result.rows[0].exists;
+  return !!tournament;
 };
 
 const addTournament = async (req: Request, res: Response) => {
   const { name, event_date, country_id, city_id } = req.body;
 
   try {
-    const exists: boolean = await checkTournamentExists(
+    if (!name || !country_id || !city_id) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const exists = await checkTournamentExists(
       name,
-      event_date,
+      event_date ? new Date(event_date) : null,
       city_id
     );
 
     if (exists) {
-      throw new Error("Такой турнир уже существует");
+      return res.status(400).json({ error: "Tournament already exists" });
     }
 
-    const values = [name, event_date, country_id, city_id];
-
-    pool.query(addTournamentQuery, values, (error, results) => {
-      if (error) {
-        res.status(500).json({ error: error.message });
-        return;
-      }
-      res.status(201).json(results.rows[0]);
+    const tournament = await prisma.tournaments.create({
+      data: {
+        name,
+        event_date: event_date ? new Date(event_date) : null,
+        country_id,
+        city_id,
+      },
     });
+
+    res.status(201).json(tournament);
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });

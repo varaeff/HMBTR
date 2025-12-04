@@ -156,10 +156,10 @@ const onAddCountry = () => {
 const onAddCity = () => {
   const title = 'Добавление города'
   const performAdd = async (name: string) => {
-    const countryId = findCountryIdByName(countryModel.value)
-    if (!countryId) throw new Error('Не выбрана страна')
-    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/cities`, { name, id: countryId })
-    cities.value = await commonDataStore.fetchCities(countryId)
+    const country_id = findCountryIdByName(countryModel.value)
+    if (!country_id) throw new Error('Не выбрана страна')
+    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/cities`, { name, country_id })
+    cities.value = await commonDataStore.fetchCities(country_id)
   }
   emit('request-add', { title, performAdd })
 }
@@ -167,10 +167,10 @@ const onAddCity = () => {
 const onAddClub = () => {
   const title = 'Добавление клуба'
   const performAdd = async (name: string) => {
-    const cityId = findCityIdByName(cityModel.value)
-    if (!cityId) throw new Error('Не выбран город')
-    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/clubs`, { name, id: cityId })
-    clubs.value = await commonDataStore.fetchClubs(cityId)
+    const city_id = findCityIdByName(cityModel.value)
+    if (!city_id) throw new Error('Не выбран город')
+    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/clubs`, { name, city_id })
+    clubs.value = await commonDataStore.fetchClubs(city_id)
   }
   emit('request-add', { title, performAdd })
 }

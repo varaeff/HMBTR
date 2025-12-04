@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model cities {
+  id         Int       @id @default(autoincrement())
+  country_id Int
+  name       String    @db.VarChar(255)
+  countries  countries @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  clubs      clubs[]
+}
+
+model clubs {
+  id      Int    @id @default(autoincrement())
+  city_id Int
+  name    String @db.VarChar(255)
+  cities  cities @relation(fields: [city_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model countries {
+  id     Int      @id @default(autoincrement())
+  name   String   @db.VarChar(255)
+  cities cities[]
+}
+
+model fighters {
+  id         Int       @id @default(autoincrement())
+  name       String    @db.VarChar(255)
+  surname    String    @db.VarChar(255)
+  patronymic String?   @db.VarChar(255)
+  birthday   DateTime? @db.Date
+  country_id Int
+  city_id    Int
+  club_id    Int?
+  pic        String?
+}
+
+model tournaments {
+  id         Int       @id @default(autoincrement())
+  name       String    @db.VarChar(255)
+  event_date DateTime? @db.Date
+  country_id Int
+  city_id    Int
+}

@@ -1,27 +1,33 @@
 import { Request, Response } from "express";
-import pool from "../../db";
-import {
-  getFightersQuery,
-  getFighterQuery,
-  checkFighterQuery,
-  addFighterQuery,
-} from "./queries";
-import { QueryResult } from "pg";
+import { prisma } from "../../prismaClient";
 
-const getFighters = (req: Request, res: Response) => {
-  pool.query(getFightersQuery, (error, results) => {
-    if (error) throw error;
-    res.status(200).json(results.rows);
-  });
+const getFighters = async (req: Request, res: Response) => {
+  try {
+    const fighters = await prisma.fighters.findMany();
+    res.status(200).json(fighters);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch fighters" });
+  }
 };
 
-const getFighter = (req: Request, res: Response) => {
-  const id: number = parseInt(req.params.id);
+const getFighter = async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
 
-  pool.query(getFighterQuery, [id], (error, results) => {
-    if (error) throw error;
-    res.status(200).json(results.rows);
-  });
+  try {
+    const fighter = await prisma.fighters.findUnique({
+      where: { id },
+    });
+
+    if (!fighter) {
+      return res.status(404).json({ error: "Fighter not found" });
+    }
+
+    res.status(200).json(fighter);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch fighter" });
+  }
 };
 
 const checkFighterExists = async (
@@ -29,10 +35,16 @@ const checkFighterExists = async (
   surname: string,
   country_id: number
 ) => {
-  const values = [name, surname, country_id];
+  const fighter = await prisma.fighters.findFirst({
+    where: {
+      name,
+      surname,
+      country_id,
+    },
+    select: { id: true },
+  });
 
-  const result: QueryResult<any> = await pool.query(checkFighterQuery, values);
-  return result.rows[0].exists;
+  return !!fighter;
 };
 
 const addFighter = async (req: Request, res: Response) => {
@@ -48,30 +60,26 @@ const addFighter = async (req: Request, res: Response) => {
   } = req.body;
 
   try {
-    const exists: boolean = await checkFighterExists(name, surname, country_id);
+    const exists = await checkFighterExists(name, surname, country_id);
 
     if (exists) {
       throw new Error("Такой боец уже существует");
     }
 
-    const values = [
-      name,
-      surname,
-      patronymic,
-      birthday,
-      country_id,
-      city_id,
-      club_id,
-      pic,
-    ];
-
-    pool.query(addFighterQuery, values, (error, results) => {
-      if (error) {
-        res.status(500).json({ error: error.message });
-        return;
-      }
-      res.status(201).json(results.rows[0]);
+    const fighter = await prisma.fighters.create({
+      data: {
+        name,
+        surname,
+        patronymic,
+        birthday: new Date(birthday),
+        country_id,
+        city_id,
+        club_id,
+        pic,
+      },
     });
+
+    res.status(201).json(fighter);
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });

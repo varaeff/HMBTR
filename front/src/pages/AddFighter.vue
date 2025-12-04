@@ -210,8 +210,13 @@ const handleRequestAdd = ({
       alertData.isError.value = true
       showAlert.value = false
     } catch (err: any) {
+      console.log(err)
       alertData.title.value = 'Ошибка'
       alertData.mainText.value = err?.response?.data?.error ?? 'Произошла ошибка при добавлении.'
+
+      if (String(err?.response?.data?.error).includes('exists'))
+        alertData.buttonAction = alertData.closeAction
+
       alertData.showInput.value = false
       alertData.isError.value = true
       showAlert.value = true

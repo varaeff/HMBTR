@@ -2,9 +2,14 @@ import { Router } from "express";
 import { getFighters, getFighter, addFighter } from "./fighters/controllers";
 import {
   getCountries,
-  getData,
+  getCountry,
   addCountry,
-  addData,
+  getCities,
+  getCity,
+  addCity,
+  getClubs,
+  getClub,
+  addClub,
 } from "./common/controllers";
 import {
   addTournament,
@@ -23,15 +28,15 @@ router.get("/tournament/:id", getTournament);
 router.post("/tournaments", addTournament);
 
 router.get("/countries", getCountries);
-router.get("/country/:id", getData("countries", "id"));
+router.get("/country/:id", getCountry);
 router.post("/countries", addCountry);
 
-router.get("/cities/:id", getData("cities", "country_id"));
-router.get("/city/:id", getData("cities", "id"));
-router.post("/cities", addData("cities", "country_id"));
+router.get("/cities/:id", getCities);
+router.get("/city/:id", getCity);
+router.post("/cities", addCity);
 
-router.get("/clubs/:id", getData("clubs", "city_id"));
-router.get("/club/:id", getData("clubs", "id"));
-router.post("/clubs", addData("clubs", "city_id"));
+router.get("/clubs/:id", getClubs);
+router.get("/club/:id", getClub);
+router.post("/clubs", addClub);
 
 export default router;
