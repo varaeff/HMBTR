@@ -1,37 +1,29 @@
 import { Request, Response } from "express";
 import { prisma } from "@/prismaClient";
+import { withErrorHandling } from "@/wrappers/withErrorHandling";
 
-const getCountries = async (req: Request, res: Response) => {
-  try {
-    const countries = await prisma.countries.findMany();
-    res.status(200).json(countries);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: "Unknown error" });
-    }
-  }
-};
+const getCountries = withErrorHandling(async (req: Request, res: Response) => {
+  const countries = await prisma.countries.findMany();
+  res.status(200).json(countries);
+});
 
-const getCountry = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+const getCountry = withErrorHandling(
+  async (req: Request, res: Response) => {
+    const id = Number(req.params.id);
 
-  try {
     const country = await prisma.countries.findUnique({
       where: { id },
     });
 
     if (!country) {
-      return res.status(404).json({ error: "Country not found" });
+      res.status(404).json({ error: "Country not found" });
+      return;
     }
 
     res.status(200).json(country);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to fetch country" });
-  }
-};
+  },
+  { params: { id: "number" } }
+);
 
 const checkCountryExists = async (name: string) => {
   const country = await prisma.countries.findFirst({
@@ -42,14 +34,15 @@ const checkCountryExists = async (name: string) => {
   return !!country;
 };
 
-const addCountry = async (req: Request, res: Response) => {
-  const { name } = req.body;
+const addCountry = withErrorHandling(
+  async (req: Request, res: Response) => {
+    const { name } = req.body;
 
-  try {
     const exists = await checkCountryExists(name);
 
     if (exists) {
-      return res.status(400).json({ error: "Country already exists" });
+      res.status(400).json({ error: "Country already exists" });
+      return;
     }
 
     const country = await prisma.countries.create({
@@ -57,13 +50,8 @@ const addCountry = async (req: Request, res: Response) => {
     });
 
     res.status(201).json(country);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: "Unknown error" });
-    }
-  }
-};
+  },
+  { body: { name: "string" } }
+);
 
 export { getCountries, getCountry, addCountry };

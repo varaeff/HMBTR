@@ -1,37 +1,30 @@
 import { Request, Response } from "express";
 import { prisma } from "@/prismaClient";
+import { withErrorHandling } from "@/wrappers/withErrorHandling";
 
-const getTournaments = async (req: Request, res: Response) => {
-  try {
+const getTournaments = withErrorHandling(
+  async (req: Request, res: Response) => {
     const tournaments = await prisma.tournaments.findMany();
     res.status(200).json(tournaments);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: "Unknown error" });
-    }
   }
-};
+);
 
-const getTournament = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-
-  try {
+const getTournament = withErrorHandling(
+  async (req: Request, res: Response) => {
+    const id = parseInt(req.params.id);
     const tournament = await prisma.tournaments.findUnique({
       where: { id },
     });
 
     if (!tournament) {
-      return res.status(404).json({ error: "Tournament not found" });
+      res.status(404).json({ error: "Tournament not found" });
+      return;
     }
 
     res.status(200).json(tournament);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to fetch tournament" });
-  }
-};
+  },
+  { params: { id: "number" } }
+);
 
 const checkTournamentExists = async (
   name: string,
@@ -50,13 +43,9 @@ const checkTournamentExists = async (
   return !!tournament;
 };
 
-const addTournament = async (req: Request, res: Response) => {
-  const { name, event_date, country_id, city_id } = req.body;
-
-  try {
-    if (!name || !country_id || !city_id) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
+const addTournament = withErrorHandling(
+  async (req: Request, res: Response) => {
+    const { name, event_date, country_id, city_id } = req.body;
 
     const exists = await checkTournamentExists(
       name,
@@ -65,7 +54,8 @@ const addTournament = async (req: Request, res: Response) => {
     );
 
     if (exists) {
-      return res.status(400).json({ error: "Tournament already exists" });
+      res.status(400).json({ error: "Tournament already exists" });
+      return;
     }
 
     const tournament = await prisma.tournaments.create({
@@ -78,13 +68,15 @@ const addTournament = async (req: Request, res: Response) => {
     });
 
     res.status(201).json(tournament);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: "Unknown error" });
-    }
+  },
+  {
+    body: {
+      name: "string",
+      event_date: "string",
+      country_id: "number",
+      city_id: "number",
+    },
   }
-};
+);
 
 export { getTournaments, getTournament, addTournament };

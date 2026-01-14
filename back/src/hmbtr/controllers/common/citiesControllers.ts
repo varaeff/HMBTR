@@ -1,41 +1,36 @@
 import { Request, Response } from "express";
 import { prisma } from "@/prismaClient";
+import { withErrorHandling } from "@/wrappers/withErrorHandling";
 
-const getCities = async (req: Request, res: Response) => {
-  const country_id = parseInt(req.params.id);
+const getCities = withErrorHandling(
+  async (req: Request, res: Response) => {
+    const country_id = parseInt(req.params.id);
 
-  try {
     const cities = await prisma.cities.findMany({
       where: { country_id },
     });
     res.status(200).json(cities);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: "Unknown error" });
-    }
-  }
-};
+  },
+  { params: { id: "number" } }
+);
 
-const getCity = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+const getCity = withErrorHandling(
+  async (req: Request, res: Response) => {
+    const id = parseInt(req.params.id);
 
-  try {
     const city = await prisma.cities.findUnique({
       where: { id },
     });
 
     if (!city) {
-      return res.status(404).json({ error: "City not found" });
+      res.status(404).json({ error: "City not found" });
+      return;
     }
 
     res.status(200).json(city);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to fetch city" });
-  }
-};
+  },
+  { params: { id: "number" } }
+);
 
 const checkCityExists = async (name: string, country_id: number) => {
   const city = await prisma.cities.findFirst({
@@ -46,18 +41,14 @@ const checkCityExists = async (name: string, country_id: number) => {
   return !!city;
 };
 
-const addCity = async (req: Request, res: Response) => {
-  const { name, country_id } = req.body;
-
-  try {
-    if (!name || !country_id) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
-
+const addCity = withErrorHandling(
+  async (req: Request, res: Response) => {
+    const { name, country_id } = req.body;
     const exists = await checkCityExists(name, country_id);
 
     if (exists) {
-      return res.status(400).json({ error: "City already exists" });
+      res.status(400).json({ error: "City already exists" });
+      return;
     }
 
     const city = await prisma.cities.create({
@@ -65,13 +56,8 @@ const addCity = async (req: Request, res: Response) => {
     });
 
     res.status(201).json(city);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: "Unknown error" });
-    }
-  }
-};
+  },
+  { body: { name: "string", country_id: "number" } }
+);
 
 export { getCities, getCity, addCity };

@@ -1,34 +1,29 @@
 import { Request, Response } from "express";
 import { prisma } from "@/prismaClient";
+import { withErrorHandling } from "@/wrappers/withErrorHandling";
 
-const getFighters = async (req: Request, res: Response) => {
-  try {
-    const fighters = await prisma.fighters.findMany();
-    res.status(200).json(fighters);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to fetch fighters" });
-  }
-};
+const getFighters = withErrorHandling(async (req: Request, res: Response) => {
+  const fighters = await prisma.fighters.findMany();
+  res.status(200).json(fighters);
+});
 
-const getFighter = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+const getFighter = withErrorHandling(
+  async (req: Request, res: Response) => {
+    const id = parseInt(req.params.id);
 
-  try {
     const fighter = await prisma.fighters.findUnique({
       where: { id },
     });
 
     if (!fighter) {
-      return res.status(404).json({ error: "Fighter not found" });
+      res.status(404).json({ error: "Fighter not found" });
+      return;
     }
 
     res.status(200).json(fighter);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to fetch fighter" });
-  }
-};
+  },
+  { params: { id: "number" } }
+);
 
 const checkFighterExists = async (
   name: string,
@@ -47,23 +42,24 @@ const checkFighterExists = async (
   return !!fighter;
 };
 
-const addFighter = async (req: Request, res: Response) => {
-  const {
-    name,
-    surname,
-    patronymic,
-    birthday,
-    country_id,
-    city_id,
-    club_id,
-    pic,
-  } = req.body;
+const addFighter = withErrorHandling(
+  async (req: Request, res: Response) => {
+    const {
+      name,
+      surname,
+      patronymic,
+      birthday,
+      country_id,
+      city_id,
+      club_id,
+      pic,
+    } = req.body;
 
-  try {
     const exists = await checkFighterExists(name, surname, country_id);
 
     if (exists) {
-      throw new Error("Такой боец уже существует");
+      res.status(400).json({ error: "Fighter already exists" });
+      return;
     }
 
     const fighter = await prisma.fighters.create({
@@ -80,13 +76,19 @@ const addFighter = async (req: Request, res: Response) => {
     });
 
     res.status(201).json(fighter);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: "Unknown error" });
-    }
+  },
+  {
+    body: {
+      name: "string",
+      surname: "string",
+      patronymic: "string",
+      birthday: "string",
+      country_id: "number",
+      city_id: "number",
+      club_id: "number",
+      pic: "string",
+    },
   }
-};
+);
 
 export { getFighters, getFighter, addFighter };
