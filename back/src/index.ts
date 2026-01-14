@@ -2,8 +2,9 @@ import express, { Express, Request, Response } from "express";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import cors from "cors";
-import router from "./hmbtr/routes";
-import { execSync } from "child_process";
+import router from "@/hmbtr/routes";
+import loggerMiddleware from "@/middlewares/logger";
+// import { execSync } from "child_process";
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ const port = process.env.APP_PORT;
 app.use(cors());
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
+app.use(loggerMiddleware);
 app.use("/api/hmbtr/v1", router);
 
 app.get("/", (req: Request, res: Response) => {
