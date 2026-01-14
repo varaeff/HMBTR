@@ -1,21 +1,29 @@
 import { Router } from "express";
-import { getFighters, getFighter, addFighter } from "./fighters/controllers";
+import {
+  getFighters,
+  getFighter,
+  addFighter,
+} from "./controllers/main/fightersControllers";
 import {
   getCountries,
   getCountry,
   addCountry,
+} from "./controllers/common/countriesControllers";
+import {
   getCities,
   getCity,
   addCity,
+} from "./controllers/common/citiesControllers";
+import {
   getClubs,
   getClub,
   addClub,
-} from "./common/controllers";
+} from "./controllers/common/clubsControllers";
 import {
   addTournament,
   getTournament,
   getTournaments,
-} from "./tournaments/controllers";
+} from "./controllers/main/tournamentsControllers";
 
 const router = Router();
 

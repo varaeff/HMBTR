@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { prisma } from "../../prismaClient";
+import { prisma } from "@/prismaClient";
 
 const getFighters = async (req: Request, res: Response) => {
   try {
