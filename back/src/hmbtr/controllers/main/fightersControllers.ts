@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from "@/prismaClient";
 import { withErrorHandling } from "@/wrappers/withErrorHandling";
+import { fighterSchema } from "./mainSchemas";
 
 const getFighters = withErrorHandling(async (req: Request, res: Response) => {
   const fighters = await prisma.fighters.findMany();
@@ -22,13 +23,13 @@ const getFighter = withErrorHandling(
 
     res.status(200).json(fighter);
   },
-  { params: { id: "number" } }
+  { params: { id: "number" } },
 );
 
 const checkFighterExists = async (
   name: string,
   surname: string,
-  country_id: number
+  country_id: number,
 ) => {
   const fighter = await prisma.fighters.findFirst({
     where: {
@@ -78,17 +79,8 @@ const addFighter = withErrorHandling(
     res.status(201).json(fighter);
   },
   {
-    body: {
-      name: "string",
-      surname: "string",
-      patronymic: "string",
-      birthday: "string",
-      country_id: "number",
-      city_id: "number",
-      club_id: "number",
-      pic: "string",
-    },
-  }
+    bodySchema: fighterSchema,
+  },
 );
 
 export { getFighters, getFighter, addFighter };

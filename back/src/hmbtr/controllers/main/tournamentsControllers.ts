@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import { prisma } from "@/prismaClient";
 import { withErrorHandling } from "@/wrappers/withErrorHandling";
+import { tournamentSchema } from "./mainSchemas";
 
 const getTournaments = withErrorHandling(
   async (req: Request, res: Response) => {
     const tournaments = await prisma.tournaments.findMany();
     res.status(200).json(tournaments);
-  }
+  },
 );
 
 const getTournament = withErrorHandling(
@@ -23,13 +24,13 @@ const getTournament = withErrorHandling(
 
     res.status(200).json(tournament);
   },
-  { params: { id: "number" } }
+  { params: { id: "number" } },
 );
 
 const checkTournamentExists = async (
   name: string,
   event_date: Date | null,
-  city_id: number
+  city_id: number,
 ) => {
   const tournament = await prisma.tournaments.findFirst({
     where: {
@@ -50,7 +51,7 @@ const addTournament = withErrorHandling(
     const exists = await checkTournamentExists(
       name,
       event_date ? new Date(event_date) : null,
-      city_id
+      city_id,
     );
 
     if (exists) {
@@ -70,13 +71,8 @@ const addTournament = withErrorHandling(
     res.status(201).json(tournament);
   },
   {
-    body: {
-      name: "string",
-      event_date: "string",
-      country_id: "number",
-      city_id: "number",
-    },
-  }
+    bodySchema: tournamentSchema,
+  },
 );
 
 export { getTournaments, getTournament, addTournament };

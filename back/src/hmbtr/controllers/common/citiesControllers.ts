@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from "@/prismaClient";
 import { withErrorHandling } from "@/wrappers/withErrorHandling";
+import { citySchema } from "./commonSchemas";
 
 const getCities = withErrorHandling(
   async (req: Request, res: Response) => {
@@ -11,7 +12,7 @@ const getCities = withErrorHandling(
     });
     res.status(200).json(cities);
   },
-  { params: { id: "number" } }
+  { params: { id: "number" } },
 );
 
 const getCity = withErrorHandling(
@@ -29,7 +30,7 @@ const getCity = withErrorHandling(
 
     res.status(200).json(city);
   },
-  { params: { id: "number" } }
+  { params: { id: "number" } },
 );
 
 const checkCityExists = async (name: string, country_id: number) => {
@@ -57,7 +58,7 @@ const addCity = withErrorHandling(
 
     res.status(201).json(city);
   },
-  { body: { name: "string", country_id: "number" } }
+  { bodySchema: citySchema },
 );
 
 export { getCities, getCity, addCity };

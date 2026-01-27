@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from "@/prismaClient";
 import { withErrorHandling } from "@/wrappers/withErrorHandling";
+import { countrySchema } from "./commonSchemas";
 
 const getCountries = withErrorHandling(async (req: Request, res: Response) => {
   const countries = await prisma.countries.findMany();
@@ -22,7 +23,7 @@ const getCountry = withErrorHandling(
 
     res.status(200).json(country);
   },
-  { params: { id: "number" } }
+  { params: { id: "number" } },
 );
 
 const checkCountryExists = async (name: string) => {
@@ -51,7 +52,7 @@ const addCountry = withErrorHandling(
 
     res.status(201).json(country);
   },
-  { body: { name: "string" } }
+  { bodySchema: countrySchema },
 );
 
 export { getCountries, getCountry, addCountry };

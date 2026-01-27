@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from "@/prismaClient";
 import { withErrorHandling } from "@/wrappers/withErrorHandling";
+import { clubSchema } from "./commonSchemas";
 
 const getClubs = withErrorHandling(
   async (req: Request, res: Response) => {
@@ -11,7 +12,7 @@ const getClubs = withErrorHandling(
     });
     res.status(200).json(clubs);
   },
-  { params: { id: "number" } }
+  { params: { id: "number" } },
 );
 
 const getClub = withErrorHandling(
@@ -29,7 +30,7 @@ const getClub = withErrorHandling(
 
     res.status(200).json(club);
   },
-  { params: { id: "number" } }
+  { params: { id: "number" } },
 );
 
 const checkClubExists = async (name: string, city_id: number) => {
@@ -58,7 +59,7 @@ const addClub = withErrorHandling(
 
     res.status(201).json(club);
   },
-  { body: { name: "string", city_id: "number" } }
+  { bodySchema: clubSchema },
 );
 
 export { getClubs, getClub, addClub };
