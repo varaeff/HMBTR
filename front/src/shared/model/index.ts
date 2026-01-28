@@ -11,18 +11,20 @@ export interface Fighter {
 }
 
 export interface FighterDB {
-  id: number
+  id?: number
   name: string
   surname: string
   patronymic?: string
-  birthday?: Date | null
+  birthday?: string
   country_id: number
   city_id: number
-  club_id?: number
+  club_id?: number | null
   pic?: string
 }
 
 export interface Tournament {
+  country_id?: number
+  city_id?: number
   id: number
   name: string
   event_date: Date
@@ -31,7 +33,7 @@ export interface Tournament {
 }
 
 export interface TournamentDB {
-  id: number
+  id?: number
   name: string
   event_date: Date
   country_id: number

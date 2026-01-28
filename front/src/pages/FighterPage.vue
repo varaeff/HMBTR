@@ -1,7 +1,36 @@
+<script setup lang="ts">
+import { ref, onMounted, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useFightersListStore } from '@/stores/fightersList'
+import NoPhoto from '@/entities/NoPhoto.jpg'
+
+const route = useRoute()
+const router = useRouter()
+const fighter = ref<any>(null)
+const FightersListStore = useFightersListStore()
+const fighterId = +route.params.id
+
+onMounted(async () => {
+  try {
+    fighter.value = await FightersListStore.showFighterDetails(fighterId)
+  } catch (error) {
+    console.error('Error loading fighter details:', error)
+    fighter.value = null
+  }
+})
+
+const fullName = computed(() => {
+  if (!fighter.value) return ''
+  const { surname, name, patronymic } = fighter.value
+  return [surname, name, patronymic].filter(Boolean).join(' ')
+})
+
+const club = computed(() => fighter.value?.club ?? 'Без клуба')
+</script>
+
 <template>
   <h1 class="title">Карточка бойца</h1>
-  <LoaderComponent v-if="isLoading" />
-  <div v-else class="promo-block">
+  <div class="promo-block">
     <div class="promo-block__picture grey-image">
       <img class="card__image" :src="fighter?.pic || NoPhoto" :alt="fullName" />
     </div>
@@ -30,40 +59,6 @@
     </button>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useFightersListStore } from '@/app/stores/fightersList'
-import LoaderComponent from '@/widgets/LoaderComponent'
-import NoPhoto from '@/entities/NoPhoto.jpg'
-
-const route = useRoute()
-const router = useRouter()
-const isLoading = ref(true)
-const fighter = ref<any>(null)
-const FightersListStore = useFightersListStore()
-const fighterId = +route.params.id
-
-onMounted(async () => {
-  try {
-    fighter.value = await FightersListStore.showFighterDetails(fighterId)
-  } catch (error) {
-    console.error('Error loading fighter details:', error)
-    fighter.value = null
-  }
-
-  isLoading.value = false
-})
-
-const fullName = computed(() => {
-  if (!fighter.value) return ''
-  const { surname, name, patronymic } = fighter.value
-  return [surname, name, patronymic].filter(Boolean).join(' ')
-})
-
-const club = computed(() => fighter.value?.club ?? 'Без клуба')
-</script>
 
 <style scoped>
 .center {

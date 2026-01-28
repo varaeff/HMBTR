@@ -68,11 +68,11 @@ const addFighter = withErrorHandling(
         name,
         surname,
         patronymic,
-        birthday: new Date(birthday),
         country_id,
         city_id,
         club_id,
         pic,
+        ...(birthday && { birthday: new Date(birthday) }),
       },
     });
 
