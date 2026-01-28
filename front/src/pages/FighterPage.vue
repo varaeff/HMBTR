@@ -3,7 +3,7 @@
   <LoaderComponent v-if="isLoading" />
   <div v-else class="promo-block">
     <div class="promo-block__picture grey-image">
-      <img class="card__image" :src="fighter.pic ? fighter.pic : NoPhoto" :alt="fullName" />
+      <img class="card__image" :src="fighter?.pic || NoPhoto" :alt="fullName" />
     </div>
     <div class="promo-block__features">
       <ul class="titled-items-list">
@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useFightersListStore } from '@/app/stores/fightersList'
 import LoaderComponent from '@/widgets/LoaderComponent'
@@ -41,18 +41,28 @@ import NoPhoto from '@/entities/NoPhoto.jpg'
 const route = useRoute()
 const router = useRouter()
 const isLoading = ref(true)
+const fighter = ref<any>(null)
 const FightersListStore = useFightersListStore()
 const fighterId = +route.params.id
 
-const getFighter = () => {
-  const data = FightersListStore.showFighterDetails(fighterId)
-  isLoading.value = false
-  return data
-}
-const fighter = getFighter()
+onMounted(async () => {
+  try {
+    fighter.value = await FightersListStore.showFighterDetails(fighterId)
+  } catch (error) {
+    console.error('Error loading fighter details:', error)
+    fighter.value = null
+  }
 
-const fullName = `${fighter?.surname ? fighter?.surname : ''} ${fighter?.name ? fighter?.name : ''} ${fighter?.patronymic ? fighter?.patronymic : ''}`
-const club = `${fighter?.club ? fighter.club : 'Без клуба'}`
+  isLoading.value = false
+})
+
+const fullName = computed(() => {
+  if (!fighter.value) return ''
+  const { surname, name, patronymic } = fighter.value
+  return [surname, name, patronymic].filter(Boolean).join(' ')
+})
+
+const club = computed(() => fighter.value?.club ?? 'Без клуба')
 </script>
 
 <style scoped>

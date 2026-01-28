@@ -26,8 +26,15 @@ export const useFightersListStore = defineStore({
     seachString: ''
   }),
   actions: {
-    showFighterDetails(this: FightersListState, id: number) {
-      const fighter = this.fighters.find((fighter) => fighter.id === id)
+    async showFighterDetails(this: FightersListState, id: number) {
+      let fighter = this.fighters.find((fighter) => fighter.id === id)
+
+      if (fighter) {
+        return fighter
+      }
+
+      fighter = (await axios.get(`${import.meta.env.VITE_API_BASE_URL}/fighter/${id}`)).data
+
       return fighter ? fighter : this.fighters[0]
     },
 
