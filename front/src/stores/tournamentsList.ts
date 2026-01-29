@@ -75,6 +75,7 @@ export const useTournamentsListStore = defineStore({
             tournament.name.toLowerCase().includes(state.seachString.toLowerCase()) ||
             tournament.city.toLowerCase().includes(state.seachString.toLowerCase())
         )
+        .sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime())
 
       return filtered.length > 0
         ? filtered.sort((a, b) => b.event_date.getTime() - a.event_date.getTime())

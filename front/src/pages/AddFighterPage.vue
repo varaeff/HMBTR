@@ -1,18 +1,20 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import { useCommonDataStore } from '@/stores/commonData'
+import { reactive } from 'vue'
 import { useFightersListStore } from '@/stores/fightersList'
 import { useRouter } from 'vue-router'
 import ButtonAlert from '@/widgets/ButtonAlert.vue'
-import ImageUpload from '@/widgets/ImageUpload.vue'
-import InputTextComponent from '@/widgets/InputTextComponent.vue'
+import ImageUpload from '@/components/ImageUpload.vue'
+import InputTextComponent from '@/components/InputTextComponent.vue'
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker'
 import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css'
-import { parseDateString } from '@/features/getDates'
+import { toISODate } from '@/features/formatDate'
 import SelectLocationBlock from '@/widgets/SelectLocationBlock.vue'
+import { useRequiredFields } from '@/composables/useRequiredFields'
+import { useAddEntityAlert } from '@/composables/useAddEntityAlert'
 import type { Fighter, FighterDB } from '@/shared/model'
 
 const router = useRouter()
+const fightersListStore = useFightersListStore()
 
 const newFighter = reactive({
   surname: '',
@@ -24,53 +26,15 @@ const newFighter = reactive({
   countryID: 0,
   cityID: 0,
   clubID: 0,
-  pic: '',
+  photo: '',
   birthday: null
 })
 
-const showAlert = ref(false)
-
-const alertData = {
-  isError: ref(true),
-  title: ref(''),
-  mainText: ref(''),
-  buttonText: 'ОК',
-  showInput: ref(false),
-  buttonAction: () => {
-    showAlert.value = false
-  },
-  closeAction: () => {
-    alertData.isError.value = true
-    alertData.showInput.value = false
-    commonDataStore.alertData = ''
-    showAlert.value = false
-  }
-}
-
-const commonDataStore = useCommonDataStore()
-const fightersListStore = useFightersListStore()
+const buttonDisabled = useRequiredFields(newFighter, ['surname', 'name', 'country', 'city'])
+const { showAlert, alertData, handleRequestAdd } = useAddEntityAlert()
 
 const saveNewFighter = async () => {
-  const errorMsg: string[] = []
-
-  if (!newFighter.name) errorMsg.push('имя бойца')
-  if (!newFighter.surname) errorMsg.push('фамилия бойца')
-  if (!newFighter.country) errorMsg.push('страна')
-  if (!newFighter.city) errorMsg.push('город')
-
-  if (errorMsg.length) {
-    const emptyFields = errorMsg.join(', ') + '.'
-    alertData.title.value = 'Заполнены не все обязательные поля!'
-    alertData.mainText.value = `Обязательны к заполнению следующие поля: ${emptyFields}`
-
-    alertData.showInput.value = false
-    alertData.buttonAction = alertData.closeAction
-
-    showAlert.value = true
-    return
-  }
-
-  const photo = newFighter.pic ? newFighter.pic : ''
+  const photo = newFighter.photo || ''
   const saveData: FighterDB = {
     surname: newFighter.surname,
     name: newFighter.name,
@@ -82,75 +46,24 @@ const saveNewFighter = async () => {
   }
 
   if (newFighter.birthday) {
-    const raw: any = newFighter.birthday
-    const dateObj = raw instanceof Date ? raw : parseDateString(String(raw))
-    const pad = (n: number) => String(n).padStart(2, '0')
-    saveData.birthday = `${dateObj.getFullYear()}-${pad(dateObj.getMonth() + 1)}-${pad(dateObj.getDate())}`
+    saveData.birthday = toISODate(newFighter.birthday)
   }
 
   const storeId = fightersListStore.getMaxId
 
   const storeData: Fighter = {
     id: storeId,
-    surname: newFighter.surname,
-    name: newFighter.name,
-    patronymic: newFighter.patronymic,
-    birthday: newFighter.birthday,
-    country: newFighter.country,
-    city: newFighter.city,
-    club: newFighter.club,
-    pic: photo
+    ...newFighter
   }
 
-  try {
-    await fightersListStore.addNewFighter(saveData, storeData)
-    router.push('/fighters')
-  } catch (error: any) {
-    alertData.title.value = error?.response?.data?.error ?? 'Ошибка'
-    alertData.mainText.value = 'Сохранение отменено.'
-    showAlert.value = true
-  }
-}
-
-// Handle request-add emitted by SelectLocationBlock.
-// payload: { title, performAdd }
-const handleRequestAdd = ({
-  title,
-  performAdd
-}: {
-  title: string
-  performAdd: (name: string) => Promise<void>
-}) => {
-  alertData.isError.value = false
-  alertData.title.value = title
-  alertData.mainText.value = ''
-  alertData.buttonText = 'ОК'
-  alertData.showInput.value = true
-
-  alertData.buttonAction = async () => {
-    const newName = commonDataStore.alertData?.trim() ?? ''
-    if (!newName) {
-      alertData.mainText.value = 'Введите название.'
-      return
-    }
-    try {
-      await performAdd(newName)
-    } catch (err: any) {
-      showAlert.value = false
-    } finally {
-      alertData.showInput.value = false
-      alertData.isError.value = true
-      commonDataStore.alertData = ''
-      showAlert.value = false
-    }
-  }
-
-  showAlert.value = true
+  await fightersListStore.addNewFighter(saveData, storeData)
+  router.push('/fighters')
 }
 </script>
 
 <template>
   <h1 class="title">Добавление нового бойца</h1>
+  <p class="title">Обязательны к заполнению следующие поля: фамилия, имя, страна, город</p>
   <ButtonAlert
     v-if="showAlert"
     :isError="alertData.isError.value"
@@ -164,7 +77,7 @@ const handleRequestAdd = ({
   <form @submit.prevent="saveNewFighter">
     <div class="promo-block">
       <div class="promo-block__picture">
-        <ImageUpload v-model:imageSrc="newFighter.pic" />
+        <ImageUpload v-model:imageSrc="newFighter.photo" />
       </div>
       <div class="promo-block__features">
         <div class="form-area">
@@ -202,7 +115,9 @@ const handleRequestAdd = ({
       </div>
     </div>
     <div class="bottom-btn">
-      <button type="submit" class="btn btn-primary-accent btn-large">Сохранить данные</button>
+      <button type="submit" class="btn btn-primary-accent btn-large" :disabled="buttonDisabled">
+        Сохранить данные
+      </button>
     </div>
   </form>
 </template>

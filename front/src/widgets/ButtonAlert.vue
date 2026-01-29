@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useCommonDataStore } from '@/stores/commonData'
-import InputTextComponent from '@/widgets/InputTextComponent.vue'
+import InputTextComponent from '@/components/InputTextComponent.vue'
 
 const props = defineProps<{
   isError: boolean

@@ -2,8 +2,8 @@
 import { ref, watch, computed, onMounted } from 'vue'
 import type { Fighter } from '@/shared/model'
 import { useFightersListStore } from '@/stores/fightersList'
-import FighterCard from '@/widgets/FighterCard.vue'
-import SeachComponent from '@/widgets/SeachComponent.vue'
+import FighterCard from '@/components/FighterCard.vue'
+import SeachComponent from '@/components/SeachComponent.vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()

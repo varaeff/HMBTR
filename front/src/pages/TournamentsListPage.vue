@@ -2,7 +2,7 @@
 import { ref, watch, computed, onMounted } from 'vue'
 import type { Tournament } from '@/shared/model'
 import { useTournamentsListStore } from '@/stores/tournamentsList'
-import SeachComponent from '@/widgets/SeachComponent.vue'
+import SeachComponent from '@/components/SeachComponent.vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()

@@ -2,8 +2,8 @@
 import { RouterView } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useApiUiStore } from '@/stores/apiUi'
-import MainMenu from '@/widgets/MainMenu.vue'
-import LoaderComponent from '@/widgets/LoaderComponent.vue'
+import MainMenu from '@/components/MainMenu.vue'
+import LoaderComponent from '@/components/LoaderComponent.vue'
 import ButtonAlert from '@/widgets/ButtonAlert.vue'
 
 const ui = useApiUiStore()

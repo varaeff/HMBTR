@@ -56,3 +56,13 @@ export interface Club {
   name: string
   city_id: number
 }
+
+export interface LocationProps {
+  country: string
+  city: string
+  club: string
+  countryID: number
+  cityID: number
+  clubID: number
+  needClub: boolean
+}
