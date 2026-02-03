@@ -19,7 +19,6 @@ const { isLoading, error } = storeToRefs(ui)
       :isError="true"
       title="Ошибка"
       :mainText="error"
-      buttonText="Закрыть"
       :showInput="false"
       :buttonAction="ui.clearError"
       :closeAction="ui.clearError"

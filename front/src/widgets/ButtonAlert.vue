@@ -1,18 +1,23 @@
 <script setup lang="ts">
 import { useCommonDataStore } from '@/stores/commonData'
+import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
 import InputTextComponent from '@/components/InputTextComponent.vue'
 
 const props = defineProps<{
   isError: boolean
   title: string
   mainText: string
-  buttonText: string
   showInput: boolean
   buttonAction: (event: MouseEvent) => void
   closeAction: (event: MouseEvent) => void
 }>()
 
 const commonDataStore = useCommonDataStore()
+const inputData = storeToRefs(commonDataStore).alertData
+const buttonDisabled = computed(() => {
+  return props.showInput ? inputData.value.trim().length === 0 : false
+})
 </script>
 
 <template>
@@ -43,7 +48,7 @@ const commonDataStore = useCommonDataStore()
                     v-focus
                     class="input input--primary input--medium"
                     :placeholder="'Введите название'"
-                    v-model:value="commonDataStore.alertData"
+                    v-model:value="inputData"
                     @keyup.enter="props.buttonAction"
                   />
                   <div class="cta-block__content" v-html="props.mainText"></div>
@@ -53,9 +58,10 @@ const commonDataStore = useCommonDataStore()
                     v-focus
                     type="button"
                     class="btn btn-primary btn-medium"
+                    :disabled="buttonDisabled"
                     @click="props.buttonAction"
                   >
-                    {{ props.buttonText }}
+                    OK
                   </button>
                 </div>
               </div>

@@ -9,7 +9,6 @@ export function useAddEntityAlert() {
     isError: ref(false),
     title: ref(''),
     mainText: ref(''),
-    buttonText: 'ОК',
     showInput: ref(false),
     buttonAction: () => {
       showAlert.value = false
@@ -34,11 +33,6 @@ export function useAddEntityAlert() {
 
     alertData.buttonAction = async () => {
       const value = commonDataStore.alertData?.trim() || ''
-      if (!value) {
-        alertData.mainText.value = 'Введите название.'
-        alertData.isError.value = true
-        return
-      }
       await performAdd(value)
       commonDataStore.alertData = ''
       showAlert.value = false

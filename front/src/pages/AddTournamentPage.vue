@@ -46,7 +46,6 @@ const saveNewTournament = async () => {
     :isError="alertData.isError.value"
     :title="alertData.title.value"
     :mainText="alertData.mainText.value"
-    :buttonText="alertData.buttonText"
     :showInput="alertData.showInput.value"
     :buttonAction="alertData.buttonAction"
     :closeAction="alertData.closeAction"
