@@ -2,7 +2,7 @@
 import { ref, watch, computed, onMounted } from 'vue'
 import type { Tournament } from '@/shared/model'
 import { useTournamentsListStore } from '@/stores/tournamentsList'
-import SeachComponent from '@/components/SeachComponent.vue'
+import { SearchWidget } from '@/widgets/SearchWidget'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -41,11 +41,8 @@ watch(seachString, () => {
   <h1 class="title">Учтённые турниры</h1>
   <div>
     <div class="title">
-      <SeachComponent
+      <SearchWidget
         :placeholder="'Введите название турнира или город проведения...'"
-        :clearBtn="true"
-        :btnTitle="'Очистить поиск'"
-        :width="30"
         :store="useTournamentsListStore"
       />
     </div>

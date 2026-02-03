@@ -4,6 +4,7 @@ import setupInterceptors from '@/api/interceptors'
 
 import App from './App.vue'
 import router from '@/router/index'
+import '@/styles/globals.css'
 
 const app = createApp(App)
 

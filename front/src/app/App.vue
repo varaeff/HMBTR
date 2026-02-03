@@ -12,7 +12,7 @@ const { isLoading, error } = storeToRefs(ui)
 
 <template>
   <MainMenu />
-  <div class="main">
+  <div class="w-full min-h-screen pt-12 box-border">
     <LoaderComponent v-if="isLoading" />
     <ButtonAlert
       v-if="error"
@@ -26,13 +26,3 @@ const { isLoading, error } = storeToRefs(ui)
     <RouterView />
   </div>
 </template>
-
-<style scoped>
-.main {
-  padding-top: 3rem;
-  width: 100%;
-  min-height: 100vh;
-  background-color: antiquewhite;
-  box-sizing: border-box;
-}
-</style>

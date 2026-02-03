@@ -3,7 +3,7 @@ import { ref, watch, computed, onMounted } from 'vue'
 import type { Fighter } from '@/shared/model'
 import { useFightersListStore } from '@/stores/fightersList'
 import FighterCard from '@/components/FighterCard.vue'
-import SeachComponent from '@/components/SeachComponent.vue'
+import { SearchWidget } from '@/widgets/SearchWidget'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -42,13 +42,7 @@ watch(seachString, () => {
 <template>
   <h1 class="title">Список бойцов</h1>
   <div class="title">
-    <SeachComponent
-      :placeholder="'Введите имя, город или клуб'"
-      :clearBtn="true"
-      :btnTitle="'Очистить поиск'"
-      :width="30"
-      :store="useFightersListStore"
-    />
+    <SearchWidget :placeholder="'Введите имя, город или клуб'" :store="useFightersListStore" />
   </div>
   <div class="fightersList">
     <FighterCard
