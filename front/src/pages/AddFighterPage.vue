@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { useFightersListStore } from '@/stores/fightersList'
 import { useRouter } from 'vue-router'
 import ButtonAlert from '@/widgets/ButtonAlert.vue'
 import ImageUpload from '@/components/ImageUpload.vue'
-import InputTextComponent from '@/components/InputTextComponent.vue'
-import VueCtkDateTimePicker from 'vue-ctk-date-time-picker'
-import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css'
-import { toISODate } from '@/features/formatDate'
-import SelectLocationBlock from '@/widgets/SelectLocationBlock.vue'
+import { Button } from '@/components/ui/button'
+import { DynamicLabeledInput } from '@/widgets/DynamicLabeledInput'
+import { DatePicker } from '@/widgets/DatePicker'
+import { toISODate, toDateFormat } from '@/features/formatDate'
+import { SelectLocationBlock } from '@/widgets/SelectLocationBlock'
 import { useRequiredFields } from '@/composables/useRequiredFields'
 import { useAddEntityAlert } from '@/composables/useAddEntityAlert'
 import type { Fighter, FighterDB } from '@/shared/model'
+import type { CalendarDate } from '@internationalized/date'
 
 const router = useRouter()
 const fightersListStore = useFightersListStore()
@@ -23,30 +24,28 @@ const newFighter = reactive({
   country: '',
   city: '',
   club: '',
-  countryID: 0,
-  cityID: 0,
-  clubID: 0,
-  photo: '',
-  birthday: null
+  country_id: 0,
+  city_id: 0,
+  club_id: 0,
+  pic: '',
+  birthday: null as Date | null
 })
+
+const fighterBirthday = ref<CalendarDate | undefined>()
 
 const buttonDisabled = useRequiredFields(newFighter, ['surname', 'name', 'country', 'city'])
 const { showAlert, alertData, handleRequestAdd } = useAddEntityAlert()
 
 const saveNewFighter = async () => {
-  const photo = newFighter.photo || ''
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { birthday, ...rest } = newFighter
   const saveData: FighterDB = {
-    surname: newFighter.surname,
-    name: newFighter.name,
-    patronymic: newFighter.patronymic,
-    country_id: Number(newFighter.countryID),
-    city_id: Number(newFighter.cityID),
-    club_id: Number(newFighter.clubID),
-    pic: photo
+    ...rest
   }
 
-  if (newFighter.birthday) {
-    saveData.birthday = toISODate(newFighter.birthday)
+  if (fighterBirthday.value) {
+    saveData.birthday = toISODate(fighterBirthday.value)
+    newFighter.birthday = toDateFormat(fighterBirthday.value)
   }
 
   const storeId = fightersListStore.getMaxId
@@ -62,8 +61,10 @@ const saveNewFighter = async () => {
 </script>
 
 <template>
-  <h1 class="title">Добавление нового бойца</h1>
-  <p class="title">Обязательны к заполнению следующие поля: фамилия, имя, страна, город</p>
+  <h1 class="flex justify-center">Добавление нового бойца</h1>
+  <p class="flex justify-center">
+    Обязательны к заполнению следующие поля: фамилия, имя, страна, город
+  </p>
   <ButtonAlert
     v-if="showAlert"
     :isError="alertData.isError.value"
@@ -76,53 +77,39 @@ const saveNewFighter = async () => {
   <form @submit.prevent="saveNewFighter">
     <div class="promo-block">
       <div class="promo-block__picture">
-        <ImageUpload v-model:imageSrc="newFighter.photo" />
+        <ImageUpload v-model:imageSrc="newFighter.pic" />
       </div>
       <div class="promo-block__features">
         <div class="form-area">
           <div class="form-area__title form-area__title--medium">Введите данные бойца.</div>
           <div class="form-area__content">
             <div class="fieldsets-batch">
-              <InputTextComponent :placeholder="'Фамилия'" v-model:value="newFighter.surname" />
-              <InputTextComponent :placeholder="'Имя'" v-model:value="newFighter.name" />
-              <InputTextComponent :placeholder="'Отчество'" v-model:value="newFighter.patronymic" />
+              <DynamicLabeledInput placeholder="Фамилия" v-model:value="newFighter.surname" />
+              <DynamicLabeledInput :placeholder="'Имя'" v-model:value="newFighter.name" />
+              <DynamicLabeledInput
+                :placeholder="'Отчество'"
+                v-model:value="newFighter.patronymic"
+              />
               <SelectLocationBlock
                 v-model:country="newFighter.country"
                 v-model:city="newFighter.city"
                 v-model:club="newFighter.club"
-                v-model:countryID="newFighter.countryID"
-                v-model:cityID="newFighter.cityID"
-                v-model:clubID="newFighter.clubID"
+                v-model:country_id="newFighter.country_id"
+                v-model:city_id="newFighter.city_id"
+                v-model:club_id="newFighter.club_id"
                 :needClub="true"
                 @request-add="handleRequestAdd"
               />
-              <VueCtkDateTimePicker
-                :onlyDate="true"
-                :right="true"
-                :noLabel="true"
-                :noHeader="true"
-                :noButton="true"
-                :color="'#808f9d'"
-                :format="'DD-MM-YYYY'"
-                :formatted="'ll'"
-                :label="'Дата рождения'"
-                v-model="newFighter.birthday"
-              />
+              <DatePicker placeholder="Дата рождения" v-model:date="fighterBirthday" />
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="bottom-btn">
-      <button type="submit" class="btn btn-primary-accent btn-large" :disabled="buttonDisabled">
+    <div class="flex justify-center">
+      <Button type="submit" variant="default" size="default" :disabled="buttonDisabled">
         Сохранить данные
-      </button>
+      </Button>
     </div>
   </form>
 </template>
-
-<style scoped>
-#undefined-wrapper {
-  border: 1px solid #808f9d;
-}
-</style>

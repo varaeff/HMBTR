@@ -2,7 +2,7 @@
 import { useCommonDataStore } from '@/stores/commonData'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
-import InputTextComponent from '@/components/InputTextComponent.vue'
+import { DynamicLabeledInput } from '@/widgets/DynamicLabeledInput'
 
 const props = defineProps<{
   isError: boolean
@@ -43,7 +43,7 @@ const buttonDisabled = computed(() => {
               <div class="cta-block">
                 <div class="cta-block__central">
                   <div class="cta-block__title">{{ props.title }}</div>
-                  <InputTextComponent
+                  <DynamicLabeledInput
                     v-if="props.showInput"
                     v-focus
                     class="input input--primary input--medium"

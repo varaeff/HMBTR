@@ -2,12 +2,17 @@
 import { ref, watch } from 'vue'
 import { parseInput } from '@/features/parseInput'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { DynamicLabeledInput } from '@/widgets/DynamicLabeledInput'
 
 const props = defineProps({
+  inputWidth: {
+    type: String,
+    default: '100%',
+    required: false
+  },
   placeholder: {
     type: String,
-    reqired: true
+    required: true
   },
   store: {
     type: Function,
@@ -27,12 +32,13 @@ watch(inputValue, (newValue) => {
 </script>
 
 <template>
-  <Input
-    class="w-[30%] mr-4"
-    type="text"
-    maxlength="64"
-    :placeholder="props.placeholder"
-    v-model="inputValue"
-  />
-  <Button variant="default" size="default" @click="inputValue = ''"> Очистить поиск </Button>
+  <div class="flex justify-center">
+    <DynamicLabeledInput
+      class="mr-4"
+      :inputWidth="props.inputWidth"
+      :placeholder="props.placeholder"
+      v-model:value="inputValue"
+    />
+    <Button variant="default" size="default" @click="inputValue = ''"> Очистить поиск </Button>
+  </div>
 </template>

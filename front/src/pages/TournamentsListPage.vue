@@ -38,14 +38,13 @@ watch(seachString, () => {
 </script>
 
 <template>
-  <h1 class="title">Учтённые турниры</h1>
+  <h1 class="flex justify-center">Учтённые турниры</h1>
   <div>
-    <div class="title">
-      <SearchWidget
-        :placeholder="'Введите название турнира или город проведения...'"
-        :store="useTournamentsListStore"
-      />
-    </div>
+    <SearchWidget
+      inputWidth="30%"
+      placeholder="Введите название турнира или город проведения"
+      :store="useTournamentsListStore"
+    />
     <div class="tournamentsList">
       <div
         v-for="tournament in tournamentsList"

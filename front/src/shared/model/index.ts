@@ -61,8 +61,8 @@ export interface LocationProps {
   country: string
   city: string
   club: string
-  countryID: number
-  cityID: number
-  clubID: number
+  country_id: number
+  city_id: number
+  club_id: number
   needClub: boolean
 }

@@ -40,10 +40,12 @@ watch(seachString, () => {
 </script>
 
 <template>
-  <h1 class="title">Список бойцов</h1>
-  <div class="title">
-    <SearchWidget :placeholder="'Введите имя, город или клуб'" :store="useFightersListStore" />
-  </div>
+  <h1 class="flex justify-center">Список бойцов</h1>
+  <SearchWidget
+    inputWidth="30%"
+    placeholder="Введите имя, город или клуб"
+    :store="useFightersListStore"
+  />
   <div class="fightersList">
     <FighterCard
       v-for="fighter in fightersList"

@@ -67,15 +67,14 @@ export function useLocationSelect(props: LocationProps, emit: any) {
 
   watch(countryModel, async (newVal) => {
     const id = findIdByName(countries.value, newVal)
-    emit('update:countryID', id)
+    emit('update:country_id', id)
 
     localCity.value = ''
     emit('update:city', '')
-    emit('update:cityID', 0)
-
+    emit('update:city_id', 0)
     localClub.value = ''
     emit('update:club', '')
-    emit('update:clubID', 0)
+    emit('update:club_id', 0)
 
     if (!id) {
       cities.value = []
@@ -88,12 +87,11 @@ export function useLocationSelect(props: LocationProps, emit: any) {
 
   watch(cityModel, async (newVal) => {
     const id = findIdByName(cities.value, newVal)
-    emit('update:cityID', id)
+    emit('update:city_id', id)
 
     localClub.value = ''
     emit('update:club', '')
-    emit('update:clubID', 0)
-
+    emit('update:club_id', 0)
     if (!id) {
       clubs.value = []
       return
@@ -104,7 +102,7 @@ export function useLocationSelect(props: LocationProps, emit: any) {
 
   watch(clubModel, (newVal) => {
     const id = findIdByName(clubs.value, newVal)
-    emit('update:clubID', id)
+    emit('update:club_id', id)
   })
 
   const safeAddEntity = async (type: 'country' | 'city' | 'club', name: string) => {

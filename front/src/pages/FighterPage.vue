@@ -29,7 +29,7 @@ const club = computed(() => fighter.value?.club ?? 'Без клуба')
 </script>
 
 <template>
-  <h1 class="title">Карточка бойца</h1>
+  <h1 class="flex justify-center">Карточка бойца</h1>
   <div class="promo-block">
     <div class="promo-block__picture grey-image">
       <img class="card__image" :src="fighter?.pic || NoPhoto" :alt="fullName" />
