@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, watch, computed, onMounted } from 'vue'
-import type { Fighter } from '@/shared/model'
+import type { Fighter } from '@/model'
 import { useFightersListStore } from '@/stores/fightersList'
 import FighterCard from '@/components/FighterCard.vue'
+import { Button } from '@/components/ui/button'
 import { SearchWidget } from '@/widgets/SearchWidget'
 import { useRouter } from 'vue-router'
 
@@ -46,34 +47,18 @@ watch(seachString, () => {
     placeholder="Введите имя, город или клуб"
     :store="useFightersListStore"
   />
-  <div class="fightersList">
+  <div class="flex flex-wrap gap-5 justify-center w-full p-5">
     <FighterCard
       v-for="fighter in fightersList"
       :key="fighter.id"
+      class="grow basis-50 max-w-full lg:max-w-[calc((100%-80px)/5)] min-w-50 p-4"
       :name="`${fighter.surname} ${fighter.name}`"
       :description="`${fighter.city} ${fighter.club || ''}`"
       :pic="fighter.pic"
       @click="router.push(`/fighter/${fighter.id}`)"
     />
   </div>
-  <div class="bottom-btn">
-    <button class="btn btn-primary-accent btn-large" @click="addFighter">Добавить бойца</button>
+  <div class="flex justify-center">
+    <Button variant="default" size="default" @click="addFighter">Добавить бойца</Button>
   </div>
 </template>
-
-<style scoped>
-.fightersList {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: flex-start;
-  width: 100%;
-  padding: 20px;
-}
-
-.fightersList > * {
-  flex: 0 1 calc((100% - 80px) / 5);
-  min-width: 200px;
-  max-width: calc((100% - 80px) / 5);
-}
-</style>

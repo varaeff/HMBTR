@@ -1,15 +1,18 @@
 import { defineStore } from 'pinia'
 import http from '@/api/http'
-import type { Tournament, TournamentDB } from '@/shared/model'
-import { getCityNameById, getCountryNameById } from '@/features/getLocations'
+import type { Tournament, TournamentDB } from '@/model'
+import { useCommonDataStore } from '@/stores/commonData'
 
 interface TournamentsListState {
   tournaments: Tournament[]
   seachString: string
 }
 
+const commonDataStore = useCommonDataStore()
+
 export const useTournamentsListStore = defineStore({
   id: 'tournamentsList',
+
   state: (): TournamentsListState => ({
     tournaments: [
       {
@@ -22,6 +25,7 @@ export const useTournamentsListStore = defineStore({
     ],
     seachString: ''
   }),
+
   actions: {
     async showTournamentDetails(this: TournamentsListState, id: number) {
       let tournament = this.tournaments.find((tournament) => tournament.id === id)
@@ -33,10 +37,10 @@ export const useTournamentsListStore = defineStore({
       tournament = (await http.get(`/tournament/${id}`)).data
       tournament &&
         tournament.country_id &&
-        (tournament.country = await getCountryNameById(tournament.country_id))
+        (tournament.country = await commonDataStore.fetchCountry(tournament.country_id))
       tournament &&
         tournament.city_id &&
-        (tournament.city = await getCityNameById(tournament.city_id))
+        (tournament.city = await commonDataStore.fetchCity(tournament.city_id))
 
       return tournament ? tournament : this.tournaments[0]
     },
@@ -49,8 +53,8 @@ export const useTournamentsListStore = defineStore({
           id: tournamentDB.id!,
           name: tournamentDB.name,
           event_date: new Date(tournamentDB.event_date),
-          country: await getCountryNameById(tournamentDB.country_id),
-          city: await getCityNameById(tournamentDB.city_id)
+          country: await commonDataStore.fetchCountry(tournamentDB.country_id),
+          city: await commonDataStore.fetchCity(tournamentDB.city_id)
         }))
       )
 
@@ -66,6 +70,7 @@ export const useTournamentsListStore = defineStore({
       await http.post(`/tournaments`, tournamentDB)
     }
   },
+
   getters: {
     filteredTournamentsList(state) {
       const filtered = state.tournaments
@@ -81,6 +86,7 @@ export const useTournamentsListStore = defineStore({
         ? filtered.sort((a, b) => b.event_date.getTime() - a.event_date.getTime())
         : [state.tournaments[0]]
     },
+
     getMaxId(state) {
       return (
         state.tournaments.reduce((maxId, tournament) => {

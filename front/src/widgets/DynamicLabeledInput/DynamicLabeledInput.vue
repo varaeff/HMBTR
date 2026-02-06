@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { parseInput } from '@/features/parseInput'
+import { parseInput } from '@/lib/utils'
 import { Input } from '@/components/ui/input'
 
 const props = defineProps({

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { parseInput } from '@/features/parseInput'
+import { parseInput } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { DynamicLabeledInput } from '@/widgets/DynamicLabeledInput'
 

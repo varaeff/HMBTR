@@ -1,6 +1,6 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useCommonDataStore } from '@/stores/commonData'
-import type { LocationProps } from '@/shared/model'
+import type { LocationProps } from '@/model'
 
 export function useLocationSelect(props: LocationProps, emit: any) {
   const store = useCommonDataStore()

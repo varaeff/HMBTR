@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import http from '@/api/http'
-import type { City, Club, Country } from '@/shared/model'
+import type { City, Club, Country } from '@/model'
 
 interface CommonDataState {
   countries: Country[]
@@ -21,6 +21,7 @@ export const useCommonDataStore = defineStore({
     selectedCity: 0,
     alertData: ''
   }),
+
   actions: {
     async fetchCountries(this: CommonDataState) {
       const response = await http.get(`/countries`)
@@ -30,7 +31,12 @@ export const useCommonDataStore = defineStore({
       return data.sort((a: Country, b: Country) => a.name.localeCompare(b.name))
     },
 
-    async addCountry(this: CommonDataState, name: string) {
+    async fetchCountry(id: number) {
+      const response = await http.get(`/country/${id}`)
+      return response.data.name
+    },
+
+    async addCountry(name: string) {
       await http.post(`/countries`, { name })
     },
 
@@ -40,6 +46,11 @@ export const useCommonDataStore = defineStore({
       this.cities = []
       this.cities.push(...data)
       return data.sort((a: City, b: City) => a.name.localeCompare(b.name))
+    },
+
+    async fetchCity(id: number) {
+      const response = await http.get(`/city/${id}`)
+      return response.data.name
     },
 
     async addCity(this: CommonDataState, country_id: number, name: string) {
@@ -52,6 +63,11 @@ export const useCommonDataStore = defineStore({
       this.clubs = []
       this.clubs.push(...data)
       return data.sort((a: Club, b: Club) => a.name.localeCompare(b.name))
+    },
+
+    async fetchClub(id: number) {
+      const response = await http.get(`/club/${id}`)
+      return response.data.name
     },
 
     async addClub(this: CommonDataState, city_id: number, name: string) {

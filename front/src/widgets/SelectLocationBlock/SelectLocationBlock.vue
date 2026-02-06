@@ -2,7 +2,7 @@
 import { SelectWidget } from '@/widgets/SelectWidget'
 import { Button } from '@/components/ui/button'
 import { useLocationSelect } from '@/composables/useLocationSelect'
-import type { LocationProps } from '@/shared/model'
+import type { LocationProps } from '@/model'
 
 const props = defineProps({
   country: String,

@@ -1,13 +1,14 @@
 import { defineStore } from 'pinia'
-import type { Fighter, FighterDB } from '@/shared/model'
+import type { Fighter, FighterDB } from '@/model'
 import http from '@/api/http'
-
-import { getCityNameById, getClubNameById, getCountryNameById } from '@/features/getLocations'
+import { useCommonDataStore } from '@/stores/commonData'
 
 interface FightersListState {
   fighters: Fighter[]
   seachString: string
 }
+
+const commonDataStore = useCommonDataStore()
 
 export const useFightersListStore = defineStore({
   id: 'fightersList',
@@ -25,6 +26,7 @@ export const useFightersListStore = defineStore({
     ],
     seachString: ''
   }),
+
   actions: {
     async showFighterDetails(this: FightersListState, id: number) {
       let fighter = this.fighters.find((fighter) => fighter.id === id)
@@ -48,9 +50,9 @@ export const useFightersListStore = defineStore({
           surname: fighterDB.surname,
           patronymic: fighterDB.patronymic,
           birthday: fighterDB.birthday ? new Date(fighterDB.birthday) : null,
-          country: await getCountryNameById(fighterDB.country_id),
-          city: await getCityNameById(fighterDB.city_id),
-          club: fighterDB.club_id ? await getClubNameById(fighterDB.club_id) : undefined,
+          country: await commonDataStore.fetchCountry(fighterDB.country_id),
+          city: await commonDataStore.fetchCity(fighterDB.city_id),
+          club: fighterDB.club_id ? await commonDataStore.fetchClub(fighterDB.club_id) : undefined,
           pic: fighterDB.pic
         }))
       )
@@ -63,6 +65,7 @@ export const useFightersListStore = defineStore({
       this.fighters.push(fighter)
     }
   },
+
   getters: {
     filteredFightersList(state) {
       const filtered = state.fighters
@@ -77,6 +80,7 @@ export const useFightersListStore = defineStore({
 
       return filtered.length > 0 ? filtered : [state.fighters[0]]
     },
+
     getMaxId(state) {
       return (
         state.fighters.reduce((maxId, fighter) => {

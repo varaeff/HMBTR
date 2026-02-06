@@ -1,18 +1,22 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { useFightersListStore } from '@/stores/fightersList'
 import { useRouter } from 'vue-router'
-import ButtonAlert from '@/widgets/ButtonAlert.vue'
-import ImageUpload from '@/components/ImageUpload.vue'
+import type { CalendarDate } from '@internationalized/date'
+import type { Fighter, FighterDB } from '@/model'
+
+import { useFightersListStore } from '@/stores/fightersList'
+
+import { ImageUpload } from '@/components/ui/imageUpload'
 import { Button } from '@/components/ui/button'
+
+import ButtonAlert from '@/widgets/ButtonAlert.vue'
 import { DynamicLabeledInput } from '@/widgets/DynamicLabeledInput'
 import { DatePicker } from '@/widgets/DatePicker'
-import { toISODate, toDateFormat } from '@/features/formatDate'
 import { SelectLocationBlock } from '@/widgets/SelectLocationBlock'
+
+import { toISODate, toDateFormat } from '@/lib/utils'
 import { useRequiredFields } from '@/composables/useRequiredFields'
 import { useAddEntityAlert } from '@/composables/useAddEntityAlert'
-import type { Fighter, FighterDB } from '@/shared/model'
-import type { CalendarDate } from '@internationalized/date'
 
 const router = useRouter()
 const fightersListStore = useFightersListStore()

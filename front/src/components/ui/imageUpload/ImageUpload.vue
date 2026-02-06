@@ -42,48 +42,25 @@ watch(
 </script>
 
 <template>
-  <div class="container">
-    <img v-show="localImageSrc" :src="localImageSrc" />
-    <div class="input-wrapper">
+  <div
+    class="relative"
+    :class="localImageSrc ? 'inline-block max-w-full max-h-full' : 'w-full h-full'"
+  >
+    <img
+      v-show="localImageSrc"
+      :src="localImageSrc"
+      class="block max-w-full max-h-full object-contain"
+    />
+    <div
+      class="absolute inset-0 flex justify-center items-center text-lg font-black transition-[background] duration-400 [text-shadow:1px_1px_#fff] hover:bg-[rgba(0,0,0,0.2)]"
+    >
       {{ addPicTitle }}
-      <input @change="previewThumbnail" class="input" name="thumbnail" type="file" />
+      <input
+        @change="previewThumbnail"
+        class="absolute inset-0 opacity-0 cursor-pointer"
+        name="thumbnail"
+        type="file"
+      />
     </div>
   </div>
 </template>
-
-<style scoped>
-.container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.input-wrapper {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: large;
-  font-weight: 900;
-  text-shadow: 1px 1px #fff;
-  transition: 0.4s background;
-}
-
-.input-wrapper:hover {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-.input {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-</style>

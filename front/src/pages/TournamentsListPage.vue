@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, computed, onMounted } from 'vue'
-import type { Tournament } from '@/shared/model'
+import type { Tournament } from '@/model'
 import { useTournamentsListStore } from '@/stores/tournamentsList'
 import { SearchWidget } from '@/widgets/SearchWidget'
 import { useRouter } from 'vue-router'
