@@ -8,6 +8,13 @@ const getFighters = withErrorHandling(async (req: Request, res: Response) => {
   res.status(200).json(fighters);
 });
 
+const getFightersCount = withErrorHandling(
+  async (req: Request, res: Response) => {
+    const fightersCount = await prisma.fighters.count();
+    res.status(200).json(fightersCount);
+  },
+);
+
 const getFighter = withErrorHandling(
   async (req: Request, res: Response) => {
     const id = parseInt(req.params.id);
@@ -83,4 +90,4 @@ const addFighter = withErrorHandling(
   },
 );
 
-export { getFighters, getFighter, addFighter };
+export { getFighters, getFightersCount, getFighter, addFighter };

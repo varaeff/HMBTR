@@ -13,14 +13,9 @@ const tournamentsList = ref([] as Tournament[])
 const tournamentsListStore = useTournamentsListStore()
 
 const getTournaments = async () => {
-  try {
-    await tournamentsListStore.getTournamentsList()
-    const data = tournamentsListStore.filteredTournamentsList
-    return data
-  } catch (error) {
-    console.error('Error loading tournaments:', error)
-    return []
-  }
+  await tournamentsListStore.getTournamentsList()
+  const data: Tournament[] = tournamentsListStore.filteredTournamentsList
+  return data
 }
 
 onMounted(async () => {

@@ -46,6 +46,10 @@ export const useTournamentsListStore = defineStore({
     },
 
     async getTournamentsList() {
+      const tournamentsCount: number = (await http.get(`/tournaments/count`)).data
+
+      if (tournamentsCount === this.tournaments.length - 1) return
+
       const data: Array<TournamentDB> = (await http.get(`/tournaments`)).data
 
       const tournaments: Array<Tournament> = await Promise.all(
@@ -58,12 +62,9 @@ export const useTournamentsListStore = defineStore({
         }))
       )
 
-      const newTournaments = tournaments.filter(
-        (newTournament) =>
-          !this.tournaments.some((existingTournament) => existingTournament.id === newTournament.id)
-      )
+      const existingIds = new Set(this.tournaments.map((t) => t.id))
 
-      this.tournaments.push(...newTournaments)
+      this.tournaments.push(...tournaments.filter((tournament) => !existingIds.has(tournament.id)))
     },
 
     async addNewTournament(tournamentDB: TournamentDB) {

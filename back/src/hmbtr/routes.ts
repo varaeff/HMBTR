@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   getFighters,
+  getFightersCount,
   getFighter,
   addFighter,
 } from "./controllers/main/fightersControllers";
@@ -23,15 +24,18 @@ import {
   addTournament,
   getTournament,
   getTournaments,
+  getTournamentsCount,
 } from "./controllers/main/tournamentsControllers";
 
 const router = Router();
 
 router.get("/fighters", getFighters);
+router.get("/fighters/count", getFightersCount);
 router.get("/fighter/:id", getFighter);
 router.post("/fighters", addFighter);
 
 router.get("/tournaments", getTournaments);
+router.get("/tournaments/count", getTournamentsCount);
 router.get("/tournament/:id", getTournament);
 router.post("/tournaments", addTournament);
 

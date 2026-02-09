@@ -21,7 +21,7 @@ export const toDateFormat = (date: CalendarDate): Date => {
 }
 
 export const parseInput = (checkString: string): string => {
-  return checkString.replace(/[^a-zA-Zа-яА-ЯёЁ]/g, '')
+  return checkString.replace(/[^a-zA-Zа-яА-ЯёЁ ]/g, '')
 }
 
 export const dateToString = (date: Date | null | undefined): string => {

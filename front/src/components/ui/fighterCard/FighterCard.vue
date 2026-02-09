@@ -56,7 +56,7 @@ const handleMouseLeave = () => {
 onMounted(() => {
   if (glossRef.value) {
     requestAnimationFrame(() => {
-      glossRef.value!.classList.add('transition-opacity duration-[250ms] ease-out')
+      glossRef.value!.classList.add('transition-opacity', 'duration-[250ms]', 'ease-out')
     })
   }
 })

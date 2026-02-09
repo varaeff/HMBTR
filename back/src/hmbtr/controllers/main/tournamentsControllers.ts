@@ -10,6 +10,13 @@ const getTournaments = withErrorHandling(
   },
 );
 
+const getTournamentsCount = withErrorHandling(
+  async (req: Request, res: Response) => {
+    const tournamentsCount = await prisma.tournaments.count();
+    res.status(200).json(tournamentsCount);
+  },
+);
+
 const getTournament = withErrorHandling(
   async (req: Request, res: Response) => {
     const id = parseInt(req.params.id);
@@ -75,4 +82,4 @@ const addTournament = withErrorHandling(
   },
 );
 
-export { getTournaments, getTournament, addTournament };
+export { getTournaments, getTournamentsCount, getTournament, addTournament };

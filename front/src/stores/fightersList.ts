@@ -61,13 +61,19 @@ export const useFightersListStore = defineStore({
     },
 
     async getFightersList(this: FightersListState) {
+      const fightersCount: number = (await http.get(`/fighters/count`)).data
+
+      if (fightersCount === this.fighters.length - 1) return
+
       const data: Array<FighterDB> = (await http.get(`/fighters`)).data
 
       const fighters: Array<Fighter> = await Promise.all(
         data.map(async (fighterDB) => parseFighter(fighterDB))
       )
 
-      this.fighters.push(...fighters)
+      const existingIds = new Set(this.fighters.map((f) => f.id))
+
+      this.fighters.push(...fighters.filter((fighter) => !existingIds.has(fighter.id)))
     },
 
     async addNewFighter(this: FightersListState, fighterDB: FighterDB, fighter: Fighter) {

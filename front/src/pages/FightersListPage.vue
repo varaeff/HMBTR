@@ -12,14 +12,7 @@ const fightersList = ref([] as Fighter[])
 const fightersListStore = useFightersListStore()
 
 const getFighters = async () => {
-  if (fightersListStore.fighters.length < 2) {
-    try {
-      await fightersListStore.getFightersList()
-    } catch (error) {
-      console.error('Error loading fighters:', error)
-    }
-  }
-
+  await fightersListStore.getFightersList()
   const data: Fighter[] = fightersListStore.filteredFightersList
   return data
 }
