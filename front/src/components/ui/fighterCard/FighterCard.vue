@@ -81,7 +81,7 @@ onMounted(() => {
         :src="props.pic ? props.pic : NoPhoto"
         :alt="props.name"
       />
-      <h2 class="box-border text-[20px] pt-2.5 pr-3.5 pb-1.25 pl-3.5 m-0">
+      <h2 class="box-border text-black text-[20px] pt-2.5 pr-3.5 pb-1.25 pl-3.5 m-0">
         {{ props.name }}
       </h2>
       <p

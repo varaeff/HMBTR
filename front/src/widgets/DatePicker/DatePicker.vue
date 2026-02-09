@@ -23,9 +23,9 @@ const emit = defineEmits<{
         <Button
           id="date"
           variant="outline"
-          class="w-[50%] justify-between font-normal text-left"
+          class="w-[50%] justify-between font-normal text-left bg-card"
           :class="{
-            'text-gray-500': !date
+            'text-muted-foreground': !date
           }"
         >
           {{ date ? date.toDate(getLocalTimeZone()).toLocaleDateString() : props.placeholder }}

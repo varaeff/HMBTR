@@ -77,6 +77,7 @@ const handleBeforeInput = (e: InputEvent) => {
       :id="inputId"
       class="pt-5 text-base"
       type="text"
+      autocomplete="new-password"
       maxlength="64"
       v-model="inputValue"
       @beforeinput="handleBeforeInput"

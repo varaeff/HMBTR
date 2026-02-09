@@ -2,12 +2,16 @@
 import { RouterView } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useApiUiStore } from '@/stores/apiUi'
-import { MainMenu } from '@/components/ui/mainMenu'
+import { useTheme } from '@/composables/useTheme'
+import { MainMenu } from '@/widgets/MainMenu'
 import { Loader } from '@/widgets/Loader'
 import { AlertWidget } from '@/widgets/AlertWidget'
 
 const ui = useApiUiStore()
 const { isLoading, error } = storeToRefs(ui)
+
+const { initTheme } = useTheme()
+initTheme()
 </script>
 
 <template>
