@@ -26,7 +26,7 @@ const store = props.store()
 watch(inputValue, (newValue) => {
   inputValue.value = parseInput(newValue)
   if (inputValue.value === newValue) {
-    store.$state.seachString = newValue
+    store.setSearchString(newValue)
   }
 })
 </script>

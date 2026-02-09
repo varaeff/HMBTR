@@ -40,11 +40,7 @@ watch(
 watch(
   () => inputValue.value,
   (newValue) => {
-    const parsedValue = parseInput(newValue)
-    inputValue.value = parsedValue
-    if (parsedValue === newValue) {
-      emit('update:value', newValue)
-    }
+    emit('update:value', newValue)
   }
 )
 
@@ -55,13 +51,22 @@ const handleFocus = () => {
 const handleBlur = () => {
   isFocused.value = false
 }
+
+const handleBeforeInput = (e: InputEvent) => {
+  if (e.data) {
+    const filtered = parseInput(e.data)
+    if (filtered !== e.data) {
+      e.preventDefault()
+    }
+  }
+}
 </script>
 
 <template>
   <div class="relative mr-1 mb-2" :style="`width:${props.inputWidth}`">
     <label
       :for="inputId"
-      class="absolute left-3 top-0 origin-left pointer-events-none transition-all duration-200 text-gray-500"
+      class="absolute left-3 bottom-4 origin-left pointer-events-none transition-all duration-200 text-gray-500"
       :class="{
         'translate-y-2 scale-100': !isFocused && !isFilled,
         'translate-y-0 scale-75': isFocused || isFilled
@@ -74,6 +79,7 @@ const handleBlur = () => {
       type="text"
       maxlength="64"
       v-model="inputValue"
+      @beforeinput="handleBeforeInput"
       @focus="handleFocus"
       @blur="handleBlur"
     />

@@ -5,7 +5,7 @@ import { useCommonDataStore } from '@/stores/commonData'
 
 interface TournamentsListState {
   tournaments: Tournament[]
-  seachString: string
+  searchString: string
 }
 
 const commonDataStore = useCommonDataStore()
@@ -23,11 +23,11 @@ export const useTournamentsListStore = defineStore({
         city: ''
       }
     ],
-    seachString: ''
+    searchString: ''
   }),
 
   actions: {
-    async showTournamentDetails(this: TournamentsListState, id: number) {
+    async showTournamentDetails(id: number) {
       let tournament = this.tournaments.find((tournament) => tournament.id === id)
 
       if (tournament) {
@@ -45,7 +45,7 @@ export const useTournamentsListStore = defineStore({
       return tournament ? tournament : this.tournaments[0]
     },
 
-    async getTournamentsList(this: TournamentsListState) {
+    async getTournamentsList() {
       const data: Array<TournamentDB> = (await http.get(`/tournaments`)).data
 
       const tournaments: Array<Tournament> = await Promise.all(
@@ -68,6 +68,14 @@ export const useTournamentsListStore = defineStore({
 
     async addNewTournament(tournamentDB: TournamentDB) {
       await http.post(`/tournaments`, tournamentDB)
+    },
+
+    clearSearchString() {
+      this.searchString = ''
+    },
+
+    setSearchString(searchString: string) {
+      this.searchString = searchString
     }
   },
 
@@ -77,8 +85,8 @@ export const useTournamentsListStore = defineStore({
         .filter((tournament) => tournament.id !== 0)
         .filter(
           (tournament) =>
-            tournament.name.toLowerCase().includes(state.seachString.toLowerCase()) ||
-            tournament.city.toLowerCase().includes(state.seachString.toLowerCase())
+            tournament.name.toLowerCase().includes(state.searchString.toLowerCase()) ||
+            tournament.city.toLowerCase().includes(state.searchString.toLowerCase())
         )
         .sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime())
 
@@ -93,6 +101,10 @@ export const useTournamentsListStore = defineStore({
           return Math.max(maxId, tournament.id)
         }, 0) + 1
       )
+    },
+
+    getSearchString(state) {
+      return state.searchString
     }
   }
 })

@@ -1,22 +1,18 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import type { CalendarDate } from '@internationalized/date'
-import type { Fighter, FighterDB } from '@/model'
-
 import { useFightersListStore } from '@/stores/fightersList'
-
 import { ImageUpload } from '@/components/ui/imageUpload'
 import { Button } from '@/components/ui/button'
-
-import ButtonAlert from '@/widgets/ButtonAlert.vue'
+import { AlertWidget } from '@/widgets/AlertWidget'
 import { DynamicLabeledInput } from '@/widgets/DynamicLabeledInput'
 import { DatePicker } from '@/widgets/DatePicker'
 import { SelectLocationBlock } from '@/widgets/SelectLocationBlock'
-
 import { toISODate, toDateFormat } from '@/lib/utils'
 import { useRequiredFields } from '@/composables/useRequiredFields'
 import { useAddEntityAlert } from '@/composables/useAddEntityAlert'
+import type { CalendarDate } from '@internationalized/date'
+import type { Fighter, FighterDB } from '@/model'
 
 const router = useRouter()
 const fightersListStore = useFightersListStore()
@@ -65,11 +61,11 @@ const saveNewFighter = async () => {
 </script>
 
 <template>
-  <h1 class="flex justify-center">Добавление нового бойца</h1>
+  <h1 class="flex justify-center mb-4">Добавление нового бойца</h1>
   <p class="flex justify-center">
     Обязательны к заполнению следующие поля: фамилия, имя, страна, город
   </p>
-  <ButtonAlert
+  <AlertWidget
     v-if="showAlert"
     :isError="alertData.isError.value"
     :title="alertData.title.value"
@@ -79,34 +75,27 @@ const saveNewFighter = async () => {
     :closeAction="alertData.closeAction"
   />
   <form @submit.prevent="saveNewFighter">
-    <div class="promo-block">
-      <div class="promo-block__picture">
+    <div class="flex justify-center max-w-244 pt-8 mx-auto gap-10 mb-10">
+      <div class="min-w-100 flex justify-end">
         <ImageUpload v-model:imageSrc="newFighter.pic" />
       </div>
-      <div class="promo-block__features">
-        <div class="form-area">
-          <div class="form-area__title form-area__title--medium">Введите данные бойца.</div>
-          <div class="form-area__content">
-            <div class="fieldsets-batch">
-              <DynamicLabeledInput placeholder="Фамилия" v-model:value="newFighter.surname" />
-              <DynamicLabeledInput :placeholder="'Имя'" v-model:value="newFighter.name" />
-              <DynamicLabeledInput
-                :placeholder="'Отчество'"
-                v-model:value="newFighter.patronymic"
-              />
-              <SelectLocationBlock
-                v-model:country="newFighter.country"
-                v-model:city="newFighter.city"
-                v-model:club="newFighter.club"
-                v-model:country_id="newFighter.country_id"
-                v-model:city_id="newFighter.city_id"
-                v-model:club_id="newFighter.club_id"
-                :needClub="true"
-                @request-add="handleRequestAdd"
-              />
-              <DatePicker placeholder="Дата рождения" v-model:date="fighterBirthday" />
-            </div>
-          </div>
+      <div class="min-w-100">
+        <h5 class="mb-2">Введите данные бойца.</h5>
+        <div class="flex flex-col">
+          <DynamicLabeledInput placeholder="Фамилия" v-model:value="newFighter.surname" />
+          <DynamicLabeledInput :placeholder="'Имя'" v-model:value="newFighter.name" />
+          <DynamicLabeledInput :placeholder="'Отчество'" v-model:value="newFighter.patronymic" />
+          <SelectLocationBlock
+            v-model:country="newFighter.country"
+            v-model:city="newFighter.city"
+            v-model:club="newFighter.club"
+            v-model:country_id="newFighter.country_id"
+            v-model:city_id="newFighter.city_id"
+            v-model:club_id="newFighter.club_id"
+            :needClub="true"
+            @request-add="handleRequestAdd"
+          />
+          <DatePicker placeholder="Дата рождения" v-model:date="fighterBirthday" />
         </div>
       </div>
     </div>

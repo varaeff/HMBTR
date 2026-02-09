@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useTournamentsListStore } from '@/stores/tournamentsList'
+import { Button } from '@/components/ui/button'
 
 const route = useRoute()
 const router = useRouter()
@@ -32,31 +33,15 @@ const tournamentDetails = computed(() => {
 </script>
 
 <template>
-  <div class="tournamentInfo" v-if="tournament">
-    <h1>{{ tournamentName }}</h1>
+  <div class="flex flex-col justify-center items-center mb-5" v-if="tournament">
+    <h1 class="mb-4">{{ tournamentName }}</h1>
     <div v-if="tournament.id !== 0">
       {{ tournamentDetails }}
     </div>
   </div>
-  <div class="bottom-btn">
-    <button class="btn btn-primary-accent btn-large" @click="router.push(`/tournaments`)">
+  <div class="flex justify-center">
+    <Button variant="default" size="default" @click="router.push(`/tournaments`)">
       К списку турниров
-    </button>
+    </Button>
   </div>
 </template>
-
-<style scoped>
-.center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.tournamentInfo {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
-}
-</style>

@@ -5,10 +5,24 @@ import { useCommonDataStore } from '@/stores/commonData'
 
 interface FightersListState {
   fighters: Fighter[]
-  seachString: string
+  searchString: string
 }
 
 const commonDataStore = useCommonDataStore()
+
+const parseFighter = async (fighterDB: FighterDB): Promise<Fighter> => {
+  return {
+    id: fighterDB.id || 0,
+    name: fighterDB.name,
+    surname: fighterDB.surname,
+    patronymic: fighterDB.patronymic,
+    birthday: fighterDB.birthday ? new Date(fighterDB.birthday) : null,
+    country: await commonDataStore.fetchCountry(fighterDB.country_id),
+    city: await commonDataStore.fetchCity(fighterDB.city_id),
+    club: fighterDB.club_id ? await commonDataStore.fetchClub(fighterDB.club_id) : undefined,
+    pic: fighterDB.pic
+  }
+}
 
 export const useFightersListStore = defineStore({
   id: 'fightersList',
@@ -24,7 +38,7 @@ export const useFightersListStore = defineStore({
         pic: ''
       }
     ],
-    seachString: ''
+    searchString: ''
   }),
 
   actions: {
@@ -35,26 +49,22 @@ export const useFightersListStore = defineStore({
         return fighter
       }
 
-      fighter = (await http.get(`/fighter/${id}`)).data
+      const fighterDB = (await http.get(`/fighter/${id}`)).data as FighterDB
 
-      return fighter ? fighter : this.fighters[0]
+      if (!fighterDB) {
+        return this.fighters[0]
+      }
+
+      fighter = await parseFighter(fighterDB)
+
+      return fighter
     },
 
     async getFightersList(this: FightersListState) {
       const data: Array<FighterDB> = (await http.get(`/fighters`)).data
 
       const fighters: Array<Fighter> = await Promise.all(
-        data.map(async (fighterDB) => ({
-          id: fighterDB.id || 0,
-          name: fighterDB.name,
-          surname: fighterDB.surname,
-          patronymic: fighterDB.patronymic,
-          birthday: fighterDB.birthday ? new Date(fighterDB.birthday) : null,
-          country: await commonDataStore.fetchCountry(fighterDB.country_id),
-          city: await commonDataStore.fetchCity(fighterDB.city_id),
-          club: fighterDB.club_id ? await commonDataStore.fetchClub(fighterDB.club_id) : undefined,
-          pic: fighterDB.pic
-        }))
+        data.map(async (fighterDB) => parseFighter(fighterDB))
       )
 
       this.fighters.push(...fighters)
@@ -63,6 +73,14 @@ export const useFightersListStore = defineStore({
     async addNewFighter(this: FightersListState, fighterDB: FighterDB, fighter: Fighter) {
       await http.post(`/fighters`, fighterDB)
       this.fighters.push(fighter)
+    },
+
+    clearSearchString() {
+      this.searchString = ''
+    },
+
+    setSearchString(searchString: string) {
+      this.searchString = searchString
     }
   },
 
@@ -72,10 +90,10 @@ export const useFightersListStore = defineStore({
         .filter((fighter) => fighter.id !== 0)
         .filter(
           (fighter) =>
-            fighter.name.toLowerCase().includes(state.seachString.toLowerCase()) ||
-            fighter.surname.toLowerCase().includes(state.seachString.toLowerCase()) ||
-            fighter.city.toLowerCase().includes(state.seachString.toLowerCase()) ||
-            (fighter.club && fighter.club.toLowerCase().includes(state.seachString.toLowerCase()))
+            fighter.name.toLowerCase().includes(state.searchString.toLowerCase()) ||
+            fighter.surname.toLowerCase().includes(state.searchString.toLowerCase()) ||
+            fighter.city.toLowerCase().includes(state.searchString.toLowerCase()) ||
+            (fighter.club && fighter.club.toLowerCase().includes(state.searchString.toLowerCase()))
         )
 
       return filtered.length > 0 ? filtered : [state.fighters[0]]
@@ -87,6 +105,10 @@ export const useFightersListStore = defineStore({
           return Math.max(maxId, fighter.id)
         }, 0) + 1
       )
+    },
+
+    getSearchString(state) {
+      return state.searchString
     }
   }
 })

@@ -3,20 +3,18 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useFightersListStore } from '@/stores/fightersList'
 import NoPhoto from '@/entities/NoPhoto.jpg'
+import { Button } from '@/components/ui/button'
+import type { Fighter } from '@/model'
+import { dateToString } from '@/lib/utils'
 
 const route = useRoute()
 const router = useRouter()
-const fighter = ref<any>(null)
+const fighter = ref<Fighter | null>(null)
 const FightersListStore = useFightersListStore()
 const fighterId = +route.params.id
 
 onMounted(async () => {
-  try {
-    fighter.value = await FightersListStore.showFighterDetails(fighterId)
-  } catch (error) {
-    console.error('Error loading fighter details:', error)
-    fighter.value = null
-  }
+  fighter.value = await FightersListStore.showFighterDetails(fighterId)
 })
 
 const fullName = computed(() => {
@@ -24,55 +22,44 @@ const fullName = computed(() => {
   const { surname, name, patronymic } = fighter.value
   return [surname, name, patronymic].filter(Boolean).join(' ')
 })
-
-const club = computed(() => fighter.value?.club ?? 'Без клуба')
 </script>
 
 <template>
-  <h1 class="flex justify-center">Карточка бойца</h1>
-  <div class="promo-block">
-    <div class="promo-block__picture grey-image">
-      <img class="card__image" :src="fighter?.pic || NoPhoto" :alt="fullName" />
+  <h1 class="flex justify-center mb-4">Карточка бойца</h1>
+  <div class="flex justify-center max-w-244 pt-8 mx-auto gap-10 mb-10">
+    <div
+      class="min-w-100 flex justify-end grayscale hover:grayscale-0 transition-all duration-1000 hover:scale-[1.1]"
+    >
+      <img :src="fighter?.pic || NoPhoto" :alt="fullName" />
     </div>
-    <div class="promo-block__features">
-      <ul class="titled-items-list">
-        <li class="titled-item titled-items-list__item">
-          <div class="titled-item__title">ФИО:</div>
-          <div class="titled-item__content">
-            {{ fullName }}
-          </div>
-        </li>
-        <li class="titled-item titled-items-list__item">
-          <div class="titled-item__title">Город</div>
-          <div class="titled-item__content">{{ fighter?.city }}</div>
-        </li>
-        <li class="titled-item titled-items-list__item">
-          <div class="titled-item__title">Клуб</div>
-          <div class="titled-item__content">{{ club }}</div>
-        </li>
-      </ul>
-    </div>
+    <ul class="min-w-100">
+      <li class="flex items-center gap-1">
+        <h5>ФИО:</h5>
+        <div>
+          {{ fullName }}
+        </div>
+      </li>
+      <li class="flex items-center gap-1">
+        <h5>Страна:</h5>
+        <div>{{ fighter?.country }}</div>
+      </li>
+      <li class="flex items-center gap-1">
+        <h5>Город:</h5>
+        <div>{{ fighter?.city }}</div>
+      </li>
+      <li v-show="fighter?.club" class="flex items-center gap-1">
+        <h5>Клуб:</h5>
+        <div>{{ fighter?.club }}</div>
+      </li>
+      <li v-show="fighter?.birthday" class="flex items-center gap-1">
+        <h5>Дата рождения:</h5>
+        <div>{{ dateToString(fighter?.birthday) }}</div>
+      </li>
+    </ul>
   </div>
-  <div class="center">
-    <button class="btn btn-primary-accent btn-large" @click="router.push(`/fighters`)">
+  <div class="flex justify-center">
+    <Button variant="default" size="default" @click="router.push(`/fighters`)">
       К списку бойцов
-    </button>
+    </Button>
   </div>
 </template>
-
-<style scoped>
-.center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.grey-image {
-  filter: grayscale(1);
-  transition: 1s;
-}
-.grey-image:hover {
-  filter: grayscale(0);
-  transform: scale(1.1);
-}
-</style>

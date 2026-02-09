@@ -17,13 +17,18 @@ export const toISODate = (date: CalendarDate): string => {
 }
 
 export const toDateFormat = (date: CalendarDate): Date => {
-  return new Date(date.year, date.month - 1, date.day + 1)
+  return new Date(Date.UTC(date.year, date.month - 1, date.day))
 }
 
 export const parseInput = (checkString: string): string => {
-  const regexp = /^[a-zA-Zа-яА-ЯёЁ ]*$/
-  if (checkString.length && !checkString[checkString.length - 1].match(regexp)) {
-    return checkString.slice(0, -1)
-  }
-  return checkString
+  return checkString.replace(/[^a-zA-Zа-яА-ЯёЁ]/g, '')
+}
+
+export const dateToString = (date: Date | null | undefined): string => {
+  if (!date) return ''
+  return new Date(date).toLocaleDateString('ru-RU', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })
 }

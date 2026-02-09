@@ -2,9 +2,9 @@
 import { RouterView } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useApiUiStore } from '@/stores/apiUi'
-import { MainMenu } from '@/components/mainMenu'
+import { MainMenu } from '@/components/ui/mainMenu'
 import { Loader } from '@/widgets/Loader'
-import ButtonAlert from '@/widgets/ButtonAlert.vue'
+import { AlertWidget } from '@/widgets/AlertWidget'
 
 const ui = useApiUiStore()
 const { isLoading, error } = storeToRefs(ui)
@@ -14,7 +14,7 @@ const { isLoading, error } = storeToRefs(ui)
   <MainMenu />
   <div class="w-full min-h-screen pt-12 box-border">
     <Loader v-if="isLoading" />
-    <ButtonAlert
+    <AlertWidget
       v-if="error"
       :isError="true"
       title="Ошибка"

@@ -2,7 +2,7 @@
 import { ref, watch, computed, onMounted } from 'vue'
 import type { Fighter } from '@/model'
 import { useFightersListStore } from '@/stores/fightersList'
-import FighterCard from '@/components/FighterCard.vue'
+import { FighterCard } from '@/components/ui/fighterCard'
 import { Button } from '@/components/ui/button'
 import { SearchWidget } from '@/widgets/SearchWidget'
 import { useRouter } from 'vue-router'
@@ -25,23 +25,24 @@ const getFighters = async () => {
 }
 
 onMounted(async () => {
-  fightersListStore.seachString = ''
+  fightersListStore.clearSearchString()
   fightersList.value = await getFighters()
 })
 
-const seachString = computed(() => fightersListStore.seachString)
+const searchString = computed(() => fightersListStore.getSearchString)
+const showAddButton = computed(() => fightersListStore.getSearchString.length > 0)
 
 const addFighter = () => {
   router.push('/addFighter')
 }
 
-watch(seachString, () => {
+watch(searchString, () => {
   fightersList.value = fightersListStore.filteredFightersList
 })
 </script>
 
 <template>
-  <h1 class="flex justify-center">Список бойцов</h1>
+  <h1 class="flex justify-center mb-4">Список бойцов</h1>
   <SearchWidget
     inputWidth="30%"
     placeholder="Введите имя, город или клуб"
@@ -59,6 +60,8 @@ watch(seachString, () => {
     />
   </div>
   <div class="flex justify-center">
-    <Button variant="default" size="default" @click="addFighter">Добавить бойца</Button>
+    <Button v-show="showAddButton" variant="default" size="default" @click="addFighter"
+      >Добавить бойца</Button
+    >
   </div>
 </template>
