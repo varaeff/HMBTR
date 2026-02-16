@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "docker": "cd back && docker-compose up -d",
-    "dev:back": "cd back && npm run dev",
+    "docker": "cd backend && docker-compose up -d",
+    "dev:backnest": "cd backend && npm run start:dev",
     "dev:front": "cd front && npm run dev",
-    "dev": "concurrently \"npm run docker\" \"npm run dev:front\" \"npm run dev:back\""
+    "dev": "concurrently \"npm run docker\" \"npm run dev:front\" \"npm run dev:backnest\""
   },
   "author": "",
   "license": "ISC",

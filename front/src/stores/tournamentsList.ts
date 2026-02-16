@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import http from '@/api/http'
 import type { Tournament, TournamentDB } from '@/model'
 import { useCommonDataStore } from '@/stores/commonData'
+import { API_ROUTES } from '@shared/routes'
 
 interface TournamentsListState {
   tournaments: Tournament[]
@@ -34,7 +35,7 @@ export const useTournamentsListStore = defineStore({
         return tournament
       }
 
-      tournament = (await http.get(`/tournament/${id}`)).data
+      tournament = (await http.get(API_ROUTES.TOURNAMENTS.BY_ID(id))).data
       tournament &&
         tournament.country_id &&
         (tournament.country = await commonDataStore.fetchCountry(tournament.country_id))
@@ -46,11 +47,13 @@ export const useTournamentsListStore = defineStore({
     },
 
     async getTournamentsList() {
-      const tournamentsCount: number = (await http.get(`/tournaments/count`)).data
+      const tournamentsCount: number = (
+        await http.get(API_ROUTES.TOURNAMENTS.ROOT + '/' + API_ROUTES.TOURNAMENTS.COUNT)
+      ).data
 
       if (tournamentsCount === this.tournaments.length - 1) return
 
-      const data: Array<TournamentDB> = (await http.get(`/tournaments`)).data
+      const data: Array<TournamentDB> = (await http.get(API_ROUTES.TOURNAMENTS.ROOT)).data
 
       const tournaments: Array<Tournament> = await Promise.all(
         data.map(async (tournamentDB) => ({
@@ -68,7 +71,7 @@ export const useTournamentsListStore = defineStore({
     },
 
     async addNewTournament(tournamentDB: TournamentDB) {
-      await http.post(`/tournaments`, tournamentDB)
+      await http.post(API_ROUTES.TOURNAMENTS.ROOT, tournamentDB)
     },
 
     clearSearchString() {

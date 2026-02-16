@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import type { Fighter, FighterDB } from '@/model'
 import http from '@/api/http'
 import { useCommonDataStore } from '@/stores/commonData'
+import { API_ROUTES } from '@shared/routes'
 
 interface FightersListState {
   fighters: Fighter[]
@@ -49,7 +50,7 @@ export const useFightersListStore = defineStore({
         return fighter
       }
 
-      const fighterDB = (await http.get(`/fighter/${id}`)).data as FighterDB
+      const fighterDB = (await http.get(API_ROUTES.FIGHTERS.BY_ID(id))).data as FighterDB
 
       if (!fighterDB) {
         return this.fighters[0]
@@ -61,11 +62,13 @@ export const useFightersListStore = defineStore({
     },
 
     async getFightersList(this: FightersListState) {
-      const fightersCount: number = (await http.get(`/fighters/count`)).data
+      const fightersCount: number = (
+        await http.get(API_ROUTES.FIGHTERS.ROOT + '/' + API_ROUTES.FIGHTERS.COUNT)
+      ).data
 
       if (fightersCount === this.fighters.length - 1) return
 
-      const data: Array<FighterDB> = (await http.get(`/fighters`)).data
+      const data: Array<FighterDB> = (await http.get(API_ROUTES.FIGHTERS.ROOT)).data
 
       const fighters: Array<Fighter> = await Promise.all(
         data.map(async (fighterDB) => parseFighter(fighterDB))
@@ -77,7 +80,7 @@ export const useFightersListStore = defineStore({
     },
 
     async addNewFighter(this: FightersListState, fighterDB: FighterDB, fighter: Fighter) {
-      await http.post(`/fighters`, fighterDB)
+      await http.post(API_ROUTES.FIGHTERS.ROOT, fighterDB)
       this.fighters.push(fighter)
     },
 

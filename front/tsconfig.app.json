@@ -9,7 +9,8 @@
     "src/**/**/*",
     "src/**/**/*.vue",
     "types/*.d.ts",
-    "types/**/*.d.ts"
+    "types/**/*.d.ts",
+    "../shared/**/*.ts"
   ],
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
@@ -18,7 +19,8 @@
     "typeRoots": ["./node_modules/@types", "./types"],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@shared/*": ["../shared/*"]
     }
   }
 }

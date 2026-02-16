@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "CommonJS",
+    "strict": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["../shared/*"]
+    }
+  },
+  "include": ["**/*.ts", "src/**/*", "../shared/**/*.ts"]
+}

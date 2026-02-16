@@ -42,6 +42,7 @@ const saveNewFighter = async () => {
   const saveData: FighterDB = {
     ...rest
   }
+  console.log('saveData', saveData)
 
   if (fighterBirthday.value) {
     saveData.birthday = toISODate(fighterBirthday.value)
