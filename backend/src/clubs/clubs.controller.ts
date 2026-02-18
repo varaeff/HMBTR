@@ -14,9 +14,14 @@ import { API_ROUTES } from '@shared/routes';
 export class ClubsController {
   constructor(private readonly clubsService: ClubsService) {}
 
-  @Get(':cityId')
-  findByCity(@Param('cityId', ParseIntPipe) cityId: number) {
-    return this.clubsService.findByCity(cityId);
+  @Get()
+  findAall() {
+    return this.clubsService.findAll();
+  }
+
+  @Get(API_ROUTES.CLUBS.COUNT as string)
+  getClubsCount() {
+    return this.clubsService.getCount();
   }
 
   @Get(API_ROUTES.CLUBS.ONE + '/:id')

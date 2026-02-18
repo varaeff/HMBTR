@@ -47,6 +47,10 @@ export const useTournamentsListStore = defineStore({
     },
 
     async getTournamentsList() {
+      await commonDataStore.fetchCountries()
+      await commonDataStore.fetchCities()
+      await commonDataStore.fetchClubs()
+
       const tournamentsCount: number = (
         await http.get(API_ROUTES.TOURNAMENTS.ROOT + '/' + API_ROUTES.TOURNAMENTS.COUNT)
       ).data

@@ -62,6 +62,10 @@ export const useFightersListStore = defineStore({
     },
 
     async getFightersList(this: FightersListState) {
+      await commonDataStore.fetchCountries()
+      await commonDataStore.fetchCities()
+      await commonDataStore.fetchClubs()
+
       const fightersCount: number = (
         await http.get(API_ROUTES.FIGHTERS.ROOT + '/' + API_ROUTES.FIGHTERS.COUNT)
       ).data

@@ -14,9 +14,14 @@ import { API_ROUTES } from '@shared/routes';
 export class CitiesController {
   constructor(private readonly citiesService: CitiesService) {}
 
-  @Get(':countryId')
-  findByCountry(@Param('countryId', ParseIntPipe) countryId: number) {
-    return this.citiesService.findByCountry(countryId);
+  @Get()
+  findAll() {
+    return this.citiesService.findAll();
+  }
+
+  @Get(API_ROUTES.CITIES.COUNT as string)
+  getCitiesCount() {
+    return this.citiesService.getCount();
   }
 
   @Get(API_ROUTES.CITIES.ONE + '/:id')

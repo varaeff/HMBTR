@@ -14,6 +14,10 @@ export class CountriesService {
     return this.prisma.countries.findMany();
   }
 
+  async getCount() {
+    return this.prisma.countries.count();
+  }
+
   async findOne(id: number) {
     const country = await this.prisma.countries.findUnique({
       where: { id },

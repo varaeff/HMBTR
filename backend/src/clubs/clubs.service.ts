@@ -10,10 +10,12 @@ import { CreateClubDto } from './dto/create-club.dto';
 export class ClubsService {
   constructor(private prisma: PrismaService) {}
 
-  async findByCity(id: number) {
-    return this.prisma.clubs.findMany({
-      where: { city_id: id },
-    });
+  async findAll() {
+    return this.prisma.clubs.findMany();
+  }
+
+  async getCount() {
+    return this.prisma.clubs.count();
   }
 
   async findOne(id: number) {

@@ -27,18 +27,18 @@ export class UpdateLoggerInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       tap(() => {
-        if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
-          const logData: Record<string, unknown> = {
-            method,
-            url,
-            payload:
-              typeof body === 'object' && body !== null
-                ? (body as Record<string, unknown>)
-                : { data: body },
-          };
+        // if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
+        const logData: Record<string, unknown> = {
+          method,
+          url,
+          payload:
+            typeof body === 'object' && body !== null
+              ? (body as Record<string, unknown>)
+              : { data: body },
+        };
 
-          this.logger.info('Data update', logData);
-        }
+        this.logger.info('Data update', logData);
+        // }
       }),
     );
   }

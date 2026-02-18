@@ -12,6 +12,7 @@ export const API_ROUTES = {
   COUNTRIES: {
     ROOT: "countries",
     ONE: "one",
+    COUNT: "count",
     BY_ID: (id: string | number) => `/countries/one/${id}`,
   },
   CITIES: {
@@ -19,11 +20,13 @@ export const API_ROUTES = {
     BY_ID: (id: string | number) => `/cities/one/${id}`,
     ROOT: "cities",
     ONE: "one",
+    COUNT: "count",
   },
   CLUBS: {
     BY_PARENT: (cityId: string | number) => `/clubs/${cityId}`,
     BY_ID: (id: string | number) => `/clubs/one/${id}`,
     ROOT: "clubs",
     ONE: "one",
+    COUNT: "count",
   },
 } as const;

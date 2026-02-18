@@ -10,10 +10,12 @@ import { CreateCityDto } from './dto/create-city.dto';
 export class CitiesService {
   constructor(private prisma: PrismaService) {}
 
-  async findByCountry(id: number) {
-    return this.prisma.cities.findMany({
-      where: { country_id: id },
-    });
+  async findAll() {
+    return this.prisma.cities.findMany();
+  }
+
+  async getCount() {
+    return this.prisma.cities.count();
   }
 
   async findOne(id: number) {

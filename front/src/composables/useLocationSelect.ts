@@ -82,7 +82,7 @@ export function useLocationSelect(props: LocationProps, emit: any) {
       return
     }
 
-    cities.value = await store.fetchCities(id)
+    cities.value = await store.fetchCitiesByCountry(id)
   })
 
   watch(cityModel, async (newVal) => {
@@ -97,7 +97,7 @@ export function useLocationSelect(props: LocationProps, emit: any) {
       return
     }
 
-    clubs.value = await store.fetchClubs(id)
+    clubs.value = await store.fetchClubsByCity(id)
   })
 
   watch(clubModel, (newVal) => {
@@ -115,12 +115,12 @@ export function useLocationSelect(props: LocationProps, emit: any) {
       const country_id = findIdByName(countries.value, countryModel.value)
       if (!country_id) throw new Error('Не выбрана страна')
       await store.addCity(country_id, name)
-      cities.value = await store.fetchCities(country_id)
+      cities.value = await store.fetchCitiesByCountry(country_id)
     } else if (type === 'club') {
       const city_id = findIdByName(cities.value, cityModel.value)
       if (!city_id) throw new Error('Не выбран город')
       await store.addClub(city_id, name)
-      clubs.value = await store.fetchClubs(city_id)
+      clubs.value = await store.fetchClubsByCity(city_id)
     }
   }
 

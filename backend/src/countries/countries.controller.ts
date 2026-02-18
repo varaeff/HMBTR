@@ -19,6 +19,11 @@ export class CountriesController {
     return this.countriesService.findAll();
   }
 
+  @Get(API_ROUTES.COUNTRIES.COUNT as string)
+  getCountriesCount() {
+    return this.countriesService.getCount();
+  }
+
   @Get(API_ROUTES.COUNTRIES.ONE + '/:id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.countriesService.findOne(id);
