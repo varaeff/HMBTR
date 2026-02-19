@@ -42,7 +42,6 @@ const saveNewFighter = async () => {
   const saveData: FighterDB = {
     ...rest
   }
-  console.log('saveData', saveData)
 
   if (fighterBirthday.value) {
     saveData.birthday = toISODate(fighterBirthday.value)
@@ -62,10 +61,8 @@ const saveNewFighter = async () => {
 </script>
 
 <template>
-  <h1 class="flex justify-center mb-4">Добавление нового бойца</h1>
-  <p class="flex justify-center">
-    Обязательны к заполнению следующие поля: фамилия, имя, страна, город
-  </p>
+  <h1 class="flex justify-center mb-4">{{ $t('addFighterNamePage') }}</h1>
+  <p class="flex justify-center">{{ $t('addFighterHint') }}</p>
   <AlertWidget
     v-if="showAlert"
     :isError="alertData.isError.value"
@@ -81,11 +78,20 @@ const saveNewFighter = async () => {
         <ImageUpload v-model:imageSrc="newFighter.pic" />
       </div>
       <div class="min-w-100">
-        <h5 class="mb-2">Введите данные бойца.</h5>
+        <h5 class="mb-2">{{ $t('addFighterFormLabel') }}</h5>
         <div class="flex flex-col">
-          <DynamicLabeledInput placeholder="Фамилия" v-model:value="newFighter.surname" />
-          <DynamicLabeledInput :placeholder="'Имя'" v-model:value="newFighter.name" />
-          <DynamicLabeledInput :placeholder="'Отчество'" v-model:value="newFighter.patronymic" />
+          <DynamicLabeledInput
+            :placeholder="$t('addFighterSurname')"
+            v-model:value="newFighter.surname"
+          />
+          <DynamicLabeledInput
+            :placeholder="$t('addFighterName')"
+            v-model:value="newFighter.name"
+          />
+          <DynamicLabeledInput
+            :placeholder="$t('addFighterPatronymic')"
+            v-model:value="newFighter.patronymic"
+          />
           <SelectLocationBlock
             v-model:country="newFighter.country"
             v-model:city="newFighter.city"
@@ -96,13 +102,13 @@ const saveNewFighter = async () => {
             :needClub="true"
             @request-add="handleRequestAdd"
           />
-          <DatePicker placeholder="Дата рождения" v-model:date="fighterBirthday" />
+          <DatePicker :placeholder="$t('addFighterDateOfBirth')" v-model:date="fighterBirthday" />
         </div>
       </div>
     </div>
     <div class="flex justify-center">
       <Button type="submit" variant="default" size="default" :disabled="buttonDisabled">
-        Сохранить данные
+        {{ $t('addFighterSaveData') }}
       </Button>
     </div>
   </form>

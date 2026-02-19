@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useTheme } from '@/composables/useTheme'
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -7,26 +8,25 @@ import {
   navigationMenuTriggerStyle
 } from '@/components/ui/navigation-menu'
 import { Switch } from '@/components/ui/switch'
-import { useTheme } from '@/composables/useTheme'
+import { LangSelect } from '@/widgets/LangSelect'
 
 const { isDark, toggleTheme } = useTheme()
 
 const links = [
   {
-    title: 'Главная',
+    title: 'menuMainPageLink',
     url: '/',
     exact: true
   },
   {
-    title: 'Список бойцов',
+    title: 'menuFightersLink',
     url: '/fighters'
   },
   {
-    title: 'Турниры',
+    title: 'menuTournamentsLink',
     url: '/tournaments'
   }
 ]
-
 </script>
 
 <template>
@@ -35,17 +35,14 @@ const links = [
       <NavigationMenuList>
         <NavigationMenuItem v-for="link in links" :key="link.url">
           <NavigationMenuLink as-child :class="navigationMenuTriggerStyle()">
-            <RouterLink :to="link.url">{{ link.title }}</RouterLink>
+            <RouterLink :to="link.url">{{ $t(link.title) }}</RouterLink>
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
     <div class="flex items-center space-x-2">
-      <Switch
-        id="theme-switch"
-        :model-value="isDark"
-        @update:model-value="toggleTheme"
-      />
+      <LangSelect />
+      <Switch id="theme-switch" :model-value="isDark" @update:model-value="toggleTheme" />
     </div>
   </nav>
 </template>

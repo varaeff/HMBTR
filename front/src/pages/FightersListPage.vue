@@ -35,12 +35,8 @@ watch(searchString, () => {
 </script>
 
 <template>
-  <h1 class="flex justify-center mb-4">Список бойцов</h1>
-  <SearchWidget
-    inputWidth="30%"
-    placeholder="Введите имя, город или клуб"
-    :store="useFightersListStore"
-  />
+  <h1 class="flex justify-center mb-4">{{ $t('fightersPageName') }}</h1>
+  <SearchWidget inputWidth="30%" placeholder="searchPlaceholder" :store="useFightersListStore" />
   <div class="flex flex-wrap gap-5 justify-center w-full p-5">
     <FighterCard
       v-for="fighter in fightersList"
@@ -53,8 +49,8 @@ watch(searchString, () => {
     />
   </div>
   <div class="flex justify-center">
-    <Button v-show="showAddButton" variant="default" size="default" @click="addFighter"
-      >Добавить бойца</Button
-    >
+    <Button v-show="showAddButton" variant="default" size="default" @click="addFighter">{{
+      $t('addFighterButton')
+    }}</Button>
   </div>
 </template>

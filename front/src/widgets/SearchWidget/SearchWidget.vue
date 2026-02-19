@@ -36,9 +36,11 @@ watch(inputValue, (newValue) => {
     <DynamicLabeledInput
       class="mr-4"
       :inputWidth="props.inputWidth"
-      :placeholder="props.placeholder"
+      :placeholder="$t(props.placeholder)"
       v-model:value="inputValue"
     />
-    <Button variant="default" size="default" @click="inputValue = ''"> Очистить поиск </Button>
+    <Button variant="default" size="default" @click="inputValue = ''">{{
+      $t('searchClear')
+    }}</Button>
   </div>
 </template>

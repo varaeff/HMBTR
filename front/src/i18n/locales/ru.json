@@ -1,0 +1,56 @@
+{
+  "menuMainPageLink": "Главная",
+  "menuFightersLink": "Список бойцов",
+  "menuTournamentsLink": "Турниры",
+
+  "mainPageName": "Охуительная стартовая страница",
+
+  "fightersPageName": "Список бойцов",
+  "addFighterButton": "Добавить бойца",
+  "searchPlaceholder": "Введите имя, город или клуб",
+  "searchClear": "Очистить поиск",
+
+  "addFighterNamePage": "Добавление нового бойца",
+  "addFighterHint": "Обязательны к заполнению следующие поля: фамилия, имя, страна, город",
+  "addFighterFormLabel": "Введите данные бойца",
+  "addFighterSurname": "Фамилия",
+  "addFighterName": "Имя",
+  "addFighterPatronymic": "Отчество",
+  "addFighterDateOfBirth": "Дата рождения",
+  "addFighterSaveData": "Сохранить данные",
+
+  "addPhoto": "Добавить фотографию",
+  "changePhoto": "Изменить фотографию",
+
+  "LocationBlockCountry": "Страна",
+  "LocationBlockCity": "Город",
+  "LocationBlockClub": "Клуб",
+  "LocationBlockAddCountry": "Добавить страну",
+  "LocationBlockAddCity": "Добавить город",
+  "LocationBlockAddClub": "Добавить клуб",
+  "LocationBlockAddingCountry": "Добавление страны",
+  "LocationBlockAddingCity": "Добавление города",
+  "LocationBlockAddingClub": "Добавление клуба",
+  "LocationBlockAlertPlaceholder": "Введите название",
+  "LocationBlockAlertButton": "Сохранить",
+
+  "fighterPageNamePage": "Карточка бойца",
+  "fighterPageFullName": "ФИО:",
+  "fighterPageCountry": "Страна:",
+  "fighterPageCity": "Город:",
+  "fighterPageClub": "Клуб:",
+  "fighterPageDateOfBirth": "Дата рождения:",
+  "fighterPageBackButton": "К списку бойцов",
+
+  "tournamentsPageNamePage": "Учтённые турниры",
+  "tournamentsPagePlaceholder": "Введите название или город",
+  "tournamentsPageAddButton": "Добавить турнир",
+
+  "addTournamentNamePage": "Добавление нового турнира",
+  "addTournamentNameCard": "Введите данные турнира",
+  "addTournamentNameTournament": "Название турнира",
+  "addTournamentDate": "Дата проведения",
+  "addTournamentSave": "Сохранить данные",
+
+  "tournamentPageBackButton": "To the tournaments list"
+}

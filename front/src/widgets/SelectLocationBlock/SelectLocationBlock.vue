@@ -53,21 +53,35 @@ const handleAddClub = () => onAddClub((payload) => emit('request-add', payload))
 
 <template>
   <div class="flex">
-    <SelectWidget :placeholder="'Страна'" :values="countryNames" v-model:value="countryModel" />
-    <Button type="button" variant="ghost" @click="handleAddCountry"> Добавить страну </Button>
+    <SelectWidget
+      :placeholder="$t('LocationBlockCountry')"
+      :values="countryNames"
+      v-model:value="countryModel"
+    />
+    <Button type="button" variant="ghost" @click="handleAddCountry">{{
+      $t('LocationBlockAddCountry')
+    }}</Button>
   </div>
 
   <div class="flex">
-    <SelectWidget :placeholder="'Город'" :values="cityNames" v-model:value="cityModel" />
+    <SelectWidget
+      :placeholder="$t('LocationBlockCity')"
+      :values="cityNames"
+      v-model:value="cityModel"
+    />
     <Button v-show="countryModel" type="button" variant="ghost" @click="handleAddCity">
-      Добавить город
+      {{ $t('LocationBlockAddCity') }}
     </Button>
   </div>
 
   <div class="flex" v-if="needClub">
-    <SelectWidget :placeholder="'Клуб'" :values="clubNames" v-model:value="clubModel" />
+    <SelectWidget
+      :placeholder="$t('LocationBlockClub')"
+      :values="clubNames"
+      v-model:value="clubModel"
+    />
     <Button v-show="cityModel" type="button" variant="ghost" @click="handleAddClub">
-      Добавить клуб
+      {{ $t('LocationBlockAddClub') }}
     </Button>
   </div>
 </template>

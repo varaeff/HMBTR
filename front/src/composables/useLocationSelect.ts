@@ -1,9 +1,12 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useCommonDataStore } from '@/stores/commonData'
+import { useTranslation } from 'i18next-vue'
 import type { LocationProps } from '@/model'
 
 export function useLocationSelect(props: LocationProps, emit: any) {
   const store = useCommonDataStore()
+
+  const { t } = useTranslation()
 
   const countries = ref<{ id: number; name: string }[]>([])
   const cities = ref<{ id: number; name: string }[]>([])
@@ -106,19 +109,15 @@ export function useLocationSelect(props: LocationProps, emit: any) {
   })
 
   const safeAddEntity = async (type: 'country' | 'city' | 'club', name: string) => {
-    if (!name.trim()) throw new Error('Название не может быть пустым')
-
     if (type === 'country') {
       await store.addCountry(name)
       countries.value = await store.fetchCountries()
     } else if (type === 'city') {
       const country_id = findIdByName(countries.value, countryModel.value)
-      if (!country_id) throw new Error('Не выбрана страна')
       await store.addCity(country_id, name)
       cities.value = await store.fetchCitiesByCountry(country_id)
     } else if (type === 'club') {
       const city_id = findIdByName(cities.value, cityModel.value)
-      if (!city_id) throw new Error('Не выбран город')
       await store.addClub(city_id, name)
       clubs.value = await store.fetchClubsByCity(city_id)
     }
@@ -126,21 +125,21 @@ export function useLocationSelect(props: LocationProps, emit: any) {
 
   const onAddCountry = (emitRequestAdd: (payload: any) => void) => {
     emitRequestAdd({
-      title: 'Добавление страны',
+      title: t('LocationBlockAddingCountry'),
       performAdd: (name: string) => safeAddEntity('country', name)
     })
   }
 
   const onAddCity = (emitRequestAdd: (payload: any) => void) => {
     emitRequestAdd({
-      title: 'Добавление города',
+      title: t('LocationBlockAddingCity'),
       performAdd: (name: string) => safeAddEntity('city', name)
     })
   }
 
   const onAddClub = (emitRequestAdd: (payload: any) => void) => {
     emitRequestAdd({
-      title: 'Добавление клуба',
+      title: t('LocationBlockAddingClub'),
       performAdd: (name: string) => safeAddEntity('club', name)
     })
   }

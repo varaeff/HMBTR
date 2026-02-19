@@ -7,7 +7,6 @@ import {
   Card,
   CardAction,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle
@@ -39,7 +38,6 @@ const buttonDisabled = computed(() => {
       <Card class="w-full max-w-sm">
         <CardHeader>
           <CardTitle>{{ props.title }}</CardTitle>
-          <CardDescription class="flex justify-center"> </CardDescription>
           <CardAction>
             <CircleX class="cursor-pointer" @click="props.closeAction" />
           </CardAction>
@@ -49,7 +47,7 @@ const buttonDisabled = computed(() => {
             <div class="flex flex-col space-y-1.5">
               <DynamicLabeledInput
                 v-if="props.showInput"
-                :placeholder="'Введите название'"
+                :placeholder="$t('LocationBlockAlertPlaceholder')"
                 v-model:value="inputData"
                 @keyup.enter="props.buttonAction"
               />
@@ -65,7 +63,7 @@ const buttonDisabled = computed(() => {
         </CardContent>
         <CardFooter class="flex flex-col gap-2">
           <Button class="w-full" :disabled="buttonDisabled" @click="props.buttonAction">
-            OK
+            {{ $t('LocationBlockAlertButton') }}
           </Button>
         </CardFooter>
       </Card>

@@ -40,12 +40,12 @@ watch(searchString, () => {
 </script>
 
 <template>
-  <h1 class="flex justify-center mb-4">Учтённые турниры</h1>
+  <h1 class="flex justify-center mb-4">{{ $t('tournamentsPageNamePage') }}</h1>
   <div>
     <SearchWidget
       :inputWidth="inputWidth"
       class="p-2"
-      placeholder="Введите название или город"
+      :placeholder="$t('tournamentsPagePlaceholder')"
       :store="useTournamentsListStore"
     />
 
@@ -60,6 +60,8 @@ watch(searchString, () => {
     </div>
   </div>
   <div class="flex justify-center">
-    <Button v-show="showAddButton" @click="addTournament"> Добавить турнир </Button>
+    <Button v-show="showAddButton" @click="addTournament"
+      >{{ $t('tournamentsPageAddButton') }}
+    </Button>
   </div>
 </template>

@@ -46,7 +46,7 @@ const saveNewTournament = async () => {
 </script>
 
 <template>
-  <h1 class="flex justify-center mb-4">Добавление нового турнира</h1>
+  <h1 class="flex justify-center mb-4">{{ $t('addTournamentNamePage') }}</h1>
   <AlertWidget
     v-if="showAlert"
     :isError="alertData.isError.value"
@@ -58,9 +58,12 @@ const saveNewTournament = async () => {
   />
   <form @submit.prevent="saveNewTournament">
     <div class="max-w-120 min-w-100 pt-8 mx-auto gap-10 mb-10">
-      <h5 class="mb-2">Введите данные турнира.</h5>
+      <h5 class="mb-2">{{ $t('addTournamentNameCard') }}</h5>
       <div class="flex flex-col">
-        <DynamicLabeledInput :placeholder="'Название турнира'" v-model:value="newTournament.name" />
+        <DynamicLabeledInput
+          :placeholder="$t('addTournamentNameTournament')"
+          v-model:value="newTournament.name"
+        />
         <SelectLocationBlock
           v-model:country="newTournament.country"
           v-model:city="newTournament.city"
@@ -69,13 +72,13 @@ const saveNewTournament = async () => {
           :needClub="false"
           @request-add="handleRequestAdd"
         />
-        <DatePicker placeholder="Дата проведения" v-model:date="eventDate" />
+        <DatePicker :placeholder="$t('addTournamentDate')" v-model:date="eventDate" />
       </div>
     </div>
 
     <div class="flex justify-center">
       <Button type="submit" variant="default" size="default" :disabled="buttonDisabled">
-        Сохранить данные
+        {{ $t('addTournamentSave') }}
       </Button>
     </div>
   </form>

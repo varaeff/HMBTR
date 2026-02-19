@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { tData } from '@/lib/utils'
 import NoPhoto from '@/entities/NoPhoto.jpg'
 
 const props = defineProps({
@@ -82,12 +83,12 @@ onMounted(() => {
         :alt="props.name"
       />
       <h2 class="box-border text-black text-[20px] pt-2.5 pr-3.5 pb-1.25 pl-3.5 m-0">
-        {{ props.name }}
+        {{ tData(props.name as string) }}
       </h2>
       <p
         class="box-border text-[hsl(201,14%,40%)] text-[14px] pt-0 pr-3.5 pb-2.5 pl-3.5 m-0 text-left"
       >
-        {{ props.description }}
+        {{ tData(props.description as string) }}
       </p>
     </div>
   </div>

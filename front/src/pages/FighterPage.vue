@@ -5,7 +5,7 @@ import { useFightersListStore } from '@/stores/fightersList'
 import NoPhoto from '@/entities/NoPhoto.jpg'
 import { Button } from '@/components/ui/button'
 import type { Fighter } from '@/model'
-import { dateToString } from '@/lib/utils'
+import { dateToString, tData } from '@/lib/utils'
 
 const route = useRoute()
 const router = useRouter()
@@ -25,7 +25,7 @@ const fullName = computed(() => {
 </script>
 
 <template>
-  <h1 class="flex justify-center mb-4">Карточка бойца</h1>
+  <h1 class="flex justify-center mb-4">{{ $t('fighterPageNamePage') }}</h1>
   <div class="flex justify-center max-w-244 pt-8 mx-auto gap-10 mb-10">
     <div
       class="min-w-100 flex justify-end grayscale hover:grayscale-0 transition-all duration-1000 hover:scale-[1.1]"
@@ -34,32 +34,32 @@ const fullName = computed(() => {
     </div>
     <ul class="min-w-100">
       <li class="flex items-center gap-1">
-        <h5>ФИО:</h5>
+        <h5>{{ $t('fighterPageFullName') }}</h5>
         <div>
-          {{ fullName }}
+          {{ tData(fullName) }}
         </div>
       </li>
       <li class="flex items-center gap-1">
-        <h5>Страна:</h5>
-        <div>{{ fighter?.country }}</div>
+        <h5>{{ $t('fighterPageCountry') }}</h5>
+        <div>{{ tData(fighter?.country as string) }}</div>
       </li>
       <li class="flex items-center gap-1">
-        <h5>Город:</h5>
-        <div>{{ fighter?.city }}</div>
+        <h5>{{ $t('fighterPageCity') }}</h5>
+        <div>{{ tData(fighter?.city as string) }}</div>
       </li>
       <li v-show="fighter?.club" class="flex items-center gap-1">
-        <h5>Клуб:</h5>
-        <div>{{ fighter?.club }}</div>
+        <h5>{{ $t('fighterPageClub') }}</h5>
+        <div>{{ tData(fighter?.club as string) }}</div>
       </li>
       <li v-show="fighter?.birthday" class="flex items-center gap-1">
-        <h5>Дата рождения:</h5>
+        <h5>{{ $t('fighterPageDateOfBirth') }}</h5>
         <div>{{ dateToString(fighter?.birthday) }}</div>
       </li>
     </ul>
   </div>
   <div class="flex justify-center">
     <Button variant="default" size="default" @click="router.push(`/fighters`)">
-      К списку бойцов
+      {{ $t('fighterPageBackButton') }}
     </Button>
   </div>
 </template>

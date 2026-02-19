@@ -28,11 +28,7 @@ export const parseInput = (checkString: string): string => {
 
 export const dateToString = (date: Date | null | undefined): string => {
   if (!date) return ''
-  return new Date(date).toLocaleDateString('ru-RU', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
+  return new Date(date).toLocaleDateString('ru-RU')
 }
 
 export const tData = (text: string): string => {

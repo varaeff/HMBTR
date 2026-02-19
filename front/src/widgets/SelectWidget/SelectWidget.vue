@@ -7,6 +7,7 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import { computed } from 'vue'
+import { tData } from '@/lib/utils'
 
 interface Props {
   placeholder: string
@@ -35,7 +36,7 @@ const selectedValue = computed({
       <SelectValue :placeholder="props.placeholder" />
     </SelectTrigger>
     <SelectContent>
-      <SelectItem v-for="val in values" :key="val" :value="val"> {{ val }} </SelectItem>
+      <SelectItem v-for="val in values" :key="val" :value="val"> {{ tData(val) }} </SelectItem>
     </SelectContent>
   </Select>
 </template>

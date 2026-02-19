@@ -1,0 +1,56 @@
+{
+  "menuMainPageLink": "Main page",
+  "menuFightersLink": "Fighters list",
+  "menuTournamentsLink": "Tournaments",
+
+  "mainPageName": "Fucking start page",
+
+  "fightersPageName": "Fighters list",
+  "addFighterButton": "Add fighter",
+  "searchPlaceholder": "Input name, city or club",
+  "searchClear": "Clear search",
+
+  "addFighterNamePage": "Adding new fighter",
+  "addFighterHint": "The following fields are required: last name, first name, country, city",
+  "addFighterFormLabel": "Input fighters data",
+  "addFighterSurname": "Surname",
+  "addFighterName": "Name",
+  "addFighterPatronymic": "Patronymic",
+  "addFighterDateOfBirth": "Date of birth",
+  "addFighterSaveData": "Save data",
+
+  "addPhoto": "Add photo",
+  "changePhoto": "Change photo",
+
+  "LocationBlockCountry": "Country",
+  "LocationBlockCity": "City",
+  "LocationBlockClub": "Club",
+  "LocationBlockAddCountry": "Add country",
+  "LocationBlockAddCity": "Add city",
+  "LocationBlockAddClub": "Add Club",
+  "LocationBlockAddingCountry": "Add country",
+  "LocationBlockAddingCity": "Add city",
+  "LocationBlockAddingClub": "Add club",
+  "LocationBlockAlertPlaceholder": "Input the name",
+  "LocationBlockAlertButton": "Save",
+
+  "fighterPageNamePage": "Fighters card",
+  "fighterPageFullName": "Full name:",
+  "fighterPageCountry": "Country:",
+  "fighterPageCity": "City:",
+  "fighterPageClub": "Club:",
+  "fighterPageDateOfBirth": "Date of Burth:",
+  "fighterPageBackButton": "To fighters list",
+
+  "tournamentsPageNamePage": "Registered tournaments",
+  "tournamentsPagePlaceholder": "Enter name or city",
+  "tournamentsPageAddButton": "Add tournament",
+
+  "addTournamentNamePage": "Add new tournament",
+  "addTournamentNameCard": "Input tournament data",
+  "addTournamentNameTournament": "Name of the tournament",
+  "addTournamentDate": "Date",
+  "addTournamentSave": "Save data",
+
+  "tournamentPageBackButton": "To the tournaments list"
+}

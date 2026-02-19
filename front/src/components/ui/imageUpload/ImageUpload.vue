@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
+import { useTranslation } from 'i18next-vue'
 
 const props = defineProps({
   imageSrc: {
@@ -9,12 +10,12 @@ const props = defineProps({
   }
 })
 
+const { t } = useTranslation()
+
 const emit = defineEmits(['update:imageSrc'])
 const localImageSrc = ref(props.imageSrc)
 
-const addPicTitle = computed(() =>
-  localImageSrc.value.length ? 'Изменить фотографию' : 'Добавить фотографию'
-)
+const addPicTitle = computed(() => (localImageSrc.value.length ? t('changePhoto') : t('addPhoto')))
 
 const previewThumbnail = (event: Event) => {
   const input = event.target as HTMLInputElement
