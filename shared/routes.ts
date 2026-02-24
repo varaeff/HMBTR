@@ -4,9 +4,13 @@ export const API_ROUTES = {
     COUNT: "count",
     BY_ID: (id: string | number) => `/fighters/${id}`,
   },
+  NOMINATIONS: {
+    ROOT: "nominations",
+  },
   TOURNAMENTS: {
     ROOT: "tournaments",
     COUNT: "count",
+    NOMINATION: "nominations",
     BY_ID: (id: string | number) => `/tournaments/${id}`,
   },
   COUNTRIES: {

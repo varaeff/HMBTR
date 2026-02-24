@@ -25,5 +25,5 @@
       "@shared/*": ["../shared/*"]
     }
   },
-  "include": ["src/**/*", "../shared/**/*.ts"]
+  "include": ["src/**/*", "../shared/**/*.ts", "prisma.config.ts"]
 }

@@ -47,4 +47,20 @@ model tournaments {
   event_date DateTime? @db.Date
   country_id Int
   city_id    Int
+  tournament_nominations tournament_nominations[]
+}
+
+model nominations {
+  id              Int       @id @default(autoincrement())
+  name_ru         String    @db.VarChar(255)
+  name_en         String    @db.VarChar(255)
+  tournament_nominations tournament_nominations[]
+}
+
+model tournament_nominations {
+  id            Int       @id @default(autoincrement())
+  tournament_id Int
+  nomination_id Int
+  tournaments   tournaments @relation(fields: [tournament_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  nominations   nominations @relation(fields: [nomination_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }

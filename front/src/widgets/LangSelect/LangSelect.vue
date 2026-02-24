@@ -14,7 +14,6 @@ const selectedLanguage = ref('')
 
 onMounted(() => {
   const savedLng = localStorage.getItem('HMBTRi18nextLng')
-  console.log(savedLng)
   selectedLanguage.value = savedLng || 'ru'
 })
 

@@ -30,6 +30,7 @@ export interface Tournament {
   event_date: Date
   country: string
   city: string
+  nominations_ids: number[]
 }
 
 export interface TournamentDB {
@@ -38,6 +39,7 @@ export interface TournamentDB {
   event_date: Date
   country_id: number
   city_id: number
+  nominations_ids: number[]
 }
 
 export interface Country {
@@ -65,4 +67,10 @@ export interface LocationProps {
   city_id: number
   club_id: number
   needClub: boolean
+}
+
+export interface Nomination {
+  id: number
+  name_ru: string
+  name_en: string
 }

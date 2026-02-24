@@ -47,9 +47,11 @@
   "tournamentsPageAddButton": "Add tournament",
 
   "addTournamentNamePage": "Add new tournament",
+  "addTournamentHint": "Fill in all fields and select at least one nomination",
   "addTournamentNameCard": "Input tournament data",
   "addTournamentNameTournament": "Name of the tournament",
   "addTournamentDate": "Date",
+  "addTournamentNominations": "Select nominations",
   "addTournamentSave": "Save data",
 
   "tournamentPageBackButton": "To the tournaments list"

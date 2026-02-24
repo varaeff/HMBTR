@@ -388,7 +388,9 @@ export const ModelName = {
   clubs: 'clubs',
   countries: 'countries',
   fighters: 'fighters',
-  tournaments: 'tournaments'
+  tournaments: 'tournaments',
+  nominations: 'nominations',
+  tournament_nominations: 'tournament_nominations'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -404,7 +406,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "cities" | "clubs" | "countries" | "fighters" | "tournaments"
+    modelProps: "cities" | "clubs" | "countries" | "fighters" | "tournaments" | "nominations" | "tournament_nominations"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -778,6 +780,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    nominations: {
+      payload: Prisma.$nominationsPayload<ExtArgs>
+      fields: Prisma.nominationsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.nominationsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$nominationsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.nominationsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$nominationsPayload>
+        }
+        findFirst: {
+          args: Prisma.nominationsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$nominationsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.nominationsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$nominationsPayload>
+        }
+        findMany: {
+          args: Prisma.nominationsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$nominationsPayload>[]
+        }
+        create: {
+          args: Prisma.nominationsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$nominationsPayload>
+        }
+        createMany: {
+          args: Prisma.nominationsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.nominationsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$nominationsPayload>[]
+        }
+        delete: {
+          args: Prisma.nominationsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$nominationsPayload>
+        }
+        update: {
+          args: Prisma.nominationsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$nominationsPayload>
+        }
+        deleteMany: {
+          args: Prisma.nominationsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.nominationsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.nominationsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$nominationsPayload>[]
+        }
+        upsert: {
+          args: Prisma.nominationsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$nominationsPayload>
+        }
+        aggregate: {
+          args: Prisma.NominationsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateNominations>
+        }
+        groupBy: {
+          args: Prisma.nominationsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NominationsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.nominationsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NominationsCountAggregateOutputType> | number
+        }
+      }
+    }
+    tournament_nominations: {
+      payload: Prisma.$tournament_nominationsPayload<ExtArgs>
+      fields: Prisma.tournament_nominationsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.tournament_nominationsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_nominationsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.tournament_nominationsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_nominationsPayload>
+        }
+        findFirst: {
+          args: Prisma.tournament_nominationsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_nominationsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.tournament_nominationsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_nominationsPayload>
+        }
+        findMany: {
+          args: Prisma.tournament_nominationsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_nominationsPayload>[]
+        }
+        create: {
+          args: Prisma.tournament_nominationsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_nominationsPayload>
+        }
+        createMany: {
+          args: Prisma.tournament_nominationsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.tournament_nominationsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_nominationsPayload>[]
+        }
+        delete: {
+          args: Prisma.tournament_nominationsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_nominationsPayload>
+        }
+        update: {
+          args: Prisma.tournament_nominationsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_nominationsPayload>
+        }
+        deleteMany: {
+          args: Prisma.tournament_nominationsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.tournament_nominationsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.tournament_nominationsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_nominationsPayload>[]
+        }
+        upsert: {
+          args: Prisma.tournament_nominationsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_nominationsPayload>
+        }
+        aggregate: {
+          args: Prisma.Tournament_nominationsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTournament_nominations>
+        }
+        groupBy: {
+          args: Prisma.tournament_nominationsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Tournament_nominationsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.tournament_nominationsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Tournament_nominationsCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -867,6 +1017,24 @@ export const TournamentsScalarFieldEnum = {
 } as const
 
 export type TournamentsScalarFieldEnum = (typeof TournamentsScalarFieldEnum)[keyof typeof TournamentsScalarFieldEnum]
+
+
+export const NominationsScalarFieldEnum = {
+  id: 'id',
+  name_ru: 'name_ru',
+  name_en: 'name_en'
+} as const
+
+export type NominationsScalarFieldEnum = (typeof NominationsScalarFieldEnum)[keyof typeof NominationsScalarFieldEnum]
+
+
+export const Tournament_nominationsScalarFieldEnum = {
+  id: 'id',
+  tournament_id: 'tournament_id',
+  nomination_id: 'nomination_id'
+} as const
+
+export type Tournament_nominationsScalarFieldEnum = (typeof Tournament_nominationsScalarFieldEnum)[keyof typeof Tournament_nominationsScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1054,6 +1222,8 @@ export type GlobalOmitConfig = {
   countries?: Prisma.countriesOmit
   fighters?: Prisma.fightersOmit
   tournaments?: Prisma.tournamentsOmit
+  nominations?: Prisma.nominationsOmit
+  tournament_nominations?: Prisma.tournament_nominationsOmit
 }
 
 /* Types for Logging */

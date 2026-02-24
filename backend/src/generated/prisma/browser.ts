@@ -42,3 +42,13 @@ export type fighters = Prisma.fightersModel
  * 
  */
 export type tournaments = Prisma.tournamentsModel
+/**
+ * Model nominations
+ * 
+ */
+export type nominations = Prisma.nominationsModel
+/**
+ * Model tournament_nominations
+ * 
+ */
+export type tournament_nominations = Prisma.tournament_nominationsModel

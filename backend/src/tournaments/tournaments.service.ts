@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
+import { AddNominationDto } from './dto/add-nomination.dto';
 
 @Injectable()
 export class TournamentsService {
@@ -44,6 +45,20 @@ export class TournamentsService {
       data: {
         ...dto,
         event_date: eventDate,
+      },
+    });
+  }
+
+  async getNominations(tournamentId: number) {
+    return this.prisma.tournament_nominations.findMany({
+      where: { tournament_id: tournamentId },
+    });
+  }
+
+  async addNomination(dto: AddNominationDto) {
+    return this.prisma.tournament_nominations.create({
+      data: {
+        ...dto,
       },
     });
   }

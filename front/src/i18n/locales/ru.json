@@ -47,10 +47,12 @@
   "tournamentsPageAddButton": "Добавить турнир",
 
   "addTournamentNamePage": "Добавление нового турнира",
+  "addTournamentHint": "Заполните все поля и выберите минимум одну номинацию",
   "addTournamentNameCard": "Введите данные турнира",
   "addTournamentNameTournament": "Название турнира",
   "addTournamentDate": "Дата проведения",
+  "addTournamentNominations": "Выберите номинации",
   "addTournamentSave": "Сохранить данные",
 
-  "tournamentPageBackButton": "To the tournaments list"
+  "tournamentPageBackButton": "К списку турниров"
 }

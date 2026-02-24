@@ -21,7 +21,8 @@ export const useTournamentsListStore = defineStore({
         name: 'турнир не найден',
         event_date: new Date(),
         country: '',
-        city: ''
+        city: '',
+        nominations_ids: []
       }
     ],
     searchString: ''
@@ -47,9 +48,12 @@ export const useTournamentsListStore = defineStore({
     },
 
     async getTournamentsList() {
-      await commonDataStore.fetchCountries()
-      await commonDataStore.fetchCities()
-      await commonDataStore.fetchClubs()
+      await Promise.all([
+        commonDataStore.fetchCountries(),
+        commonDataStore.fetchCities(),
+        commonDataStore.fetchClubs(),
+        commonDataStore.fetchNominations()
+      ])
 
       const tournamentsCount: number = (
         await http.get(API_ROUTES.TOURNAMENTS.ROOT + '/' + API_ROUTES.TOURNAMENTS.COUNT)
@@ -65,7 +69,16 @@ export const useTournamentsListStore = defineStore({
           name: tournamentDB.name,
           event_date: new Date(tournamentDB.event_date),
           country: await commonDataStore.fetchCountry(tournamentDB.country_id),
-          city: await commonDataStore.fetchCity(tournamentDB.city_id)
+          city: await commonDataStore.fetchCity(tournamentDB.city_id),
+          nominations_ids: (
+            await http.get(
+              API_ROUTES.TOURNAMENTS.ROOT +
+                '/' +
+                API_ROUTES.TOURNAMENTS.NOMINATION +
+                '/' +
+                tournamentDB.id
+            )
+          ).data.map((nomination: any) => nomination.nomination_id)
         }))
       )
 
@@ -74,8 +87,28 @@ export const useTournamentsListStore = defineStore({
       this.tournaments.push(...tournaments.filter((tournament) => !existingIds.has(tournament.id)))
     },
 
-    async addNewTournament(tournamentDB: TournamentDB) {
-      await http.post(API_ROUTES.TOURNAMENTS.ROOT, tournamentDB)
+    async addNewTournament(tournament: TournamentDB) {
+      const newTournament: Tournament = await (
+        await http.post(API_ROUTES.TOURNAMENTS.ROOT, tournament)
+      ).data
+
+      await Promise.all(
+        tournament.nominations_ids.map(async (nominationId) => {
+          await http.post(API_ROUTES.TOURNAMENTS.ROOT + '/' + API_ROUTES.TOURNAMENTS.NOMINATION, {
+            tournament_id: newTournament.id,
+            nomination_id: nominationId
+          })
+        })
+      )
+
+      this.tournaments.push({
+        id: newTournament.id,
+        name: newTournament.name,
+        event_date: new Date(newTournament.event_date),
+        country: await commonDataStore.fetchCountry(newTournament.country_id!),
+        city: await commonDataStore.fetchCity(newTournament.city_id!),
+        nominations_ids: tournament.nominations_ids
+      })
     },
 
     clearSearchString() {

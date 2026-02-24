@@ -5,12 +5,15 @@ import { useTournamentsListStore } from '@/stores/tournamentsList'
 import { Button } from '@/components/ui/button'
 import { SearchWidget } from '@/widgets/SearchWidget'
 import { TournamentCard } from '@/widgets/TournamentCard'
+import { useTranslation } from 'i18next-vue'
 import type { Tournament } from '@/model'
 
 const router = useRouter()
 
 const tournamentsList = ref([] as Tournament[])
 const tournamentsListStore = useTournamentsListStore()
+
+const { i18next } = useTranslation()
 
 const getTournaments = async () => {
   await tournamentsListStore.getTournamentsList()
@@ -53,7 +56,7 @@ watch(searchString, () => {
       <TournamentCard
         class="cursor-pointer hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
         v-for="tournament in tournamentsList"
-        :key="tournament.id"
+        :key="i18next.language + tournament.id"
         @click="router.push(`/tournament/${tournament.id}`)"
         :tournament="tournament"
       />

@@ -11,6 +11,7 @@ import { TournamentsModule } from '../tournaments/tournaments.module';
 import { CountriesModule } from '../countries/countries.module';
 import { CitiesModule } from '../cities/cities.module';
 import { ClubsModule } from '../clubs/clubs.module';
+import { NominationsModule } from '../nominations/nominations.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ClubsModule } from '../clubs/clubs.module';
     CountriesModule,
     CitiesModule,
     ClubsModule,
+    NominationsModule,
   ],
   controllers: [AppController],
   providers: [
