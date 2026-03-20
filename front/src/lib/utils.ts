@@ -22,8 +22,13 @@ export const toDateFormat = (date: CalendarDate): Date => {
   return new Date(Date.UTC(date.year, date.month - 1, date.day))
 }
 
-export const parseInput = (checkString: string): string => {
-  return checkString.replace(/[^a-zA-Zа-яА-ЯёЁ ]/g, '')
+export const parseInput = (checkString: string, inputType: string): string => {
+  if (inputType === 'email') {
+    return checkString.replace(/[^a-zA-Z0-9@._+-]/g, '')
+  } else if (inputType === 'text') {
+    return checkString.replace(/[^a-zA-Zа-яА-ЯёЁ ]/g, '')
+  }
+  return checkString
 }
 
 export const dateToString = (date: Date | null | undefined): string => {

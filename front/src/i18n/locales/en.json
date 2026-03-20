@@ -2,6 +2,18 @@
   "menuMainPageLink": "Main page",
   "menuFightersLink": "Fighters list",
   "menuTournamentsLink": "Tournaments",
+  "menuLoginLink": "Login for organizers",
+
+  "LoginWidgetLoginTab": "Login",
+  "LoginWidgetRegisterTab": "Register",
+  "LoginWidgetLoginHint": "Input username and password",
+  "LoginWidgetRegisterHint": "Register to access organizer features",
+  "LoginWidgetUsernamePlaceholder": "Username",
+  "LoginWidgetPasswordPlaceholder": "Password",
+  "LoginWidgetEmailPlaceholder": "Email",
+  "LoginWidgetLoginButton": "Login",
+  "LoginWidgetRegisterButton": "Register",
+  "LoginWidgetCloseButton": "Close",
 
   "mainPageName": "Fucking start page",
 
@@ -13,11 +25,12 @@
   "addFighterNamePage": "Adding new fighter",
   "addFighterHint": "The following fields are required: last name, first name, country, city",
   "addFighterFormLabel": "Input fighters data",
-  "addFighterSurname": "Surname",
-  "addFighterName": "Name",
-  "addFighterPatronymic": "Patronymic",
   "addFighterDateOfBirth": "Date of birth",
   "addFighterSaveData": "Save data",
+
+  "fullNameSurname": "Surname",
+  "fullNameName": "Name",
+  "fullNamePatronymic": "Patronymic",
 
   "addPhoto": "Add photo",
   "changePhoto": "Change photo",

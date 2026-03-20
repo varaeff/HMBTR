@@ -52,36 +52,38 @@ const handleAddClub = () => onAddClub((payload) => emit('request-add', payload))
 </script>
 
 <template>
-  <div class="flex">
-    <SelectWidget
-      :placeholder="$t('LocationBlockCountry')"
-      :values="countryNames"
-      v-model:value="countryModel"
-    />
-    <Button type="button" variant="ghost" @click="handleAddCountry">{{
-      $t('LocationBlockAddCountry')
-    }}</Button>
-  </div>
+  <div class="flex flex-col">
+    <div class="flex">
+      <SelectWidget
+        :placeholder="$t('LocationBlockCountry')"
+        :values="countryNames"
+        v-model:value="countryModel"
+      />
+      <Button type="button" variant="ghost" @click="handleAddCountry">{{
+        $t('LocationBlockAddCountry')
+      }}</Button>
+    </div>
 
-  <div class="flex">
-    <SelectWidget
-      :placeholder="$t('LocationBlockCity')"
-      :values="cityNames"
-      v-model:value="cityModel"
-    />
-    <Button v-show="countryModel" type="button" variant="ghost" @click="handleAddCity">
-      {{ $t('LocationBlockAddCity') }}
-    </Button>
-  </div>
+    <div class="flex">
+      <SelectWidget
+        :placeholder="$t('LocationBlockCity')"
+        :values="cityNames"
+        v-model:value="cityModel"
+      />
+      <Button v-show="countryModel" type="button" variant="ghost" @click="handleAddCity">
+        {{ $t('LocationBlockAddCity') }}
+      </Button>
+    </div>
 
-  <div class="flex" v-if="needClub">
-    <SelectWidget
-      :placeholder="$t('LocationBlockClub')"
-      :values="clubNames"
-      v-model:value="clubModel"
-    />
-    <Button v-show="cityModel" type="button" variant="ghost" @click="handleAddClub">
-      {{ $t('LocationBlockAddClub') }}
-    </Button>
+    <div class="flex" v-if="needClub">
+      <SelectWidget
+        :placeholder="$t('LocationBlockClub')"
+        :values="clubNames"
+        v-model:value="clubModel"
+      />
+      <Button v-show="cityModel" type="button" variant="ghost" @click="handleAddClub">
+        {{ $t('LocationBlockAddClub') }}
+      </Button>
+    </div>
   </div>
 </template>

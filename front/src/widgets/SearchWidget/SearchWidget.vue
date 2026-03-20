@@ -5,11 +5,6 @@ import { Button } from '@/components/ui/button'
 import { DynamicLabeledInput } from '@/widgets/DynamicLabeledInput'
 
 const props = defineProps({
-  inputWidth: {
-    type: String,
-    default: '100%',
-    required: false
-  },
   placeholder: {
     type: String,
     required: true
@@ -35,7 +30,6 @@ watch(inputValue, (newValue) => {
   <div class="flex justify-center">
     <DynamicLabeledInput
       class="mr-4"
-      :inputWidth="props.inputWidth"
       :placeholder="$t(props.placeholder)"
       v-model:value="inputValue"
     />

@@ -5,8 +5,8 @@ import { useFightersListStore } from '@/stores/fightersList'
 import { ImageUpload } from '@/components/ui/imageUpload'
 import { Button } from '@/components/ui/button'
 import { AlertWidget } from '@/widgets/AlertWidget'
-import { DynamicLabeledInput } from '@/widgets/DynamicLabeledInput'
 import { DatePicker } from '@/widgets/DatePicker'
+import { FullNameWidget } from '@/widgets/FullNameWidget'
 import { SelectLocationBlock } from '@/widgets/SelectLocationBlock'
 import { toISODate, toDateFormat } from '@/lib/utils'
 import { useRequiredFields } from '@/composables/useRequiredFields'
@@ -79,18 +79,11 @@ const saveNewFighter = async () => {
       </div>
       <div class="min-w-100">
         <h5 class="mb-2">{{ $t('addFighterFormLabel') }}</h5>
-        <div class="flex flex-col">
-          <DynamicLabeledInput
-            :placeholder="$t('addFighterSurname')"
-            v-model:value="newFighter.surname"
-          />
-          <DynamicLabeledInput
-            :placeholder="$t('addFighterName')"
-            v-model:value="newFighter.name"
-          />
-          <DynamicLabeledInput
-            :placeholder="$t('addFighterPatronymic')"
-            v-model:value="newFighter.patronymic"
+        <div class="flex flex-col gap-4">
+          <FullNameWidget
+            v-model:surname="newFighter.surname"
+            v-model:name="newFighter.name"
+            v-model:patronymic="newFighter.patronymic"
           />
           <SelectLocationBlock
             v-model:country="newFighter.country"

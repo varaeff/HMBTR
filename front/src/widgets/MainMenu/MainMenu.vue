@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/navigation-menu'
 import { Switch } from '@/components/ui/switch'
 import { LangSelect } from '@/widgets/LangSelect'
+import { LoginWidget } from '@/widgets/LoginWidget'
 
 const { isDark, toggleTheme } = useTheme()
 
@@ -30,7 +31,7 @@ const links = [
 </script>
 
 <template>
-  <nav class="fixed left-0 top-0 w-full z-100 flex justify-between backdrop-blur-sm px-4">
+  <nav class="fixed left-0 top-0 w-full z-10 flex justify-between backdrop-blur-sm px-4">
     <NavigationMenu :viewport="false">
       <NavigationMenuList>
         <NavigationMenuItem v-for="link in links" :key="link.url">
@@ -41,6 +42,7 @@ const links = [
       </NavigationMenuList>
     </NavigationMenu>
     <div class="flex items-center space-x-2">
+      <LoginWidget />
       <LangSelect />
       <Switch id="theme-switch" :model-value="isDark" @update:model-value="toggleTheme" />
     </div>

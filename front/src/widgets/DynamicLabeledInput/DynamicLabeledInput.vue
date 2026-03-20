@@ -4,11 +4,6 @@ import { parseInput } from '@/lib/utils'
 import { Input } from '@/components/ui/input'
 
 const props = defineProps({
-  inputWidth: {
-    type: String,
-    default: '100%',
-    required: false
-  },
   placeholder: {
     type: String,
     required: true
@@ -16,6 +11,11 @@ const props = defineProps({
   value: {
     type: String,
     default: '',
+    required: false
+  },
+  inputType: {
+    type: String,
+    default: 'text',
     required: false
   }
 })
@@ -54,7 +54,7 @@ const handleBlur = () => {
 
 const handleBeforeInput = (e: InputEvent) => {
   if (e.data) {
-    const filtered = parseInput(e.data)
+    const filtered = parseInput(e.data, props.inputType)
     if (filtered !== e.data) {
       e.preventDefault()
     }
@@ -63,7 +63,7 @@ const handleBeforeInput = (e: InputEvent) => {
 </script>
 
 <template>
-  <div class="relative mr-1 mb-2" :style="`width:${props.inputWidth}`">
+  <div class="w-full relative mr-1 mb-2">
     <label
       :for="inputId"
       class="absolute left-3 bottom-4 origin-left pointer-events-none transition-all duration-200 text-gray-500"
@@ -76,7 +76,7 @@ const handleBeforeInput = (e: InputEvent) => {
     <Input
       :id="inputId"
       class="pt-5 text-base"
-      type="text"
+      :type="props.inputType"
       autocomplete="new-password"
       maxlength="64"
       v-model="inputValue"

@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia'
 import http from '@/api/http'
-import type { City, Club, Country, Nominations } from '@/model'
+import type { City, Club, Country, Nomination } from '@/model'
 import { API_ROUTES } from '@shared/routes'
 
 interface CommonDataState {
   countries: Country[]
   cities: City[]
   clubs: Club[]
-  nominations: Nominations[]
+  nominations: Nomination[]
   alertData: string
 }
 
@@ -121,12 +121,12 @@ export const useCommonDataStore = defineStore({
 
     async fetchNominations() {
       if (this.nominations.length > 0)
-        return this.nominations.sort((a: Nominations, b: Nominations) => a.id - b.id)
+        return this.nominations.sort((a: Nomination, b: Nomination) => a.id - b.id)
 
       const response = await http.get(API_ROUTES.NOMINATIONS.ROOT)
       const data = response.data
       this.nominations.push(...data)
-      return data.sort((a: Nominations, b: Nominations) => a.id - b.id)
+      return data.sort((a: Nomination, b: Nomination) => a.id - b.id)
     }
   }
 })

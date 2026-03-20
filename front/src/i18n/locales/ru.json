@@ -2,6 +2,18 @@
   "menuMainPageLink": "Главная",
   "menuFightersLink": "Список бойцов",
   "menuTournamentsLink": "Турниры",
+  "menuLoginLink": "Вход для организаторов",
+
+  "LoginWidgetLoginTab": "Вход",
+  "LoginWidgetRegisterTab": "Регистрация",
+  "LoginWidgetLoginHint": "Введите имя пользователя и пароль",
+  "LoginWidgetRegisterHint": "Зарегистрируйтесь, чтобы получить доступ к функциям организатора",
+  "LoginWidgetUsernamePlaceholder": "Имя пользователя",
+  "LoginWidgetPasswordPlaceholder": "Пароль",
+  "LoginWidgetEmailPlaceholder": "Электронная почта",
+  "LoginWidgetLoginButton": "Войти",
+  "LoginWidgetRegisterButton": "Зарегистрироваться",
+  "LoginWidgetCloseButton": "Закрыть",
 
   "mainPageName": "Охуительная стартовая страница",
 
@@ -13,11 +25,12 @@
   "addFighterNamePage": "Добавление нового бойца",
   "addFighterHint": "Обязательны к заполнению следующие поля: фамилия, имя, страна, город",
   "addFighterFormLabel": "Введите данные бойца",
-  "addFighterSurname": "Фамилия",
-  "addFighterName": "Имя",
-  "addFighterPatronymic": "Отчество",
   "addFighterDateOfBirth": "Дата рождения",
   "addFighterSaveData": "Сохранить данные",
+
+  "fullNameSurname": "Фамилия",
+  "fullNameName": "Имя",
+  "fullNamePatronymic": "Отчество",
 
   "addPhoto": "Добавить фотографию",
   "changePhoto": "Изменить фотографию",

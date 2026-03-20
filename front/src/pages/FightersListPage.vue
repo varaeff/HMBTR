@@ -36,7 +36,13 @@ watch(searchString, () => {
 
 <template>
   <h1 class="flex justify-center mb-4">{{ $t('fightersPageName') }}</h1>
-  <SearchWidget inputWidth="30%" placeholder="searchPlaceholder" :store="useFightersListStore" />
+  <div class="w-full flex justify-center">
+    <SearchWidget
+      class="w-11/12 lg:w-5/12"
+      placeholder="searchPlaceholder"
+      :store="useFightersListStore"
+    />
+  </div>
   <div class="flex flex-wrap gap-5 justify-center w-full p-5">
     <FighterCard
       v-for="fighter in fightersList"
