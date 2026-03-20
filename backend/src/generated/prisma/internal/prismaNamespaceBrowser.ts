@@ -57,7 +57,8 @@ export const ModelName = {
   fighters: 'fighters',
   tournaments: 'tournaments',
   nominations: 'nominations',
-  tournament_nominations: 'tournament_nominations'
+  tournament_nominations: 'tournament_nominations',
+  users: 'users'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -144,6 +145,23 @@ export const Tournament_nominationsScalarFieldEnum = {
 } as const
 
 export type Tournament_nominationsScalarFieldEnum = (typeof Tournament_nominationsScalarFieldEnum)[keyof typeof Tournament_nominationsScalarFieldEnum]
+
+
+export const UsersScalarFieldEnum = {
+  id: 'id',
+  username: 'username',
+  password: 'password',
+  surname: 'surname',
+  name: 'name',
+  patronymic: 'patronymic',
+  email: 'email',
+  is_admin: 'is_admin',
+  is_organizer: 'is_organizer',
+  refreshToken: 'refreshToken',
+  createdAt: 'createdAt'
+} as const
+
+export type UsersScalarFieldEnum = (typeof UsersScalarFieldEnum)[keyof typeof UsersScalarFieldEnum]
 
 
 export const SortOrder = {

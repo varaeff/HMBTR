@@ -64,3 +64,17 @@ model tournament_nominations {
   tournaments   tournaments @relation(fields: [tournament_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   nominations   nominations @relation(fields: [nomination_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
+
+model users {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique @db.VarChar(255)
+  password     String   @db.VarChar(255)
+  surname      String   @db.VarChar(255)
+  name         String   @db.VarChar(255)
+  patronymic   String?  @db.VarChar(255)
+  email        String?  @unique @db.VarChar(255)
+  is_admin     Boolean  @default(false)
+  is_organizer Boolean  @default(false)
+  refreshToken String?  @db.Text
+  createdAt    DateTime @default(now())
+}
