@@ -2,6 +2,7 @@
 import { ref, watch, computed, onMounted } from 'vue'
 import type { Fighter } from '@/model'
 import { useFightersListStore } from '@/stores/fightersList'
+import { useAuthStore } from '@/stores/auth'
 import { FighterCard } from '@/components/ui/fighterCard'
 import { Button } from '@/components/ui/button'
 import { SearchWidget } from '@/widgets/SearchWidget'
@@ -10,6 +11,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const fightersList = ref([] as Fighter[])
 const fightersListStore = useFightersListStore()
+const authStore = useAuthStore()
 
 const getFighters = async () => {
   await fightersListStore.getFightersList()
@@ -23,7 +25,12 @@ onMounted(async () => {
 })
 
 const searchString = computed(() => fightersListStore.getSearchString)
-const showAddButton = computed(() => fightersListStore.getSearchString.length > 0)
+const showAddButton = computed(
+  () =>
+    fightersListStore.getSearchString.length > 0 &&
+    authStore.isAuthenticated &&
+    (authStore.user?.is_organizer || authStore.user?.is_admin)
+)
 
 const addFighter = () => {
   router.push('/addFighter')

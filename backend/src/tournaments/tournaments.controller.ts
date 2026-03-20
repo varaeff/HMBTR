@@ -10,21 +10,25 @@ import { TournamentsService } from './tournaments.service';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { API_ROUTES } from '@shared/routes';
 import { AddNominationDto } from './dto/add-nomination.dto';
+import { Public } from '../auth/decorators/public.decorator';
 
 @Controller(API_ROUTES.TOURNAMENTS.ROOT)
 export class TournamentsController {
   constructor(private readonly tournamentsService: TournamentsService) {}
 
+  @Public()
   @Get()
   findAll() {
     return this.tournamentsService.findAll();
   }
 
+  @Public()
   @Get(API_ROUTES.TOURNAMENTS.COUNT)
   getCount() {
     return this.tournamentsService.getCount();
   }
 
+  @Public()
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.tournamentsService.findOne(id);
@@ -35,6 +39,7 @@ export class TournamentsController {
     return this.tournamentsService.create(createTournamentDto);
   }
 
+  @Public()
   @Get(API_ROUTES.TOURNAMENTS.NOMINATION + '/:id')
   getNominations(@Param('id', ParseIntPipe) id: number) {
     return this.tournamentsService.getNominations(id);

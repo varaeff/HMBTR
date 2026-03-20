@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { useTheme } from '@/composables/useTheme'
+import { storeToRefs } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -10,8 +12,11 @@ import {
 import { Switch } from '@/components/ui/switch'
 import { LangSelect } from '@/widgets/LangSelect'
 import { LoginWidget } from '@/widgets/LoginWidget'
+import { UserMenu } from '@/widgets/UserMenu'
 
 const { isDark, toggleTheme } = useTheme()
+const authStore = useAuthStore()
+const { isAuthenticated } = storeToRefs(authStore)
 
 const links = [
   {
@@ -42,7 +47,8 @@ const links = [
       </NavigationMenuList>
     </NavigationMenu>
     <div class="flex items-center space-x-2">
-      <LoginWidget />
+      <UserMenu v-if="isAuthenticated" />
+      <LoginWidget v-else />
       <LangSelect />
       <Switch id="theme-switch" :model-value="isDark" @update:model-value="toggleTheme" />
     </div>

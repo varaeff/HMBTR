@@ -60,6 +60,27 @@ const handleBeforeInput = (e: InputEvent) => {
     }
   }
 }
+
+const handlePaste = (e: ClipboardEvent) => {
+  if (props.inputType !== 'email') {
+    e.preventDefault()
+    return
+  }
+
+  const pastedText = e.clipboardData?.getData('text') || ''
+  const filtered = parseInput(pastedText, 'email')
+
+  if (filtered !== pastedText) {
+    e.preventDefault()
+
+    const input = e.target as HTMLInputElement
+    const start = input.selectionStart || 0
+    const end = input.selectionEnd || 0
+
+    inputValue.value =
+      inputValue.value.substring(0, start) + filtered + inputValue.value.substring(end)
+  }
+}
 </script>
 
 <template>
@@ -83,6 +104,7 @@ const handleBeforeInput = (e: InputEvent) => {
       @beforeinput="handleBeforeInput"
       @focus="handleFocus"
       @blur="handleBlur"
+      @paste="handlePaste"
     />
   </div>
 </template>

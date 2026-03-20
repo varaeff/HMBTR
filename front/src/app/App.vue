@@ -18,15 +18,19 @@ initTheme()
   <MainMenu />
   <div class="w-full min-h-screen pt-12 box-border">
     <Loader v-if="isLoading" />
-    <AlertWidget
-      v-if="error"
-      :isError="true"
-      title="Ошибка"
-      :mainText="error"
-      :showInput="false"
-      :buttonAction="ui.clearError"
-      :closeAction="ui.clearError"
-    />
+    <Teleport to="body">
+      <AlertWidget
+        class="fixed inset-0 z-99999 flex items-center justify-center"
+        style="pointer-events: auto"
+        v-if="error"
+        :isError="true"
+        :title="$t('AlertWidgetDefaultTitle')"
+        :mainText="error"
+        :showInput="false"
+        :buttonAction="ui.clearError"
+        :closeAction="ui.clearError"
+      />
+    </Teleport>
     <RouterView />
   </div>
 </template>

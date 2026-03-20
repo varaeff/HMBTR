@@ -1,7 +1,5 @@
 # JWT Authorization Module
 
-This is a complete JWT authorization module for your NestJS backend application.
-
 ## Features
 
 - User registration with password hashing (bcrypt)
@@ -10,16 +8,6 @@ This is a complete JWT authorization module for your NestJS backend application.
 - Protected routes with JWT authentication
 - Profile endpoint to get current user information
 - Refresh token endpoint to get new access token
-
-## Installation
-
-Dependencies have been installed:
-
-- `@nestjs/jwt` - JWT token generation and verification
-- `@nestjs/passport` - Passport authentication strategy
-- `passport` and `passport-jwt` - JWT strategy implementation
-- `bcrypt` - Password hashing
-- `@nestjs/config` - Environment configuration
 
 ## Configuration
 
@@ -196,14 +184,6 @@ model users {
 }
 ```
 
-## Security Notes
-
-1. **Change JWT Secrets**: Never use the default JWT secrets in production. Generate strong, random secrets.
-2. **HTTPS Only**: Always use HTTPS in production to protect tokens in transit.
-3. **Secure Environment Variables**: Keep your `.env` file secure and never commit it to version control.
-4. **Token Expiration**: The access token expires after 15 minutes for security. Use the refresh token to get a new access token.
-5. **Password Hashing**: All passwords are hashed using bcrypt before storage.
-
 ## Module Files
 
 - `src/auth/auth.module.ts` - Main auth module
@@ -214,10 +194,3 @@ model users {
 - `src/auth/guards/jwt-auth-global.guard.ts` - Global JWT guard
 - `src/auth/decorators/public.decorator.ts` - Public route decorator
 - `src/auth/dto/` - Data transfer objects
-
-## Next Steps
-
-1. Update your `.env` file with secure JWT secrets
-2. Ensure your database is running and accessible
-3. Run `npm start:dev` to start the development server
-4. Test the API endpoints using Postman or curl

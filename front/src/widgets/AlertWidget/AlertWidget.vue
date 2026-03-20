@@ -33,9 +33,9 @@ const buttonDisabled = computed(() => {
 
 <template>
   <div>
-    <div class="absolute inset-0 bg-black opacity-50 z-199" />
-    <div class="absolute inset-0 flex items-center justify-center z-200">
-      <Card class="w-full max-w-sm">
+    <div class="absolute inset-0 bg-black opacity-50 z-99998" />
+    <div class="absolute inset-0 flex items-center justify-center z-99999">
+      <Card class="alert-widget-container w-full max-w-sm">
         <CardHeader>
           <CardTitle>{{ props.title }}</CardTitle>
           <CardAction>
@@ -62,7 +62,11 @@ const buttonDisabled = computed(() => {
           </div>
         </CardContent>
         <CardFooter class="flex flex-col gap-2">
-          <Button class="w-full" :disabled="buttonDisabled" @click="props.buttonAction">
+          <Button
+            class="w-full cursor-pointer"
+            :disabled="buttonDisabled"
+            @click="props.buttonAction"
+          >
             {{ $t('LocationBlockAlertButton') }}
           </Button>
         </CardFooter>

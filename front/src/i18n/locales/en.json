@@ -45,7 +45,9 @@
   "LocationBlockAddingCity": "Add city",
   "LocationBlockAddingClub": "Add club",
   "LocationBlockAlertPlaceholder": "Input the name",
-  "LocationBlockAlertButton": "Save",
+  "LocationBlockAlertButton": "OK",
+
+  "AlertWidgetDefaultTitle": "Error",
 
   "fighterPageNamePage": "Fighters card",
   "fighterPageFullName": "Full name:",
@@ -67,5 +69,10 @@
   "addTournamentNominations": "Select nominations",
   "addTournamentSave": "Save data",
 
-  "tournamentPageBackButton": "To the tournaments list"
+  "tournamentPageBackButton": "To the tournaments list",
+
+  "userMenuAdmin": "Administrator",
+  "userMenuOrganizer": "Organizer",
+  "userMenuUser": "User",
+  "userMenuLogout": "Logout"
 }

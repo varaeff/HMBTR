@@ -36,13 +36,12 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @Public()
   @Post('refresh')
   async refresh(
-    @Request() req: RequestWithUser,
     @Body('refreshToken') refreshToken: string,
   ): Promise<AuthResponseDto> {
-    return this.authService.refreshToken(req.user.id, refreshToken);
+    return this.authService.refreshToken(refreshToken);
   }
 
   @UseGuards(JwtAuthGuard)

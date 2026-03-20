@@ -45,7 +45,9 @@
   "LocationBlockAddingCity": "Добавление города",
   "LocationBlockAddingClub": "Добавление клуба",
   "LocationBlockAlertPlaceholder": "Введите название",
-  "LocationBlockAlertButton": "Сохранить",
+  "LocationBlockAlertButton": "OK",
+
+  "AlertWidgetDefaultTitle": "Ошибка",
 
   "fighterPageNamePage": "Карточка бойца",
   "fighterPageFullName": "ФИО:",
@@ -67,5 +69,10 @@
   "addTournamentNominations": "Выберите номинации",
   "addTournamentSave": "Сохранить данные",
 
-  "tournamentPageBackButton": "К списку турниров"
+  "tournamentPageBackButton": "К списку турниров",
+
+  "userMenuAdmin": "Администратор",
+  "userMenuOrganizer": "Организатор",
+  "userMenuUser": "Пользователь",
+  "userMenuLogout": "Выход"
 }

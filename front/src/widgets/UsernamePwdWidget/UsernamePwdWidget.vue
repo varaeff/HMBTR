@@ -1,16 +1,21 @@
 <script setup lang="ts">
 import { DynamicLabeledInput } from '@/widgets/DynamicLabeledInput'
 
-const username = defineModel<string>('username')
-const password = defineModel<string>('password')
+defineProps(['username', 'password'])
+defineEmits(['update:username', 'update:password'])
 </script>
 
 <template>
   <div class="flex flex-col">
-    <DynamicLabeledInput :placeholder="$t('LoginWidgetUsernamePlaceholder')" v-model="username" />
+    <DynamicLabeledInput
+      :placeholder="$t('LoginWidgetUsernamePlaceholder')"
+      :value="username"
+      @input="$emit('update:username', $event.target.value)"
+    />
     <DynamicLabeledInput
       :placeholder="$t('LoginWidgetPasswordPlaceholder')"
-      v-model="password"
+      :value="password"
+      @input="$emit('update:password', $event.target.value)"
       inputType="password"
     />
   </div>

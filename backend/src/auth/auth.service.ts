@@ -144,11 +144,13 @@ export class AuthService {
     return user;
   }
 
-  async refreshToken(
-    userId: number,
-    refreshToken: string,
-  ): Promise<AuthResponseDto> {
-    // Get user and verify refresh token
+  async refreshToken(refreshToken: string): Promise<AuthResponseDto> {
+    const payload = this.jwtService.verify<JwtPayload>(refreshToken, {
+      secret: process.env.JWT_REFRESH_SECRET || 'refresh-secret',
+    });
+
+    const userId = payload.sub;
+
     const user = await this.prismaService.users.findUnique({
       where: { id: userId },
     });
@@ -157,23 +159,12 @@ export class AuthService {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
-    // Verify the refresh token signature
-    try {
-      this.jwtService.verify(refreshToken, {
-        secret: process.env.JWT_REFRESH_SECRET || 'refresh-secret',
-      });
-    } catch {
-      throw new UnauthorizedException('Refresh token expired');
-    }
-
-    // Generate new tokens
     const tokens = await this.generateTokens(
       user.id,
       user.username,
       user.email ?? undefined,
     );
 
-    // Update refresh token in database
     await this.prismaService.users.update({
       where: { id: user.id },
       data: { refreshToken: tokens.refresh_token },

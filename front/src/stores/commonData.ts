@@ -48,7 +48,7 @@ export const useCommonDataStore = defineStore({
 
     async addCountry(name: string) {
       const country = await http.post(API_ROUTES.COUNTRIES.ROOT, { name })
-      this.countries.push(...country.data)
+      this.countries.push(country.data)
     },
 
     async fetchCities() {
