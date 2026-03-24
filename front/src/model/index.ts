@@ -74,3 +74,13 @@ export interface Nomination {
   name_ru: string
   name_en: string
 }
+
+export interface User {
+  id: number
+  username: string
+  name: string
+  surname: string
+  email?: string
+  is_admin: boolean
+  is_organizer: boolean
+}

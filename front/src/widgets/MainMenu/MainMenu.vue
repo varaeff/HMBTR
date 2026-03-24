@@ -16,7 +16,7 @@ import { UserMenu } from '@/widgets/UserMenu'
 
 const { isDark, toggleTheme } = useTheme()
 const authStore = useAuthStore()
-const { isAuthenticated } = storeToRefs(authStore)
+const { isAuthenticated, isAdmin } = storeToRefs(authStore)
 
 const links = [
   {
@@ -31,6 +31,11 @@ const links = [
   {
     title: 'menuTournamentsLink',
     url: '/tournaments'
+  },
+  {
+    title: 'menuUsersLink',
+    url: '/users',
+    adminOnly: true
   }
 ]
 </script>
@@ -39,7 +44,11 @@ const links = [
   <nav class="fixed left-0 top-0 w-full z-10 flex justify-between backdrop-blur-sm px-4">
     <NavigationMenu :viewport="false">
       <NavigationMenuList>
-        <NavigationMenuItem v-for="link in links" :key="link.url">
+        <NavigationMenuItem
+          v-for="link in links"
+          :key="link.url"
+          v-show="!link.adminOnly || isAdmin"
+        >
           <NavigationMenuLink as-child :class="navigationMenuTriggerStyle()">
             <RouterLink :to="link.url">{{ $t(link.title) }}</RouterLink>
           </NavigationMenuLink>

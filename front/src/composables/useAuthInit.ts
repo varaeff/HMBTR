@@ -18,6 +18,7 @@ export const useAuthInit = () => {
           await authService.profile()
         } catch (error) {
           // If profile fetch fails, tokens are invalid
+          console.warn('Stored tokens are invalid, logging out')
           authStore.logout()
         }
       }

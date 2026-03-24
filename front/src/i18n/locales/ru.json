@@ -2,6 +2,7 @@
   "menuMainPageLink": "Главная",
   "menuFightersLink": "Список бойцов",
   "menuTournamentsLink": "Турниры",
+  "menuUsersLink": "Пользователи",
   "menuLoginLink": "Вход для организаторов",
 
   "LoginWidgetLoginTab": "Вход",
@@ -74,5 +75,11 @@
   "userMenuAdmin": "Администратор",
   "userMenuOrganizer": "Организатор",
   "userMenuUser": "Пользователь",
-  "userMenuLogout": "Выход"
+  "userMenuLogout": "Выход",
+
+  "usersPageName": "Список пользователей",
+
+  "forbiddenPageTitle": "403",
+  "forbiddenPageMessage": "У вас недостаточно прав для доступа к этой странице.",
+  "forbiddenPageHomeButton": "На главную"
 }

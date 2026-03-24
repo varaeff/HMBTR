@@ -13,12 +13,15 @@ import { CitiesModule } from '../cities/cities.module';
 import { ClubsModule } from '../clubs/clubs.module';
 import { NominationsModule } from '../nominations/nominations.module';
 import { AuthModule } from '../auth/auth.module';
+import { UsersModule } from '../users/users.module';
 import { JwtAuthGuardGlobal } from '../auth/guards/jwt-auth-global.guard';
+import { EmailService } from '../common/services/email.service';
 
 @Module({
   imports: [
     WinstonModule.forRoot(winstonConfig),
     AuthModule,
+    UsersModule,
     FightersModule,
     TournamentsModule,
     CountriesModule,
@@ -29,6 +32,7 @@ import { JwtAuthGuardGlobal } from '../auth/guards/jwt-auth-global.guard';
   controllers: [AppController],
   providers: [
     AppService,
+    EmailService,
     { provide: APP_GUARD, useClass: JwtAuthGuardGlobal },
     { provide: APP_FILTER, useClass: AllExceptionsFilter },
     {

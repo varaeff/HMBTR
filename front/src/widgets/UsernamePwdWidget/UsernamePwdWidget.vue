@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { DynamicLabeledInput } from '@/widgets/DynamicLabeledInput'
 
-defineProps(['username', 'password'])
+defineProps(['autocompleteType', 'username', 'password'])
 defineEmits(['update:username', 'update:password'])
 </script>
 
@@ -10,11 +10,16 @@ defineEmits(['update:username', 'update:password'])
     <DynamicLabeledInput
       :placeholder="$t('LoginWidgetUsernamePlaceholder')"
       :value="username"
+      name="username"
+      autocomplete="username"
       @input="$emit('update:username', $event.target.value)"
     />
     <DynamicLabeledInput
       :placeholder="$t('LoginWidgetPasswordPlaceholder')"
       :value="password"
+      name="password"
+      type="password"
+      :autocomplete="autocompleteType"
       @input="$emit('update:password', $event.target.value)"
       inputType="password"
     />

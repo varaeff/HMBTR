@@ -1,13 +1,13 @@
 import http from '@/api/http'
 import { useAuthStore } from '@/stores/auth'
-import type { User } from '@/stores/auth'
+import type { User } from '@/model/index'
 
-export interface LoginRequest {
+interface LoginRequest {
   username: string
   password: string
 }
 
-export interface RegisterRequest {
+interface RegisterRequest {
   username: string
   password: string
   name: string
@@ -16,7 +16,7 @@ export interface RegisterRequest {
   email?: string
 }
 
-export interface AuthResponse {
+interface AuthResponse {
   access_token: string
   refresh_token: string
   user: User
@@ -54,7 +54,6 @@ export const useAuthService = () => {
       await http.post('/auth/logout')
       authStore.logout()
     } catch (error) {
-      // Even if logout fails on backend, clear local state
       authStore.logout()
       throw error
     }
@@ -77,6 +76,7 @@ export const useAuthService = () => {
 
       return response.data
     } catch (error) {
+      console.error('Failed to refresh token:', error)
       authStore.logout()
       throw error
     }

@@ -2,6 +2,7 @@
   "menuMainPageLink": "Main page",
   "menuFightersLink": "Fighters list",
   "menuTournamentsLink": "Tournaments",
+  "menuUsersLink": "Users",
   "menuLoginLink": "Login for organizers",
 
   "LoginWidgetLoginTab": "Login",
@@ -74,5 +75,11 @@
   "userMenuAdmin": "Administrator",
   "userMenuOrganizer": "Organizer",
   "userMenuUser": "User",
-  "userMenuLogout": "Logout"
+  "userMenuLogout": "Logout",
+
+  "usersPageName": "Users list",
+
+  "forbiddenPageTitle": "403",
+  "forbiddenPageMessage": "You do not have enough permissions to access this page.",
+  "forbiddenPageHomeButton": "To the main page"
 }

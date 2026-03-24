@@ -52,8 +52,11 @@ const setupInterceptors = (pinia: Pinia) => {
 
       ui.stopLoading()
 
+      // Don't retry refresh endpoint itself - if refresh fails, logout immediately
+      const isRefreshEndpoint = originalRequest.url?.includes('/auth/refresh')
+
       // Handle 401 Unauthorized - Token expired
-      if (error.response?.status === 401 && !originalRequest._retry) {
+      if (error.response?.status === 401 && !originalRequest._retry && !isRefreshEndpoint) {
         if (isRefreshing) {
           // Queue the request to be retried after token refresh
           return new Promise((resolve, reject) => {
@@ -100,6 +103,12 @@ const setupInterceptors = (pinia: Pinia) => {
 
           return Promise.reject(refreshError)
         }
+      }
+
+      // If refresh endpoint itself returns 401, user record was likely deleted - logout immediately
+      if (isRefreshEndpoint && error.response?.status === 401) {
+        auth.logout()
+        router.push('/')
       }
 
       // Handle other errors

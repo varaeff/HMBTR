@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { Button } from '@/components/ui/button'
 import {
   Sheet,
@@ -20,6 +21,7 @@ import { useApiUiStore } from '@/stores/apiUi'
 
 const authService = useAuthService()
 const apiUi = useApiUiStore()
+const router = useRouter()
 
 const newUser = reactive({
   username: '',
@@ -61,8 +63,9 @@ const handleLogin = async () => {
       password: newUser.password
     })
 
-    // Success - close the sheet
     isSheetOpen.value = false
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    router.push('/')
   } catch (error: any) {
     const serverError =
       error.response?.data?.details || error.response?.data?.error || 'Ошибка входа'
@@ -74,8 +77,6 @@ const handleLogin = async () => {
 }
 
 const handleRegister = async () => {
-  console.log('Attempting registration with:', { ...newUser })
-
   if (!newUser.username || !newUser.password || !newUser.name || !newUser.surname) {
     apiUi.setError('Username, password, name, and surname are required')
     return
@@ -95,19 +96,13 @@ const handleRegister = async () => {
 
     // Success - close the sheet
     isSheetOpen.value = false
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    router.push('/')
   } catch (error) {
     // Error is already handled by interceptors
     console.error('Registration failed:', error)
   } finally {
     isLoading.value = false
-  }
-}
-
-const handleSubmit = () => {
-  if (activeTab.value === 'login') {
-    handleLogin()
-  } else {
-    handleRegister()
   }
 }
 </script>
@@ -124,25 +119,38 @@ const handleSubmit = () => {
           Форма входа и регистрации пользователя
         </SheetDescription>
       </SheetHeader>
-      <div class="grid flex-1 auto-rows-min gap-6 px-4">
-        <Tabs v-model="activeTab" default-value="login">
-          <TabsList>
-            <TabsTrigger value="login"> {{ $t('LoginWidgetLoginTab') }} </TabsTrigger>
-            <TabsTrigger value="register"> {{ $t('LoginWidgetRegisterTab') }} </TabsTrigger>
-          </TabsList>
-          <TabsContent value="login">
-            <p class="text-sm text-muted-foreground mb-4">{{ $t('LoginWidgetLoginHint') }}</p>
-            <form class="flex flex-col gap-2">
+      <Tabs v-model="activeTab" default-value="login" class="pl-4 h-full">
+        <TabsList>
+          <TabsTrigger value="login"> {{ $t('LoginWidgetLoginTab') }} </TabsTrigger>
+          <TabsTrigger value="register"> {{ $t('LoginWidgetRegisterTab') }} </TabsTrigger>
+        </TabsList>
+        <TabsContent value="login" class="h-full">
+          <form
+            @submit.prevent="handleLogin"
+            class="flex flex-col justify-between h-full p-4 pl-0 pb-0"
+          >
+            <div>
+              <p class="text-sm text-muted-foreground mb-4">{{ $t('LoginWidgetLoginHint') }}</p>
               <UsernamePwdWidget
+                autocompleteType="current-password"
                 v-model:username="newUser.username"
                 v-model:password="newUser.password"
               />
-            </form>
-          </TabsContent>
-          <TabsContent value="register">
-            <p class="text-sm text-muted-foreground mb-4">{{ $t('LoginWidgetRegisterHint') }}</p>
-            <form class="flex flex-col gap-4">
+            </div>
+            <Button type="submit" :disabled="isLoading">
+              {{ $t('LoginWidgetLoginButton') }}
+            </Button>
+          </form>
+        </TabsContent>
+        <TabsContent value="register" class="h-full">
+          <form
+            @submit.prevent="handleRegister"
+            class="flex flex-col justify-between h-full p-4 pl-0 pb-0"
+          >
+            <div class="flex flex-col gap-4">
+              <p class="text-sm text-muted-foreground mb-4">{{ $t('LoginWidgetRegisterHint') }}</p>
               <UsernamePwdWidget
+                autocompleteType="new-password"
                 v-model:username="newUser.username"
                 v-model:password="newUser.password"
               />
@@ -157,16 +165,14 @@ const handleSubmit = () => {
                 v-model="newUser.email"
                 inputType="email"
               />
-            </form>
-          </TabsContent>
-        </Tabs>
-      </div>
-      <SheetFooter>
-        <Button type="submit" @click="handleSubmit" :disabled="isLoading">
-          {{
-            activeTab === 'login' ? $t('LoginWidgetLoginButton') : $t('LoginWidgetRegisterButton')
-          }}
-        </Button>
+            </div>
+            <Button type="submit" :disabled="isLoading">
+              {{ $t('LoginWidgetRegisterButton') }}
+            </Button>
+          </form>
+        </TabsContent>
+      </Tabs>
+      <SheetFooter class="pt-0">
         <SheetClose as-child>
           <Button variant="outline" @click="activeTab = 'login'" :disabled="isLoading">
             {{ $t('LoginWidgetCloseButton') }}

@@ -20,6 +20,10 @@ const props = defineProps({
   }
 })
 
+defineOptions({
+  inheritAttrs: false
+})
+
 const emit = defineEmits<{
   'update:value': [value: string]
 }>()
@@ -98,8 +102,8 @@ const handlePaste = (e: ClipboardEvent) => {
       :id="inputId"
       class="pt-5 text-base"
       :type="props.inputType"
-      autocomplete="new-password"
       maxlength="64"
+      v-bind="$attrs"
       v-model="inputValue"
       @beforeinput="handleBeforeInput"
       @focus="handleFocus"
