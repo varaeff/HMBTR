@@ -20,7 +20,7 @@
 
   "fightersPageName": "Список бойцов",
   "addFighterButton": "Добавить бойца",
-  "searchPlaceholder": "Введите имя, город или клуб",
+  "fightersSearchPlaceholder": "Введите имя, город или клуб",
   "searchClear": "Очистить поиск",
 
   "addFighterNamePage": "Добавление нового бойца",
@@ -78,6 +78,19 @@
   "userMenuLogout": "Выход",
 
   "usersPageName": "Список пользователей",
+  "usersSearchPlaceholder": "Введите аккаунт, имя или фамилию",
+  "usersTabsAll": "Все",
+  "usersTabsAdmins": "Администраторы",
+  "usersTabsOrganizers": "Организаторы",
+  "usersTabsOthers": "Прочие",
+  "usersTableUsername": "Аккаунт",
+  "usersTableName": "Имя",
+  "usersTableSurname": "Фамилия",
+  "usersTablePatronymic": "Отчество",
+  "usersTableEmail": "Почта",
+  "usersTableIsAdmin": "Админ",
+  "usersTableIsOrganizer": "Организатор",
+  "usersTableTotal": "Всего",
 
   "forbiddenPageTitle": "403",
   "forbiddenPageMessage": "У вас недостаточно прав для доступа к этой странице.",

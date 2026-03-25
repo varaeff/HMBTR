@@ -38,5 +38,6 @@ export const API_ROUTES = {
     ADMINS: "admins",
     BY_ID_PATH: ":id",
     BY_ID: (id: string | number) => `/users/${id}`,
+    COUNT: "count",
   },
 } as const;

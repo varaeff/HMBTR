@@ -29,6 +29,12 @@ export class UsersController {
     return this.usersService.findAllAdmins();
   }
 
+  @Public()
+  @Get(API_ROUTES.USERS.COUNT)
+  getUsersCount() {
+    return this.usersService.getCount();
+  }
+
   @UseGuards(JwtAuthGuard)
   @Put(API_ROUTES.USERS.BY_ID_PATH)
   update(

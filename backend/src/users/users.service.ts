@@ -8,36 +8,17 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async findAll() {
-    return this.prisma.users.findMany({
-      select: {
-        id: true,
-        username: true,
-        name: true,
-        surname: true,
-        patronymic: true,
-        email: true,
-        is_admin: true,
-        is_organizer: true,
-        createdAt: true,
-      },
-    });
+    return this.prisma.users.findMany();
+  }
+
+  async getCount() {
+    return this.prisma.users.count();
   }
 
   async findAllAdmins() {
     return this.prisma.users.findMany({
       where: {
         is_admin: true,
-      },
-      select: {
-        id: true,
-        username: true,
-        name: true,
-        surname: true,
-        patronymic: true,
-        email: true,
-        is_admin: true,
-        is_organizer: true,
-        createdAt: true,
       },
     });
   }

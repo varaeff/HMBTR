@@ -20,7 +20,7 @@
 
   "fightersPageName": "Fighters list",
   "addFighterButton": "Add fighter",
-  "searchPlaceholder": "Input name, city or club",
+  "fightersSearchPlaceholder": "Input name, city or club",
   "searchClear": "Clear search",
 
   "addFighterNamePage": "Adding new fighter",
@@ -78,6 +78,19 @@
   "userMenuLogout": "Logout",
 
   "usersPageName": "Users list",
+  "usersSearchPlaceholder": "Input username, name or surname",
+  "usersTabsAll": "All",
+  "usersTabsAdmins": "Admins",
+  "usersTabsOrganizers": "Organizers",
+  "usersTabsOthers": "Others",
+  "usersTableUsername": "Username",
+  "usersTableName": "Name",
+  "usersTableSurname": "Surname",
+  "usersTablePatronymic": "Patronymic",
+  "usersTableEmail": "Email",
+  "usersTableIsAdmin": "Admin",
+  "usersTableIsOrganizer": "Organizer",
+  "usersTableTotal": "Total",
 
   "forbiddenPageTitle": "403",
   "forbiddenPageMessage": "You do not have enough permissions to access this page.",

@@ -46,7 +46,7 @@ watch(searchString, () => {
   <div class="w-full flex justify-center">
     <SearchWidget
       class="w-11/12 lg:w-5/12"
-      placeholder="searchPlaceholder"
+      :placeholder="$t('fightersSearchPlaceholder')"
       :store="useFightersListStore"
     />
   </div>

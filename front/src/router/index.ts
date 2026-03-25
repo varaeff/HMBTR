@@ -45,7 +45,7 @@ const router = createRouter({
     {
       path: '/users',
       name: 'users',
-      component: () => import('@/pages/UsersPage.vue'),
+      component: () => import('@/pages/UsersListPage.vue'),
       meta: { requiresAuth: true, requiresAdmin: true }
     },
     {
