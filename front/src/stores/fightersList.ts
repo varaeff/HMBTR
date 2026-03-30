@@ -28,17 +28,7 @@ const parseFighter = async (fighterDB: FighterDB): Promise<Fighter> => {
 export const useFightersListStore = defineStore({
   id: 'fightersList',
   state: (): FightersListState => ({
-    fighters: [
-      {
-        id: 0,
-        name: 'боец не найден',
-        surname: '',
-        country: '',
-        city: '',
-        club: '',
-        pic: ''
-      }
-    ],
+    fighters: [],
     searchString: ''
   }),
 
@@ -53,7 +43,7 @@ export const useFightersListStore = defineStore({
       const fighterDB = (await http.get(API_ROUTES.FIGHTERS.BY_ID(id))).data as FighterDB
 
       if (!fighterDB) {
-        return this.fighters[0]
+        return
       }
 
       fighter = await parseFighter(fighterDB)
@@ -72,7 +62,7 @@ export const useFightersListStore = defineStore({
         await http.get(API_ROUTES.FIGHTERS.ROOT + '/' + API_ROUTES.FIGHTERS.COUNT)
       ).data
 
-      if (fightersCount === this.fighters.length - 1) return
+      if (fightersCount === this.fighters.length) return
 
       const data: Array<FighterDB> = (await http.get(API_ROUTES.FIGHTERS.ROOT)).data
 
@@ -111,7 +101,7 @@ export const useFightersListStore = defineStore({
             (fighter.club && fighter.club.toLowerCase().includes(state.searchString.toLowerCase()))
         )
 
-      return filtered.length > 0 ? filtered : [state.fighters[0]]
+      return filtered.length > 0 ? filtered : []
     },
 
     getMaxId(state) {

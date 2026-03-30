@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, watch, computed, onMounted } from 'vue'
-import type { Fighter } from '@/model'
+import { useRouter } from 'vue-router'
 import { useFightersListStore } from '@/stores/fightersList'
 import { useAuthStore } from '@/stores/auth'
 import { FighterCard } from '@/components/ui/fighterCard'
 import { Button } from '@/components/ui/button'
 import { SearchWidget } from '@/widgets/SearchWidget'
-import { useRouter } from 'vue-router'
+import type { Fighter } from '@/model'
 
 const router = useRouter()
 const fightersList = ref([] as Fighter[])

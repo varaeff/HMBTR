@@ -9,7 +9,7 @@ import { dateToString, tData } from '@/lib/utils'
 
 const route = useRoute()
 const router = useRouter()
-const fighter = ref<Fighter | null>(null)
+const fighter = ref<Fighter | null | undefined>(null)
 const FightersListStore = useFightersListStore()
 const fighterId = +route.params.id
 

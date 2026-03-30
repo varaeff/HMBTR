@@ -12,6 +12,11 @@ const props = defineProps({
   store: {
     type: Function,
     required: true
+  },
+  inputType: {
+    type: String,
+    required: false,
+    default: 'text'
   }
 })
 
@@ -19,7 +24,7 @@ const inputValue = ref('')
 const store = props.store()
 
 watch(inputValue, (newValue) => {
-  inputValue.value = parseInput(newValue)
+  inputValue.value = parseInput(newValue, props.inputType)
   if (inputValue.value === newValue) {
     store.setSearchString(newValue)
   }

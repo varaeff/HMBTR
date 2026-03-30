@@ -260,6 +260,7 @@ export type fightersWhereInput = {
   city_id?: Prisma.IntFilter<"fighters"> | number
   club_id?: Prisma.IntNullableFilter<"fighters"> | number | null
   pic?: Prisma.StringNullableFilter<"fighters"> | string | null
+  competitors?: Prisma.CompetitorsListRelationFilter
 }
 
 export type fightersOrderByWithRelationInput = {
@@ -272,6 +273,7 @@ export type fightersOrderByWithRelationInput = {
   city_id?: Prisma.SortOrder
   club_id?: Prisma.SortOrderInput | Prisma.SortOrder
   pic?: Prisma.SortOrderInput | Prisma.SortOrder
+  competitors?: Prisma.competitorsOrderByRelationAggregateInput
 }
 
 export type fightersWhereUniqueInput = Prisma.AtLeast<{
@@ -287,6 +289,7 @@ export type fightersWhereUniqueInput = Prisma.AtLeast<{
   city_id?: Prisma.IntFilter<"fighters"> | number
   club_id?: Prisma.IntNullableFilter<"fighters"> | number | null
   pic?: Prisma.StringNullableFilter<"fighters"> | string | null
+  competitors?: Prisma.CompetitorsListRelationFilter
 }, "id">
 
 export type fightersOrderByWithAggregationInput = {
@@ -330,6 +333,7 @@ export type fightersCreateInput = {
   city_id: number
   club_id?: number | null
   pic?: string | null
+  competitors?: Prisma.competitorsCreateNestedManyWithoutFightersInput
 }
 
 export type fightersUncheckedCreateInput = {
@@ -342,6 +346,7 @@ export type fightersUncheckedCreateInput = {
   city_id: number
   club_id?: number | null
   pic?: string | null
+  competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutFightersInput
 }
 
 export type fightersUpdateInput = {
@@ -353,6 +358,7 @@ export type fightersUpdateInput = {
   city_id?: Prisma.IntFieldUpdateOperationsInput | number
   club_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  competitors?: Prisma.competitorsUpdateManyWithoutFightersNestedInput
 }
 
 export type fightersUncheckedUpdateInput = {
@@ -365,6 +371,7 @@ export type fightersUncheckedUpdateInput = {
   city_id?: Prisma.IntFieldUpdateOperationsInput | number
   club_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  competitors?: Prisma.competitorsUncheckedUpdateManyWithoutFightersNestedInput
 }
 
 export type fightersCreateManyInput = {
@@ -452,6 +459,11 @@ export type fightersSumOrderByAggregateInput = {
   club_id?: Prisma.SortOrder
 }
 
+export type FightersScalarRelationFilter = {
+  is?: Prisma.fightersWhereInput
+  isNot?: Prisma.fightersWhereInput
+}
+
 export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
 }
@@ -468,6 +480,111 @@ export type NullableIntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type fightersCreateNestedOneWithoutCompetitorsInput = {
+  create?: Prisma.XOR<Prisma.fightersCreateWithoutCompetitorsInput, Prisma.fightersUncheckedCreateWithoutCompetitorsInput>
+  connectOrCreate?: Prisma.fightersCreateOrConnectWithoutCompetitorsInput
+  connect?: Prisma.fightersWhereUniqueInput
+}
+
+export type fightersUpdateOneRequiredWithoutCompetitorsNestedInput = {
+  create?: Prisma.XOR<Prisma.fightersCreateWithoutCompetitorsInput, Prisma.fightersUncheckedCreateWithoutCompetitorsInput>
+  connectOrCreate?: Prisma.fightersCreateOrConnectWithoutCompetitorsInput
+  upsert?: Prisma.fightersUpsertWithoutCompetitorsInput
+  connect?: Prisma.fightersWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.fightersUpdateToOneWithWhereWithoutCompetitorsInput, Prisma.fightersUpdateWithoutCompetitorsInput>, Prisma.fightersUncheckedUpdateWithoutCompetitorsInput>
+}
+
+export type fightersCreateWithoutCompetitorsInput = {
+  name: string
+  surname: string
+  patronymic?: string | null
+  birthday?: Date | string | null
+  country_id: number
+  city_id: number
+  club_id?: number | null
+  pic?: string | null
+}
+
+export type fightersUncheckedCreateWithoutCompetitorsInput = {
+  id?: number
+  name: string
+  surname: string
+  patronymic?: string | null
+  birthday?: Date | string | null
+  country_id: number
+  city_id: number
+  club_id?: number | null
+  pic?: string | null
+}
+
+export type fightersCreateOrConnectWithoutCompetitorsInput = {
+  where: Prisma.fightersWhereUniqueInput
+  create: Prisma.XOR<Prisma.fightersCreateWithoutCompetitorsInput, Prisma.fightersUncheckedCreateWithoutCompetitorsInput>
+}
+
+export type fightersUpsertWithoutCompetitorsInput = {
+  update: Prisma.XOR<Prisma.fightersUpdateWithoutCompetitorsInput, Prisma.fightersUncheckedUpdateWithoutCompetitorsInput>
+  create: Prisma.XOR<Prisma.fightersCreateWithoutCompetitorsInput, Prisma.fightersUncheckedCreateWithoutCompetitorsInput>
+  where?: Prisma.fightersWhereInput
+}
+
+export type fightersUpdateToOneWithWhereWithoutCompetitorsInput = {
+  where?: Prisma.fightersWhereInput
+  data: Prisma.XOR<Prisma.fightersUpdateWithoutCompetitorsInput, Prisma.fightersUncheckedUpdateWithoutCompetitorsInput>
+}
+
+export type fightersUpdateWithoutCompetitorsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  surname?: Prisma.StringFieldUpdateOperationsInput | string
+  patronymic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthday?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  country_id?: Prisma.IntFieldUpdateOperationsInput | number
+  city_id?: Prisma.IntFieldUpdateOperationsInput | number
+  club_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type fightersUncheckedUpdateWithoutCompetitorsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  surname?: Prisma.StringFieldUpdateOperationsInput | string
+  patronymic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthday?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  country_id?: Prisma.IntFieldUpdateOperationsInput | number
+  city_id?: Prisma.IntFieldUpdateOperationsInput | number
+  club_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+
+/**
+ * Count Type FightersCountOutputType
+ */
+
+export type FightersCountOutputType = {
+  competitors: number
+}
+
+export type FightersCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  competitors?: boolean | FightersCountOutputTypeCountCompetitorsArgs
+}
+
+/**
+ * FightersCountOutputType without action
+ */
+export type FightersCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FightersCountOutputType
+   */
+  select?: Prisma.FightersCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * FightersCountOutputType without action
+ */
+export type FightersCountOutputTypeCountCompetitorsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.competitorsWhereInput
+}
 
 
 export type fightersSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -480,6 +597,8 @@ export type fightersSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   city_id?: boolean
   club_id?: boolean
   pic?: boolean
+  competitors?: boolean | Prisma.fighters$competitorsArgs<ExtArgs>
+  _count?: boolean | Prisma.FightersCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["fighters"]>
 
 export type fightersSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -519,10 +638,18 @@ export type fightersSelectScalar = {
 }
 
 export type fightersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "surname" | "patronymic" | "birthday" | "country_id" | "city_id" | "club_id" | "pic", ExtArgs["result"]["fighters"]>
+export type fightersInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  competitors?: boolean | Prisma.fighters$competitorsArgs<ExtArgs>
+  _count?: boolean | Prisma.FightersCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type fightersIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type fightersIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $fightersPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "fighters"
-  objects: {}
+  objects: {
+    competitors: Prisma.$competitorsPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     name: string
@@ -927,6 +1054,7 @@ readonly fields: fightersFieldRefs;
  */
 export interface Prisma__fightersClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  competitors<T extends Prisma.fighters$competitorsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.fighters$competitorsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$competitorsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -982,6 +1110,10 @@ export type fightersFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   omit?: Prisma.fightersOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.fightersInclude<ExtArgs> | null
+  /**
    * Filter, which fighters to fetch.
    */
   where: Prisma.fightersWhereUniqueInput
@@ -1000,6 +1132,10 @@ export type fightersFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensio
    */
   omit?: Prisma.fightersOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.fightersInclude<ExtArgs> | null
+  /**
    * Filter, which fighters to fetch.
    */
   where: Prisma.fightersWhereUniqueInput
@@ -1017,6 +1153,10 @@ export type fightersFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Omit specific fields from the fighters
    */
   omit?: Prisma.fightersOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.fightersInclude<ExtArgs> | null
   /**
    * Filter, which fighters to fetch.
    */
@@ -1066,6 +1206,10 @@ export type fightersFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extension
    */
   omit?: Prisma.fightersOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.fightersInclude<ExtArgs> | null
+  /**
    * Filter, which fighters to fetch.
    */
   where?: Prisma.fightersWhereInput
@@ -1114,6 +1258,10 @@ export type fightersFindManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    */
   omit?: Prisma.fightersOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.fightersInclude<ExtArgs> | null
+  /**
    * Filter, which fighters to fetch.
    */
   where?: Prisma.fightersWhereInput
@@ -1156,6 +1304,10 @@ export type fightersCreateArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Omit specific fields from the fighters
    */
   omit?: Prisma.fightersOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.fightersInclude<ExtArgs> | null
   /**
    * The data needed to create a fighters.
    */
@@ -1204,6 +1356,10 @@ export type fightersUpdateArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Omit specific fields from the fighters
    */
   omit?: Prisma.fightersOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.fightersInclude<ExtArgs> | null
   /**
    * The data needed to update a fighters.
    */
@@ -1271,6 +1427,10 @@ export type fightersUpsertArgs<ExtArgs extends runtime.Types.Extensions.Internal
    */
   omit?: Prisma.fightersOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.fightersInclude<ExtArgs> | null
+  /**
    * The filter to search for the fighters to update in case it exists.
    */
   where: Prisma.fightersWhereUniqueInput
@@ -1297,6 +1457,10 @@ export type fightersDeleteArgs<ExtArgs extends runtime.Types.Extensions.Internal
    */
   omit?: Prisma.fightersOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.fightersInclude<ExtArgs> | null
+  /**
    * Filter which fighters to delete.
    */
   where: Prisma.fightersWhereUniqueInput
@@ -1317,6 +1481,30 @@ export type fightersDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
 }
 
 /**
+ * fighters.competitors
+ */
+export type fighters$competitorsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the competitors
+   */
+  select?: Prisma.competitorsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the competitors
+   */
+  omit?: Prisma.competitorsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.competitorsInclude<ExtArgs> | null
+  where?: Prisma.competitorsWhereInput
+  orderBy?: Prisma.competitorsOrderByWithRelationInput | Prisma.competitorsOrderByWithRelationInput[]
+  cursor?: Prisma.competitorsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CompetitorsScalarFieldEnum | Prisma.CompetitorsScalarFieldEnum[]
+}
+
+/**
  * fighters without action
  */
 export type fightersDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1328,4 +1516,8 @@ export type fightersDefaultArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Omit specific fields from the fighters
    */
   omit?: Prisma.fightersOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.fightersInclude<ExtArgs> | null
 }

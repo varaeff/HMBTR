@@ -391,7 +391,8 @@ export const ModelName = {
   tournaments: 'tournaments',
   nominations: 'nominations',
   tournament_nominations: 'tournament_nominations',
-  users: 'users'
+  users: 'users',
+  competitors: 'competitors'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -407,7 +408,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "cities" | "clubs" | "countries" | "fighters" | "tournaments" | "nominations" | "tournament_nominations" | "users"
+    modelProps: "cities" | "clubs" | "countries" | "fighters" | "tournaments" | "nominations" | "tournament_nominations" | "users" | "competitors"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1003,6 +1004,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    competitors: {
+      payload: Prisma.$competitorsPayload<ExtArgs>
+      fields: Prisma.competitorsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.competitorsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competitorsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.competitorsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competitorsPayload>
+        }
+        findFirst: {
+          args: Prisma.competitorsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competitorsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.competitorsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competitorsPayload>
+        }
+        findMany: {
+          args: Prisma.competitorsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competitorsPayload>[]
+        }
+        create: {
+          args: Prisma.competitorsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competitorsPayload>
+        }
+        createMany: {
+          args: Prisma.competitorsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.competitorsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competitorsPayload>[]
+        }
+        delete: {
+          args: Prisma.competitorsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competitorsPayload>
+        }
+        update: {
+          args: Prisma.competitorsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competitorsPayload>
+        }
+        deleteMany: {
+          args: Prisma.competitorsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.competitorsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.competitorsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competitorsPayload>[]
+        }
+        upsert: {
+          args: Prisma.competitorsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competitorsPayload>
+        }
+        aggregate: {
+          args: Prisma.CompetitorsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCompetitors>
+        }
+        groupBy: {
+          args: Prisma.competitorsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CompetitorsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.competitorsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CompetitorsCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1127,6 +1202,16 @@ export const UsersScalarFieldEnum = {
 } as const
 
 export type UsersScalarFieldEnum = (typeof UsersScalarFieldEnum)[keyof typeof UsersScalarFieldEnum]
+
+
+export const CompetitorsScalarFieldEnum = {
+  id: 'id',
+  fighter_id: 'fighter_id',
+  tournament_id: 'tournament_id',
+  nomination_id: 'nomination_id'
+} as const
+
+export type CompetitorsScalarFieldEnum = (typeof CompetitorsScalarFieldEnum)[keyof typeof CompetitorsScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1324,6 +1409,7 @@ export type GlobalOmitConfig = {
   nominations?: Prisma.nominationsOmit
   tournament_nominations?: Prisma.tournament_nominationsOmit
   users?: Prisma.usersOmit
+  competitors?: Prisma.competitorsOmit
 }
 
 /* Types for Logging */

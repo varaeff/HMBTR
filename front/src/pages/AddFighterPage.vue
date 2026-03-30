@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useFightersListStore } from '@/stores/fightersList'
 import { ImageUpload } from '@/components/ui/imageUpload'
 import { Button } from '@/components/ui/button'
@@ -15,7 +15,10 @@ import type { CalendarDate } from '@internationalized/date'
 import type { Fighter, FighterDB } from '@/model'
 
 const router = useRouter()
+const route = useRoute()
 const fightersListStore = useFightersListStore()
+
+const tournamentId = route.hash.slice(1)
 
 const newFighter = reactive({
   surname: '',
@@ -56,7 +59,9 @@ const saveNewFighter = async () => {
   }
 
   await fightersListStore.addNewFighter(saveData, storeData)
-  router.push('/fighters')
+
+  const url = tournamentId ? `/tournament/${tournamentId}` : '/fighters'
+  router.push(url)
 }
 </script>
 

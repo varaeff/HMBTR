@@ -70,7 +70,12 @@
   "addTournamentNominations": "Выберите номинации",
   "addTournamentSave": "Сохранить данные",
 
+  "tournamentPageFightersSelectLabel": "Добавление бойцов",
   "tournamentPageBackButton": "К списку турниров",
+
+  "fightersSelectPlaceholder": "Выберите бойца...",
+  "fightersSelectEmpty": "Боeц не найден",
+  "fightersSelectRegister": "Зарегистрировать на турнир",
 
   "userMenuAdmin": "Администратор",
   "userMenuOrganizer": "Организатор",

@@ -70,7 +70,12 @@
   "addTournamentNominations": "Select nominations",
   "addTournamentSave": "Save data",
 
+  "tournamentPageFightersSelectLabel": "Add Fighters",
   "tournamentPageBackButton": "To the tournaments list",
+
+  "fightersSelectPlaceholder": "Select a fighter...",
+  "fightersSelectEmpty": "Fighter not found",
+  "fightersSelectRegister": "Register for the tournament",
 
   "userMenuAdmin": "Administrator",
   "userMenuOrganizer": "Organizer",

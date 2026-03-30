@@ -77,3 +77,8 @@ export type tournament_nominations = Prisma.tournament_nominationsModel
  * 
  */
 export type users = Prisma.usersModel
+/**
+ * Model competitors
+ * 
+ */
+export type competitors = Prisma.competitorsModel

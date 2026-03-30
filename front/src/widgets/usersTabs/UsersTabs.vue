@@ -22,6 +22,16 @@ const activeTab = defineModel<UserType>('activeTab', {
   default: USERS_TYPES.ALL
 })
 const usersListStore = useUsersListStore()
+
+const tableHeaders: string[] = [
+  'usersTableUsername',
+  'usersTableName',
+  'usersTableSurname',
+  'usersTablePatronymic',
+  'usersTableEmail',
+  'usersTableIsAdmin',
+  'usersTableIsOrganizer'
+]
 </script>
 
 <template>
@@ -42,13 +52,9 @@ const usersListStore = useUsersListStore()
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>{{ $t('usersTableUsername') }}</TableHead>
-              <TableHead>{{ $t('usersTableName') }}</TableHead>
-              <TableHead>{{ $t('usersTableSurname') }}</TableHead>
-              <TableHead>{{ $t('usersTablePatronymic') }}</TableHead>
-              <TableHead>{{ $t('usersTableEmail') }}</TableHead>
-              <TableHead>{{ $t('usersTableIsAdmin') }}</TableHead>
-              <TableHead>{{ $t('usersTableIsOrganizer') }}</TableHead>
+              <TableHead v-for="header in tableHeaders" :key="header">
+                {{ $t(header) }}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -84,7 +90,9 @@ const usersListStore = useUsersListStore()
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell colspan="6"> {{ $t('usersTableTotal') }} </TableCell>
+              <TableCell :colspan="tableHeaders.length - 1">
+                {{ $t('usersTableTotal') }}
+              </TableCell>
               <TableCell class="text-right">{{ users.length }}</TableCell>
             </TableRow>
           </TableFooter>

@@ -15,21 +15,12 @@ export const useTournamentsListStore = defineStore({
   id: 'tournamentsList',
 
   state: (): TournamentsListState => ({
-    tournaments: [
-      {
-        id: 0,
-        name: 'турнир не найден',
-        event_date: new Date(),
-        country: '',
-        city: '',
-        nominations_ids: []
-      }
-    ],
+    tournaments: [],
     searchString: ''
   }),
 
   actions: {
-    async showTournamentDetails(id: number) {
+    async showTournamentDetails(id: number): Promise<Tournament | null> {
       let tournament = this.tournaments.find((tournament) => tournament.id === id)
 
       if (tournament) {
@@ -44,7 +35,11 @@ export const useTournamentsListStore = defineStore({
         tournament.city_id &&
         (tournament.city = await commonDataStore.fetchCity(tournament.city_id))
 
-      return tournament ? tournament : this.tournaments[0]
+      const url = `${API_ROUTES.TOURNAMENTS.ROOT}/${API_ROUTES.TOURNAMENTS.NOMINATION}/${tournament?.id}`
+      const { data } = await http.get(url)
+      tournament && (tournament.nominations_ids = data.map((n: any) => n.nomination_id))
+
+      return tournament ? tournament : null
     },
 
     async getTournamentsList() {
@@ -59,7 +54,7 @@ export const useTournamentsListStore = defineStore({
         await http.get(API_ROUTES.TOURNAMENTS.ROOT + '/' + API_ROUTES.TOURNAMENTS.COUNT)
       ).data
 
-      if (tournamentsCount === this.tournaments.length - 1) return
+      if (tournamentsCount === this.tournaments.length) return
 
       const data: Array<TournamentDB> = (await http.get(API_ROUTES.TOURNAMENTS.ROOT)).data
 
@@ -133,7 +128,7 @@ export const useTournamentsListStore = defineStore({
 
       return filtered.length > 0
         ? filtered.sort((a, b) => b.event_date.getTime() - a.event_date.getTime())
-        : [state.tournaments[0]]
+        : []
     },
 
     getMaxId(state) {
