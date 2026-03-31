@@ -71,6 +71,7 @@
   "addTournamentSave": "Save data",
 
   "tournamentPageFightersSelectLabel": "Add Fighters",
+  "tournamentPageRemoveCompetitorButton": "Remove",
   "tournamentPageBackButton": "To the tournaments list",
 
   "fightersSelectPlaceholder": "Select a fighter...",

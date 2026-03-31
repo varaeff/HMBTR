@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { CheckIcon, ChevronsUpDownIcon } from 'lucide-vue-next'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { useRouter } from 'vue-router'
 import { useFightersListStore } from '@/stores/fightersList'
+import { useCompetitionStore } from '@/stores/competition'
 import { cn, tData } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -18,46 +19,57 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Checkbox } from '@/components/ui/checkbox'
 import type { Fighter, Nomination } from '@/model'
 
-interface fighterForSelect {
-  value: string
-  label: string
-}
-
 const props = defineProps<{
   tournamentId: number
   nominations: Nomination[]
 }>()
 
 const fightersListStore = useFightersListStore()
-const fightersList = ref([] as fighterForSelect[])
+const competitionStore = useCompetitionStore()
 const router = useRouter()
 const { i18next } = useTranslation()
 const open = ref(false)
 const selectedFighter = ref<string>('')
 const competitorNominationsIds = ref<number[]>([])
 
+const fightersList = computed(() => {
+  const data: Fighter[] = fightersListStore.filteredFightersList
+  return data
+    .filter(
+      (fighter) => !competitionStore.tournamentCompetitors.some((c) => c.fighter_id === fighter.id)
+    )
+    .map((fighter) => ({
+      value: fighter.id.toString(),
+      label: `${fighter.surname} ${fighter.name}, ${fighter.city} ${fighter.club || ''}`
+    }))
+})
+
 const getFighters = async () => {
   await fightersListStore.getFightersList()
-  const data: Fighter[] = fightersListStore.filteredFightersList
-  const dataForSelect = data.map((fighter) => ({
-    value: fighter.id.toString(),
-    label: `${fighter.surname} ${fighter.name}, ${fighter.city} ${fighter.club || ''}`
-  }))
-  return dataForSelect
 }
 
 const addFighter = () => {
   router.push(`/addFighter#${props.tournamentId.toString()}`)
 }
 
-const registerFighter = () => {
+const registerFighter = async () => {
+  const fighter_id = +selectedFighter.value
+
+  const registrationPromises = competitorNominationsIds.value.map((nomination_id) =>
+    competitionStore.registerFighter(fighter_id, nomination_id)
+  )
+
+  await Promise.all(registrationPromises)
+
   selectedFighter.value = ''
   competitorNominationsIds.value = []
 }
 
 onMounted(async () => {
   fightersListStore.clearSearchString()
-  fightersList.value = await getFighters()
+  competitionStore.tournamentId = props.tournamentId
+
+  await Promise.all([getFighters(), competitionStore.setCompetitors()])
 })
 </script>
 
@@ -92,7 +104,7 @@ onMounted(async () => {
               :value="fighter.value"
               @select="
                 () => {
-                  selectedFighter = selectedFighter === fighter.value ? '' : fighter.value
+                  selectedFighter = fighter.value
                   open = false
                 }
               "
@@ -133,7 +145,12 @@ onMounted(async () => {
       </div>
     </div>
     <div class="flex justify-center">
-      <Button variant="default" size="default" @click="registerFighter">
+      <Button
+        variant="default"
+        size="default"
+        :disabled="!competitorNominationsIds.length"
+        @click="registerFighter"
+      >
         {{ $t('fightersSelectRegister') }}
       </Button>
     </div>

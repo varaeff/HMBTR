@@ -12,6 +12,7 @@ import { CountriesModule } from '../countries/countries.module';
 import { CitiesModule } from '../cities/cities.module';
 import { ClubsModule } from '../clubs/clubs.module';
 import { NominationsModule } from '../nominations/nominations.module';
+import { CompetitorsModule } from '../competitors/competitors.module';
 import { AuthModule } from '../auth/auth.module';
 import { UsersModule } from '../users/users.module';
 import { JwtAuthGuardGlobal } from '../auth/guards/jwt-auth-global.guard';
@@ -28,6 +29,7 @@ import { EmailService } from '../common/services/email.service';
     CitiesModule,
     ClubsModule,
     NominationsModule,
+    CompetitorsModule,
   ],
   controllers: [AppController],
   providers: [

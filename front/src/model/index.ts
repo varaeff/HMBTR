@@ -100,3 +100,10 @@ export interface UsersResponse {
   [USERS_TYPES.ORGANIZERS]: User[]
   [USERS_TYPES.OTHERS]: User[]
 }
+
+export interface Competitor {
+  id: number
+  fighter_id: number
+  tournament_id: number
+  nomination_id: number
+}

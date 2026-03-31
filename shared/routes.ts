@@ -40,4 +40,13 @@ export const API_ROUTES = {
     BY_ID: (id: string | number) => `/users/${id}`,
     COUNT: "count",
   },
+  COMPETITORS: {
+    ROOT: "competitors",
+    BY_TOURNAMENT: (tournamentId: string | number) =>
+      `/competitors/${tournamentId}`,
+    BY_TOURNAMENT_AND_NOMINATION: (
+      tournamentId: string | number,
+      nominationId: string | number,
+    ) => `/competitors/${tournamentId}/${nominationId}`,
+  },
 } as const;

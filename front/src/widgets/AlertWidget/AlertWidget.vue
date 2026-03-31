@@ -35,7 +35,7 @@ const buttonDisabled = computed(() => {
   <div>
     <div class="absolute inset-0 bg-black opacity-50 z-99998" />
     <div class="absolute inset-0 flex items-center justify-center z-99999">
-      <Card class="alert-widget-container w-full max-w-sm">
+      <Card class="alert-widget-container w-full max-w-xl overflow-hidden">
         <CardHeader>
           <CardTitle>{{ props.title }}</CardTitle>
           <CardAction>
@@ -44,7 +44,7 @@ const buttonDisabled = computed(() => {
         </CardHeader>
         <CardContent>
           <div class="grid w-full items-center gap-4">
-            <div class="flex flex-col space-y-1.5">
+            <div class="flex flex-col space-y-1.5 min-w-0">
               <DynamicLabeledInput
                 v-if="props.showInput"
                 :placeholder="$t('LocationBlockAlertPlaceholder')"
@@ -54,7 +54,7 @@ const buttonDisabled = computed(() => {
               <div v-if="isError" class="flex items-center gap-4">
                 <CircleAlert :size="48" class="shrink-0" />
                 <div
-                  class="flex-1 min-w-0 wrap-break-words whitespace-normal [&_pre]:whitespace-pre-wrap [&_pre]:wrap-break-words"
+                  class="flex-1 min-w-0 wrap-break-word overflow-hidden whitespace-normal [&_pre]:whitespace-pre-wrap [&_pre]:wrap-break-word"
                   v-html="props.mainText"
                 />
               </div>

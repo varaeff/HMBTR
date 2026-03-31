@@ -71,6 +71,7 @@
   "addTournamentSave": "Сохранить данные",
 
   "tournamentPageFightersSelectLabel": "Добавление бойцов",
+  "tournamentPageRemoveCompetitorButton": "Убрать",
   "tournamentPageBackButton": "К списку турниров",
 
   "fightersSelectPlaceholder": "Выберите бойца...",

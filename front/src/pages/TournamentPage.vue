@@ -1,42 +1,52 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useTournamentsListStore } from '@/stores/tournamentsList'
+import { useFightersListStore } from '@/stores/fightersList'
 import { useCommonDataStore } from '@/stores/commonData'
+import { useCompetitionStore } from '@/stores/competition'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { FightersSelect } from '@/widgets/FightersSelect'
 import { dateToString, tData } from '@/lib/utils'
-import type { Tournament, Nomination } from '@/model'
+import type { Tournament, Nomination, Fighter } from '@/model'
 
 const route = useRoute()
 const router = useRouter()
 const TournamentsListStore = useTournamentsListStore()
+const fightersListStore = useFightersListStore()
 const commonDataStore = useCommonDataStore()
+const competitionStore = useCompetitionStore()
 const { i18next } = useTranslation()
 
 const tournamentId = +route.params.id
 const tournament = ref<Tournament | null>(null)
 const nominations = ref<Nomination[]>([])
-const activeTab = ref<string | number>('')
+const activeTab = ref<number>(0)
 
 onMounted(async () => {
-  const tournamentData = await TournamentsListStore.showTournamentDetails(tournamentId)
-  tournament.value = tournamentData
-
+  tournament.value = await TournamentsListStore.showTournamentDetails(tournamentId)
   const allNominations = await commonDataStore.fetchNominations()
 
-  if (tournamentData && tournamentData.nominations_ids) {
+  if (tournament.value && tournament.value.nominations_ids) {
     nominations.value = allNominations.filter((nom: Nomination) =>
-      tournamentData.nominations_ids.includes(nom.id)
+      tournament.value!.nominations_ids.includes(nom.id)
     )
-  } else {
-    nominations.value = []
   }
 
-  if (nominations.value.length > 0) {
-    activeTab.value = nominations.value[0].id
+  nominations.value.length && (activeTab.value = nominations.value[0].id)
+
+  if (tournament.value) {
+    competitionStore.setTournamentAndNomination(tournamentId, activeTab.value)
+  }
+
+  await competitionStore.setCompetitors()
+})
+
+watch(activeTab, async (newVal) => {
+  if (newVal) {
+    competitionStore.setTournamentAndNomination(tournamentId, newVal)
   }
 })
 
@@ -47,6 +57,25 @@ const tournamentDetails = computed(() => {
   return `${tData(tournament.value.country)}, ${tData(tournament.value.city)},
       ${dateToString(tournament.value.event_date)}`
 })
+
+const nominationCompetitors = computed(() => {
+  const allFighters: Fighter[] = fightersListStore.filteredFightersList
+  const currentNominationData = competitionStore.getNominationCompetitors
+
+  return allFighters.filter((fighter) =>
+    currentNominationData.some((c) => c.fighter_id === fighter.id)
+  )
+})
+
+const removeCompetitor = async (fighterId: number) => {
+  const competitor = competitionStore.tournamentCompetitors.find(
+    (c) => c.fighter_id === fighterId && c.nomination_id === activeTab.value
+  )
+
+  if (competitor) {
+    await competitionStore.deleteCompetitor(competitor.id)
+  }
+}
 </script>
 
 <template>
@@ -79,8 +108,23 @@ const tournamentDetails = computed(() => {
 
     <TabsContent :value="activeTab" class="mt-0">
       <div class="flex flex-col gap-2">
-        tournament id: {{ tournament?.id }} <br />
-        nomination id: {{ activeTab }} <br />
+        <div
+          v-for="competitor in nominationCompetitors"
+          :key="competitor.id"
+          class="flex flex-col gap-1 p-1 border rounded-md"
+        >
+          <div class="flex justify-between items-center">
+            <div class="flex gap-2">
+              <div>{{ competitor.surname }} {{ competitor.name }}</div>
+              <div class="text-muted-foreground">
+                {{ competitor.city }} {{ competitor.club || '' }}
+              </div>
+            </div>
+            <Button variant="outline" size="sm" @click="removeCompetitor(competitor.id)">{{
+              $t('tournamentPageRemoveCompetitorButton')
+            }}</Button>
+          </div>
+        </div>
       </div>
     </TabsContent>
   </Tabs>
