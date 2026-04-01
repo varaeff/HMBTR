@@ -72,6 +72,8 @@
 
   "tournamentPageFightersSelectLabel": "Добавление бойцов",
   "tournamentPageRemoveCompetitorButton": "Убрать",
+  "tournamentPageCloseRegistrationButton": "Закрыть регистрацию",
+  "tournamentPageRegistrationClosed": "Регистрация закрыта",
   "tournamentPageBackButton": "К списку турниров",
 
   "fightersSelectPlaceholder": "Выберите бойца...",

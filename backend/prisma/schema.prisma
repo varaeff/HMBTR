@@ -59,6 +59,7 @@ model tournament_nominations {
   id            Int       @id @default(autoincrement())
   tournament_id Int
   nomination_id Int
+  is_open        Boolean   @default(true)
 }
 
 

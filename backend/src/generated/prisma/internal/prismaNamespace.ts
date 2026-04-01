@@ -1181,7 +1181,8 @@ export type NominationsScalarFieldEnum = (typeof NominationsScalarFieldEnum)[key
 export const Tournament_nominationsScalarFieldEnum = {
   id: 'id',
   tournament_id: 'tournament_id',
-  nomination_id: 'nomination_id'
+  nomination_id: 'nomination_id',
+  is_open: 'is_open'
 } as const
 
 export type Tournament_nominationsScalarFieldEnum = (typeof Tournament_nominationsScalarFieldEnum)[keyof typeof Tournament_nominationsScalarFieldEnum]

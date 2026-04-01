@@ -10,6 +10,7 @@ import { TournamentsService } from './tournaments.service';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { API_ROUTES } from '@shared/routes';
 import { AddNominationDto } from './dto/add-nomination.dto';
+import { UpdateNominationDto } from './dto/update-nomination.dto';
 import { Public } from '../auth/decorators/public.decorator';
 
 @Controller(API_ROUTES.TOURNAMENTS.ROOT)
@@ -48,5 +49,10 @@ export class TournamentsController {
   @Post(API_ROUTES.TOURNAMENTS.NOMINATION)
   addNomination(@Body() addNominationDto: AddNominationDto) {
     return this.tournamentsService.addNomination(addNominationDto);
+  }
+
+  @Post(API_ROUTES.TOURNAMENTS.NOMINATION + '/update')
+  updateNomination(@Body() updateNominationDto: UpdateNominationDto) {
+    return this.tournamentsService.updateNomination(updateNominationDto);
   }
 }

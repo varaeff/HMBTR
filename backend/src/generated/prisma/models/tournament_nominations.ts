@@ -42,18 +42,21 @@ export type Tournament_nominationsMinAggregateOutputType = {
   id: number | null
   tournament_id: number | null
   nomination_id: number | null
+  is_open: boolean | null
 }
 
 export type Tournament_nominationsMaxAggregateOutputType = {
   id: number | null
   tournament_id: number | null
   nomination_id: number | null
+  is_open: boolean | null
 }
 
 export type Tournament_nominationsCountAggregateOutputType = {
   id: number
   tournament_id: number
   nomination_id: number
+  is_open: number
   _all: number
 }
 
@@ -74,18 +77,21 @@ export type Tournament_nominationsMinAggregateInputType = {
   id?: true
   tournament_id?: true
   nomination_id?: true
+  is_open?: true
 }
 
 export type Tournament_nominationsMaxAggregateInputType = {
   id?: true
   tournament_id?: true
   nomination_id?: true
+  is_open?: true
 }
 
 export type Tournament_nominationsCountAggregateInputType = {
   id?: true
   tournament_id?: true
   nomination_id?: true
+  is_open?: true
   _all?: true
 }
 
@@ -179,6 +185,7 @@ export type Tournament_nominationsGroupByOutputType = {
   id: number
   tournament_id: number
   nomination_id: number
+  is_open: boolean
   _count: Tournament_nominationsCountAggregateOutputType | null
   _avg: Tournament_nominationsAvgAggregateOutputType | null
   _sum: Tournament_nominationsSumAggregateOutputType | null
@@ -208,12 +215,14 @@ export type tournament_nominationsWhereInput = {
   id?: Prisma.IntFilter<"tournament_nominations"> | number
   tournament_id?: Prisma.IntFilter<"tournament_nominations"> | number
   nomination_id?: Prisma.IntFilter<"tournament_nominations"> | number
+  is_open?: Prisma.BoolFilter<"tournament_nominations"> | boolean
 }
 
 export type tournament_nominationsOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   nomination_id?: Prisma.SortOrder
+  is_open?: Prisma.SortOrder
 }
 
 export type tournament_nominationsWhereUniqueInput = Prisma.AtLeast<{
@@ -223,12 +232,14 @@ export type tournament_nominationsWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.tournament_nominationsWhereInput | Prisma.tournament_nominationsWhereInput[]
   tournament_id?: Prisma.IntFilter<"tournament_nominations"> | number
   nomination_id?: Prisma.IntFilter<"tournament_nominations"> | number
+  is_open?: Prisma.BoolFilter<"tournament_nominations"> | boolean
 }, "id">
 
 export type tournament_nominationsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   nomination_id?: Prisma.SortOrder
+  is_open?: Prisma.SortOrder
   _count?: Prisma.tournament_nominationsCountOrderByAggregateInput
   _avg?: Prisma.tournament_nominationsAvgOrderByAggregateInput
   _max?: Prisma.tournament_nominationsMaxOrderByAggregateInput
@@ -243,51 +254,60 @@ export type tournament_nominationsScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"tournament_nominations"> | number
   tournament_id?: Prisma.IntWithAggregatesFilter<"tournament_nominations"> | number
   nomination_id?: Prisma.IntWithAggregatesFilter<"tournament_nominations"> | number
+  is_open?: Prisma.BoolWithAggregatesFilter<"tournament_nominations"> | boolean
 }
 
 export type tournament_nominationsCreateInput = {
   tournament_id: number
   nomination_id: number
+  is_open?: boolean
 }
 
 export type tournament_nominationsUncheckedCreateInput = {
   id?: number
   tournament_id: number
   nomination_id: number
+  is_open?: boolean
 }
 
 export type tournament_nominationsUpdateInput = {
   tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
   nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  is_open?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type tournament_nominationsUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
   nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  is_open?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type tournament_nominationsCreateManyInput = {
   id?: number
   tournament_id: number
   nomination_id: number
+  is_open?: boolean
 }
 
 export type tournament_nominationsUpdateManyMutationInput = {
   tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
   nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  is_open?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type tournament_nominationsUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
   nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  is_open?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type tournament_nominationsCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   nomination_id?: Prisma.SortOrder
+  is_open?: Prisma.SortOrder
 }
 
 export type tournament_nominationsAvgOrderByAggregateInput = {
@@ -300,12 +320,14 @@ export type tournament_nominationsMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   nomination_id?: Prisma.SortOrder
+  is_open?: Prisma.SortOrder
 }
 
 export type tournament_nominationsMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   nomination_id?: Prisma.SortOrder
+  is_open?: Prisma.SortOrder
 }
 
 export type tournament_nominationsSumOrderByAggregateInput = {
@@ -314,33 +336,41 @@ export type tournament_nominationsSumOrderByAggregateInput = {
   nomination_id?: Prisma.SortOrder
 }
 
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
 
 
 export type tournament_nominationsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   tournament_id?: boolean
   nomination_id?: boolean
+  is_open?: boolean
 }, ExtArgs["result"]["tournament_nominations"]>
 
 export type tournament_nominationsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   tournament_id?: boolean
   nomination_id?: boolean
+  is_open?: boolean
 }, ExtArgs["result"]["tournament_nominations"]>
 
 export type tournament_nominationsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   tournament_id?: boolean
   nomination_id?: boolean
+  is_open?: boolean
 }, ExtArgs["result"]["tournament_nominations"]>
 
 export type tournament_nominationsSelectScalar = {
   id?: boolean
   tournament_id?: boolean
   nomination_id?: boolean
+  is_open?: boolean
 }
 
-export type tournament_nominationsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tournament_id" | "nomination_id", ExtArgs["result"]["tournament_nominations"]>
+export type tournament_nominationsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tournament_id" | "nomination_id" | "is_open", ExtArgs["result"]["tournament_nominations"]>
 
 export type $tournament_nominationsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "tournament_nominations"
@@ -349,6 +379,7 @@ export type $tournament_nominationsPayload<ExtArgs extends runtime.Types.Extensi
     id: number
     tournament_id: number
     nomination_id: number
+    is_open: boolean
   }, ExtArgs["result"]["tournament_nominations"]>
   composites: {}
 }
@@ -775,6 +806,7 @@ export interface tournament_nominationsFieldRefs {
   readonly id: Prisma.FieldRef<"tournament_nominations", 'Int'>
   readonly tournament_id: Prisma.FieldRef<"tournament_nominations", 'Int'>
   readonly nomination_id: Prisma.FieldRef<"tournament_nominations", 'Int'>
+  readonly is_open: Prisma.FieldRef<"tournament_nominations", 'Boolean'>
 }
     
 

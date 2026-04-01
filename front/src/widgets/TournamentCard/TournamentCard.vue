@@ -17,7 +17,9 @@ const { i18next } = useTranslation()
 
 onMounted(async () => {
   nominations.value = await commonDataStore.fetchNominations().then((data) => {
-    return data.filter((nom: Nomination) => props.tournament.nominations_ids.includes(nom.id))
+    return data.filter((nom: Nomination) =>
+      props.tournament.nominations.some((tn) => tn.nomination_id === nom.id)
+    )
   })
 })
 
@@ -36,7 +38,7 @@ const tournamentPlace = computed(() => {
     </CardHeader>
     <CardContent class="flex flex-col gap-2">
       {{ dateToString(props.tournament.event_date) }}
-      <div v-if="props.tournament.nominations_ids.length" class="flex flex-wrap items-center gap-2">
+      <div v-if="props.tournament.nominations.length" class="flex flex-wrap items-center gap-2">
         <Badge v-for="nom in nominations" :key="nom.id" variant="default">
           {{ nom[`name_${i18next.language as 'ru' | 'en'}`] }}
         </Badge>

@@ -7,6 +7,7 @@ import { useFightersListStore } from '@/stores/fightersList'
 import { useCompetitionStore } from '@/stores/competition'
 import { cn, tData } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
 import {
   Command,
   CommandEmpty,

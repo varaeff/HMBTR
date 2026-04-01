@@ -2,7 +2,7 @@
 import { ref, watch, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useTournamentsListStore } from '@/stores/tournamentsList'
-import { useAuthStore } from '@/stores/auth'
+import { hasAccess } from '@/lib/checkAccess'
 import { Button } from '@/components/ui/button'
 import { SearchWidget } from '@/widgets/SearchWidget'
 import { TournamentCard } from '@/widgets/TournamentCard'
@@ -13,7 +13,6 @@ const router = useRouter()
 
 const tournamentsList = ref([] as Tournament[])
 const tournamentsListStore = useTournamentsListStore()
-const authStore = useAuthStore()
 
 const { i18next } = useTranslation()
 
@@ -29,12 +28,7 @@ onMounted(async () => {
 })
 
 const searchString = computed(() => tournamentsListStore.getSearchString)
-const showAddButton = computed(
-  () =>
-    tournamentsListStore.getSearchString.length > 0 &&
-    authStore.isAuthenticated &&
-    (authStore.user?.is_organizer || authStore.user?.is_admin)
-)
+const showAddButton = computed(() => tournamentsListStore.getSearchString.length > 0 && hasAccess())
 
 const addTournament = () => {
   router.push('/addTournament')

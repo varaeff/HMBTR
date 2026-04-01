@@ -37,7 +37,7 @@ export const useTournamentsListStore = defineStore({
 
       const url = `${API_ROUTES.TOURNAMENTS.ROOT}/${API_ROUTES.TOURNAMENTS.NOMINATION}/${tournament?.id}`
       const { data } = await http.get(url)
-      tournament && (tournament.nominations_ids = data.map((n: any) => n.nomination_id))
+      tournament && (tournament.nominations = data)
 
       return tournament ? tournament : null
     },
@@ -65,7 +65,7 @@ export const useTournamentsListStore = defineStore({
           event_date: new Date(tournamentDB.event_date),
           country: await commonDataStore.fetchCountry(tournamentDB.country_id),
           city: await commonDataStore.fetchCity(tournamentDB.city_id),
-          nominations_ids: (
+          nominations: (
             await http.get(
               API_ROUTES.TOURNAMENTS.ROOT +
                 '/' +
@@ -73,7 +73,7 @@ export const useTournamentsListStore = defineStore({
                 '/' +
                 tournamentDB.id
             )
-          ).data.map((nomination: any) => nomination.nomination_id)
+          ).data
         }))
       )
 
@@ -88,10 +88,10 @@ export const useTournamentsListStore = defineStore({
       ).data
 
       await Promise.all(
-        tournament.nominations_ids.map(async (nominationId) => {
+        tournament.nominations.map(async (nomination) => {
           await http.post(API_ROUTES.TOURNAMENTS.ROOT + '/' + API_ROUTES.TOURNAMENTS.NOMINATION, {
             tournament_id: newTournament.id,
-            nomination_id: nominationId
+            nomination_id: nomination.nomination_id
           })
         })
       )
@@ -102,8 +102,23 @@ export const useTournamentsListStore = defineStore({
         event_date: new Date(newTournament.event_date),
         country: await commonDataStore.fetchCountry(newTournament.country_id!),
         city: await commonDataStore.fetchCity(newTournament.city_id!),
-        nominations_ids: tournament.nominations_ids
+        nominations: tournament.nominations
       })
+    },
+
+    async updateTournamentNomination(tournamentId: number, nominationId: number, isOpen: boolean) {
+      await http.post(
+        API_ROUTES.TOURNAMENTS.ROOT + '/' + API_ROUTES.TOURNAMENTS.NOMINATION + '/update',
+        {
+          tournament_id: tournamentId,
+          nomination_id: nominationId,
+          is_open: isOpen
+        }
+      )
+
+      const tournament = this.tournaments.find((t) => t.id === tournamentId)
+      const nomination = tournament?.nominations.find((n) => n.nomination_id === nominationId)
+      nomination && (nomination.is_open = isOpen)
     },
 
     clearSearchString() {

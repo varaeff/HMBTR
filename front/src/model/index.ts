@@ -22,6 +22,13 @@ export interface FighterDB {
   pic?: string
 }
 
+export interface TournamentNomination {
+  id: number
+  tournament_id: number
+  nomination_id: number
+  is_open: boolean
+}
+
 export interface Tournament {
   country_id?: number
   city_id?: number
@@ -30,7 +37,7 @@ export interface Tournament {
   event_date: Date
   country: string
   city: string
-  nominations_ids: number[]
+  nominations: TournamentNomination[]
 }
 
 export interface TournamentDB {
@@ -39,7 +46,7 @@ export interface TournamentDB {
   event_date: Date
   country_id: number
   city_id: number
-  nominations_ids: number[]
+  nominations: TournamentNomination[]
 }
 
 export interface Country {

@@ -72,6 +72,8 @@
 
   "tournamentPageFightersSelectLabel": "Add Fighters",
   "tournamentPageRemoveCompetitorButton": "Remove",
+  "tournamentPageCloseRegistrationButton": "Close registration",
+  "tournamentPageRegistrationClosed": "Registration is closed",
   "tournamentPageBackButton": "To the tournaments list",
 
   "fightersSelectPlaceholder": "Select a fighter...",
