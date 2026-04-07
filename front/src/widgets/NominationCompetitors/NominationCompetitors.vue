@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import { useCompetitionStore } from '@/stores/competition'
 import { Button } from '@/components/ui/button'
 import type { Fighter } from '@/model'
 
@@ -11,33 +12,56 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'remove', id: number): void
   (e: 'close'): void
 }>()
+
+const competitionStore = useCompetitionStore()
+
+const isPending = ref(false)
+
+const handleClose = async () => {
+  try {
+    isPending.value = true
+    emit('close')
+  } finally {
+    isPending.value = false
+  }
+}
 
 const showCloseBtn = computed(() => {
   return props.competitors.length > 1 && props.hasAccess && props.isOpen
 })
+
+const removeCompetitor = async (fighterId: number) => {
+  const competitor = competitionStore.tournamentCompetitors.find(
+    (c) => c.fighter_id === fighterId && c.nomination_id === props.activeTab
+  )
+
+  if (competitor) {
+    await competitionStore.deleteCompetitor(competitor.id)
+  }
+}
 </script>
 
 <template>
   <div class="flex flex-col gap-2">
     <div
-      v-for="competitor in competitors"
+      v-for="(competitor, index) in competitors"
       :key="competitor.id"
       class="flex flex-col gap-1 p-1 border rounded-md"
     >
       <div class="flex justify-between items-center">
         <div class="flex gap-2">
-          <div>{{ competitor.surname }} {{ competitor.name }}</div>
+          <div>{{ index + 1 }}. {{ competitor.surname }} {{ competitor.name }}</div>
           <div class="text-muted-foreground">{{ competitor.city }} {{ competitor.club || '' }}</div>
         </div>
 
         <Button
           v-if="hasAccess && isOpen"
+          :disabled="isPending"
           variant="outline"
           size="sm"
-          @click="emit('remove', competitor.id)"
+          @click="removeCompetitor(competitor.id)"
         >
           {{ $t('tournamentPageRemoveCompetitorButton') }}
         </Button>
@@ -46,7 +70,14 @@ const showCloseBtn = computed(() => {
   </div>
 
   <div class="flex justify-end">
-    <Button v-if="showCloseBtn" @click="emit('close')" variant="destructive" size="sm" class="mt-4">
+    <Button
+      v-if="showCloseBtn"
+      :disabled="isPending"
+      @click="handleClose"
+      variant="destructive"
+      size="sm"
+      class="mt-4"
+    >
       {{ $t('tournamentPageCloseRegistrationButton') }}
     </Button>
   </div>

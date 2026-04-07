@@ -3,6 +3,7 @@ import { ref, watch, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useFightersListStore } from '@/stores/fightersList'
 import { hasAccess } from '@/lib/checkAccess'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { FighterCard } from '@/components/ui/fighterCard'
 import { Button } from '@/components/ui/button'
 import { SearchWidget } from '@/widgets/SearchWidget'
@@ -37,24 +38,26 @@ watch(searchString, () => {
 
 <template>
   <h1 class="flex justify-center mb-4">{{ $t('fightersPageName') }}</h1>
-  <div class="w-full flex justify-center">
+  <div class="w-full flex justify-center mb-5">
     <SearchWidget
       class="w-11/12 lg:w-5/12"
       :placeholder="$t('fightersSearchPlaceholder')"
       :store="useFightersListStore"
     />
   </div>
-  <div class="flex flex-wrap gap-5 justify-center w-full p-5">
-    <FighterCard
-      v-for="fighter in fightersList"
-      :key="fighter.id"
-      class="grow basis-50 max-w-full lg:max-w-[calc((100%-80px)/5)] min-w-50 p-4"
-      :name="`${fighter.surname} ${fighter.name}`"
-      :description="`${fighter.city} ${fighter.club || ''}`"
-      :pic="fighter.pic"
-      @click="router.push(`/fighter/${fighter.id}`)"
-    />
-  </div>
+  <ScrollArea class="w-full h-[calc(100vh-250px)] px-5 mb-5">
+    <div class="flex flex-wrap gap-5 justify-center">
+      <FighterCard
+        v-for="fighter in fightersList"
+        :key="fighter.id"
+        class="grow basis-50 max-w-full lg:max-w-[calc((100%-80px)/5)] min-w-50 p-4"
+        :name="`${fighter.surname} ${fighter.name}`"
+        :description="`${fighter.city} ${fighter.club || ''}`"
+        :pic="fighter.pic"
+        @click="router.push(`/fighter/${fighter.id}`)"
+      />
+    </div>
+  </ScrollArea>
   <div class="flex justify-center">
     <Button v-show="showAddButton" variant="default" size="default" @click="addFighter">{{
       $t('addFighterButton')

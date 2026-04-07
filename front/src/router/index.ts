@@ -18,7 +18,8 @@ const router = createRouter({
     {
       path: '/fighter/:id',
       name: 'fighter',
-      component: () => import('@/pages/FighterPage.vue')
+      component: () => import('@/pages/FighterPage.vue'),
+      props: true
     },
     {
       path: '/addFighter',
@@ -34,7 +35,8 @@ const router = createRouter({
     {
       path: '/tournament/:id',
       name: 'tournament',
-      component: () => import('@/pages/TournamentPage.vue')
+      component: () => import('@/pages/TournamentPage.vue'),
+      props: true
     },
     {
       path: '/addTournament',

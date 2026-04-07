@@ -1,20 +1,23 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useFightersListStore } from '@/stores/fightersList'
 import NoPhoto from '@/entities/NoPhoto.jpg'
 import { Button } from '@/components/ui/button'
 import type { Fighter } from '@/model'
 import { dateToString, tData } from '@/lib/utils'
 
-const route = useRoute()
+const props = defineProps<{
+  id: string
+}>()
+
 const router = useRouter()
 const fighter = ref<Fighter | null | undefined>(null)
 const FightersListStore = useFightersListStore()
-const fighterId = +route.params.id
+const fighterId = computed(() => +props.id)
 
 onMounted(async () => {
-  fighter.value = await FightersListStore.showFighterDetails(fighterId)
+  fighter.value = await FightersListStore.showFighterDetails(fighterId.value)
 })
 
 const fullName = computed(() => {

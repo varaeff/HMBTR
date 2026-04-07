@@ -71,10 +71,14 @@
   "addTournamentSave": "Save data",
 
   "tournamentPageFightersSelectLabel": "Add Fighters",
+  "tournamentPageRegisteredFighters": "Registered fighters",
   "tournamentPageRemoveCompetitorButton": "Remove",
   "tournamentPageCloseRegistrationButton": "Close registration",
   "tournamentPageRegistrationClosed": "Registration is closed",
-  "tournamentPageBackButton": "To the tournaments list",
+  "tournamentPageCreateGroups": "Create groups",
+  "tournamentPageGroupsFirst": "Groups of stage 1",
+  "tournamentPageGroupName": "Group",
+  "tournamentPageGenerateFights": "Generate fights",
 
   "fightersSelectPlaceholder": "Select a fighter...",
   "fightersSelectEmpty": "Fighter not found",

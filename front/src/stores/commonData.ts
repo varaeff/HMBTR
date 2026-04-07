@@ -82,7 +82,7 @@ export const useCommonDataStore = defineStore({
 
     async addCity(country_id: number, name: string) {
       const city = await http.post(API_ROUTES.CITIES.ROOT, { country_id, name })
-      this.cities.push(...city.data)
+      this.cities.push(city.data)
     },
 
     async fetchClubs() {
@@ -116,7 +116,7 @@ export const useCommonDataStore = defineStore({
 
     async addClub(city_id: number, name: string) {
       const club = await http.post(API_ROUTES.CLUBS.ROOT, { city_id, name })
-      this.clubs.push(...club.data)
+      this.clubs.push(club.data)
     },
 
     async fetchNominations() {

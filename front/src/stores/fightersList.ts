@@ -91,17 +91,19 @@ export const useFightersListStore = defineStore({
 
   getters: {
     filteredFightersList(state) {
-      const filtered = state.fighters
-        .filter((fighter) => fighter.id !== 0)
-        .filter(
-          (fighter) =>
-            fighter.name.toLowerCase().includes(state.searchString.toLowerCase()) ||
-            fighter.surname.toLowerCase().includes(state.searchString.toLowerCase()) ||
-            fighter.city.toLowerCase().includes(state.searchString.toLowerCase()) ||
-            (fighter.club && fighter.club.toLowerCase().includes(state.searchString.toLowerCase()))
-        )
+      const filtered = state.fighters.filter(
+        (fighter) =>
+          fighter.name.toLowerCase().includes(state.searchString.toLowerCase()) ||
+          fighter.surname.toLowerCase().includes(state.searchString.toLowerCase()) ||
+          fighter.city.toLowerCase().includes(state.searchString.toLowerCase()) ||
+          (fighter.club && fighter.club.toLowerCase().includes(state.searchString.toLowerCase()))
+      )
 
       return filtered.length > 0 ? filtered : []
+    },
+
+    fightersList(state) {
+      return state.fighters
     },
 
     getMaxId(state) {

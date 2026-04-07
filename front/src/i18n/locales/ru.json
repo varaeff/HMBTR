@@ -71,10 +71,14 @@
   "addTournamentSave": "Сохранить данные",
 
   "tournamentPageFightersSelectLabel": "Добавление бойцов",
+  "tournamentPageRegisteredFighters": "Зарегистрированные бойцы",
   "tournamentPageRemoveCompetitorButton": "Убрать",
   "tournamentPageCloseRegistrationButton": "Закрыть регистрацию",
   "tournamentPageRegistrationClosed": "Регистрация закрыта",
-  "tournamentPageBackButton": "К списку турниров",
+  "tournamentPageCreateGroups": "Распределить по группам",
+  "tournamentPageGroupsFirst": "Группы этапа 1",
+  "tournamentPageGroupName": "Группа",
+  "tournamentPageGenerateFights": "Сгенерировать бои",
 
   "fightersSelectPlaceholder": "Выберите бойца...",
   "fightersSelectEmpty": "Боeц не найден",
