@@ -9,13 +9,19 @@ import { hasAccess } from '@/lib/checkAccess'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { Button } from '@/components/ui/button'
+import { FightsDisplay } from '@/widgets/FightsDisplay'
 import { FightersSelect } from '@/widgets/FightersSelect'
 import { NominationCompetitors } from '@/widgets/NominationCompetitors'
 import { NominationGroups } from '@/widgets/NominationGroups'
+
 import { useCollapsiblePersist } from '@/composables/useCollapsiblePersist'
-import { dateToString, tData, groupFighters } from '@/lib/utils'
+import { tData } from '@/lib/utils'
+import { generateGroups } from '@/lib/generateGroups'
+import { stageGroupFights } from '@/lib/generateFights'
+import { updateGroupsStatistics } from '@/lib/groupsStatistic'
+import { dateToString } from '@/lib/dateUtils'
 import { ChevronsUpDown } from 'lucide-vue-next'
-import type { Tournament, Fighter } from '@/model'
+import type { Tournament, Fighter, Group, BlockData } from '@/model'
 
 const props = defineProps<{
   id: string
@@ -29,7 +35,9 @@ const { i18next } = useTranslation()
 
 const tournamentId = computed(() => +props.id)
 const tournament = ref<Tournament | null>(null)
-const groups = ref<Fighter[][]>([])
+
+const groups = ref<Group[]>([])
+const fightsBlocks = ref<BlockData[]>([])
 const activeTab = ref<number>(0)
 const canEdit = hasAccess()
 
@@ -47,7 +55,9 @@ const allTournamentNominations = computed(() => {
   if (!tournament.value || !commonDataStore.nominations.length) return []
 
   const activeIds = new Set(tournament.value.nominations.map((tn) => tn.nomination_id))
-  return commonDataStore.nominations.filter((nom) => activeIds.has(nom.id))
+  return commonDataStore.nominations
+    .filter((nom) => activeIds.has(nom.id))
+    .sort((a, b) => a.id - b.id)
 })
 
 const openNominations = computed(() => {
@@ -77,18 +87,42 @@ const nominationCompetitors = computed(() => {
   return allFighters.filter((f) => currentIds.has(f.id))
 })
 
-const closeRegistration = async () => {
-  console.log('Closing registration for nomination', activeTab.value)
-  console.log('tournament ID: ', tournamentId)
-  console.log('openNominations: ', openNominations.value)
+const haveLessThanThree = computed(() => {
+  if (!groups.value.length) return true
 
+  return groups.value.every((group) => group.fighters.length > 2)
+})
+
+const isFightsGenerated = computed(() => {
+  return fightsBlocks.value.length > 0
+})
+
+const closeRegistration = async () => {
   await TournamentsListStore.updateTournamentNomination(tournamentId.value, activeTab.value, false)
   tournament.value = await TournamentsListStore.showTournamentDetails(tournamentId.value)
 }
 
-const createGroups = async () => {
-  groups.value = groupFighters(nominationCompetitors.value)
+const createGroups = () => {
+  groups.value = generateGroups(nominationCompetitors.value, 0)
+  fightsBlocks.value = []
   isCompetitorsListOpen.value = false
+}
+
+const generateFights = () => {
+  const groupsToGenerate = groups.value
+  fightsBlocks.value = stageGroupFights(groupsToGenerate)
+}
+
+const updateGlobalScore = ({ fightNumber, f1Score, f2Score }: any) => {
+  // Находим нужный бой во всех блоках и обновляем его
+  for (const block of fightsBlocks.value) {
+    const fight = block.fights.find((f) => f.number === fightNumber)
+    if (fight) {
+      fight.fighter1Score = f1Score
+      fight.fighter2Score = f2Score
+      break
+    }
+  }
 }
 
 onMounted(async () => {
@@ -122,8 +156,17 @@ watch(activeTab, async (newVal) => {
   if (newVal) {
     competitionStore.setTournamentAndNomination(tournamentId.value, newVal)
     groups.value = []
+    fightsBlocks.value = []
   }
 })
+
+watch(
+  () =>
+    fightsBlocks.value.flatMap((b) => b.fights.map((f) => `${f.fighter1Score}:${f.fighter2Score}`)),
+  () => {
+    updateGroupsStatistics(groups.value, fightsBlocks.value)
+  }
+)
 </script>
 
 <template>
@@ -208,14 +251,26 @@ watch(activeTab, async (newVal) => {
           <NominationGroups
             v-if="groups.length"
             :groups="groups"
+            :isFixed="isFightsGenerated"
             @update-groups="groups = $event"
           />
         </CollapsibleContent>
       </Collapsible>
 
-      <div class="flex flex-col justify-center items-center my-5" v-if="canEdit && groups.length">
-        <Button @click="createGroups">{{ $t('tournamentPageGenerateFights') }}</Button>
+      <div
+        class="flex flex-col justify-center items-center my-5"
+        v-if="canEdit && groups.length && !isFightsGenerated"
+      >
+        <Button :disabled="!haveLessThanThree" @click="generateFights">{{
+          $t('tournamentPageGenerateFights')
+        }}</Button>
       </div>
+
+      <FightsDisplay
+        v-if="fightsBlocks.length"
+        :blocks="fightsBlocks"
+        @update-fight-score="updateGlobalScore"
+      />
     </TabsContent>
   </Tabs>
 </template>

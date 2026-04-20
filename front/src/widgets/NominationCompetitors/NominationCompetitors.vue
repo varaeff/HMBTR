@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { tData } from '@/lib/utils'
 import { useCompetitionStore } from '@/stores/competition'
 import { Button } from '@/components/ui/button'
 import type { Fighter } from '@/model'
@@ -29,7 +30,7 @@ const handleClose = async () => {
 }
 
 const showCloseBtn = computed(() => {
-  return props.competitors.length > 1 && props.hasAccess && props.isOpen
+  return props.competitors.length > 2 && props.hasAccess && props.isOpen
 })
 
 const removeCompetitor = async (fighterId: number) => {
@@ -52,8 +53,10 @@ const removeCompetitor = async (fighterId: number) => {
     >
       <div class="flex justify-between items-center">
         <div class="flex gap-2">
-          <div>{{ index + 1 }}. {{ competitor.surname }} {{ competitor.name }}</div>
-          <div class="text-muted-foreground">{{ competitor.city }} {{ competitor.club || '' }}</div>
+          <div>{{ index + 1 }}. {{ tData(competitor.surname) }} {{ tData(competitor.name) }}</div>
+          <div class="text-muted-foreground">
+            {{ tData(competitor.city) }} {{ tData(competitor.club || '') }}
+          </div>
         </div>
 
         <Button

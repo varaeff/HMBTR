@@ -78,7 +78,13 @@
   "tournamentPageCreateGroups": "Create groups",
   "tournamentPageGroupsFirst": "Groups of stage 1",
   "tournamentPageGroupName": "Group",
+  "tournamentPageGroups": "Groups",
   "tournamentPageGenerateFights": "Generate fights",
+
+  "groupsTableFighter": "Fighter",
+  "groupsTableClub": "Club",
+  "groupsTableWins": "Wins",
+  "groupsTableDifference": "Diff",
 
   "fightersSelectPlaceholder": "Select a fighter...",
   "fightersSelectEmpty": "Fighter not found",

@@ -1,3 +1,15 @@
+export interface FighterDB {
+  id?: number
+  name: string
+  surname: string
+  patronymic?: string
+  birthday?: string
+  country_id: number
+  city_id: number
+  club_id?: number | null
+  pic?: string
+}
+
 export interface Fighter {
   id: number
   name: string
@@ -10,16 +22,27 @@ export interface Fighter {
   pic?: string
 }
 
-export interface FighterDB {
-  id?: number
-  name: string
-  surname: string
-  patronymic?: string
-  birthday?: string
-  country_id: number
-  city_id: number
-  club_id?: number | null
-  pic?: string
+export interface GroupFighter extends Fighter {
+  wins: number
+  diff: number
+}
+
+export interface Group {
+  letter: string
+  fighters: GroupFighter[]
+}
+
+export interface FightData {
+  number: number
+  fighter1: Fighter
+  fighter2: Fighter
+  fighter1Score: number
+  fighter2Score: number
+}
+
+export interface BlockData {
+  letters: string[]
+  fights: FightData[]
 }
 
 export interface TournamentNomination {
@@ -46,7 +69,7 @@ export interface TournamentDB {
   event_date: Date
   country_id: number
   city_id: number
-  nominations: TournamentNomination[]
+  nominations_ids: number[]
 }
 
 export interface Country {

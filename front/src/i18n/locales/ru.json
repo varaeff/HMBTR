@@ -78,7 +78,13 @@
   "tournamentPageCreateGroups": "Распределить по группам",
   "tournamentPageGroupsFirst": "Группы этапа 1",
   "tournamentPageGroupName": "Группа",
+  "tournamentPageGroups": "Группы",
   "tournamentPageGenerateFights": "Сгенерировать бои",
+
+  "groupsTableFighter": "Боец",
+  "groupsTableClub": "Клуб",
+  "groupsTableWins": "Победы",
+  "groupsTableDifference": "Разница",
 
   "fightersSelectPlaceholder": "Выберите бойца...",
   "fightersSelectEmpty": "Боeц не найден",

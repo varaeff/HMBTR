@@ -13,7 +13,7 @@ import { DatePicker } from '@/widgets/DatePicker'
 import { SelectLocationBlock } from '@/widgets/SelectLocationBlock'
 import { useRequiredFields } from '@/composables/useRequiredFields'
 import { useAddEntityAlert } from '@/composables/useAddEntityAlert'
-import { toDateFormat } from '@/lib/utils'
+import { toDateFormat } from '@/lib/dateUtils'
 import type { CalendarDate } from '@internationalized/date'
 import type { Nomination } from '@/model'
 

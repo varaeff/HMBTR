@@ -4,7 +4,8 @@ import { useTranslation } from 'i18next-vue'
 import { useCommonDataStore } from '@/stores/commonData'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { dateToString, tData } from '@/lib/utils'
+import { tData } from '@/lib/utils'
+import { dateToString } from '@/lib/dateUtils'
 import type { Tournament, Nomination } from '@/model'
 
 const props = defineProps<{

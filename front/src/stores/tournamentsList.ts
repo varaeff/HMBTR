@@ -88,10 +88,10 @@ export const useTournamentsListStore = defineStore({
       ).data
 
       await Promise.all(
-        tournament.nominations.map(async (nomination) => {
+        tournament.nominations_ids.map(async (nominationId) => {
           await http.post(API_ROUTES.TOURNAMENTS.ROOT + '/' + API_ROUTES.TOURNAMENTS.NOMINATION, {
             tournament_id: newTournament.id,
-            nomination_id: nomination.nomination_id
+            nomination_id: nominationId
           })
         })
       )
@@ -102,7 +102,15 @@ export const useTournamentsListStore = defineStore({
         event_date: new Date(newTournament.event_date),
         country: await commonDataStore.fetchCountry(newTournament.country_id!),
         city: await commonDataStore.fetchCity(newTournament.city_id!),
-        nominations: tournament.nominations
+        nominations: (
+          await http.get(
+            API_ROUTES.TOURNAMENTS.ROOT +
+              '/' +
+              API_ROUTES.TOURNAMENTS.NOMINATION +
+              '/' +
+              newTournament.id
+          )
+        ).data
       })
     },
 
