@@ -76,7 +76,7 @@
   "tournamentPageCloseRegistrationButton": "Закрыть регистрацию",
   "tournamentPageRegistrationClosed": "Регистрация закрыта",
   "tournamentPageCreateGroups": "Распределить по группам",
-  "tournamentPageGroupsFirst": "Группы этапа 1",
+  "tournamentPageStage1": "Этап 1",
   "tournamentPageGroupName": "Группа",
   "tournamentPageGroups": "Группы",
   "tournamentPageGenerateFights": "Сгенерировать бои",

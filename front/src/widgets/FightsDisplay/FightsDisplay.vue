@@ -1,16 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
+import { useCompetitionStore } from '@/stores/competition'
 import { FightCard } from '@/components/ui/fightCard'
-import type { BlockData } from '@/model'
 
-defineProps<{
-  blocks: BlockData[]
-}>()
-
-const emit = defineEmits<{
-  (e: 'updateFightScore', payload: { fightNumber: number; f1Score: number; f2Score: number }): void
-}>()
+const competitionStore = useCompetitionStore()
+const blocks = computed(() => competitionStore.getFightsBlocks)
 
 const getGroupLabel = (letters: string[]) => {
   return letters.join(', ')
@@ -20,11 +15,7 @@ const { i18next } = useTranslation()
 const languageKey = computed(() => i18next.language)
 
 const handleScoreUpdate = (fightNumber: number, scores: { f1: number; f2: number }) => {
-  emit('updateFightScore', {
-    fightNumber,
-    f1Score: scores.f1,
-    f2Score: scores.f2
-  })
+  competitionStore.updateGlobalScore({ fightNumber, f1Score: scores.f1, f2Score: scores.f2 })
 }
 </script>
 

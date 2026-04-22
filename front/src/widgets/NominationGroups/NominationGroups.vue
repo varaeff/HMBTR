@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
+import { useCompetitionStore } from '@/stores/competition'
 import { tData } from '@/lib/utils'
 import { Table, TableHeader, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import type { GroupFighter, Group } from '@/model'
 
-const props = defineProps<{ groups: Group[]; isFixed: boolean }>()
-const emit = defineEmits<{ 'update-groups': [groups: Group[]] }>()
+const props = defineProps<{ isFixed: boolean }>()
+const competitionStore = useCompetitionStore()
 const { i18next } = useTranslation()
 const languageKey = computed(() => i18next.language)
 
@@ -28,7 +29,7 @@ const moveFighter = (targetGroupIdx: number | 'new', targetFighterIdx?: number) 
   const { groupIdx: sGIdx, fighterIdx: sFIdx, fighter } = activeDrag.value
 
   // Создаем глубокую копию групп и их бойцов
-  let nextGroups: Group[] = props.groups.map((group) => ({
+  let nextGroups: Group[] = competitionStore.getGroups.map((group) => ({
     ...group,
     fighters: [...group.fighters]
   }))
@@ -58,7 +59,7 @@ const moveFighter = (targetGroupIdx: number | 'new', targetFighterIdx?: number) 
       letter: String.fromCharCode(65 + idx) // 65 = 'A'
     }))
 
-  emit('update-groups', updatedGroups)
+  competitionStore.setGroups(updatedGroups)
 }
 
 const handleDrop = (e: DragEvent, gIdx: number | 'new', fIdx?: number) => {
@@ -73,7 +74,7 @@ const handleDrop = (e: DragEvent, gIdx: number | 'new', fIdx?: number) => {
     @dragover.prevent
     @drop="handleDrop($event, 'new')"
   >
-    <div v-for="(group, gIdx) in props.groups" :key="group.letter + languageKey">
+    <div v-for="(group, gIdx) in competitionStore.getGroups" :key="group.letter + languageKey">
       <Table
         class="border rounded-lg p-4 bg-card w-64 shadow-sm"
         @dragover.prevent

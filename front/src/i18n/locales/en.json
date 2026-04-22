@@ -76,7 +76,7 @@
   "tournamentPageCloseRegistrationButton": "Close registration",
   "tournamentPageRegistrationClosed": "Registration is closed",
   "tournamentPageCreateGroups": "Create groups",
-  "tournamentPageGroupsFirst": "Groups of stage 1",
+  "tournamentPageStage1": "Stage 1",
   "tournamentPageGroupName": "Group",
   "tournamentPageGroups": "Groups",
   "tournamentPageGenerateFights": "Generate fights",
