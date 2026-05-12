@@ -35,3 +35,8 @@ cypress/downloads/
 # =========================
 .DS_Store
 Thumbs.db
+
+# =========================
+# Local agent context
+# =========================
+.codex-local/

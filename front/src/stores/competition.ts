@@ -78,6 +78,11 @@ export const useCompetitionStore = defineStore({
         }
       }
       updateGroupsStatistics(this.groups, this.fightsBlocks)
+    },
+
+    updateStageData(groups: Group[], blocks: BlockData[]) {
+      this.groups = [...groups]
+      this.fightsBlocks = [...blocks]
     }
   },
 

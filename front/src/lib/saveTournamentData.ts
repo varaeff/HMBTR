@@ -1,7 +1,9 @@
 import http from '@/api/http'
 import { API_ROUTES } from '@shared/routes'
+
+import { useCompetitionStore } from '@/stores/competition'
+
 import type { Group, BlockData, GroupFighter } from '@/model'
-import { useFightersListStore } from '@/stores/fightersList'
 
 interface SaveTournamentDataParams {
   tournamentId: number
@@ -11,6 +13,14 @@ interface SaveTournamentDataParams {
   fightsBlocks: BlockData[]
 }
 
+const getFighterGroupMap = (groups: Group[]): Map<number, string> => {
+  const map = new Map<number, string>()
+  groups.forEach((group) => {
+    group.fighters.forEach((f) => map.set(f.id, group.letter))
+  })
+  return map
+}
+
 export const saveTournamentData = async ({
   tournamentId,
   nominationId,
@@ -18,109 +28,90 @@ export const saveTournamentData = async ({
   groups,
   fightsBlocks
 }: SaveTournamentDataParams) => {
-  try {
-    // Get tournament_nominations to find its id
-    const nominationsUrl = `${API_ROUTES.TOURNAMENTS.ROOT}/${API_ROUTES.TOURNAMENTS.NOMINATION}/${tournamentId}`
-    const { data: tournamentsNominations } = await http.get(nominationsUrl)
+  const competitionStore = useCompetitionStore()
 
+  try {
+    // 1. Подготовка данных
+    const { data: tournamentsNominations } = await http.get(
+      `${API_ROUTES.TOURNAMENTS.ROOT}/${API_ROUTES.TOURNAMENTS.NOMINATION}/${tournamentId}`
+    )
     const targetNomination = tournamentsNominations.find(
       (tn: any) => tn.nomination_id === nominationId
     )
-
-    if (!targetNomination) {
-      throw new Error('Tournament nomination not found')
-    }
+    if (!targetNomination) throw new Error('Tournament nomination not found')
 
     const newStage = currentStage + 1
+    const compMap = new Map<number, number>(
+      competitionStore.tournamentCompetitors.map((c) => [c.fighter_id, c.id])
+    )
+    const fighterToGroupMap = getFighterGroupMap(groups)
 
-    // 1. Update tournament_nominations stage
+    // 2. Обновление стадии в БД
     await http.patch(`${API_ROUTES.TOURNAMENTS.ROOT}/${API_ROUTES.TOURNAMENTS.NOMINATION}/stage`, {
       nomination_id: targetNomination.id,
       stage: newStage
     })
 
-    // 2. Save groups and collect their IDs
+    // 3. Сохранение групп (параллельно) и создание Map ID групп
     const groupsMap = new Map<string, number>()
-
-    for (const group of groups) {
-      const { data: createdGroup } = await http.post(API_ROUTES.GROUPS.ROOT, {
-        tournament_id: tournamentId,
-        nomination_id: nominationId,
-        name: group.letter,
-        stage: newStage
-      })
-      groupsMap.set(group.letter, createdGroup.id)
-    }
-
-    // Create a map of fighter ID to group letter for quick lookup
-    const fighterToGroupMap = new Map<number, string>()
-    for (const group of groups) {
-      for (const fighter of group.fighters) {
-        fighterToGroupMap.set(fighter.id, group.letter)
-      }
-    }
-
-    // 3. Save group_competitors
-    for (const group of groups) {
-      const groupId = groupsMap.get(group.letter)
-      if (!groupId) continue
-
-      for (const fighter of group.fighters) {
-        const competitorId = await findCompetitorId(fighter.id, tournamentId, nominationId)
-
-        if (competitorId) {
-          await http.post(API_ROUTES.GROUP_COMPETITORS.ROOT, {
-            group_id: groupId,
-            competitor_id: competitorId
+    const groupCreationResults = await Promise.all(
+      groups.map((group) =>
+        http
+          .post(API_ROUTES.GROUPS.ROOT, {
+            tournament_id: tournamentId,
+            nomination_id: nominationId,
+            name: group.letter,
+            stage: newStage
           })
+          .then((res) => ({ letter: group.letter, id: res.data.id, fighters: group.fighters }))
+      )
+    )
+
+    // 4. Сохранение участников групп (всех сразу)
+    const participantRequests: any[] = []
+    for (const g of groupCreationResults) {
+      groupsMap.set(g.letter, g.id)
+      g.fighters.forEach((fighter) => {
+        const competitorId = compMap.get(fighter.id)
+        if (competitorId) {
+          participantRequests.push(
+            http.post(API_ROUTES.GROUP_COMPETITORS.ROOT, {
+              group_id: g.id,
+              competitor_id: competitorId
+            })
+          )
         }
-      }
+      })
     }
+    await Promise.all(participantRequests)
 
-    // 4. Save fights
-    for (const block of fightsBlocks) {
-      for (const fight of block.fights) {
-        const competitor1Id = await findCompetitorId(fight.fighter1.id, tournamentId, nominationId)
-        const competitor2Id = await findCompetitorId(fight.fighter2.id, tournamentId, nominationId)
+    // 5. Сохранение боев (всех сразу)
+    const fightRequests = fightsBlocks.flatMap((block) =>
+      block.fights.map((fight) => {
+        const c1 = compMap.get(fight.fighter1.id)
+        const c2 = compMap.get(fight.fighter2.id)
+        const gLetter = fighterToGroupMap.get(fight.fighter1.id)
 
-        if (!competitor1Id || !competitor2Id) continue
-
-        // Determine group ID based on which group these fighters belong to
-        const groupLetter = fighterToGroupMap.get(fight.fighter1.id)
-        const groupId = groupLetter ? groupsMap.get(groupLetter) : undefined
-
-        await http.post(API_ROUTES.FIGHTS.ROOT, {
+        return http.post(API_ROUTES.FIGHTS.ROOT, {
           tournament_id: tournamentId,
           nomination_id: nominationId,
-          group_id: groupId || null,
-          competitor1_id: competitor1Id,
-          competitor2_id: competitor2Id,
+          group_id: gLetter ? groupsMap.get(gLetter) : null,
+          competitor1_id: c1,
+          competitor2_id: c2,
           stage: newStage,
           fight_number: fight.number
         })
-      }
-    }
+      })
+    )
+    await Promise.all(fightRequests)
+
+    //Обновляем стор после успешного сохранения в БД
+    competitionStore.updateStageData(groups, fightsBlocks)
 
     return { success: true, newStage }
   } catch (error) {
     console.error('Error saving tournament data:', error)
     throw error
-  }
-}
-
-// Helper function to find competitor ID by fighter ID
-const findCompetitorId = async (
-  fighterId: number,
-  tournamentId: number,
-  nominationId: number
-): Promise<number | null> => {
-  try {
-    const url = API_ROUTES.COMPETITORS.BY_TOURNAMENT_AND_NOMINATION(tournamentId, nominationId)
-    const { data: competitors } = await http.get(url)
-    const competitor = competitors.find((c: any) => c.fighter_id === fighterId)
-    return competitor?.id || null
-  } catch {
-    return null
   }
 }
 
@@ -130,115 +121,72 @@ export const loadGroupsAndFights = async (
   nominationId: number,
   stage: number
 ) => {
+  const competitionStore = useCompetitionStore()
+
   try {
-    // 1. Fetch all competitors for this tournament and nomination
-    const competitorsUrl = API_ROUTES.COMPETITORS.BY_TOURNAMENT_AND_NOMINATION(
-      tournamentId,
-      nominationId
+    // Параллельно загружаем группы и бои.
+    const [groupsRes, fightsRes] = await Promise.all([
+      http.get(API_ROUTES.GROUPS.BY_TOURNAMENT_AND_NOMINATION(tournamentId, nominationId)),
+      http.get(API_ROUTES.FIGHTS.BY_TOURNAMENT(tournamentId))
+    ])
+
+    // Используем карту из стора для быстрого доступа к данным бойца по competitor_id
+    const competitorMap = new Map<number, any>(
+      competitionStore.tournamentCompetitors.map((c) => [
+        c.id,
+        { ...c, fighter: competitionStore.getNominationFighters.find((f) => f.id === c.fighter_id) }
+      ])
     )
-    let { data: allCompetitors } = await http.get(competitorsUrl)
 
-    const fightersListStore = useFightersListStore()
-    allCompetitors = allCompetitors.map((c: any) => ({
-      ...c,
-      fighter: fightersListStore.getFighterById(c.fighter_id)
-    }))
-
-    // Create a map of competitor ID to fighter info
-    const competitorMap = new Map<number, any>()
-    for (const competitor of allCompetitors) {
-      competitorMap.set(competitor.id, competitor)
-    }
-
-    // 2. Fetch groups for this tournament, nomination, and stage
-    const groupsUrl = API_ROUTES.GROUPS.BY_TOURNAMENT_AND_NOMINATION(tournamentId, nominationId)
-    const { data: allGroups } = await http.get(groupsUrl)
-    const stageGroups = allGroups.filter((g: any) => g.stage === stage)
-
-    // 3. Build groups with fighters
-    const groups: Group[] = []
-    for (const groupData of stageGroups) {
-      // Fetch group members
-      const groupCompetitorsUrl = API_ROUTES.GROUP_COMPETITORS.BY_GROUP(groupData.id)
-      const { data: groupCompetitors } = await http.get(groupCompetitorsUrl)
-
-      const fighters: GroupFighter[] = []
-
-      for (const gc of groupCompetitors) {
-        const fData = gc.competitor?.fighter
-
-        if (fData) {
-          fighters.push({
-            ...fData,
-            wins: 0,
-            diff: 0
-          })
-        }
-      }
-
-      groups.push({
-        letter: groupData.name,
-        fighters
-      })
-    }
-
-    // 4. Fetch fights for this tournament, nomination, and stage
-    const fightsUrl = API_ROUTES.FIGHTS.BY_TOURNAMENT(tournamentId)
-    const { data: allFights } = await http.get(fightsUrl)
-    const stageFights = allFights.filter(
+    const stageGroups = groupsRes.data
+      .filter((g: any) => g.stage === stage)
+      .sort((a: any, b: any) => a.name.localeCompare(b.name))
+    const stageFights = fightsRes.data.filter(
       (f: any) => f.nomination_id === nominationId && f.stage === stage
     )
 
-    // 5. Build fight blocks (по 2 группы в блоке, как в stageGroupFights)
+    // Загрузка участников групп (параллельно)
+    const groupsData = await Promise.all(
+      stageGroups.map(async (gData: any) => {
+        const { data: gComps } = await http.get(API_ROUTES.GROUP_COMPETITORS.BY_GROUP(gData.id))
+        const fighters: GroupFighter[] = gComps
+          .map((gc: any) => competitorMap.get(gc.competitor_id)?.fighter)
+          .filter(Boolean)
+          .map((f: any) => ({ ...f, wins: 0, diff: 0 }))
+
+        return { letter: gData.name, fighters, id: gData.id }
+      })
+    )
+
+    const groups: Group[] = groupsData.map(({ letter, fighters }) => ({ letter, fighters }))
+
+    // Сборка блоков
     const fightsBlocks: BlockData[] = []
+    for (let i = 0; i < groupsData.length; i += 2) {
+      const g1 = groupsData[i]
+      const g2 = groupsData[i + 1]
+      const blockLetters = g2 ? [g1.letter, g2.letter] : [g1.letter]
+      const targetIds = g2 ? [g1.id, g2.id] : [g1.id]
 
-    // Итерируемся по созданным группам с шагом 2, чтобы воссоздать блоки
-    for (let i = 0; i < groups.length; i += 2) {
-      const group1 = groups[i]
-      const group2 = groups[i + 1] // Может быть undefined, если групп нечетное количество
-
-      const blockLetters = [group1.letter]
-      if (group2) blockLetters.push(group2.letter)
-
-      // Находим все ID групп, входящих в этот блок
-      const targetGroupIds = stageGroups
-        .filter((sg: any) => sg.name === group1.letter || (group2 && sg.name === group2.letter))
-        .map((sg: any) => sg.id)
-
-      // Фильтруем бои, которые принадлежат этим группам
-      const blockFightsRaw = stageFights
-        .filter((f: any) => targetGroupIds.includes(f.group_id))
-        // Сортируем по fight_number, чтобы сохранить порядок чередования (A1, B1, A2, B2...)
+      const blockFights = stageFights
+        .filter((f: any) => targetIds.includes(f.group_id))
         .sort((a: any, b: any) => a.fight_number - b.fight_number)
-
-      const blockFights: any[] = []
-
-      for (const fight of blockFightsRaw) {
-        const f1 = competitorMap.get(fight.competitor1_id)?.fighter
-        const f2 = competitorMap.get(fight.competitor2_id)?.fighter
-
-        if (f1 && f2) {
-          blockFights.push({
-            number: fight.fight_number,
-            fighter1: f1,
-            fighter2: f2,
-            fighter1Score: fight.competitor1_score,
-            fighter2Score: fight.competitor2_score
-          })
-        }
-      }
+        .map((f: any) => ({
+          number: f.fight_number,
+          fighter1: competitorMap.get(f.competitor1_id)?.fighter,
+          fighter2: competitorMap.get(f.competitor2_id)?.fighter,
+          fighter1Score: f.competitor1_score,
+          fighter2Score: f.competitor2_score
+        }))
 
       if (blockFights.length > 0) {
-        fightsBlocks.push({
-          letters: blockLetters,
-          fights: blockFights
-        })
+        fightsBlocks.push({ letters: blockLetters, fights: blockFights })
       }
     }
 
     return { groups, fightsBlocks }
   } catch (error) {
-    console.error('Error loading groups and fights:', error)
+    console.error('Error loading tournament data:', error)
     return { groups: [], fightsBlocks: [] }
   }
 }
