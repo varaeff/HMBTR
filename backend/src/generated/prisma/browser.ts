@@ -18,6 +18,11 @@ export { Prisma }
 export * as $Enums from './enums'
 export * from './enums';
 /**
+ * Model countries
+ * 
+ */
+export type countries = Prisma.countriesModel
+/**
  * Model cities
  * 
  */
@@ -27,11 +32,6 @@ export type cities = Prisma.citiesModel
  * 
  */
 export type clubs = Prisma.clubsModel
-/**
- * Model countries
- * 
- */
-export type countries = Prisma.countriesModel
 /**
  * Model fighters
  * 
@@ -53,12 +53,27 @@ export type nominations = Prisma.nominationsModel
  */
 export type tournament_nominations = Prisma.tournament_nominationsModel
 /**
- * Model users
- * 
- */
-export type users = Prisma.usersModel
-/**
  * Model competitors
  * 
  */
 export type competitors = Prisma.competitorsModel
+/**
+ * Model groups
+ * 
+ */
+export type groups = Prisma.groupsModel
+/**
+ * Model group_competitors
+ * 
+ */
+export type group_competitors = Prisma.group_competitorsModel
+/**
+ * Model fights
+ * 
+ */
+export type fights = Prisma.fightsModel
+/**
+ * Model users
+ * 
+ */
+export type users = Prisma.usersModel

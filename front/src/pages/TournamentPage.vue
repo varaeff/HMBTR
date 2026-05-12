@@ -20,6 +20,7 @@ import { useCollapsiblePersist } from '@/composables/useCollapsiblePersist'
 import { tData } from '@/lib/utils'
 import { generateGroups } from '@/lib/generateGroups'
 import { stageGroupFights } from '@/lib/generateFights'
+import { saveTournamentData, loadGroupsAndFights } from '@/lib/saveTournamentData'
 import { dateToString } from '@/lib/dateUtils'
 import { hasAccess } from '@/lib/checkAccess'
 
@@ -46,6 +47,18 @@ const loadNominationData = async (nomId: number) => {
   competitionStore.setFightsBlocks([])
   competitionStore.setTournamentAndNomination(tournamentId.value, nomId)
   await competitionStore.setCompetitors()
+
+  // Load groups and fights from database if stage > 0
+  const targetNomination = tournament.value?.nominations.find((n) => n.nomination_id === nomId)
+  if (targetNomination && targetNomination.stage > 0) {
+    const { groups, fightsBlocks } = await loadGroupsAndFights(
+      tournamentId.value,
+      nomId,
+      targetNomination.stage
+    )
+    competitionStore.setGroups(groups)
+    competitionStore.setFightsBlocks(fightsBlocks)
+  }
 }
 
 const isCompetitorsListOpen = useCollapsiblePersist(
@@ -110,9 +123,32 @@ const createGroups = () => {
   isCompetitorsListOpen.value = false
 }
 
-const generateFights = () => {
+const generateFights = async () => {
   const groupsToGenerate = competitionStore.getGroups
-  competitionStore.setFightsBlocks(stageGroupFights(groupsToGenerate))
+  const fightsBlocks = stageGroupFights(groupsToGenerate)
+  competitionStore.setFightsBlocks(fightsBlocks)
+
+  // Get the current stage from tournament_nominations
+  const targetNomination = tournament.value?.nominations.find(
+    (n) => n.nomination_id === activeTab.value
+  )
+
+  if (targetNomination) {
+    try {
+      await saveTournamentData({
+        tournamentId: tournamentId.value,
+        nominationId: activeTab.value,
+        currentStage: targetNomination.stage,
+        groups: groupsToGenerate,
+        fightsBlocks: fightsBlocks
+      })
+
+      // Update the stage in the local tournament object
+      targetNomination.stage += 1
+    } catch (error) {
+      console.error('Failed to save tournament data:', error)
+    }
+  }
 }
 
 onMounted(async () => {
@@ -132,6 +168,7 @@ watch(activeTab, (newVal) => {
 watch(tournamentNominations, (noms) => {
   if (noms.all.length && !activeTab.value) {
     activeTab.value = noms.all[0].id
+    loadNominationData(noms.all[0].id)
   }
 })
 </script>
@@ -169,7 +206,7 @@ watch(tournamentNominations, (noms) => {
       </TabsTrigger>
     </TabsList>
 
-    <TabsContent :value="activeTab" class="mt-0">
+    <TabsContent :key="activeTab" :value="activeTab" class="mt-0">
       <CollapsibleSection
         v-if="nominationCompetitors.length"
         :title="$t('tournamentPageRegisteredFighters')"

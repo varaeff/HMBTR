@@ -3,7 +3,7 @@ import http from '@/api/http'
 import type { BlockData, Competitor } from '@/model'
 import { API_ROUTES } from '@shared/routes'
 import type { Group } from '@/model'
-import { useFightersListStore } from './fightersList'
+import { useFightersListStore } from '@/stores/fightersList'
 import { updateGroupsStatistics } from '@/lib/groupsStatistic'
 
 interface CompetitionState {
@@ -61,7 +61,7 @@ export const useCompetitionStore = defineStore({
     },
 
     setGroups(groups: Group[]) {
-      this.groups = groups
+      this.groups = [...groups]
     },
 
     setFightsBlocks(blocks: BlockData[]) {

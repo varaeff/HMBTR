@@ -8,13 +8,16 @@
  *
  * 🟢 You can import this file directly.
  */
+export type * from './models/countries'
 export type * from './models/cities'
 export type * from './models/clubs'
-export type * from './models/countries'
 export type * from './models/fighters'
 export type * from './models/tournaments'
 export type * from './models/nominations'
 export type * from './models/tournament_nominations'
-export type * from './models/users'
 export type * from './models/competitors'
+export type * from './models/groups'
+export type * from './models/group_competitors'
+export type * from './models/fights'
+export type * from './models/users'
 export type * from './commonInputTypes'

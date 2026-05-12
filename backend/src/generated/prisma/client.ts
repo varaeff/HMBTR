@@ -27,8 +27,8 @@ export * from "./enums"
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Cities
- * const cities = await prisma.cities.findMany()
+ * // Fetch zero or more Countries
+ * const countries = await prisma.countries.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -37,6 +37,11 @@ export const PrismaClient = $Class.getPrismaClientClass()
 export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts extends Prisma.PrismaClientOptions["omit"] = Prisma.PrismaClientOptions["omit"], ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = $Class.PrismaClient<LogOpts, OmitOpts, ExtArgs>
 export { Prisma }
 
+/**
+ * Model countries
+ * 
+ */
+export type countries = Prisma.countriesModel
 /**
  * Model cities
  * 
@@ -47,11 +52,6 @@ export type cities = Prisma.citiesModel
  * 
  */
 export type clubs = Prisma.clubsModel
-/**
- * Model countries
- * 
- */
-export type countries = Prisma.countriesModel
 /**
  * Model fighters
  * 
@@ -73,12 +73,27 @@ export type nominations = Prisma.nominationsModel
  */
 export type tournament_nominations = Prisma.tournament_nominationsModel
 /**
- * Model users
- * 
- */
-export type users = Prisma.usersModel
-/**
  * Model competitors
  * 
  */
 export type competitors = Prisma.competitorsModel
+/**
+ * Model groups
+ * 
+ */
+export type groups = Prisma.groupsModel
+/**
+ * Model group_competitors
+ * 
+ */
+export type group_competitors = Prisma.group_competitorsModel
+/**
+ * Model fights
+ * 
+ */
+export type fights = Prisma.fightsModel
+/**
+ * Model users
+ * 
+ */
+export type users = Prisma.usersModel

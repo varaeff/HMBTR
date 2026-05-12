@@ -114,6 +114,10 @@ export const useFightersListStore = defineStore({
       )
     },
 
+    getFighterById: (state) => (id: number) => {
+      return state.fighters.find((fighter) => fighter.id === id)
+    },
+
     getSearchString(state) {
       return state.searchString
     }

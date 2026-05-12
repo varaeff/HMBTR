@@ -51,15 +51,18 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  countries: 'countries',
   cities: 'cities',
   clubs: 'clubs',
-  countries: 'countries',
   fighters: 'fighters',
   tournaments: 'tournaments',
   nominations: 'nominations',
   tournament_nominations: 'tournament_nominations',
-  users: 'users',
-  competitors: 'competitors'
+  competitors: 'competitors',
+  groups: 'groups',
+  group_competitors: 'group_competitors',
+  fights: 'fights',
+  users: 'users'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -78,6 +81,14 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+export const CountriesScalarFieldEnum = {
+  id: 'id',
+  name: 'name'
+} as const
+
+export type CountriesScalarFieldEnum = (typeof CountriesScalarFieldEnum)[keyof typeof CountriesScalarFieldEnum]
+
+
 export const CitiesScalarFieldEnum = {
   id: 'id',
   country_id: 'country_id',
@@ -94,14 +105,6 @@ export const ClubsScalarFieldEnum = {
 } as const
 
 export type ClubsScalarFieldEnum = (typeof ClubsScalarFieldEnum)[keyof typeof ClubsScalarFieldEnum]
-
-
-export const CountriesScalarFieldEnum = {
-  id: 'id',
-  name: 'name'
-} as const
-
-export type CountriesScalarFieldEnum = (typeof CountriesScalarFieldEnum)[keyof typeof CountriesScalarFieldEnum]
 
 
 export const FightersScalarFieldEnum = {
@@ -143,10 +146,61 @@ export const Tournament_nominationsScalarFieldEnum = {
   id: 'id',
   tournament_id: 'tournament_id',
   nomination_id: 'nomination_id',
-  is_open: 'is_open'
+  is_open: 'is_open',
+  is_finished: 'is_finished',
+  stage: 'stage'
 } as const
 
 export type Tournament_nominationsScalarFieldEnum = (typeof Tournament_nominationsScalarFieldEnum)[keyof typeof Tournament_nominationsScalarFieldEnum]
+
+
+export const CompetitorsScalarFieldEnum = {
+  id: 'id',
+  fighter_id: 'fighter_id',
+  tournament_id: 'tournament_id',
+  nomination_id: 'nomination_id',
+  stage: 'stage'
+} as const
+
+export type CompetitorsScalarFieldEnum = (typeof CompetitorsScalarFieldEnum)[keyof typeof CompetitorsScalarFieldEnum]
+
+
+export const GroupsScalarFieldEnum = {
+  id: 'id',
+  tournament_id: 'tournament_id',
+  nomination_id: 'nomination_id',
+  name: 'name',
+  stage: 'stage'
+} as const
+
+export type GroupsScalarFieldEnum = (typeof GroupsScalarFieldEnum)[keyof typeof GroupsScalarFieldEnum]
+
+
+export const Group_competitorsScalarFieldEnum = {
+  id: 'id',
+  group_id: 'group_id',
+  competitor_id: 'competitor_id'
+} as const
+
+export type Group_competitorsScalarFieldEnum = (typeof Group_competitorsScalarFieldEnum)[keyof typeof Group_competitorsScalarFieldEnum]
+
+
+export const FightsScalarFieldEnum = {
+  id: 'id',
+  tournament_id: 'tournament_id',
+  nomination_id: 'nomination_id',
+  group_id: 'group_id',
+  competitor1_id: 'competitor1_id',
+  competitor2_id: 'competitor2_id',
+  competitor1_score: 'competitor1_score',
+  competitor2_score: 'competitor2_score',
+  winner_id: 'winner_id',
+  stage: 'stage',
+  fight_number: 'fight_number',
+  is_finished: 'is_finished'
+} as const
+
+export type FightsScalarFieldEnum = (typeof FightsScalarFieldEnum)[keyof typeof FightsScalarFieldEnum]
 
 
 export const UsersScalarFieldEnum = {
@@ -164,16 +218,6 @@ export const UsersScalarFieldEnum = {
 } as const
 
 export type UsersScalarFieldEnum = (typeof UsersScalarFieldEnum)[keyof typeof UsersScalarFieldEnum]
-
-
-export const CompetitorsScalarFieldEnum = {
-  id: 'id',
-  fighter_id: 'fighter_id',
-  tournament_id: 'tournament_id',
-  nomination_id: 'nomination_id'
-} as const
-
-export type CompetitorsScalarFieldEnum = (typeof CompetitorsScalarFieldEnum)[keyof typeof CompetitorsScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -5,12 +5,14 @@ import {
   Body,
   Param,
   ParseIntPipe,
+  Patch,
 } from '@nestjs/common';
 import { TournamentsService } from './tournaments.service';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { API_ROUTES } from '@shared/routes';
 import { AddNominationDto } from './dto/add-nomination.dto';
 import { UpdateNominationDto } from './dto/update-nomination.dto';
+import { UpdateNominationStageDto } from './dto/update-nomination-stage.dto';
 import { Public } from '../auth/decorators/public.decorator';
 
 @Controller(API_ROUTES.TOURNAMENTS.ROOT)
@@ -54,5 +56,14 @@ export class TournamentsController {
   @Post(API_ROUTES.TOURNAMENTS.NOMINATION + '/update')
   updateNomination(@Body() updateNominationDto: UpdateNominationDto) {
     return this.tournamentsService.updateNomination(updateNominationDto);
+  }
+
+  @Patch(API_ROUTES.TOURNAMENTS.NOMINATION + '/stage')
+  updateNominationStage(
+    @Body() updateNominationStageDto: UpdateNominationStageDto,
+  ) {
+    return this.tournamentsService.updateNominationStage(
+      updateNominationStageDto,
+    );
   }
 }

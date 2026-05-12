@@ -8,26 +8,38 @@ datasource db {
   provider = "postgresql"
 }
 
+// --- ГЕОГРАФИЯ И КЛУБЫ ---
+
+model countries {
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar(255)
+
+  cities      cities[]
+  fighters    fighters[]
+  tournaments tournaments[]
+}
+
 model cities {
-  id         Int       @id @default(autoincrement())
+  id         Int    @id @default(autoincrement())
   country_id Int
-  name       String    @db.VarChar(255)
-  countries  countries @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  clubs      clubs[]
+  name       String @db.VarChar(255)
+
+  country     countries     @relation(fields: [country_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  clubs       clubs[]
+  fighters    fighters[]
+  tournaments tournaments[]
 }
 
 model clubs {
   id      Int    @id @default(autoincrement())
   city_id Int
   name    String @db.VarChar(255)
-  cities  cities @relation(fields: [city_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  city     cities     @relation(fields: [city_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  fighters fighters[]
 }
 
-model countries {
-  id     Int      @id @default(autoincrement())
-  name   String   @db.VarChar(255)
-  cities cities[]
-}
+// --- БОЙЦЫ И ТУРНИРЫ ---
 
 model fighters {
   id         Int       @id @default(autoincrement())
@@ -35,10 +47,15 @@ model fighters {
   surname    String    @db.VarChar(255)
   patronymic String?   @db.VarChar(255)
   birthday   DateTime? @db.Date
-  country_id Int
+  country_id Int        
   city_id    Int
-  club_id    Int?
+  club_id    Int?      
   pic        String?
+
+  country     countries     @relation(fields: [country_id], references: [id])
+  city        cities        @relation(fields: [city_id], references: [id])
+  club        clubs?        @relation(fields: [club_id], references: [id])
+  competitors competitors[]
 }
 
 model tournaments {
@@ -47,21 +64,105 @@ model tournaments {
   event_date DateTime? @db.Date
   country_id Int
   city_id    Int
+
+  country     countries                @relation(fields: [country_id], references: [id])
+  city        cities                   @relation(fields: [city_id], references: [id])
+  nominations tournament_nominations[]
+  competitors competitors[]
+  groups      groups[]
+  fights      fights[]
 }
 
 model nominations {
-  id              Int       @id @default(autoincrement())
-  name_ru         String    @db.VarChar(255)
-  name_en         String    @db.VarChar(255)
+  id      Int    @id @default(autoincrement())
+  name_ru String @db.VarChar(255)
+  name_en String @db.VarChar(255)
+
+  tournaments tournament_nominations[]
+  competitors competitors[]
+  groups      groups[]
+  fights      fights[]
 }
+
+// --- СОРЕВНОВАТЕЛЬНАЯ ЛОГИКА ---
 
 model tournament_nominations {
-  id            Int       @id @default(autoincrement())
+  id            Int     @id @default(autoincrement())
   tournament_id Int
   nomination_id Int
-  is_open        Boolean   @default(true)
+  is_open       Boolean @default(true)
+  is_finished   Boolean @default(false)
+  stage         Int     @default(0)
+
+  tournament tournaments @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
+  nomination nominations @relation(fields: [nomination_id], references: [id], onDelete: Cascade)
 }
 
+model competitors {
+  id            Int @id @default(autoincrement())
+  fighter_id    Int
+  tournament_id Int
+  nomination_id Int
+  stage         Int @default(0)
+
+  fighter    fighters            @relation(fields: [fighter_id], references: [id], onDelete: Cascade)
+  tournament tournaments         @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
+  nomination nominations         @relation(fields: [nomination_id], references: [id], onDelete: Cascade)
+  groups     group_competitors[]
+
+  // Связи для таблицы боев (кто участвовал)
+  fights_as_f1 fights[] @relation("Fighter1")
+  fights_as_f2 fights[] @relation("Fighter2")
+  fights_won   fights[] @relation("Winner")
+}
+
+model groups {
+  id            Int    @id @default(autoincrement())
+  tournament_id Int
+  nomination_id Int
+  name          String @db.VarChar(255)
+  stage         Int    @default(0)
+
+  tournament tournaments         @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
+  nomination nominations         @relation(fields: [nomination_id], references: [id], onDelete: Cascade)
+  fighters   group_competitors[]
+  fights     fights[]
+}
+
+model group_competitors {
+  id            Int @id @default(autoincrement())
+  group_id      Int
+  competitor_id Int
+
+  group      groups      @relation(fields: [group_id], references: [id], onDelete: Cascade)
+  competitor competitors @relation(fields: [competitor_id], references: [id], onDelete: Cascade)
+}
+
+model fights {
+  id                Int     @id @default(autoincrement())
+  tournament_id     Int
+  nomination_id     Int
+  group_id          Int?
+  competitor1_id    Int
+  competitor2_id    Int
+  competitor1_score Int     @default(0)
+  competitor2_score Int     @default(0)
+  winner_id         Int?
+  stage             Int     @default(0)
+  fight_number      Int     @default(0)
+  is_finished       Boolean @default(false)
+
+  tournament tournaments @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
+  nomination nominations @relation(fields: [nomination_id], references: [id], onDelete: Cascade)
+  group      groups?     @relation(fields: [group_id], references: [id])
+
+  // Именованные связи для различения двух бойцов
+  competitor1 competitors  @relation("Fighter1", fields: [competitor1_id], references: [id])
+  competitor2 competitors  @relation("Fighter2", fields: [competitor2_id], references: [id])
+  winner      competitors? @relation("Winner", fields: [winner_id], references: [id])
+}
+
+// --- ПОЛЬЗОВАТЕЛИ ---
 
 model users {
   id           Int      @id @default(autoincrement())
@@ -75,11 +176,4 @@ model users {
   is_organizer Boolean  @default(false)
   refreshToken String?  @db.Text
   createdAt    DateTime @default(now())
-}
-
-model competitors {
-  id         Int       @id @default(autoincrement())
-  fighter_id  Int
-  tournament_id Int
-  nomination_id Int
 }

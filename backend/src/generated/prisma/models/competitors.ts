@@ -31,6 +31,7 @@ export type CompetitorsAvgAggregateOutputType = {
   fighter_id: number | null
   tournament_id: number | null
   nomination_id: number | null
+  stage: number | null
 }
 
 export type CompetitorsSumAggregateOutputType = {
@@ -38,6 +39,7 @@ export type CompetitorsSumAggregateOutputType = {
   fighter_id: number | null
   tournament_id: number | null
   nomination_id: number | null
+  stage: number | null
 }
 
 export type CompetitorsMinAggregateOutputType = {
@@ -45,6 +47,7 @@ export type CompetitorsMinAggregateOutputType = {
   fighter_id: number | null
   tournament_id: number | null
   nomination_id: number | null
+  stage: number | null
 }
 
 export type CompetitorsMaxAggregateOutputType = {
@@ -52,6 +55,7 @@ export type CompetitorsMaxAggregateOutputType = {
   fighter_id: number | null
   tournament_id: number | null
   nomination_id: number | null
+  stage: number | null
 }
 
 export type CompetitorsCountAggregateOutputType = {
@@ -59,6 +63,7 @@ export type CompetitorsCountAggregateOutputType = {
   fighter_id: number
   tournament_id: number
   nomination_id: number
+  stage: number
   _all: number
 }
 
@@ -68,6 +73,7 @@ export type CompetitorsAvgAggregateInputType = {
   fighter_id?: true
   tournament_id?: true
   nomination_id?: true
+  stage?: true
 }
 
 export type CompetitorsSumAggregateInputType = {
@@ -75,6 +81,7 @@ export type CompetitorsSumAggregateInputType = {
   fighter_id?: true
   tournament_id?: true
   nomination_id?: true
+  stage?: true
 }
 
 export type CompetitorsMinAggregateInputType = {
@@ -82,6 +89,7 @@ export type CompetitorsMinAggregateInputType = {
   fighter_id?: true
   tournament_id?: true
   nomination_id?: true
+  stage?: true
 }
 
 export type CompetitorsMaxAggregateInputType = {
@@ -89,6 +97,7 @@ export type CompetitorsMaxAggregateInputType = {
   fighter_id?: true
   tournament_id?: true
   nomination_id?: true
+  stage?: true
 }
 
 export type CompetitorsCountAggregateInputType = {
@@ -96,6 +105,7 @@ export type CompetitorsCountAggregateInputType = {
   fighter_id?: true
   tournament_id?: true
   nomination_id?: true
+  stage?: true
   _all?: true
 }
 
@@ -190,6 +200,7 @@ export type CompetitorsGroupByOutputType = {
   fighter_id: number
   tournament_id: number
   nomination_id: number
+  stage: number
   _count: CompetitorsCountAggregateOutputType | null
   _avg: CompetitorsAvgAggregateOutputType | null
   _sum: CompetitorsSumAggregateOutputType | null
@@ -220,6 +231,14 @@ export type competitorsWhereInput = {
   fighter_id?: Prisma.IntFilter<"competitors"> | number
   tournament_id?: Prisma.IntFilter<"competitors"> | number
   nomination_id?: Prisma.IntFilter<"competitors"> | number
+  stage?: Prisma.IntFilter<"competitors"> | number
+  fighter?: Prisma.XOR<Prisma.FightersScalarRelationFilter, Prisma.fightersWhereInput>
+  tournament?: Prisma.XOR<Prisma.TournamentsScalarRelationFilter, Prisma.tournamentsWhereInput>
+  nomination?: Prisma.XOR<Prisma.NominationsScalarRelationFilter, Prisma.nominationsWhereInput>
+  groups?: Prisma.Group_competitorsListRelationFilter
+  fights_as_f1?: Prisma.FightsListRelationFilter
+  fights_as_f2?: Prisma.FightsListRelationFilter
+  fights_won?: Prisma.FightsListRelationFilter
 }
 
 export type competitorsOrderByWithRelationInput = {
@@ -227,6 +246,14 @@ export type competitorsOrderByWithRelationInput = {
   fighter_id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   nomination_id?: Prisma.SortOrder
+  stage?: Prisma.SortOrder
+  fighter?: Prisma.fightersOrderByWithRelationInput
+  tournament?: Prisma.tournamentsOrderByWithRelationInput
+  nomination?: Prisma.nominationsOrderByWithRelationInput
+  groups?: Prisma.group_competitorsOrderByRelationAggregateInput
+  fights_as_f1?: Prisma.fightsOrderByRelationAggregateInput
+  fights_as_f2?: Prisma.fightsOrderByRelationAggregateInput
+  fights_won?: Prisma.fightsOrderByRelationAggregateInput
 }
 
 export type competitorsWhereUniqueInput = Prisma.AtLeast<{
@@ -237,6 +264,14 @@ export type competitorsWhereUniqueInput = Prisma.AtLeast<{
   fighter_id?: Prisma.IntFilter<"competitors"> | number
   tournament_id?: Prisma.IntFilter<"competitors"> | number
   nomination_id?: Prisma.IntFilter<"competitors"> | number
+  stage?: Prisma.IntFilter<"competitors"> | number
+  fighter?: Prisma.XOR<Prisma.FightersScalarRelationFilter, Prisma.fightersWhereInput>
+  tournament?: Prisma.XOR<Prisma.TournamentsScalarRelationFilter, Prisma.tournamentsWhereInput>
+  nomination?: Prisma.XOR<Prisma.NominationsScalarRelationFilter, Prisma.nominationsWhereInput>
+  groups?: Prisma.Group_competitorsListRelationFilter
+  fights_as_f1?: Prisma.FightsListRelationFilter
+  fights_as_f2?: Prisma.FightsListRelationFilter
+  fights_won?: Prisma.FightsListRelationFilter
 }, "id">
 
 export type competitorsOrderByWithAggregationInput = {
@@ -244,6 +279,7 @@ export type competitorsOrderByWithAggregationInput = {
   fighter_id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   nomination_id?: Prisma.SortOrder
+  stage?: Prisma.SortOrder
   _count?: Prisma.competitorsCountOrderByAggregateInput
   _avg?: Prisma.competitorsAvgOrderByAggregateInput
   _max?: Prisma.competitorsMaxOrderByAggregateInput
@@ -259,12 +295,18 @@ export type competitorsScalarWhereWithAggregatesInput = {
   fighter_id?: Prisma.IntWithAggregatesFilter<"competitors"> | number
   tournament_id?: Prisma.IntWithAggregatesFilter<"competitors"> | number
   nomination_id?: Prisma.IntWithAggregatesFilter<"competitors"> | number
+  stage?: Prisma.IntWithAggregatesFilter<"competitors"> | number
 }
 
 export type competitorsCreateInput = {
-  fighter_id: number
-  tournament_id: number
-  nomination_id: number
+  stage?: number
+  fighter: Prisma.fightersCreateNestedOneWithoutCompetitorsInput
+  tournament: Prisma.tournamentsCreateNestedOneWithoutCompetitorsInput
+  nomination: Prisma.nominationsCreateNestedOneWithoutCompetitorsInput
+  groups?: Prisma.group_competitorsCreateNestedManyWithoutCompetitorInput
+  fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
+  fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
+  fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
 }
 
 export type competitorsUncheckedCreateInput = {
@@ -272,12 +314,22 @@ export type competitorsUncheckedCreateInput = {
   fighter_id: number
   tournament_id: number
   nomination_id: number
+  stage?: number
+  groups?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutCompetitorInput
+  fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
+  fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
+  fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
 }
 
 export type competitorsUpdateInput = {
-  fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
-  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
-  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter?: Prisma.fightersUpdateOneRequiredWithoutCompetitorsNestedInput
+  tournament?: Prisma.tournamentsUpdateOneRequiredWithoutCompetitorsNestedInput
+  nomination?: Prisma.nominationsUpdateOneRequiredWithoutCompetitorsNestedInput
+  groups?: Prisma.group_competitorsUpdateManyWithoutCompetitorNestedInput
+  fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
+  fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
+  fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
 }
 
 export type competitorsUncheckedUpdateInput = {
@@ -285,6 +337,11 @@ export type competitorsUncheckedUpdateInput = {
   fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
   tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
   nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  groups?: Prisma.group_competitorsUncheckedUpdateManyWithoutCompetitorNestedInput
+  fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
+  fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
+  fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
 }
 
 export type competitorsCreateManyInput = {
@@ -292,12 +349,11 @@ export type competitorsCreateManyInput = {
   fighter_id: number
   tournament_id: number
   nomination_id: number
+  stage?: number
 }
 
 export type competitorsUpdateManyMutationInput = {
-  fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
-  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
-  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type competitorsUncheckedUpdateManyInput = {
@@ -305,6 +361,17 @@ export type competitorsUncheckedUpdateManyInput = {
   fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
   tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
   nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type CompetitorsListRelationFilter = {
+  every?: Prisma.competitorsWhereInput
+  some?: Prisma.competitorsWhereInput
+  none?: Prisma.competitorsWhereInput
+}
+
+export type competitorsOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type competitorsCountOrderByAggregateInput = {
@@ -312,6 +379,7 @@ export type competitorsCountOrderByAggregateInput = {
   fighter_id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   nomination_id?: Prisma.SortOrder
+  stage?: Prisma.SortOrder
 }
 
 export type competitorsAvgOrderByAggregateInput = {
@@ -319,6 +387,7 @@ export type competitorsAvgOrderByAggregateInput = {
   fighter_id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   nomination_id?: Prisma.SortOrder
+  stage?: Prisma.SortOrder
 }
 
 export type competitorsMaxOrderByAggregateInput = {
@@ -326,6 +395,7 @@ export type competitorsMaxOrderByAggregateInput = {
   fighter_id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   nomination_id?: Prisma.SortOrder
+  stage?: Prisma.SortOrder
 }
 
 export type competitorsMinOrderByAggregateInput = {
@@ -333,6 +403,7 @@ export type competitorsMinOrderByAggregateInput = {
   fighter_id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   nomination_id?: Prisma.SortOrder
+  stage?: Prisma.SortOrder
 }
 
 export type competitorsSumOrderByAggregateInput = {
@@ -340,8 +411,748 @@ export type competitorsSumOrderByAggregateInput = {
   fighter_id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   nomination_id?: Prisma.SortOrder
+  stage?: Prisma.SortOrder
 }
 
+export type CompetitorsScalarRelationFilter = {
+  is?: Prisma.competitorsWhereInput
+  isNot?: Prisma.competitorsWhereInput
+}
+
+export type CompetitorsNullableScalarRelationFilter = {
+  is?: Prisma.competitorsWhereInput | null
+  isNot?: Prisma.competitorsWhereInput | null
+}
+
+export type competitorsCreateNestedManyWithoutFighterInput = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutFighterInput, Prisma.competitorsUncheckedCreateWithoutFighterInput> | Prisma.competitorsCreateWithoutFighterInput[] | Prisma.competitorsUncheckedCreateWithoutFighterInput[]
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutFighterInput | Prisma.competitorsCreateOrConnectWithoutFighterInput[]
+  createMany?: Prisma.competitorsCreateManyFighterInputEnvelope
+  connect?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+}
+
+export type competitorsUncheckedCreateNestedManyWithoutFighterInput = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutFighterInput, Prisma.competitorsUncheckedCreateWithoutFighterInput> | Prisma.competitorsCreateWithoutFighterInput[] | Prisma.competitorsUncheckedCreateWithoutFighterInput[]
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutFighterInput | Prisma.competitorsCreateOrConnectWithoutFighterInput[]
+  createMany?: Prisma.competitorsCreateManyFighterInputEnvelope
+  connect?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+}
+
+export type competitorsUpdateManyWithoutFighterNestedInput = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutFighterInput, Prisma.competitorsUncheckedCreateWithoutFighterInput> | Prisma.competitorsCreateWithoutFighterInput[] | Prisma.competitorsUncheckedCreateWithoutFighterInput[]
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutFighterInput | Prisma.competitorsCreateOrConnectWithoutFighterInput[]
+  upsert?: Prisma.competitorsUpsertWithWhereUniqueWithoutFighterInput | Prisma.competitorsUpsertWithWhereUniqueWithoutFighterInput[]
+  createMany?: Prisma.competitorsCreateManyFighterInputEnvelope
+  set?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  disconnect?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  delete?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  connect?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  update?: Prisma.competitorsUpdateWithWhereUniqueWithoutFighterInput | Prisma.competitorsUpdateWithWhereUniqueWithoutFighterInput[]
+  updateMany?: Prisma.competitorsUpdateManyWithWhereWithoutFighterInput | Prisma.competitorsUpdateManyWithWhereWithoutFighterInput[]
+  deleteMany?: Prisma.competitorsScalarWhereInput | Prisma.competitorsScalarWhereInput[]
+}
+
+export type competitorsUncheckedUpdateManyWithoutFighterNestedInput = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutFighterInput, Prisma.competitorsUncheckedCreateWithoutFighterInput> | Prisma.competitorsCreateWithoutFighterInput[] | Prisma.competitorsUncheckedCreateWithoutFighterInput[]
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutFighterInput | Prisma.competitorsCreateOrConnectWithoutFighterInput[]
+  upsert?: Prisma.competitorsUpsertWithWhereUniqueWithoutFighterInput | Prisma.competitorsUpsertWithWhereUniqueWithoutFighterInput[]
+  createMany?: Prisma.competitorsCreateManyFighterInputEnvelope
+  set?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  disconnect?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  delete?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  connect?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  update?: Prisma.competitorsUpdateWithWhereUniqueWithoutFighterInput | Prisma.competitorsUpdateWithWhereUniqueWithoutFighterInput[]
+  updateMany?: Prisma.competitorsUpdateManyWithWhereWithoutFighterInput | Prisma.competitorsUpdateManyWithWhereWithoutFighterInput[]
+  deleteMany?: Prisma.competitorsScalarWhereInput | Prisma.competitorsScalarWhereInput[]
+}
+
+export type competitorsCreateNestedManyWithoutTournamentInput = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutTournamentInput, Prisma.competitorsUncheckedCreateWithoutTournamentInput> | Prisma.competitorsCreateWithoutTournamentInput[] | Prisma.competitorsUncheckedCreateWithoutTournamentInput[]
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutTournamentInput | Prisma.competitorsCreateOrConnectWithoutTournamentInput[]
+  createMany?: Prisma.competitorsCreateManyTournamentInputEnvelope
+  connect?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+}
+
+export type competitorsUncheckedCreateNestedManyWithoutTournamentInput = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutTournamentInput, Prisma.competitorsUncheckedCreateWithoutTournamentInput> | Prisma.competitorsCreateWithoutTournamentInput[] | Prisma.competitorsUncheckedCreateWithoutTournamentInput[]
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutTournamentInput | Prisma.competitorsCreateOrConnectWithoutTournamentInput[]
+  createMany?: Prisma.competitorsCreateManyTournamentInputEnvelope
+  connect?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+}
+
+export type competitorsUpdateManyWithoutTournamentNestedInput = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutTournamentInput, Prisma.competitorsUncheckedCreateWithoutTournamentInput> | Prisma.competitorsCreateWithoutTournamentInput[] | Prisma.competitorsUncheckedCreateWithoutTournamentInput[]
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutTournamentInput | Prisma.competitorsCreateOrConnectWithoutTournamentInput[]
+  upsert?: Prisma.competitorsUpsertWithWhereUniqueWithoutTournamentInput | Prisma.competitorsUpsertWithWhereUniqueWithoutTournamentInput[]
+  createMany?: Prisma.competitorsCreateManyTournamentInputEnvelope
+  set?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  disconnect?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  delete?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  connect?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  update?: Prisma.competitorsUpdateWithWhereUniqueWithoutTournamentInput | Prisma.competitorsUpdateWithWhereUniqueWithoutTournamentInput[]
+  updateMany?: Prisma.competitorsUpdateManyWithWhereWithoutTournamentInput | Prisma.competitorsUpdateManyWithWhereWithoutTournamentInput[]
+  deleteMany?: Prisma.competitorsScalarWhereInput | Prisma.competitorsScalarWhereInput[]
+}
+
+export type competitorsUncheckedUpdateManyWithoutTournamentNestedInput = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutTournamentInput, Prisma.competitorsUncheckedCreateWithoutTournamentInput> | Prisma.competitorsCreateWithoutTournamentInput[] | Prisma.competitorsUncheckedCreateWithoutTournamentInput[]
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutTournamentInput | Prisma.competitorsCreateOrConnectWithoutTournamentInput[]
+  upsert?: Prisma.competitorsUpsertWithWhereUniqueWithoutTournamentInput | Prisma.competitorsUpsertWithWhereUniqueWithoutTournamentInput[]
+  createMany?: Prisma.competitorsCreateManyTournamentInputEnvelope
+  set?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  disconnect?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  delete?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  connect?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  update?: Prisma.competitorsUpdateWithWhereUniqueWithoutTournamentInput | Prisma.competitorsUpdateWithWhereUniqueWithoutTournamentInput[]
+  updateMany?: Prisma.competitorsUpdateManyWithWhereWithoutTournamentInput | Prisma.competitorsUpdateManyWithWhereWithoutTournamentInput[]
+  deleteMany?: Prisma.competitorsScalarWhereInput | Prisma.competitorsScalarWhereInput[]
+}
+
+export type competitorsCreateNestedManyWithoutNominationInput = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutNominationInput, Prisma.competitorsUncheckedCreateWithoutNominationInput> | Prisma.competitorsCreateWithoutNominationInput[] | Prisma.competitorsUncheckedCreateWithoutNominationInput[]
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutNominationInput | Prisma.competitorsCreateOrConnectWithoutNominationInput[]
+  createMany?: Prisma.competitorsCreateManyNominationInputEnvelope
+  connect?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+}
+
+export type competitorsUncheckedCreateNestedManyWithoutNominationInput = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutNominationInput, Prisma.competitorsUncheckedCreateWithoutNominationInput> | Prisma.competitorsCreateWithoutNominationInput[] | Prisma.competitorsUncheckedCreateWithoutNominationInput[]
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutNominationInput | Prisma.competitorsCreateOrConnectWithoutNominationInput[]
+  createMany?: Prisma.competitorsCreateManyNominationInputEnvelope
+  connect?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+}
+
+export type competitorsUpdateManyWithoutNominationNestedInput = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutNominationInput, Prisma.competitorsUncheckedCreateWithoutNominationInput> | Prisma.competitorsCreateWithoutNominationInput[] | Prisma.competitorsUncheckedCreateWithoutNominationInput[]
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutNominationInput | Prisma.competitorsCreateOrConnectWithoutNominationInput[]
+  upsert?: Prisma.competitorsUpsertWithWhereUniqueWithoutNominationInput | Prisma.competitorsUpsertWithWhereUniqueWithoutNominationInput[]
+  createMany?: Prisma.competitorsCreateManyNominationInputEnvelope
+  set?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  disconnect?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  delete?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  connect?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  update?: Prisma.competitorsUpdateWithWhereUniqueWithoutNominationInput | Prisma.competitorsUpdateWithWhereUniqueWithoutNominationInput[]
+  updateMany?: Prisma.competitorsUpdateManyWithWhereWithoutNominationInput | Prisma.competitorsUpdateManyWithWhereWithoutNominationInput[]
+  deleteMany?: Prisma.competitorsScalarWhereInput | Prisma.competitorsScalarWhereInput[]
+}
+
+export type competitorsUncheckedUpdateManyWithoutNominationNestedInput = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutNominationInput, Prisma.competitorsUncheckedCreateWithoutNominationInput> | Prisma.competitorsCreateWithoutNominationInput[] | Prisma.competitorsUncheckedCreateWithoutNominationInput[]
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutNominationInput | Prisma.competitorsCreateOrConnectWithoutNominationInput[]
+  upsert?: Prisma.competitorsUpsertWithWhereUniqueWithoutNominationInput | Prisma.competitorsUpsertWithWhereUniqueWithoutNominationInput[]
+  createMany?: Prisma.competitorsCreateManyNominationInputEnvelope
+  set?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  disconnect?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  delete?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  connect?: Prisma.competitorsWhereUniqueInput | Prisma.competitorsWhereUniqueInput[]
+  update?: Prisma.competitorsUpdateWithWhereUniqueWithoutNominationInput | Prisma.competitorsUpdateWithWhereUniqueWithoutNominationInput[]
+  updateMany?: Prisma.competitorsUpdateManyWithWhereWithoutNominationInput | Prisma.competitorsUpdateManyWithWhereWithoutNominationInput[]
+  deleteMany?: Prisma.competitorsScalarWhereInput | Prisma.competitorsScalarWhereInput[]
+}
+
+export type competitorsCreateNestedOneWithoutGroupsInput = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutGroupsInput, Prisma.competitorsUncheckedCreateWithoutGroupsInput>
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutGroupsInput
+  connect?: Prisma.competitorsWhereUniqueInput
+}
+
+export type competitorsUpdateOneRequiredWithoutGroupsNestedInput = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutGroupsInput, Prisma.competitorsUncheckedCreateWithoutGroupsInput>
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutGroupsInput
+  upsert?: Prisma.competitorsUpsertWithoutGroupsInput
+  connect?: Prisma.competitorsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.competitorsUpdateToOneWithWhereWithoutGroupsInput, Prisma.competitorsUpdateWithoutGroupsInput>, Prisma.competitorsUncheckedUpdateWithoutGroupsInput>
+}
+
+export type competitorsCreateNestedOneWithoutFights_as_f1Input = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutFights_as_f1Input, Prisma.competitorsUncheckedCreateWithoutFights_as_f1Input>
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutFights_as_f1Input
+  connect?: Prisma.competitorsWhereUniqueInput
+}
+
+export type competitorsCreateNestedOneWithoutFights_as_f2Input = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutFights_as_f2Input, Prisma.competitorsUncheckedCreateWithoutFights_as_f2Input>
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutFights_as_f2Input
+  connect?: Prisma.competitorsWhereUniqueInput
+}
+
+export type competitorsCreateNestedOneWithoutFights_wonInput = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutFights_wonInput, Prisma.competitorsUncheckedCreateWithoutFights_wonInput>
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutFights_wonInput
+  connect?: Prisma.competitorsWhereUniqueInput
+}
+
+export type competitorsUpdateOneRequiredWithoutFights_as_f1NestedInput = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutFights_as_f1Input, Prisma.competitorsUncheckedCreateWithoutFights_as_f1Input>
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutFights_as_f1Input
+  upsert?: Prisma.competitorsUpsertWithoutFights_as_f1Input
+  connect?: Prisma.competitorsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.competitorsUpdateToOneWithWhereWithoutFights_as_f1Input, Prisma.competitorsUpdateWithoutFights_as_f1Input>, Prisma.competitorsUncheckedUpdateWithoutFights_as_f1Input>
+}
+
+export type competitorsUpdateOneRequiredWithoutFights_as_f2NestedInput = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutFights_as_f2Input, Prisma.competitorsUncheckedCreateWithoutFights_as_f2Input>
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutFights_as_f2Input
+  upsert?: Prisma.competitorsUpsertWithoutFights_as_f2Input
+  connect?: Prisma.competitorsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.competitorsUpdateToOneWithWhereWithoutFights_as_f2Input, Prisma.competitorsUpdateWithoutFights_as_f2Input>, Prisma.competitorsUncheckedUpdateWithoutFights_as_f2Input>
+}
+
+export type competitorsUpdateOneWithoutFights_wonNestedInput = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutFights_wonInput, Prisma.competitorsUncheckedCreateWithoutFights_wonInput>
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutFights_wonInput
+  upsert?: Prisma.competitorsUpsertWithoutFights_wonInput
+  disconnect?: Prisma.competitorsWhereInput | boolean
+  delete?: Prisma.competitorsWhereInput | boolean
+  connect?: Prisma.competitorsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.competitorsUpdateToOneWithWhereWithoutFights_wonInput, Prisma.competitorsUpdateWithoutFights_wonInput>, Prisma.competitorsUncheckedUpdateWithoutFights_wonInput>
+}
+
+export type competitorsCreateWithoutFighterInput = {
+  stage?: number
+  tournament: Prisma.tournamentsCreateNestedOneWithoutCompetitorsInput
+  nomination: Prisma.nominationsCreateNestedOneWithoutCompetitorsInput
+  groups?: Prisma.group_competitorsCreateNestedManyWithoutCompetitorInput
+  fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
+  fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
+  fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
+}
+
+export type competitorsUncheckedCreateWithoutFighterInput = {
+  id?: number
+  tournament_id: number
+  nomination_id: number
+  stage?: number
+  groups?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutCompetitorInput
+  fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
+  fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
+  fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
+}
+
+export type competitorsCreateOrConnectWithoutFighterInput = {
+  where: Prisma.competitorsWhereUniqueInput
+  create: Prisma.XOR<Prisma.competitorsCreateWithoutFighterInput, Prisma.competitorsUncheckedCreateWithoutFighterInput>
+}
+
+export type competitorsCreateManyFighterInputEnvelope = {
+  data: Prisma.competitorsCreateManyFighterInput | Prisma.competitorsCreateManyFighterInput[]
+  skipDuplicates?: boolean
+}
+
+export type competitorsUpsertWithWhereUniqueWithoutFighterInput = {
+  where: Prisma.competitorsWhereUniqueInput
+  update: Prisma.XOR<Prisma.competitorsUpdateWithoutFighterInput, Prisma.competitorsUncheckedUpdateWithoutFighterInput>
+  create: Prisma.XOR<Prisma.competitorsCreateWithoutFighterInput, Prisma.competitorsUncheckedCreateWithoutFighterInput>
+}
+
+export type competitorsUpdateWithWhereUniqueWithoutFighterInput = {
+  where: Prisma.competitorsWhereUniqueInput
+  data: Prisma.XOR<Prisma.competitorsUpdateWithoutFighterInput, Prisma.competitorsUncheckedUpdateWithoutFighterInput>
+}
+
+export type competitorsUpdateManyWithWhereWithoutFighterInput = {
+  where: Prisma.competitorsScalarWhereInput
+  data: Prisma.XOR<Prisma.competitorsUpdateManyMutationInput, Prisma.competitorsUncheckedUpdateManyWithoutFighterInput>
+}
+
+export type competitorsScalarWhereInput = {
+  AND?: Prisma.competitorsScalarWhereInput | Prisma.competitorsScalarWhereInput[]
+  OR?: Prisma.competitorsScalarWhereInput[]
+  NOT?: Prisma.competitorsScalarWhereInput | Prisma.competitorsScalarWhereInput[]
+  id?: Prisma.IntFilter<"competitors"> | number
+  fighter_id?: Prisma.IntFilter<"competitors"> | number
+  tournament_id?: Prisma.IntFilter<"competitors"> | number
+  nomination_id?: Prisma.IntFilter<"competitors"> | number
+  stage?: Prisma.IntFilter<"competitors"> | number
+}
+
+export type competitorsCreateWithoutTournamentInput = {
+  stage?: number
+  fighter: Prisma.fightersCreateNestedOneWithoutCompetitorsInput
+  nomination: Prisma.nominationsCreateNestedOneWithoutCompetitorsInput
+  groups?: Prisma.group_competitorsCreateNestedManyWithoutCompetitorInput
+  fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
+  fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
+  fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
+}
+
+export type competitorsUncheckedCreateWithoutTournamentInput = {
+  id?: number
+  fighter_id: number
+  nomination_id: number
+  stage?: number
+  groups?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutCompetitorInput
+  fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
+  fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
+  fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
+}
+
+export type competitorsCreateOrConnectWithoutTournamentInput = {
+  where: Prisma.competitorsWhereUniqueInput
+  create: Prisma.XOR<Prisma.competitorsCreateWithoutTournamentInput, Prisma.competitorsUncheckedCreateWithoutTournamentInput>
+}
+
+export type competitorsCreateManyTournamentInputEnvelope = {
+  data: Prisma.competitorsCreateManyTournamentInput | Prisma.competitorsCreateManyTournamentInput[]
+  skipDuplicates?: boolean
+}
+
+export type competitorsUpsertWithWhereUniqueWithoutTournamentInput = {
+  where: Prisma.competitorsWhereUniqueInput
+  update: Prisma.XOR<Prisma.competitorsUpdateWithoutTournamentInput, Prisma.competitorsUncheckedUpdateWithoutTournamentInput>
+  create: Prisma.XOR<Prisma.competitorsCreateWithoutTournamentInput, Prisma.competitorsUncheckedCreateWithoutTournamentInput>
+}
+
+export type competitorsUpdateWithWhereUniqueWithoutTournamentInput = {
+  where: Prisma.competitorsWhereUniqueInput
+  data: Prisma.XOR<Prisma.competitorsUpdateWithoutTournamentInput, Prisma.competitorsUncheckedUpdateWithoutTournamentInput>
+}
+
+export type competitorsUpdateManyWithWhereWithoutTournamentInput = {
+  where: Prisma.competitorsScalarWhereInput
+  data: Prisma.XOR<Prisma.competitorsUpdateManyMutationInput, Prisma.competitorsUncheckedUpdateManyWithoutTournamentInput>
+}
+
+export type competitorsCreateWithoutNominationInput = {
+  stage?: number
+  fighter: Prisma.fightersCreateNestedOneWithoutCompetitorsInput
+  tournament: Prisma.tournamentsCreateNestedOneWithoutCompetitorsInput
+  groups?: Prisma.group_competitorsCreateNestedManyWithoutCompetitorInput
+  fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
+  fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
+  fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
+}
+
+export type competitorsUncheckedCreateWithoutNominationInput = {
+  id?: number
+  fighter_id: number
+  tournament_id: number
+  stage?: number
+  groups?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutCompetitorInput
+  fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
+  fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
+  fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
+}
+
+export type competitorsCreateOrConnectWithoutNominationInput = {
+  where: Prisma.competitorsWhereUniqueInput
+  create: Prisma.XOR<Prisma.competitorsCreateWithoutNominationInput, Prisma.competitorsUncheckedCreateWithoutNominationInput>
+}
+
+export type competitorsCreateManyNominationInputEnvelope = {
+  data: Prisma.competitorsCreateManyNominationInput | Prisma.competitorsCreateManyNominationInput[]
+  skipDuplicates?: boolean
+}
+
+export type competitorsUpsertWithWhereUniqueWithoutNominationInput = {
+  where: Prisma.competitorsWhereUniqueInput
+  update: Prisma.XOR<Prisma.competitorsUpdateWithoutNominationInput, Prisma.competitorsUncheckedUpdateWithoutNominationInput>
+  create: Prisma.XOR<Prisma.competitorsCreateWithoutNominationInput, Prisma.competitorsUncheckedCreateWithoutNominationInput>
+}
+
+export type competitorsUpdateWithWhereUniqueWithoutNominationInput = {
+  where: Prisma.competitorsWhereUniqueInput
+  data: Prisma.XOR<Prisma.competitorsUpdateWithoutNominationInput, Prisma.competitorsUncheckedUpdateWithoutNominationInput>
+}
+
+export type competitorsUpdateManyWithWhereWithoutNominationInput = {
+  where: Prisma.competitorsScalarWhereInput
+  data: Prisma.XOR<Prisma.competitorsUpdateManyMutationInput, Prisma.competitorsUncheckedUpdateManyWithoutNominationInput>
+}
+
+export type competitorsCreateWithoutGroupsInput = {
+  stage?: number
+  fighter: Prisma.fightersCreateNestedOneWithoutCompetitorsInput
+  tournament: Prisma.tournamentsCreateNestedOneWithoutCompetitorsInput
+  nomination: Prisma.nominationsCreateNestedOneWithoutCompetitorsInput
+  fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
+  fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
+  fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
+}
+
+export type competitorsUncheckedCreateWithoutGroupsInput = {
+  id?: number
+  fighter_id: number
+  tournament_id: number
+  nomination_id: number
+  stage?: number
+  fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
+  fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
+  fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
+}
+
+export type competitorsCreateOrConnectWithoutGroupsInput = {
+  where: Prisma.competitorsWhereUniqueInput
+  create: Prisma.XOR<Prisma.competitorsCreateWithoutGroupsInput, Prisma.competitorsUncheckedCreateWithoutGroupsInput>
+}
+
+export type competitorsUpsertWithoutGroupsInput = {
+  update: Prisma.XOR<Prisma.competitorsUpdateWithoutGroupsInput, Prisma.competitorsUncheckedUpdateWithoutGroupsInput>
+  create: Prisma.XOR<Prisma.competitorsCreateWithoutGroupsInput, Prisma.competitorsUncheckedCreateWithoutGroupsInput>
+  where?: Prisma.competitorsWhereInput
+}
+
+export type competitorsUpdateToOneWithWhereWithoutGroupsInput = {
+  where?: Prisma.competitorsWhereInput
+  data: Prisma.XOR<Prisma.competitorsUpdateWithoutGroupsInput, Prisma.competitorsUncheckedUpdateWithoutGroupsInput>
+}
+
+export type competitorsUpdateWithoutGroupsInput = {
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter?: Prisma.fightersUpdateOneRequiredWithoutCompetitorsNestedInput
+  tournament?: Prisma.tournamentsUpdateOneRequiredWithoutCompetitorsNestedInput
+  nomination?: Prisma.nominationsUpdateOneRequiredWithoutCompetitorsNestedInput
+  fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
+  fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
+  fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
+}
+
+export type competitorsUncheckedUpdateWithoutGroupsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
+  fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
+  fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
+}
+
+export type competitorsCreateWithoutFights_as_f1Input = {
+  stage?: number
+  fighter: Prisma.fightersCreateNestedOneWithoutCompetitorsInput
+  tournament: Prisma.tournamentsCreateNestedOneWithoutCompetitorsInput
+  nomination: Prisma.nominationsCreateNestedOneWithoutCompetitorsInput
+  groups?: Prisma.group_competitorsCreateNestedManyWithoutCompetitorInput
+  fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
+  fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
+}
+
+export type competitorsUncheckedCreateWithoutFights_as_f1Input = {
+  id?: number
+  fighter_id: number
+  tournament_id: number
+  nomination_id: number
+  stage?: number
+  groups?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutCompetitorInput
+  fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
+  fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
+}
+
+export type competitorsCreateOrConnectWithoutFights_as_f1Input = {
+  where: Prisma.competitorsWhereUniqueInput
+  create: Prisma.XOR<Prisma.competitorsCreateWithoutFights_as_f1Input, Prisma.competitorsUncheckedCreateWithoutFights_as_f1Input>
+}
+
+export type competitorsCreateWithoutFights_as_f2Input = {
+  stage?: number
+  fighter: Prisma.fightersCreateNestedOneWithoutCompetitorsInput
+  tournament: Prisma.tournamentsCreateNestedOneWithoutCompetitorsInput
+  nomination: Prisma.nominationsCreateNestedOneWithoutCompetitorsInput
+  groups?: Prisma.group_competitorsCreateNestedManyWithoutCompetitorInput
+  fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
+  fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
+}
+
+export type competitorsUncheckedCreateWithoutFights_as_f2Input = {
+  id?: number
+  fighter_id: number
+  tournament_id: number
+  nomination_id: number
+  stage?: number
+  groups?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutCompetitorInput
+  fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
+  fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
+}
+
+export type competitorsCreateOrConnectWithoutFights_as_f2Input = {
+  where: Prisma.competitorsWhereUniqueInput
+  create: Prisma.XOR<Prisma.competitorsCreateWithoutFights_as_f2Input, Prisma.competitorsUncheckedCreateWithoutFights_as_f2Input>
+}
+
+export type competitorsCreateWithoutFights_wonInput = {
+  stage?: number
+  fighter: Prisma.fightersCreateNestedOneWithoutCompetitorsInput
+  tournament: Prisma.tournamentsCreateNestedOneWithoutCompetitorsInput
+  nomination: Prisma.nominationsCreateNestedOneWithoutCompetitorsInput
+  groups?: Prisma.group_competitorsCreateNestedManyWithoutCompetitorInput
+  fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
+  fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
+}
+
+export type competitorsUncheckedCreateWithoutFights_wonInput = {
+  id?: number
+  fighter_id: number
+  tournament_id: number
+  nomination_id: number
+  stage?: number
+  groups?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutCompetitorInput
+  fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
+  fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
+}
+
+export type competitorsCreateOrConnectWithoutFights_wonInput = {
+  where: Prisma.competitorsWhereUniqueInput
+  create: Prisma.XOR<Prisma.competitorsCreateWithoutFights_wonInput, Prisma.competitorsUncheckedCreateWithoutFights_wonInput>
+}
+
+export type competitorsUpsertWithoutFights_as_f1Input = {
+  update: Prisma.XOR<Prisma.competitorsUpdateWithoutFights_as_f1Input, Prisma.competitorsUncheckedUpdateWithoutFights_as_f1Input>
+  create: Prisma.XOR<Prisma.competitorsCreateWithoutFights_as_f1Input, Prisma.competitorsUncheckedCreateWithoutFights_as_f1Input>
+  where?: Prisma.competitorsWhereInput
+}
+
+export type competitorsUpdateToOneWithWhereWithoutFights_as_f1Input = {
+  where?: Prisma.competitorsWhereInput
+  data: Prisma.XOR<Prisma.competitorsUpdateWithoutFights_as_f1Input, Prisma.competitorsUncheckedUpdateWithoutFights_as_f1Input>
+}
+
+export type competitorsUpdateWithoutFights_as_f1Input = {
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter?: Prisma.fightersUpdateOneRequiredWithoutCompetitorsNestedInput
+  tournament?: Prisma.tournamentsUpdateOneRequiredWithoutCompetitorsNestedInput
+  nomination?: Prisma.nominationsUpdateOneRequiredWithoutCompetitorsNestedInput
+  groups?: Prisma.group_competitorsUpdateManyWithoutCompetitorNestedInput
+  fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
+  fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
+}
+
+export type competitorsUncheckedUpdateWithoutFights_as_f1Input = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  groups?: Prisma.group_competitorsUncheckedUpdateManyWithoutCompetitorNestedInput
+  fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
+  fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
+}
+
+export type competitorsUpsertWithoutFights_as_f2Input = {
+  update: Prisma.XOR<Prisma.competitorsUpdateWithoutFights_as_f2Input, Prisma.competitorsUncheckedUpdateWithoutFights_as_f2Input>
+  create: Prisma.XOR<Prisma.competitorsCreateWithoutFights_as_f2Input, Prisma.competitorsUncheckedCreateWithoutFights_as_f2Input>
+  where?: Prisma.competitorsWhereInput
+}
+
+export type competitorsUpdateToOneWithWhereWithoutFights_as_f2Input = {
+  where?: Prisma.competitorsWhereInput
+  data: Prisma.XOR<Prisma.competitorsUpdateWithoutFights_as_f2Input, Prisma.competitorsUncheckedUpdateWithoutFights_as_f2Input>
+}
+
+export type competitorsUpdateWithoutFights_as_f2Input = {
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter?: Prisma.fightersUpdateOneRequiredWithoutCompetitorsNestedInput
+  tournament?: Prisma.tournamentsUpdateOneRequiredWithoutCompetitorsNestedInput
+  nomination?: Prisma.nominationsUpdateOneRequiredWithoutCompetitorsNestedInput
+  groups?: Prisma.group_competitorsUpdateManyWithoutCompetitorNestedInput
+  fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
+  fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
+}
+
+export type competitorsUncheckedUpdateWithoutFights_as_f2Input = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  groups?: Prisma.group_competitorsUncheckedUpdateManyWithoutCompetitorNestedInput
+  fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
+  fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
+}
+
+export type competitorsUpsertWithoutFights_wonInput = {
+  update: Prisma.XOR<Prisma.competitorsUpdateWithoutFights_wonInput, Prisma.competitorsUncheckedUpdateWithoutFights_wonInput>
+  create: Prisma.XOR<Prisma.competitorsCreateWithoutFights_wonInput, Prisma.competitorsUncheckedCreateWithoutFights_wonInput>
+  where?: Prisma.competitorsWhereInput
+}
+
+export type competitorsUpdateToOneWithWhereWithoutFights_wonInput = {
+  where?: Prisma.competitorsWhereInput
+  data: Prisma.XOR<Prisma.competitorsUpdateWithoutFights_wonInput, Prisma.competitorsUncheckedUpdateWithoutFights_wonInput>
+}
+
+export type competitorsUpdateWithoutFights_wonInput = {
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter?: Prisma.fightersUpdateOneRequiredWithoutCompetitorsNestedInput
+  tournament?: Prisma.tournamentsUpdateOneRequiredWithoutCompetitorsNestedInput
+  nomination?: Prisma.nominationsUpdateOneRequiredWithoutCompetitorsNestedInput
+  groups?: Prisma.group_competitorsUpdateManyWithoutCompetitorNestedInput
+  fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
+  fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
+}
+
+export type competitorsUncheckedUpdateWithoutFights_wonInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  groups?: Prisma.group_competitorsUncheckedUpdateManyWithoutCompetitorNestedInput
+  fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
+  fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
+}
+
+export type competitorsCreateManyFighterInput = {
+  id?: number
+  tournament_id: number
+  nomination_id: number
+  stage?: number
+}
+
+export type competitorsUpdateWithoutFighterInput = {
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament?: Prisma.tournamentsUpdateOneRequiredWithoutCompetitorsNestedInput
+  nomination?: Prisma.nominationsUpdateOneRequiredWithoutCompetitorsNestedInput
+  groups?: Prisma.group_competitorsUpdateManyWithoutCompetitorNestedInput
+  fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
+  fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
+  fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
+}
+
+export type competitorsUncheckedUpdateWithoutFighterInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  groups?: Prisma.group_competitorsUncheckedUpdateManyWithoutCompetitorNestedInput
+  fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
+  fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
+  fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
+}
+
+export type competitorsUncheckedUpdateManyWithoutFighterInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type competitorsCreateManyTournamentInput = {
+  id?: number
+  fighter_id: number
+  nomination_id: number
+  stage?: number
+}
+
+export type competitorsUpdateWithoutTournamentInput = {
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter?: Prisma.fightersUpdateOneRequiredWithoutCompetitorsNestedInput
+  nomination?: Prisma.nominationsUpdateOneRequiredWithoutCompetitorsNestedInput
+  groups?: Prisma.group_competitorsUpdateManyWithoutCompetitorNestedInput
+  fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
+  fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
+  fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
+}
+
+export type competitorsUncheckedUpdateWithoutTournamentInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  groups?: Prisma.group_competitorsUncheckedUpdateManyWithoutCompetitorNestedInput
+  fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
+  fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
+  fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
+}
+
+export type competitorsUncheckedUpdateManyWithoutTournamentInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type competitorsCreateManyNominationInput = {
+  id?: number
+  fighter_id: number
+  tournament_id: number
+  stage?: number
+}
+
+export type competitorsUpdateWithoutNominationInput = {
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter?: Prisma.fightersUpdateOneRequiredWithoutCompetitorsNestedInput
+  tournament?: Prisma.tournamentsUpdateOneRequiredWithoutCompetitorsNestedInput
+  groups?: Prisma.group_competitorsUpdateManyWithoutCompetitorNestedInput
+  fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
+  fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
+  fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
+}
+
+export type competitorsUncheckedUpdateWithoutNominationInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  groups?: Prisma.group_competitorsUncheckedUpdateManyWithoutCompetitorNestedInput
+  fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
+  fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
+  fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
+}
+
+export type competitorsUncheckedUpdateManyWithoutNominationInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+
+/**
+ * Count Type CompetitorsCountOutputType
+ */
+
+export type CompetitorsCountOutputType = {
+  groups: number
+  fights_as_f1: number
+  fights_as_f2: number
+  fights_won: number
+}
+
+export type CompetitorsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  groups?: boolean | CompetitorsCountOutputTypeCountGroupsArgs
+  fights_as_f1?: boolean | CompetitorsCountOutputTypeCountFights_as_f1Args
+  fights_as_f2?: boolean | CompetitorsCountOutputTypeCountFights_as_f2Args
+  fights_won?: boolean | CompetitorsCountOutputTypeCountFights_wonArgs
+}
+
+/**
+ * CompetitorsCountOutputType without action
+ */
+export type CompetitorsCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CompetitorsCountOutputType
+   */
+  select?: Prisma.CompetitorsCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * CompetitorsCountOutputType without action
+ */
+export type CompetitorsCountOutputTypeCountGroupsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.group_competitorsWhereInput
+}
+
+/**
+ * CompetitorsCountOutputType without action
+ */
+export type CompetitorsCountOutputTypeCountFights_as_f1Args<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.fightsWhereInput
+}
+
+/**
+ * CompetitorsCountOutputType without action
+ */
+export type CompetitorsCountOutputTypeCountFights_as_f2Args<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.fightsWhereInput
+}
+
+/**
+ * CompetitorsCountOutputType without action
+ */
+export type CompetitorsCountOutputTypeCountFights_wonArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.fightsWhereInput
+}
 
 
 export type competitorsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -349,6 +1160,15 @@ export type competitorsSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   fighter_id?: boolean
   tournament_id?: boolean
   nomination_id?: boolean
+  stage?: boolean
+  fighter?: boolean | Prisma.fightersDefaultArgs<ExtArgs>
+  tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
+  nomination?: boolean | Prisma.nominationsDefaultArgs<ExtArgs>
+  groups?: boolean | Prisma.competitors$groupsArgs<ExtArgs>
+  fights_as_f1?: boolean | Prisma.competitors$fights_as_f1Args<ExtArgs>
+  fights_as_f2?: boolean | Prisma.competitors$fights_as_f2Args<ExtArgs>
+  fights_won?: boolean | Prisma.competitors$fights_wonArgs<ExtArgs>
+  _count?: boolean | Prisma.CompetitorsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["competitors"]>
 
 export type competitorsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -356,6 +1176,10 @@ export type competitorsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   fighter_id?: boolean
   tournament_id?: boolean
   nomination_id?: boolean
+  stage?: boolean
+  fighter?: boolean | Prisma.fightersDefaultArgs<ExtArgs>
+  tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
+  nomination?: boolean | Prisma.nominationsDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["competitors"]>
 
 export type competitorsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -363,6 +1187,10 @@ export type competitorsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   fighter_id?: boolean
   tournament_id?: boolean
   nomination_id?: boolean
+  stage?: boolean
+  fighter?: boolean | Prisma.fightersDefaultArgs<ExtArgs>
+  tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
+  nomination?: boolean | Prisma.nominationsDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["competitors"]>
 
 export type competitorsSelectScalar = {
@@ -370,18 +1198,48 @@ export type competitorsSelectScalar = {
   fighter_id?: boolean
   tournament_id?: boolean
   nomination_id?: boolean
+  stage?: boolean
 }
 
-export type competitorsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fighter_id" | "tournament_id" | "nomination_id", ExtArgs["result"]["competitors"]>
+export type competitorsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fighter_id" | "tournament_id" | "nomination_id" | "stage", ExtArgs["result"]["competitors"]>
+export type competitorsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  fighter?: boolean | Prisma.fightersDefaultArgs<ExtArgs>
+  tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
+  nomination?: boolean | Prisma.nominationsDefaultArgs<ExtArgs>
+  groups?: boolean | Prisma.competitors$groupsArgs<ExtArgs>
+  fights_as_f1?: boolean | Prisma.competitors$fights_as_f1Args<ExtArgs>
+  fights_as_f2?: boolean | Prisma.competitors$fights_as_f2Args<ExtArgs>
+  fights_won?: boolean | Prisma.competitors$fights_wonArgs<ExtArgs>
+  _count?: boolean | Prisma.CompetitorsCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type competitorsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  fighter?: boolean | Prisma.fightersDefaultArgs<ExtArgs>
+  tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
+  nomination?: boolean | Prisma.nominationsDefaultArgs<ExtArgs>
+}
+export type competitorsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  fighter?: boolean | Prisma.fightersDefaultArgs<ExtArgs>
+  tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
+  nomination?: boolean | Prisma.nominationsDefaultArgs<ExtArgs>
+}
 
 export type $competitorsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "competitors"
-  objects: {}
+  objects: {
+    fighter: Prisma.$fightersPayload<ExtArgs>
+    tournament: Prisma.$tournamentsPayload<ExtArgs>
+    nomination: Prisma.$nominationsPayload<ExtArgs>
+    groups: Prisma.$group_competitorsPayload<ExtArgs>[]
+    fights_as_f1: Prisma.$fightsPayload<ExtArgs>[]
+    fights_as_f2: Prisma.$fightsPayload<ExtArgs>[]
+    fights_won: Prisma.$fightsPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     fighter_id: number
     tournament_id: number
     nomination_id: number
+    stage: number
   }, ExtArgs["result"]["competitors"]>
   composites: {}
 }
@@ -776,6 +1634,13 @@ readonly fields: competitorsFieldRefs;
  */
 export interface Prisma__competitorsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  fighter<T extends Prisma.fightersDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.fightersDefaultArgs<ExtArgs>>): Prisma.Prisma__fightersClient<runtime.Types.Result.GetResult<Prisma.$fightersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  tournament<T extends Prisma.tournamentsDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournamentsDefaultArgs<ExtArgs>>): Prisma.Prisma__tournamentsClient<runtime.Types.Result.GetResult<Prisma.$tournamentsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  nomination<T extends Prisma.nominationsDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.nominationsDefaultArgs<ExtArgs>>): Prisma.Prisma__nominationsClient<runtime.Types.Result.GetResult<Prisma.$nominationsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  groups<T extends Prisma.competitors$groupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competitors$groupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$group_competitorsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  fights_as_f1<T extends Prisma.competitors$fights_as_f1Args<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competitors$fights_as_f1Args<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fightsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  fights_as_f2<T extends Prisma.competitors$fights_as_f2Args<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competitors$fights_as_f2Args<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fightsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  fights_won<T extends Prisma.competitors$fights_wonArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competitors$fights_wonArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fightsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -809,6 +1674,7 @@ export interface competitorsFieldRefs {
   readonly fighter_id: Prisma.FieldRef<"competitors", 'Int'>
   readonly tournament_id: Prisma.FieldRef<"competitors", 'Int'>
   readonly nomination_id: Prisma.FieldRef<"competitors", 'Int'>
+  readonly stage: Prisma.FieldRef<"competitors", 'Int'>
 }
     
 
@@ -825,6 +1691,10 @@ export type competitorsFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the competitors
    */
   omit?: Prisma.competitorsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.competitorsInclude<ExtArgs> | null
   /**
    * Filter, which competitors to fetch.
    */
@@ -844,6 +1714,10 @@ export type competitorsFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Exten
    */
   omit?: Prisma.competitorsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.competitorsInclude<ExtArgs> | null
+  /**
    * Filter, which competitors to fetch.
    */
   where: Prisma.competitorsWhereUniqueInput
@@ -861,6 +1735,10 @@ export type competitorsFindFirstArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the competitors
    */
   omit?: Prisma.competitorsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.competitorsInclude<ExtArgs> | null
   /**
    * Filter, which competitors to fetch.
    */
@@ -910,6 +1788,10 @@ export type competitorsFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extens
    */
   omit?: Prisma.competitorsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.competitorsInclude<ExtArgs> | null
+  /**
    * Filter, which competitors to fetch.
    */
   where?: Prisma.competitorsWhereInput
@@ -958,6 +1840,10 @@ export type competitorsFindManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    */
   omit?: Prisma.competitorsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.competitorsInclude<ExtArgs> | null
+  /**
    * Filter, which competitors to fetch.
    */
   where?: Prisma.competitorsWhereInput
@@ -1001,6 +1887,10 @@ export type competitorsCreateArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   omit?: Prisma.competitorsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.competitorsInclude<ExtArgs> | null
+  /**
    * The data needed to create a competitors.
    */
   data: Prisma.XOR<Prisma.competitorsCreateInput, Prisma.competitorsUncheckedCreateInput>
@@ -1034,6 +1924,10 @@ export type competitorsCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ext
    */
   data: Prisma.competitorsCreateManyInput | Prisma.competitorsCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.competitorsIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1048,6 +1942,10 @@ export type competitorsUpdateArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Omit specific fields from the competitors
    */
   omit?: Prisma.competitorsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.competitorsInclude<ExtArgs> | null
   /**
    * The data needed to update a competitors.
    */
@@ -1100,6 +1998,10 @@ export type competitorsUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Ext
    * Limit how many competitors to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.competitorsIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1114,6 +2016,10 @@ export type competitorsUpsertArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Omit specific fields from the competitors
    */
   omit?: Prisma.competitorsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.competitorsInclude<ExtArgs> | null
   /**
    * The filter to search for the competitors to update in case it exists.
    */
@@ -1141,6 +2047,10 @@ export type competitorsDeleteArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   omit?: Prisma.competitorsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.competitorsInclude<ExtArgs> | null
+  /**
    * Filter which competitors to delete.
    */
   where: Prisma.competitorsWhereUniqueInput
@@ -1161,6 +2071,102 @@ export type competitorsDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
 }
 
 /**
+ * competitors.groups
+ */
+export type competitors$groupsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the group_competitors
+   */
+  select?: Prisma.group_competitorsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the group_competitors
+   */
+  omit?: Prisma.group_competitorsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.group_competitorsInclude<ExtArgs> | null
+  where?: Prisma.group_competitorsWhereInput
+  orderBy?: Prisma.group_competitorsOrderByWithRelationInput | Prisma.group_competitorsOrderByWithRelationInput[]
+  cursor?: Prisma.group_competitorsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Group_competitorsScalarFieldEnum | Prisma.Group_competitorsScalarFieldEnum[]
+}
+
+/**
+ * competitors.fights_as_f1
+ */
+export type competitors$fights_as_f1Args<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the fights
+   */
+  select?: Prisma.fightsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the fights
+   */
+  omit?: Prisma.fightsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.fightsInclude<ExtArgs> | null
+  where?: Prisma.fightsWhereInput
+  orderBy?: Prisma.fightsOrderByWithRelationInput | Prisma.fightsOrderByWithRelationInput[]
+  cursor?: Prisma.fightsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FightsScalarFieldEnum | Prisma.FightsScalarFieldEnum[]
+}
+
+/**
+ * competitors.fights_as_f2
+ */
+export type competitors$fights_as_f2Args<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the fights
+   */
+  select?: Prisma.fightsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the fights
+   */
+  omit?: Prisma.fightsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.fightsInclude<ExtArgs> | null
+  where?: Prisma.fightsWhereInput
+  orderBy?: Prisma.fightsOrderByWithRelationInput | Prisma.fightsOrderByWithRelationInput[]
+  cursor?: Prisma.fightsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FightsScalarFieldEnum | Prisma.FightsScalarFieldEnum[]
+}
+
+/**
+ * competitors.fights_won
+ */
+export type competitors$fights_wonArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the fights
+   */
+  select?: Prisma.fightsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the fights
+   */
+  omit?: Prisma.fightsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.fightsInclude<ExtArgs> | null
+  where?: Prisma.fightsWhereInput
+  orderBy?: Prisma.fightsOrderByWithRelationInput | Prisma.fightsOrderByWithRelationInput[]
+  cursor?: Prisma.fightsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FightsScalarFieldEnum | Prisma.FightsScalarFieldEnum[]
+}
+
+/**
  * competitors without action
  */
 export type competitorsDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1172,4 +2178,8 @@ export type competitorsDefaultArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the competitors
    */
   omit?: Prisma.competitorsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.competitorsInclude<ExtArgs> | null
 }

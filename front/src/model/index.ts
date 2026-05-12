@@ -50,6 +50,8 @@ export interface TournamentNomination {
   tournament_id: number
   nomination_id: number
   is_open: boolean
+  stage: number
+  is_finished: boolean
 }
 
 export interface Tournament {

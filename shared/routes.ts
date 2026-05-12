@@ -49,4 +49,27 @@ export const API_ROUTES = {
       nominationId: string | number,
     ) => `/competitors/${tournamentId}/${nominationId}`,
   },
+  GROUPS: {
+    ROOT: "groups",
+    BY_TOURNAMENT: (tournamentId: string | number) =>
+      `/groups/tournament/${tournamentId}`,
+    BY_TOURNAMENT_AND_NOMINATION: (
+      tournamentId: string | number,
+      nominationId: string | number,
+    ) => `/groups/tournament/${tournamentId}/nomination/${nominationId}`,
+    BY_ID: (id: string | number) => `/groups/${id}`,
+  },
+  GROUP_COMPETITORS: {
+    ROOT: "group-competitors",
+    BY_GROUP: (groupId: string | number) =>
+      `/group-competitors/group/${groupId}`,
+    BY_ID: (id: string | number) => `/group-competitors/${id}`,
+  },
+  FIGHTS: {
+    ROOT: "fights",
+    BY_TOURNAMENT: (tournamentId: string | number) =>
+      `/fights/tournament/${tournamentId}`,
+    BY_GROUP: (groupId: string | number) => `/fights/group/${groupId}`,
+    BY_ID: (id: string | number) => `/fights/${id}`,
+  },
 } as const;

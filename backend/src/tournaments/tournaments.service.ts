@@ -7,6 +7,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { AddNominationDto } from './dto/add-nomination.dto';
 import { UpdateNominationDto } from './dto/update-nomination.dto';
+import { UpdateNominationStageDto } from './dto/update-nomination-stage.dto';
 
 @Injectable()
 export class TournamentsService {
@@ -75,6 +76,21 @@ export class TournamentsService {
       where: { id: dto.nomination_id },
       data: {
         is_open: dto.is_open,
+      },
+    });
+  }
+
+  async updateNominationStage(dto: UpdateNominationStageDto) {
+    const nomination = await this.prisma.tournament_nominations.findUnique({
+      where: { id: dto.nomination_id },
+    });
+
+    if (!nomination) throw new NotFoundException('Nomination not found');
+
+    return this.prisma.tournament_nominations.update({
+      where: { id: dto.nomination_id },
+      data: {
+        stage: dto.stage,
       },
     });
   }

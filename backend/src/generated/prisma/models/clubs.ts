@@ -204,14 +204,16 @@ export type clubsWhereInput = {
   id?: Prisma.IntFilter<"clubs"> | number
   city_id?: Prisma.IntFilter<"clubs"> | number
   name?: Prisma.StringFilter<"clubs"> | string
-  cities?: Prisma.XOR<Prisma.CitiesScalarRelationFilter, Prisma.citiesWhereInput>
+  city?: Prisma.XOR<Prisma.CitiesScalarRelationFilter, Prisma.citiesWhereInput>
+  fighters?: Prisma.FightersListRelationFilter
 }
 
 export type clubsOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   city_id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  cities?: Prisma.citiesOrderByWithRelationInput
+  city?: Prisma.citiesOrderByWithRelationInput
+  fighters?: Prisma.fightersOrderByRelationAggregateInput
 }
 
 export type clubsWhereUniqueInput = Prisma.AtLeast<{
@@ -221,7 +223,8 @@ export type clubsWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.clubsWhereInput | Prisma.clubsWhereInput[]
   city_id?: Prisma.IntFilter<"clubs"> | number
   name?: Prisma.StringFilter<"clubs"> | string
-  cities?: Prisma.XOR<Prisma.CitiesScalarRelationFilter, Prisma.citiesWhereInput>
+  city?: Prisma.XOR<Prisma.CitiesScalarRelationFilter, Prisma.citiesWhereInput>
+  fighters?: Prisma.FightersListRelationFilter
 }, "id">
 
 export type clubsOrderByWithAggregationInput = {
@@ -246,24 +249,28 @@ export type clubsScalarWhereWithAggregatesInput = {
 
 export type clubsCreateInput = {
   name: string
-  cities: Prisma.citiesCreateNestedOneWithoutClubsInput
+  city: Prisma.citiesCreateNestedOneWithoutClubsInput
+  fighters?: Prisma.fightersCreateNestedManyWithoutClubInput
 }
 
 export type clubsUncheckedCreateInput = {
   id?: number
   city_id: number
   name: string
+  fighters?: Prisma.fightersUncheckedCreateNestedManyWithoutClubInput
 }
 
 export type clubsUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  cities?: Prisma.citiesUpdateOneRequiredWithoutClubsNestedInput
+  city?: Prisma.citiesUpdateOneRequiredWithoutClubsNestedInput
+  fighters?: Prisma.fightersUpdateManyWithoutClubNestedInput
 }
 
 export type clubsUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   city_id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  fighters?: Prisma.fightersUncheckedUpdateManyWithoutClubNestedInput
 }
 
 export type clubsCreateManyInput = {
@@ -320,81 +327,104 @@ export type clubsSumOrderByAggregateInput = {
   city_id?: Prisma.SortOrder
 }
 
-export type clubsCreateNestedManyWithoutCitiesInput = {
-  create?: Prisma.XOR<Prisma.clubsCreateWithoutCitiesInput, Prisma.clubsUncheckedCreateWithoutCitiesInput> | Prisma.clubsCreateWithoutCitiesInput[] | Prisma.clubsUncheckedCreateWithoutCitiesInput[]
-  connectOrCreate?: Prisma.clubsCreateOrConnectWithoutCitiesInput | Prisma.clubsCreateOrConnectWithoutCitiesInput[]
-  createMany?: Prisma.clubsCreateManyCitiesInputEnvelope
+export type ClubsNullableScalarRelationFilter = {
+  is?: Prisma.clubsWhereInput | null
+  isNot?: Prisma.clubsWhereInput | null
+}
+
+export type clubsCreateNestedManyWithoutCityInput = {
+  create?: Prisma.XOR<Prisma.clubsCreateWithoutCityInput, Prisma.clubsUncheckedCreateWithoutCityInput> | Prisma.clubsCreateWithoutCityInput[] | Prisma.clubsUncheckedCreateWithoutCityInput[]
+  connectOrCreate?: Prisma.clubsCreateOrConnectWithoutCityInput | Prisma.clubsCreateOrConnectWithoutCityInput[]
+  createMany?: Prisma.clubsCreateManyCityInputEnvelope
   connect?: Prisma.clubsWhereUniqueInput | Prisma.clubsWhereUniqueInput[]
 }
 
-export type clubsUncheckedCreateNestedManyWithoutCitiesInput = {
-  create?: Prisma.XOR<Prisma.clubsCreateWithoutCitiesInput, Prisma.clubsUncheckedCreateWithoutCitiesInput> | Prisma.clubsCreateWithoutCitiesInput[] | Prisma.clubsUncheckedCreateWithoutCitiesInput[]
-  connectOrCreate?: Prisma.clubsCreateOrConnectWithoutCitiesInput | Prisma.clubsCreateOrConnectWithoutCitiesInput[]
-  createMany?: Prisma.clubsCreateManyCitiesInputEnvelope
+export type clubsUncheckedCreateNestedManyWithoutCityInput = {
+  create?: Prisma.XOR<Prisma.clubsCreateWithoutCityInput, Prisma.clubsUncheckedCreateWithoutCityInput> | Prisma.clubsCreateWithoutCityInput[] | Prisma.clubsUncheckedCreateWithoutCityInput[]
+  connectOrCreate?: Prisma.clubsCreateOrConnectWithoutCityInput | Prisma.clubsCreateOrConnectWithoutCityInput[]
+  createMany?: Prisma.clubsCreateManyCityInputEnvelope
   connect?: Prisma.clubsWhereUniqueInput | Prisma.clubsWhereUniqueInput[]
 }
 
-export type clubsUpdateManyWithoutCitiesNestedInput = {
-  create?: Prisma.XOR<Prisma.clubsCreateWithoutCitiesInput, Prisma.clubsUncheckedCreateWithoutCitiesInput> | Prisma.clubsCreateWithoutCitiesInput[] | Prisma.clubsUncheckedCreateWithoutCitiesInput[]
-  connectOrCreate?: Prisma.clubsCreateOrConnectWithoutCitiesInput | Prisma.clubsCreateOrConnectWithoutCitiesInput[]
-  upsert?: Prisma.clubsUpsertWithWhereUniqueWithoutCitiesInput | Prisma.clubsUpsertWithWhereUniqueWithoutCitiesInput[]
-  createMany?: Prisma.clubsCreateManyCitiesInputEnvelope
+export type clubsUpdateManyWithoutCityNestedInput = {
+  create?: Prisma.XOR<Prisma.clubsCreateWithoutCityInput, Prisma.clubsUncheckedCreateWithoutCityInput> | Prisma.clubsCreateWithoutCityInput[] | Prisma.clubsUncheckedCreateWithoutCityInput[]
+  connectOrCreate?: Prisma.clubsCreateOrConnectWithoutCityInput | Prisma.clubsCreateOrConnectWithoutCityInput[]
+  upsert?: Prisma.clubsUpsertWithWhereUniqueWithoutCityInput | Prisma.clubsUpsertWithWhereUniqueWithoutCityInput[]
+  createMany?: Prisma.clubsCreateManyCityInputEnvelope
   set?: Prisma.clubsWhereUniqueInput | Prisma.clubsWhereUniqueInput[]
   disconnect?: Prisma.clubsWhereUniqueInput | Prisma.clubsWhereUniqueInput[]
   delete?: Prisma.clubsWhereUniqueInput | Prisma.clubsWhereUniqueInput[]
   connect?: Prisma.clubsWhereUniqueInput | Prisma.clubsWhereUniqueInput[]
-  update?: Prisma.clubsUpdateWithWhereUniqueWithoutCitiesInput | Prisma.clubsUpdateWithWhereUniqueWithoutCitiesInput[]
-  updateMany?: Prisma.clubsUpdateManyWithWhereWithoutCitiesInput | Prisma.clubsUpdateManyWithWhereWithoutCitiesInput[]
+  update?: Prisma.clubsUpdateWithWhereUniqueWithoutCityInput | Prisma.clubsUpdateWithWhereUniqueWithoutCityInput[]
+  updateMany?: Prisma.clubsUpdateManyWithWhereWithoutCityInput | Prisma.clubsUpdateManyWithWhereWithoutCityInput[]
   deleteMany?: Prisma.clubsScalarWhereInput | Prisma.clubsScalarWhereInput[]
 }
 
-export type clubsUncheckedUpdateManyWithoutCitiesNestedInput = {
-  create?: Prisma.XOR<Prisma.clubsCreateWithoutCitiesInput, Prisma.clubsUncheckedCreateWithoutCitiesInput> | Prisma.clubsCreateWithoutCitiesInput[] | Prisma.clubsUncheckedCreateWithoutCitiesInput[]
-  connectOrCreate?: Prisma.clubsCreateOrConnectWithoutCitiesInput | Prisma.clubsCreateOrConnectWithoutCitiesInput[]
-  upsert?: Prisma.clubsUpsertWithWhereUniqueWithoutCitiesInput | Prisma.clubsUpsertWithWhereUniqueWithoutCitiesInput[]
-  createMany?: Prisma.clubsCreateManyCitiesInputEnvelope
+export type clubsUncheckedUpdateManyWithoutCityNestedInput = {
+  create?: Prisma.XOR<Prisma.clubsCreateWithoutCityInput, Prisma.clubsUncheckedCreateWithoutCityInput> | Prisma.clubsCreateWithoutCityInput[] | Prisma.clubsUncheckedCreateWithoutCityInput[]
+  connectOrCreate?: Prisma.clubsCreateOrConnectWithoutCityInput | Prisma.clubsCreateOrConnectWithoutCityInput[]
+  upsert?: Prisma.clubsUpsertWithWhereUniqueWithoutCityInput | Prisma.clubsUpsertWithWhereUniqueWithoutCityInput[]
+  createMany?: Prisma.clubsCreateManyCityInputEnvelope
   set?: Prisma.clubsWhereUniqueInput | Prisma.clubsWhereUniqueInput[]
   disconnect?: Prisma.clubsWhereUniqueInput | Prisma.clubsWhereUniqueInput[]
   delete?: Prisma.clubsWhereUniqueInput | Prisma.clubsWhereUniqueInput[]
   connect?: Prisma.clubsWhereUniqueInput | Prisma.clubsWhereUniqueInput[]
-  update?: Prisma.clubsUpdateWithWhereUniqueWithoutCitiesInput | Prisma.clubsUpdateWithWhereUniqueWithoutCitiesInput[]
-  updateMany?: Prisma.clubsUpdateManyWithWhereWithoutCitiesInput | Prisma.clubsUpdateManyWithWhereWithoutCitiesInput[]
+  update?: Prisma.clubsUpdateWithWhereUniqueWithoutCityInput | Prisma.clubsUpdateWithWhereUniqueWithoutCityInput[]
+  updateMany?: Prisma.clubsUpdateManyWithWhereWithoutCityInput | Prisma.clubsUpdateManyWithWhereWithoutCityInput[]
   deleteMany?: Prisma.clubsScalarWhereInput | Prisma.clubsScalarWhereInput[]
 }
 
-export type clubsCreateWithoutCitiesInput = {
+export type clubsCreateNestedOneWithoutFightersInput = {
+  create?: Prisma.XOR<Prisma.clubsCreateWithoutFightersInput, Prisma.clubsUncheckedCreateWithoutFightersInput>
+  connectOrCreate?: Prisma.clubsCreateOrConnectWithoutFightersInput
+  connect?: Prisma.clubsWhereUniqueInput
+}
+
+export type clubsUpdateOneWithoutFightersNestedInput = {
+  create?: Prisma.XOR<Prisma.clubsCreateWithoutFightersInput, Prisma.clubsUncheckedCreateWithoutFightersInput>
+  connectOrCreate?: Prisma.clubsCreateOrConnectWithoutFightersInput
+  upsert?: Prisma.clubsUpsertWithoutFightersInput
+  disconnect?: Prisma.clubsWhereInput | boolean
+  delete?: Prisma.clubsWhereInput | boolean
+  connect?: Prisma.clubsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.clubsUpdateToOneWithWhereWithoutFightersInput, Prisma.clubsUpdateWithoutFightersInput>, Prisma.clubsUncheckedUpdateWithoutFightersInput>
+}
+
+export type clubsCreateWithoutCityInput = {
   name: string
+  fighters?: Prisma.fightersCreateNestedManyWithoutClubInput
 }
 
-export type clubsUncheckedCreateWithoutCitiesInput = {
+export type clubsUncheckedCreateWithoutCityInput = {
   id?: number
   name: string
+  fighters?: Prisma.fightersUncheckedCreateNestedManyWithoutClubInput
 }
 
-export type clubsCreateOrConnectWithoutCitiesInput = {
+export type clubsCreateOrConnectWithoutCityInput = {
   where: Prisma.clubsWhereUniqueInput
-  create: Prisma.XOR<Prisma.clubsCreateWithoutCitiesInput, Prisma.clubsUncheckedCreateWithoutCitiesInput>
+  create: Prisma.XOR<Prisma.clubsCreateWithoutCityInput, Prisma.clubsUncheckedCreateWithoutCityInput>
 }
 
-export type clubsCreateManyCitiesInputEnvelope = {
-  data: Prisma.clubsCreateManyCitiesInput | Prisma.clubsCreateManyCitiesInput[]
+export type clubsCreateManyCityInputEnvelope = {
+  data: Prisma.clubsCreateManyCityInput | Prisma.clubsCreateManyCityInput[]
   skipDuplicates?: boolean
 }
 
-export type clubsUpsertWithWhereUniqueWithoutCitiesInput = {
+export type clubsUpsertWithWhereUniqueWithoutCityInput = {
   where: Prisma.clubsWhereUniqueInput
-  update: Prisma.XOR<Prisma.clubsUpdateWithoutCitiesInput, Prisma.clubsUncheckedUpdateWithoutCitiesInput>
-  create: Prisma.XOR<Prisma.clubsCreateWithoutCitiesInput, Prisma.clubsUncheckedCreateWithoutCitiesInput>
+  update: Prisma.XOR<Prisma.clubsUpdateWithoutCityInput, Prisma.clubsUncheckedUpdateWithoutCityInput>
+  create: Prisma.XOR<Prisma.clubsCreateWithoutCityInput, Prisma.clubsUncheckedCreateWithoutCityInput>
 }
 
-export type clubsUpdateWithWhereUniqueWithoutCitiesInput = {
+export type clubsUpdateWithWhereUniqueWithoutCityInput = {
   where: Prisma.clubsWhereUniqueInput
-  data: Prisma.XOR<Prisma.clubsUpdateWithoutCitiesInput, Prisma.clubsUncheckedUpdateWithoutCitiesInput>
+  data: Prisma.XOR<Prisma.clubsUpdateWithoutCityInput, Prisma.clubsUncheckedUpdateWithoutCityInput>
 }
 
-export type clubsUpdateManyWithWhereWithoutCitiesInput = {
+export type clubsUpdateManyWithWhereWithoutCityInput = {
   where: Prisma.clubsScalarWhereInput
-  data: Prisma.XOR<Prisma.clubsUpdateManyMutationInput, Prisma.clubsUncheckedUpdateManyWithoutCitiesInput>
+  data: Prisma.XOR<Prisma.clubsUpdateManyMutationInput, Prisma.clubsUncheckedUpdateManyWithoutCityInput>
 }
 
 export type clubsScalarWhereInput = {
@@ -406,46 +436,117 @@ export type clubsScalarWhereInput = {
   name?: Prisma.StringFilter<"clubs"> | string
 }
 
-export type clubsCreateManyCitiesInput = {
+export type clubsCreateWithoutFightersInput = {
+  name: string
+  city: Prisma.citiesCreateNestedOneWithoutClubsInput
+}
+
+export type clubsUncheckedCreateWithoutFightersInput = {
+  id?: number
+  city_id: number
+  name: string
+}
+
+export type clubsCreateOrConnectWithoutFightersInput = {
+  where: Prisma.clubsWhereUniqueInput
+  create: Prisma.XOR<Prisma.clubsCreateWithoutFightersInput, Prisma.clubsUncheckedCreateWithoutFightersInput>
+}
+
+export type clubsUpsertWithoutFightersInput = {
+  update: Prisma.XOR<Prisma.clubsUpdateWithoutFightersInput, Prisma.clubsUncheckedUpdateWithoutFightersInput>
+  create: Prisma.XOR<Prisma.clubsCreateWithoutFightersInput, Prisma.clubsUncheckedCreateWithoutFightersInput>
+  where?: Prisma.clubsWhereInput
+}
+
+export type clubsUpdateToOneWithWhereWithoutFightersInput = {
+  where?: Prisma.clubsWhereInput
+  data: Prisma.XOR<Prisma.clubsUpdateWithoutFightersInput, Prisma.clubsUncheckedUpdateWithoutFightersInput>
+}
+
+export type clubsUpdateWithoutFightersInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.citiesUpdateOneRequiredWithoutClubsNestedInput
+}
+
+export type clubsUncheckedUpdateWithoutFightersInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  city_id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type clubsCreateManyCityInput = {
   id?: number
   name: string
 }
 
-export type clubsUpdateWithoutCitiesInput = {
+export type clubsUpdateWithoutCityInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  fighters?: Prisma.fightersUpdateManyWithoutClubNestedInput
 }
 
-export type clubsUncheckedUpdateWithoutCitiesInput = {
+export type clubsUncheckedUpdateWithoutCityInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  fighters?: Prisma.fightersUncheckedUpdateManyWithoutClubNestedInput
+}
+
+export type clubsUncheckedUpdateManyWithoutCityInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
-export type clubsUncheckedUpdateManyWithoutCitiesInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+
+/**
+ * Count Type ClubsCountOutputType
+ */
+
+export type ClubsCountOutputType = {
+  fighters: number
 }
 
+export type ClubsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  fighters?: boolean | ClubsCountOutputTypeCountFightersArgs
+}
+
+/**
+ * ClubsCountOutputType without action
+ */
+export type ClubsCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ClubsCountOutputType
+   */
+  select?: Prisma.ClubsCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ClubsCountOutputType without action
+ */
+export type ClubsCountOutputTypeCountFightersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.fightersWhereInput
+}
 
 
 export type clubsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   city_id?: boolean
   name?: boolean
-  cities?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
+  city?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
+  fighters?: boolean | Prisma.clubs$fightersArgs<ExtArgs>
+  _count?: boolean | Prisma.ClubsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["clubs"]>
 
 export type clubsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   city_id?: boolean
   name?: boolean
-  cities?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
+  city?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["clubs"]>
 
 export type clubsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   city_id?: boolean
   name?: boolean
-  cities?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
+  city?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["clubs"]>
 
 export type clubsSelectScalar = {
@@ -456,19 +557,22 @@ export type clubsSelectScalar = {
 
 export type clubsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "city_id" | "name", ExtArgs["result"]["clubs"]>
 export type clubsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  cities?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
+  city?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
+  fighters?: boolean | Prisma.clubs$fightersArgs<ExtArgs>
+  _count?: boolean | Prisma.ClubsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type clubsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  cities?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
+  city?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
 }
 export type clubsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  cities?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
+  city?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
 }
 
 export type $clubsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "clubs"
   objects: {
-    cities: Prisma.$citiesPayload<ExtArgs>
+    city: Prisma.$citiesPayload<ExtArgs>
+    fighters: Prisma.$fightersPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -868,7 +972,8 @@ readonly fields: clubsFieldRefs;
  */
 export interface Prisma__clubsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  cities<T extends Prisma.citiesDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.citiesDefaultArgs<ExtArgs>>): Prisma.Prisma__citiesClient<runtime.Types.Result.GetResult<Prisma.$citiesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  city<T extends Prisma.citiesDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.citiesDefaultArgs<ExtArgs>>): Prisma.Prisma__citiesClient<runtime.Types.Result.GetResult<Prisma.$citiesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  fighters<T extends Prisma.clubs$fightersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.clubs$fightersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fightersPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1294,6 +1399,30 @@ export type clubsDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Limit how many clubs to delete.
    */
   limit?: number
+}
+
+/**
+ * clubs.fighters
+ */
+export type clubs$fightersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the fighters
+   */
+  select?: Prisma.fightersSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the fighters
+   */
+  omit?: Prisma.fightersOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.fightersInclude<ExtArgs> | null
+  where?: Prisma.fightersWhereInput
+  orderBy?: Prisma.fightersOrderByWithRelationInput | Prisma.fightersOrderByWithRelationInput[]
+  cursor?: Prisma.fightersWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FightersScalarFieldEnum | Prisma.FightersScalarFieldEnum[]
 }
 
 /**

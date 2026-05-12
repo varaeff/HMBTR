@@ -224,6 +224,12 @@ export type tournamentsWhereInput = {
   event_date?: Prisma.DateTimeNullableFilter<"tournaments"> | Date | string | null
   country_id?: Prisma.IntFilter<"tournaments"> | number
   city_id?: Prisma.IntFilter<"tournaments"> | number
+  country?: Prisma.XOR<Prisma.CountriesScalarRelationFilter, Prisma.countriesWhereInput>
+  city?: Prisma.XOR<Prisma.CitiesScalarRelationFilter, Prisma.citiesWhereInput>
+  nominations?: Prisma.Tournament_nominationsListRelationFilter
+  competitors?: Prisma.CompetitorsListRelationFilter
+  groups?: Prisma.GroupsListRelationFilter
+  fights?: Prisma.FightsListRelationFilter
 }
 
 export type tournamentsOrderByWithRelationInput = {
@@ -232,6 +238,12 @@ export type tournamentsOrderByWithRelationInput = {
   event_date?: Prisma.SortOrderInput | Prisma.SortOrder
   country_id?: Prisma.SortOrder
   city_id?: Prisma.SortOrder
+  country?: Prisma.countriesOrderByWithRelationInput
+  city?: Prisma.citiesOrderByWithRelationInput
+  nominations?: Prisma.tournament_nominationsOrderByRelationAggregateInput
+  competitors?: Prisma.competitorsOrderByRelationAggregateInput
+  groups?: Prisma.groupsOrderByRelationAggregateInput
+  fights?: Prisma.fightsOrderByRelationAggregateInput
 }
 
 export type tournamentsWhereUniqueInput = Prisma.AtLeast<{
@@ -243,6 +255,12 @@ export type tournamentsWhereUniqueInput = Prisma.AtLeast<{
   event_date?: Prisma.DateTimeNullableFilter<"tournaments"> | Date | string | null
   country_id?: Prisma.IntFilter<"tournaments"> | number
   city_id?: Prisma.IntFilter<"tournaments"> | number
+  country?: Prisma.XOR<Prisma.CountriesScalarRelationFilter, Prisma.countriesWhereInput>
+  city?: Prisma.XOR<Prisma.CitiesScalarRelationFilter, Prisma.citiesWhereInput>
+  nominations?: Prisma.Tournament_nominationsListRelationFilter
+  competitors?: Prisma.CompetitorsListRelationFilter
+  groups?: Prisma.GroupsListRelationFilter
+  fights?: Prisma.FightsListRelationFilter
 }, "id">
 
 export type tournamentsOrderByWithAggregationInput = {
@@ -272,8 +290,12 @@ export type tournamentsScalarWhereWithAggregatesInput = {
 export type tournamentsCreateInput = {
   name: string
   event_date?: Date | string | null
-  country_id: number
-  city_id: number
+  country: Prisma.countriesCreateNestedOneWithoutTournamentsInput
+  city: Prisma.citiesCreateNestedOneWithoutTournamentsInput
+  nominations?: Prisma.tournament_nominationsCreateNestedManyWithoutTournamentInput
+  competitors?: Prisma.competitorsCreateNestedManyWithoutTournamentInput
+  groups?: Prisma.groupsCreateNestedManyWithoutTournamentInput
+  fights?: Prisma.fightsCreateNestedManyWithoutTournamentInput
 }
 
 export type tournamentsUncheckedCreateInput = {
@@ -282,13 +304,21 @@ export type tournamentsUncheckedCreateInput = {
   event_date?: Date | string | null
   country_id: number
   city_id: number
+  nominations?: Prisma.tournament_nominationsUncheckedCreateNestedManyWithoutTournamentInput
+  competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutTournamentInput
+  groups?: Prisma.groupsUncheckedCreateNestedManyWithoutTournamentInput
+  fights?: Prisma.fightsUncheckedCreateNestedManyWithoutTournamentInput
 }
 
 export type tournamentsUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  country_id?: Prisma.IntFieldUpdateOperationsInput | number
-  city_id?: Prisma.IntFieldUpdateOperationsInput | number
+  country?: Prisma.countriesUpdateOneRequiredWithoutTournamentsNestedInput
+  city?: Prisma.citiesUpdateOneRequiredWithoutTournamentsNestedInput
+  nominations?: Prisma.tournament_nominationsUpdateManyWithoutTournamentNestedInput
+  competitors?: Prisma.competitorsUpdateManyWithoutTournamentNestedInput
+  groups?: Prisma.groupsUpdateManyWithoutTournamentNestedInput
+  fights?: Prisma.fightsUpdateManyWithoutTournamentNestedInput
 }
 
 export type tournamentsUncheckedUpdateInput = {
@@ -297,6 +327,10 @@ export type tournamentsUncheckedUpdateInput = {
   event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   country_id?: Prisma.IntFieldUpdateOperationsInput | number
   city_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nominations?: Prisma.tournament_nominationsUncheckedUpdateManyWithoutTournamentNestedInput
+  competitors?: Prisma.competitorsUncheckedUpdateManyWithoutTournamentNestedInput
+  groups?: Prisma.groupsUncheckedUpdateManyWithoutTournamentNestedInput
+  fights?: Prisma.fightsUncheckedUpdateManyWithoutTournamentNestedInput
 }
 
 export type tournamentsCreateManyInput = {
@@ -310,8 +344,6 @@ export type tournamentsCreateManyInput = {
 export type tournamentsUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  country_id?: Prisma.IntFieldUpdateOperationsInput | number
-  city_id?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type tournamentsUncheckedUpdateManyInput = {
@@ -320,6 +352,16 @@ export type tournamentsUncheckedUpdateManyInput = {
   event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   country_id?: Prisma.IntFieldUpdateOperationsInput | number
   city_id?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type TournamentsListRelationFilter = {
+  every?: Prisma.tournamentsWhereInput
+  some?: Prisma.tournamentsWhereInput
+  none?: Prisma.tournamentsWhereInput
+}
+
+export type tournamentsOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type tournamentsCountOrderByAggregateInput = {
@@ -358,6 +400,614 @@ export type tournamentsSumOrderByAggregateInput = {
   city_id?: Prisma.SortOrder
 }
 
+export type TournamentsScalarRelationFilter = {
+  is?: Prisma.tournamentsWhereInput
+  isNot?: Prisma.tournamentsWhereInput
+}
+
+export type tournamentsCreateNestedManyWithoutCountryInput = {
+  create?: Prisma.XOR<Prisma.tournamentsCreateWithoutCountryInput, Prisma.tournamentsUncheckedCreateWithoutCountryInput> | Prisma.tournamentsCreateWithoutCountryInput[] | Prisma.tournamentsUncheckedCreateWithoutCountryInput[]
+  connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutCountryInput | Prisma.tournamentsCreateOrConnectWithoutCountryInput[]
+  createMany?: Prisma.tournamentsCreateManyCountryInputEnvelope
+  connect?: Prisma.tournamentsWhereUniqueInput | Prisma.tournamentsWhereUniqueInput[]
+}
+
+export type tournamentsUncheckedCreateNestedManyWithoutCountryInput = {
+  create?: Prisma.XOR<Prisma.tournamentsCreateWithoutCountryInput, Prisma.tournamentsUncheckedCreateWithoutCountryInput> | Prisma.tournamentsCreateWithoutCountryInput[] | Prisma.tournamentsUncheckedCreateWithoutCountryInput[]
+  connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutCountryInput | Prisma.tournamentsCreateOrConnectWithoutCountryInput[]
+  createMany?: Prisma.tournamentsCreateManyCountryInputEnvelope
+  connect?: Prisma.tournamentsWhereUniqueInput | Prisma.tournamentsWhereUniqueInput[]
+}
+
+export type tournamentsUpdateManyWithoutCountryNestedInput = {
+  create?: Prisma.XOR<Prisma.tournamentsCreateWithoutCountryInput, Prisma.tournamentsUncheckedCreateWithoutCountryInput> | Prisma.tournamentsCreateWithoutCountryInput[] | Prisma.tournamentsUncheckedCreateWithoutCountryInput[]
+  connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutCountryInput | Prisma.tournamentsCreateOrConnectWithoutCountryInput[]
+  upsert?: Prisma.tournamentsUpsertWithWhereUniqueWithoutCountryInput | Prisma.tournamentsUpsertWithWhereUniqueWithoutCountryInput[]
+  createMany?: Prisma.tournamentsCreateManyCountryInputEnvelope
+  set?: Prisma.tournamentsWhereUniqueInput | Prisma.tournamentsWhereUniqueInput[]
+  disconnect?: Prisma.tournamentsWhereUniqueInput | Prisma.tournamentsWhereUniqueInput[]
+  delete?: Prisma.tournamentsWhereUniqueInput | Prisma.tournamentsWhereUniqueInput[]
+  connect?: Prisma.tournamentsWhereUniqueInput | Prisma.tournamentsWhereUniqueInput[]
+  update?: Prisma.tournamentsUpdateWithWhereUniqueWithoutCountryInput | Prisma.tournamentsUpdateWithWhereUniqueWithoutCountryInput[]
+  updateMany?: Prisma.tournamentsUpdateManyWithWhereWithoutCountryInput | Prisma.tournamentsUpdateManyWithWhereWithoutCountryInput[]
+  deleteMany?: Prisma.tournamentsScalarWhereInput | Prisma.tournamentsScalarWhereInput[]
+}
+
+export type tournamentsUncheckedUpdateManyWithoutCountryNestedInput = {
+  create?: Prisma.XOR<Prisma.tournamentsCreateWithoutCountryInput, Prisma.tournamentsUncheckedCreateWithoutCountryInput> | Prisma.tournamentsCreateWithoutCountryInput[] | Prisma.tournamentsUncheckedCreateWithoutCountryInput[]
+  connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutCountryInput | Prisma.tournamentsCreateOrConnectWithoutCountryInput[]
+  upsert?: Prisma.tournamentsUpsertWithWhereUniqueWithoutCountryInput | Prisma.tournamentsUpsertWithWhereUniqueWithoutCountryInput[]
+  createMany?: Prisma.tournamentsCreateManyCountryInputEnvelope
+  set?: Prisma.tournamentsWhereUniqueInput | Prisma.tournamentsWhereUniqueInput[]
+  disconnect?: Prisma.tournamentsWhereUniqueInput | Prisma.tournamentsWhereUniqueInput[]
+  delete?: Prisma.tournamentsWhereUniqueInput | Prisma.tournamentsWhereUniqueInput[]
+  connect?: Prisma.tournamentsWhereUniqueInput | Prisma.tournamentsWhereUniqueInput[]
+  update?: Prisma.tournamentsUpdateWithWhereUniqueWithoutCountryInput | Prisma.tournamentsUpdateWithWhereUniqueWithoutCountryInput[]
+  updateMany?: Prisma.tournamentsUpdateManyWithWhereWithoutCountryInput | Prisma.tournamentsUpdateManyWithWhereWithoutCountryInput[]
+  deleteMany?: Prisma.tournamentsScalarWhereInput | Prisma.tournamentsScalarWhereInput[]
+}
+
+export type tournamentsCreateNestedManyWithoutCityInput = {
+  create?: Prisma.XOR<Prisma.tournamentsCreateWithoutCityInput, Prisma.tournamentsUncheckedCreateWithoutCityInput> | Prisma.tournamentsCreateWithoutCityInput[] | Prisma.tournamentsUncheckedCreateWithoutCityInput[]
+  connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutCityInput | Prisma.tournamentsCreateOrConnectWithoutCityInput[]
+  createMany?: Prisma.tournamentsCreateManyCityInputEnvelope
+  connect?: Prisma.tournamentsWhereUniqueInput | Prisma.tournamentsWhereUniqueInput[]
+}
+
+export type tournamentsUncheckedCreateNestedManyWithoutCityInput = {
+  create?: Prisma.XOR<Prisma.tournamentsCreateWithoutCityInput, Prisma.tournamentsUncheckedCreateWithoutCityInput> | Prisma.tournamentsCreateWithoutCityInput[] | Prisma.tournamentsUncheckedCreateWithoutCityInput[]
+  connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutCityInput | Prisma.tournamentsCreateOrConnectWithoutCityInput[]
+  createMany?: Prisma.tournamentsCreateManyCityInputEnvelope
+  connect?: Prisma.tournamentsWhereUniqueInput | Prisma.tournamentsWhereUniqueInput[]
+}
+
+export type tournamentsUpdateManyWithoutCityNestedInput = {
+  create?: Prisma.XOR<Prisma.tournamentsCreateWithoutCityInput, Prisma.tournamentsUncheckedCreateWithoutCityInput> | Prisma.tournamentsCreateWithoutCityInput[] | Prisma.tournamentsUncheckedCreateWithoutCityInput[]
+  connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutCityInput | Prisma.tournamentsCreateOrConnectWithoutCityInput[]
+  upsert?: Prisma.tournamentsUpsertWithWhereUniqueWithoutCityInput | Prisma.tournamentsUpsertWithWhereUniqueWithoutCityInput[]
+  createMany?: Prisma.tournamentsCreateManyCityInputEnvelope
+  set?: Prisma.tournamentsWhereUniqueInput | Prisma.tournamentsWhereUniqueInput[]
+  disconnect?: Prisma.tournamentsWhereUniqueInput | Prisma.tournamentsWhereUniqueInput[]
+  delete?: Prisma.tournamentsWhereUniqueInput | Prisma.tournamentsWhereUniqueInput[]
+  connect?: Prisma.tournamentsWhereUniqueInput | Prisma.tournamentsWhereUniqueInput[]
+  update?: Prisma.tournamentsUpdateWithWhereUniqueWithoutCityInput | Prisma.tournamentsUpdateWithWhereUniqueWithoutCityInput[]
+  updateMany?: Prisma.tournamentsUpdateManyWithWhereWithoutCityInput | Prisma.tournamentsUpdateManyWithWhereWithoutCityInput[]
+  deleteMany?: Prisma.tournamentsScalarWhereInput | Prisma.tournamentsScalarWhereInput[]
+}
+
+export type tournamentsUncheckedUpdateManyWithoutCityNestedInput = {
+  create?: Prisma.XOR<Prisma.tournamentsCreateWithoutCityInput, Prisma.tournamentsUncheckedCreateWithoutCityInput> | Prisma.tournamentsCreateWithoutCityInput[] | Prisma.tournamentsUncheckedCreateWithoutCityInput[]
+  connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutCityInput | Prisma.tournamentsCreateOrConnectWithoutCityInput[]
+  upsert?: Prisma.tournamentsUpsertWithWhereUniqueWithoutCityInput | Prisma.tournamentsUpsertWithWhereUniqueWithoutCityInput[]
+  createMany?: Prisma.tournamentsCreateManyCityInputEnvelope
+  set?: Prisma.tournamentsWhereUniqueInput | Prisma.tournamentsWhereUniqueInput[]
+  disconnect?: Prisma.tournamentsWhereUniqueInput | Prisma.tournamentsWhereUniqueInput[]
+  delete?: Prisma.tournamentsWhereUniqueInput | Prisma.tournamentsWhereUniqueInput[]
+  connect?: Prisma.tournamentsWhereUniqueInput | Prisma.tournamentsWhereUniqueInput[]
+  update?: Prisma.tournamentsUpdateWithWhereUniqueWithoutCityInput | Prisma.tournamentsUpdateWithWhereUniqueWithoutCityInput[]
+  updateMany?: Prisma.tournamentsUpdateManyWithWhereWithoutCityInput | Prisma.tournamentsUpdateManyWithWhereWithoutCityInput[]
+  deleteMany?: Prisma.tournamentsScalarWhereInput | Prisma.tournamentsScalarWhereInput[]
+}
+
+export type tournamentsCreateNestedOneWithoutNominationsInput = {
+  create?: Prisma.XOR<Prisma.tournamentsCreateWithoutNominationsInput, Prisma.tournamentsUncheckedCreateWithoutNominationsInput>
+  connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutNominationsInput
+  connect?: Prisma.tournamentsWhereUniqueInput
+}
+
+export type tournamentsUpdateOneRequiredWithoutNominationsNestedInput = {
+  create?: Prisma.XOR<Prisma.tournamentsCreateWithoutNominationsInput, Prisma.tournamentsUncheckedCreateWithoutNominationsInput>
+  connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutNominationsInput
+  upsert?: Prisma.tournamentsUpsertWithoutNominationsInput
+  connect?: Prisma.tournamentsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.tournamentsUpdateToOneWithWhereWithoutNominationsInput, Prisma.tournamentsUpdateWithoutNominationsInput>, Prisma.tournamentsUncheckedUpdateWithoutNominationsInput>
+}
+
+export type tournamentsCreateNestedOneWithoutCompetitorsInput = {
+  create?: Prisma.XOR<Prisma.tournamentsCreateWithoutCompetitorsInput, Prisma.tournamentsUncheckedCreateWithoutCompetitorsInput>
+  connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutCompetitorsInput
+  connect?: Prisma.tournamentsWhereUniqueInput
+}
+
+export type tournamentsUpdateOneRequiredWithoutCompetitorsNestedInput = {
+  create?: Prisma.XOR<Prisma.tournamentsCreateWithoutCompetitorsInput, Prisma.tournamentsUncheckedCreateWithoutCompetitorsInput>
+  connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutCompetitorsInput
+  upsert?: Prisma.tournamentsUpsertWithoutCompetitorsInput
+  connect?: Prisma.tournamentsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.tournamentsUpdateToOneWithWhereWithoutCompetitorsInput, Prisma.tournamentsUpdateWithoutCompetitorsInput>, Prisma.tournamentsUncheckedUpdateWithoutCompetitorsInput>
+}
+
+export type tournamentsCreateNestedOneWithoutGroupsInput = {
+  create?: Prisma.XOR<Prisma.tournamentsCreateWithoutGroupsInput, Prisma.tournamentsUncheckedCreateWithoutGroupsInput>
+  connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutGroupsInput
+  connect?: Prisma.tournamentsWhereUniqueInput
+}
+
+export type tournamentsUpdateOneRequiredWithoutGroupsNestedInput = {
+  create?: Prisma.XOR<Prisma.tournamentsCreateWithoutGroupsInput, Prisma.tournamentsUncheckedCreateWithoutGroupsInput>
+  connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutGroupsInput
+  upsert?: Prisma.tournamentsUpsertWithoutGroupsInput
+  connect?: Prisma.tournamentsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.tournamentsUpdateToOneWithWhereWithoutGroupsInput, Prisma.tournamentsUpdateWithoutGroupsInput>, Prisma.tournamentsUncheckedUpdateWithoutGroupsInput>
+}
+
+export type tournamentsCreateNestedOneWithoutFightsInput = {
+  create?: Prisma.XOR<Prisma.tournamentsCreateWithoutFightsInput, Prisma.tournamentsUncheckedCreateWithoutFightsInput>
+  connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutFightsInput
+  connect?: Prisma.tournamentsWhereUniqueInput
+}
+
+export type tournamentsUpdateOneRequiredWithoutFightsNestedInput = {
+  create?: Prisma.XOR<Prisma.tournamentsCreateWithoutFightsInput, Prisma.tournamentsUncheckedCreateWithoutFightsInput>
+  connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutFightsInput
+  upsert?: Prisma.tournamentsUpsertWithoutFightsInput
+  connect?: Prisma.tournamentsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.tournamentsUpdateToOneWithWhereWithoutFightsInput, Prisma.tournamentsUpdateWithoutFightsInput>, Prisma.tournamentsUncheckedUpdateWithoutFightsInput>
+}
+
+export type tournamentsCreateWithoutCountryInput = {
+  name: string
+  event_date?: Date | string | null
+  city: Prisma.citiesCreateNestedOneWithoutTournamentsInput
+  nominations?: Prisma.tournament_nominationsCreateNestedManyWithoutTournamentInput
+  competitors?: Prisma.competitorsCreateNestedManyWithoutTournamentInput
+  groups?: Prisma.groupsCreateNestedManyWithoutTournamentInput
+  fights?: Prisma.fightsCreateNestedManyWithoutTournamentInput
+}
+
+export type tournamentsUncheckedCreateWithoutCountryInput = {
+  id?: number
+  name: string
+  event_date?: Date | string | null
+  city_id: number
+  nominations?: Prisma.tournament_nominationsUncheckedCreateNestedManyWithoutTournamentInput
+  competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutTournamentInput
+  groups?: Prisma.groupsUncheckedCreateNestedManyWithoutTournamentInput
+  fights?: Prisma.fightsUncheckedCreateNestedManyWithoutTournamentInput
+}
+
+export type tournamentsCreateOrConnectWithoutCountryInput = {
+  where: Prisma.tournamentsWhereUniqueInput
+  create: Prisma.XOR<Prisma.tournamentsCreateWithoutCountryInput, Prisma.tournamentsUncheckedCreateWithoutCountryInput>
+}
+
+export type tournamentsCreateManyCountryInputEnvelope = {
+  data: Prisma.tournamentsCreateManyCountryInput | Prisma.tournamentsCreateManyCountryInput[]
+  skipDuplicates?: boolean
+}
+
+export type tournamentsUpsertWithWhereUniqueWithoutCountryInput = {
+  where: Prisma.tournamentsWhereUniqueInput
+  update: Prisma.XOR<Prisma.tournamentsUpdateWithoutCountryInput, Prisma.tournamentsUncheckedUpdateWithoutCountryInput>
+  create: Prisma.XOR<Prisma.tournamentsCreateWithoutCountryInput, Prisma.tournamentsUncheckedCreateWithoutCountryInput>
+}
+
+export type tournamentsUpdateWithWhereUniqueWithoutCountryInput = {
+  where: Prisma.tournamentsWhereUniqueInput
+  data: Prisma.XOR<Prisma.tournamentsUpdateWithoutCountryInput, Prisma.tournamentsUncheckedUpdateWithoutCountryInput>
+}
+
+export type tournamentsUpdateManyWithWhereWithoutCountryInput = {
+  where: Prisma.tournamentsScalarWhereInput
+  data: Prisma.XOR<Prisma.tournamentsUpdateManyMutationInput, Prisma.tournamentsUncheckedUpdateManyWithoutCountryInput>
+}
+
+export type tournamentsScalarWhereInput = {
+  AND?: Prisma.tournamentsScalarWhereInput | Prisma.tournamentsScalarWhereInput[]
+  OR?: Prisma.tournamentsScalarWhereInput[]
+  NOT?: Prisma.tournamentsScalarWhereInput | Prisma.tournamentsScalarWhereInput[]
+  id?: Prisma.IntFilter<"tournaments"> | number
+  name?: Prisma.StringFilter<"tournaments"> | string
+  event_date?: Prisma.DateTimeNullableFilter<"tournaments"> | Date | string | null
+  country_id?: Prisma.IntFilter<"tournaments"> | number
+  city_id?: Prisma.IntFilter<"tournaments"> | number
+}
+
+export type tournamentsCreateWithoutCityInput = {
+  name: string
+  event_date?: Date | string | null
+  country: Prisma.countriesCreateNestedOneWithoutTournamentsInput
+  nominations?: Prisma.tournament_nominationsCreateNestedManyWithoutTournamentInput
+  competitors?: Prisma.competitorsCreateNestedManyWithoutTournamentInput
+  groups?: Prisma.groupsCreateNestedManyWithoutTournamentInput
+  fights?: Prisma.fightsCreateNestedManyWithoutTournamentInput
+}
+
+export type tournamentsUncheckedCreateWithoutCityInput = {
+  id?: number
+  name: string
+  event_date?: Date | string | null
+  country_id: number
+  nominations?: Prisma.tournament_nominationsUncheckedCreateNestedManyWithoutTournamentInput
+  competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutTournamentInput
+  groups?: Prisma.groupsUncheckedCreateNestedManyWithoutTournamentInput
+  fights?: Prisma.fightsUncheckedCreateNestedManyWithoutTournamentInput
+}
+
+export type tournamentsCreateOrConnectWithoutCityInput = {
+  where: Prisma.tournamentsWhereUniqueInput
+  create: Prisma.XOR<Prisma.tournamentsCreateWithoutCityInput, Prisma.tournamentsUncheckedCreateWithoutCityInput>
+}
+
+export type tournamentsCreateManyCityInputEnvelope = {
+  data: Prisma.tournamentsCreateManyCityInput | Prisma.tournamentsCreateManyCityInput[]
+  skipDuplicates?: boolean
+}
+
+export type tournamentsUpsertWithWhereUniqueWithoutCityInput = {
+  where: Prisma.tournamentsWhereUniqueInput
+  update: Prisma.XOR<Prisma.tournamentsUpdateWithoutCityInput, Prisma.tournamentsUncheckedUpdateWithoutCityInput>
+  create: Prisma.XOR<Prisma.tournamentsCreateWithoutCityInput, Prisma.tournamentsUncheckedCreateWithoutCityInput>
+}
+
+export type tournamentsUpdateWithWhereUniqueWithoutCityInput = {
+  where: Prisma.tournamentsWhereUniqueInput
+  data: Prisma.XOR<Prisma.tournamentsUpdateWithoutCityInput, Prisma.tournamentsUncheckedUpdateWithoutCityInput>
+}
+
+export type tournamentsUpdateManyWithWhereWithoutCityInput = {
+  where: Prisma.tournamentsScalarWhereInput
+  data: Prisma.XOR<Prisma.tournamentsUpdateManyMutationInput, Prisma.tournamentsUncheckedUpdateManyWithoutCityInput>
+}
+
+export type tournamentsCreateWithoutNominationsInput = {
+  name: string
+  event_date?: Date | string | null
+  country: Prisma.countriesCreateNestedOneWithoutTournamentsInput
+  city: Prisma.citiesCreateNestedOneWithoutTournamentsInput
+  competitors?: Prisma.competitorsCreateNestedManyWithoutTournamentInput
+  groups?: Prisma.groupsCreateNestedManyWithoutTournamentInput
+  fights?: Prisma.fightsCreateNestedManyWithoutTournamentInput
+}
+
+export type tournamentsUncheckedCreateWithoutNominationsInput = {
+  id?: number
+  name: string
+  event_date?: Date | string | null
+  country_id: number
+  city_id: number
+  competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutTournamentInput
+  groups?: Prisma.groupsUncheckedCreateNestedManyWithoutTournamentInput
+  fights?: Prisma.fightsUncheckedCreateNestedManyWithoutTournamentInput
+}
+
+export type tournamentsCreateOrConnectWithoutNominationsInput = {
+  where: Prisma.tournamentsWhereUniqueInput
+  create: Prisma.XOR<Prisma.tournamentsCreateWithoutNominationsInput, Prisma.tournamentsUncheckedCreateWithoutNominationsInput>
+}
+
+export type tournamentsUpsertWithoutNominationsInput = {
+  update: Prisma.XOR<Prisma.tournamentsUpdateWithoutNominationsInput, Prisma.tournamentsUncheckedUpdateWithoutNominationsInput>
+  create: Prisma.XOR<Prisma.tournamentsCreateWithoutNominationsInput, Prisma.tournamentsUncheckedCreateWithoutNominationsInput>
+  where?: Prisma.tournamentsWhereInput
+}
+
+export type tournamentsUpdateToOneWithWhereWithoutNominationsInput = {
+  where?: Prisma.tournamentsWhereInput
+  data: Prisma.XOR<Prisma.tournamentsUpdateWithoutNominationsInput, Prisma.tournamentsUncheckedUpdateWithoutNominationsInput>
+}
+
+export type tournamentsUpdateWithoutNominationsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  country?: Prisma.countriesUpdateOneRequiredWithoutTournamentsNestedInput
+  city?: Prisma.citiesUpdateOneRequiredWithoutTournamentsNestedInput
+  competitors?: Prisma.competitorsUpdateManyWithoutTournamentNestedInput
+  groups?: Prisma.groupsUpdateManyWithoutTournamentNestedInput
+  fights?: Prisma.fightsUpdateManyWithoutTournamentNestedInput
+}
+
+export type tournamentsUncheckedUpdateWithoutNominationsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  country_id?: Prisma.IntFieldUpdateOperationsInput | number
+  city_id?: Prisma.IntFieldUpdateOperationsInput | number
+  competitors?: Prisma.competitorsUncheckedUpdateManyWithoutTournamentNestedInput
+  groups?: Prisma.groupsUncheckedUpdateManyWithoutTournamentNestedInput
+  fights?: Prisma.fightsUncheckedUpdateManyWithoutTournamentNestedInput
+}
+
+export type tournamentsCreateWithoutCompetitorsInput = {
+  name: string
+  event_date?: Date | string | null
+  country: Prisma.countriesCreateNestedOneWithoutTournamentsInput
+  city: Prisma.citiesCreateNestedOneWithoutTournamentsInput
+  nominations?: Prisma.tournament_nominationsCreateNestedManyWithoutTournamentInput
+  groups?: Prisma.groupsCreateNestedManyWithoutTournamentInput
+  fights?: Prisma.fightsCreateNestedManyWithoutTournamentInput
+}
+
+export type tournamentsUncheckedCreateWithoutCompetitorsInput = {
+  id?: number
+  name: string
+  event_date?: Date | string | null
+  country_id: number
+  city_id: number
+  nominations?: Prisma.tournament_nominationsUncheckedCreateNestedManyWithoutTournamentInput
+  groups?: Prisma.groupsUncheckedCreateNestedManyWithoutTournamentInput
+  fights?: Prisma.fightsUncheckedCreateNestedManyWithoutTournamentInput
+}
+
+export type tournamentsCreateOrConnectWithoutCompetitorsInput = {
+  where: Prisma.tournamentsWhereUniqueInput
+  create: Prisma.XOR<Prisma.tournamentsCreateWithoutCompetitorsInput, Prisma.tournamentsUncheckedCreateWithoutCompetitorsInput>
+}
+
+export type tournamentsUpsertWithoutCompetitorsInput = {
+  update: Prisma.XOR<Prisma.tournamentsUpdateWithoutCompetitorsInput, Prisma.tournamentsUncheckedUpdateWithoutCompetitorsInput>
+  create: Prisma.XOR<Prisma.tournamentsCreateWithoutCompetitorsInput, Prisma.tournamentsUncheckedCreateWithoutCompetitorsInput>
+  where?: Prisma.tournamentsWhereInput
+}
+
+export type tournamentsUpdateToOneWithWhereWithoutCompetitorsInput = {
+  where?: Prisma.tournamentsWhereInput
+  data: Prisma.XOR<Prisma.tournamentsUpdateWithoutCompetitorsInput, Prisma.tournamentsUncheckedUpdateWithoutCompetitorsInput>
+}
+
+export type tournamentsUpdateWithoutCompetitorsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  country?: Prisma.countriesUpdateOneRequiredWithoutTournamentsNestedInput
+  city?: Prisma.citiesUpdateOneRequiredWithoutTournamentsNestedInput
+  nominations?: Prisma.tournament_nominationsUpdateManyWithoutTournamentNestedInput
+  groups?: Prisma.groupsUpdateManyWithoutTournamentNestedInput
+  fights?: Prisma.fightsUpdateManyWithoutTournamentNestedInput
+}
+
+export type tournamentsUncheckedUpdateWithoutCompetitorsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  country_id?: Prisma.IntFieldUpdateOperationsInput | number
+  city_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nominations?: Prisma.tournament_nominationsUncheckedUpdateManyWithoutTournamentNestedInput
+  groups?: Prisma.groupsUncheckedUpdateManyWithoutTournamentNestedInput
+  fights?: Prisma.fightsUncheckedUpdateManyWithoutTournamentNestedInput
+}
+
+export type tournamentsCreateWithoutGroupsInput = {
+  name: string
+  event_date?: Date | string | null
+  country: Prisma.countriesCreateNestedOneWithoutTournamentsInput
+  city: Prisma.citiesCreateNestedOneWithoutTournamentsInput
+  nominations?: Prisma.tournament_nominationsCreateNestedManyWithoutTournamentInput
+  competitors?: Prisma.competitorsCreateNestedManyWithoutTournamentInput
+  fights?: Prisma.fightsCreateNestedManyWithoutTournamentInput
+}
+
+export type tournamentsUncheckedCreateWithoutGroupsInput = {
+  id?: number
+  name: string
+  event_date?: Date | string | null
+  country_id: number
+  city_id: number
+  nominations?: Prisma.tournament_nominationsUncheckedCreateNestedManyWithoutTournamentInput
+  competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutTournamentInput
+  fights?: Prisma.fightsUncheckedCreateNestedManyWithoutTournamentInput
+}
+
+export type tournamentsCreateOrConnectWithoutGroupsInput = {
+  where: Prisma.tournamentsWhereUniqueInput
+  create: Prisma.XOR<Prisma.tournamentsCreateWithoutGroupsInput, Prisma.tournamentsUncheckedCreateWithoutGroupsInput>
+}
+
+export type tournamentsUpsertWithoutGroupsInput = {
+  update: Prisma.XOR<Prisma.tournamentsUpdateWithoutGroupsInput, Prisma.tournamentsUncheckedUpdateWithoutGroupsInput>
+  create: Prisma.XOR<Prisma.tournamentsCreateWithoutGroupsInput, Prisma.tournamentsUncheckedCreateWithoutGroupsInput>
+  where?: Prisma.tournamentsWhereInput
+}
+
+export type tournamentsUpdateToOneWithWhereWithoutGroupsInput = {
+  where?: Prisma.tournamentsWhereInput
+  data: Prisma.XOR<Prisma.tournamentsUpdateWithoutGroupsInput, Prisma.tournamentsUncheckedUpdateWithoutGroupsInput>
+}
+
+export type tournamentsUpdateWithoutGroupsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  country?: Prisma.countriesUpdateOneRequiredWithoutTournamentsNestedInput
+  city?: Prisma.citiesUpdateOneRequiredWithoutTournamentsNestedInput
+  nominations?: Prisma.tournament_nominationsUpdateManyWithoutTournamentNestedInput
+  competitors?: Prisma.competitorsUpdateManyWithoutTournamentNestedInput
+  fights?: Prisma.fightsUpdateManyWithoutTournamentNestedInput
+}
+
+export type tournamentsUncheckedUpdateWithoutGroupsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  country_id?: Prisma.IntFieldUpdateOperationsInput | number
+  city_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nominations?: Prisma.tournament_nominationsUncheckedUpdateManyWithoutTournamentNestedInput
+  competitors?: Prisma.competitorsUncheckedUpdateManyWithoutTournamentNestedInput
+  fights?: Prisma.fightsUncheckedUpdateManyWithoutTournamentNestedInput
+}
+
+export type tournamentsCreateWithoutFightsInput = {
+  name: string
+  event_date?: Date | string | null
+  country: Prisma.countriesCreateNestedOneWithoutTournamentsInput
+  city: Prisma.citiesCreateNestedOneWithoutTournamentsInput
+  nominations?: Prisma.tournament_nominationsCreateNestedManyWithoutTournamentInput
+  competitors?: Prisma.competitorsCreateNestedManyWithoutTournamentInput
+  groups?: Prisma.groupsCreateNestedManyWithoutTournamentInput
+}
+
+export type tournamentsUncheckedCreateWithoutFightsInput = {
+  id?: number
+  name: string
+  event_date?: Date | string | null
+  country_id: number
+  city_id: number
+  nominations?: Prisma.tournament_nominationsUncheckedCreateNestedManyWithoutTournamentInput
+  competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutTournamentInput
+  groups?: Prisma.groupsUncheckedCreateNestedManyWithoutTournamentInput
+}
+
+export type tournamentsCreateOrConnectWithoutFightsInput = {
+  where: Prisma.tournamentsWhereUniqueInput
+  create: Prisma.XOR<Prisma.tournamentsCreateWithoutFightsInput, Prisma.tournamentsUncheckedCreateWithoutFightsInput>
+}
+
+export type tournamentsUpsertWithoutFightsInput = {
+  update: Prisma.XOR<Prisma.tournamentsUpdateWithoutFightsInput, Prisma.tournamentsUncheckedUpdateWithoutFightsInput>
+  create: Prisma.XOR<Prisma.tournamentsCreateWithoutFightsInput, Prisma.tournamentsUncheckedCreateWithoutFightsInput>
+  where?: Prisma.tournamentsWhereInput
+}
+
+export type tournamentsUpdateToOneWithWhereWithoutFightsInput = {
+  where?: Prisma.tournamentsWhereInput
+  data: Prisma.XOR<Prisma.tournamentsUpdateWithoutFightsInput, Prisma.tournamentsUncheckedUpdateWithoutFightsInput>
+}
+
+export type tournamentsUpdateWithoutFightsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  country?: Prisma.countriesUpdateOneRequiredWithoutTournamentsNestedInput
+  city?: Prisma.citiesUpdateOneRequiredWithoutTournamentsNestedInput
+  nominations?: Prisma.tournament_nominationsUpdateManyWithoutTournamentNestedInput
+  competitors?: Prisma.competitorsUpdateManyWithoutTournamentNestedInput
+  groups?: Prisma.groupsUpdateManyWithoutTournamentNestedInput
+}
+
+export type tournamentsUncheckedUpdateWithoutFightsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  country_id?: Prisma.IntFieldUpdateOperationsInput | number
+  city_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nominations?: Prisma.tournament_nominationsUncheckedUpdateManyWithoutTournamentNestedInput
+  competitors?: Prisma.competitorsUncheckedUpdateManyWithoutTournamentNestedInput
+  groups?: Prisma.groupsUncheckedUpdateManyWithoutTournamentNestedInput
+}
+
+export type tournamentsCreateManyCountryInput = {
+  id?: number
+  name: string
+  event_date?: Date | string | null
+  city_id: number
+}
+
+export type tournamentsUpdateWithoutCountryInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  city?: Prisma.citiesUpdateOneRequiredWithoutTournamentsNestedInput
+  nominations?: Prisma.tournament_nominationsUpdateManyWithoutTournamentNestedInput
+  competitors?: Prisma.competitorsUpdateManyWithoutTournamentNestedInput
+  groups?: Prisma.groupsUpdateManyWithoutTournamentNestedInput
+  fights?: Prisma.fightsUpdateManyWithoutTournamentNestedInput
+}
+
+export type tournamentsUncheckedUpdateWithoutCountryInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  city_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nominations?: Prisma.tournament_nominationsUncheckedUpdateManyWithoutTournamentNestedInput
+  competitors?: Prisma.competitorsUncheckedUpdateManyWithoutTournamentNestedInput
+  groups?: Prisma.groupsUncheckedUpdateManyWithoutTournamentNestedInput
+  fights?: Prisma.fightsUncheckedUpdateManyWithoutTournamentNestedInput
+}
+
+export type tournamentsUncheckedUpdateManyWithoutCountryInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  city_id?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type tournamentsCreateManyCityInput = {
+  id?: number
+  name: string
+  event_date?: Date | string | null
+  country_id: number
+}
+
+export type tournamentsUpdateWithoutCityInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  country?: Prisma.countriesUpdateOneRequiredWithoutTournamentsNestedInput
+  nominations?: Prisma.tournament_nominationsUpdateManyWithoutTournamentNestedInput
+  competitors?: Prisma.competitorsUpdateManyWithoutTournamentNestedInput
+  groups?: Prisma.groupsUpdateManyWithoutTournamentNestedInput
+  fights?: Prisma.fightsUpdateManyWithoutTournamentNestedInput
+}
+
+export type tournamentsUncheckedUpdateWithoutCityInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  country_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nominations?: Prisma.tournament_nominationsUncheckedUpdateManyWithoutTournamentNestedInput
+  competitors?: Prisma.competitorsUncheckedUpdateManyWithoutTournamentNestedInput
+  groups?: Prisma.groupsUncheckedUpdateManyWithoutTournamentNestedInput
+  fights?: Prisma.fightsUncheckedUpdateManyWithoutTournamentNestedInput
+}
+
+export type tournamentsUncheckedUpdateManyWithoutCityInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  country_id?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+
+/**
+ * Count Type TournamentsCountOutputType
+ */
+
+export type TournamentsCountOutputType = {
+  nominations: number
+  competitors: number
+  groups: number
+  fights: number
+}
+
+export type TournamentsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  nominations?: boolean | TournamentsCountOutputTypeCountNominationsArgs
+  competitors?: boolean | TournamentsCountOutputTypeCountCompetitorsArgs
+  groups?: boolean | TournamentsCountOutputTypeCountGroupsArgs
+  fights?: boolean | TournamentsCountOutputTypeCountFightsArgs
+}
+
+/**
+ * TournamentsCountOutputType without action
+ */
+export type TournamentsCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TournamentsCountOutputType
+   */
+  select?: Prisma.TournamentsCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * TournamentsCountOutputType without action
+ */
+export type TournamentsCountOutputTypeCountNominationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.tournament_nominationsWhereInput
+}
+
+/**
+ * TournamentsCountOutputType without action
+ */
+export type TournamentsCountOutputTypeCountCompetitorsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.competitorsWhereInput
+}
+
+/**
+ * TournamentsCountOutputType without action
+ */
+export type TournamentsCountOutputTypeCountGroupsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.groupsWhereInput
+}
+
+/**
+ * TournamentsCountOutputType without action
+ */
+export type TournamentsCountOutputTypeCountFightsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.fightsWhereInput
+}
 
 
 export type tournamentsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -366,6 +1016,13 @@ export type tournamentsSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   event_date?: boolean
   country_id?: boolean
   city_id?: boolean
+  country?: boolean | Prisma.countriesDefaultArgs<ExtArgs>
+  city?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
+  nominations?: boolean | Prisma.tournaments$nominationsArgs<ExtArgs>
+  competitors?: boolean | Prisma.tournaments$competitorsArgs<ExtArgs>
+  groups?: boolean | Prisma.tournaments$groupsArgs<ExtArgs>
+  fights?: boolean | Prisma.tournaments$fightsArgs<ExtArgs>
+  _count?: boolean | Prisma.TournamentsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tournaments"]>
 
 export type tournamentsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -374,6 +1031,8 @@ export type tournamentsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   event_date?: boolean
   country_id?: boolean
   city_id?: boolean
+  country?: boolean | Prisma.countriesDefaultArgs<ExtArgs>
+  city?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tournaments"]>
 
 export type tournamentsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -382,6 +1041,8 @@ export type tournamentsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   event_date?: boolean
   country_id?: boolean
   city_id?: boolean
+  country?: boolean | Prisma.countriesDefaultArgs<ExtArgs>
+  city?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tournaments"]>
 
 export type tournamentsSelectScalar = {
@@ -393,10 +1054,34 @@ export type tournamentsSelectScalar = {
 }
 
 export type tournamentsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "event_date" | "country_id" | "city_id", ExtArgs["result"]["tournaments"]>
+export type tournamentsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  country?: boolean | Prisma.countriesDefaultArgs<ExtArgs>
+  city?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
+  nominations?: boolean | Prisma.tournaments$nominationsArgs<ExtArgs>
+  competitors?: boolean | Prisma.tournaments$competitorsArgs<ExtArgs>
+  groups?: boolean | Prisma.tournaments$groupsArgs<ExtArgs>
+  fights?: boolean | Prisma.tournaments$fightsArgs<ExtArgs>
+  _count?: boolean | Prisma.TournamentsCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type tournamentsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  country?: boolean | Prisma.countriesDefaultArgs<ExtArgs>
+  city?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
+}
+export type tournamentsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  country?: boolean | Prisma.countriesDefaultArgs<ExtArgs>
+  city?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
+}
 
 export type $tournamentsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "tournaments"
-  objects: {}
+  objects: {
+    country: Prisma.$countriesPayload<ExtArgs>
+    city: Prisma.$citiesPayload<ExtArgs>
+    nominations: Prisma.$tournament_nominationsPayload<ExtArgs>[]
+    competitors: Prisma.$competitorsPayload<ExtArgs>[]
+    groups: Prisma.$groupsPayload<ExtArgs>[]
+    fights: Prisma.$fightsPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     name: string
@@ -797,6 +1482,12 @@ readonly fields: tournamentsFieldRefs;
  */
 export interface Prisma__tournamentsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  country<T extends Prisma.countriesDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.countriesDefaultArgs<ExtArgs>>): Prisma.Prisma__countriesClient<runtime.Types.Result.GetResult<Prisma.$countriesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  city<T extends Prisma.citiesDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.citiesDefaultArgs<ExtArgs>>): Prisma.Prisma__citiesClient<runtime.Types.Result.GetResult<Prisma.$citiesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  nominations<T extends Prisma.tournaments$nominationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournaments$nominationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$tournament_nominationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  competitors<T extends Prisma.tournaments$competitorsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournaments$competitorsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$competitorsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  groups<T extends Prisma.tournaments$groupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournaments$groupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$groupsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  fights<T extends Prisma.tournaments$fightsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournaments$fightsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fightsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -848,6 +1539,10 @@ export type tournamentsFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.tournamentsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.tournamentsInclude<ExtArgs> | null
+  /**
    * Filter, which tournaments to fetch.
    */
   where: Prisma.tournamentsWhereUniqueInput
@@ -866,6 +1561,10 @@ export type tournamentsFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Exten
    */
   omit?: Prisma.tournamentsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.tournamentsInclude<ExtArgs> | null
+  /**
    * Filter, which tournaments to fetch.
    */
   where: Prisma.tournamentsWhereUniqueInput
@@ -883,6 +1582,10 @@ export type tournamentsFindFirstArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the tournaments
    */
   omit?: Prisma.tournamentsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.tournamentsInclude<ExtArgs> | null
   /**
    * Filter, which tournaments to fetch.
    */
@@ -932,6 +1635,10 @@ export type tournamentsFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extens
    */
   omit?: Prisma.tournamentsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.tournamentsInclude<ExtArgs> | null
+  /**
    * Filter, which tournaments to fetch.
    */
   where?: Prisma.tournamentsWhereInput
@@ -980,6 +1687,10 @@ export type tournamentsFindManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    */
   omit?: Prisma.tournamentsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.tournamentsInclude<ExtArgs> | null
+  /**
    * Filter, which tournaments to fetch.
    */
   where?: Prisma.tournamentsWhereInput
@@ -1023,6 +1734,10 @@ export type tournamentsCreateArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   omit?: Prisma.tournamentsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.tournamentsInclude<ExtArgs> | null
+  /**
    * The data needed to create a tournaments.
    */
   data: Prisma.XOR<Prisma.tournamentsCreateInput, Prisma.tournamentsUncheckedCreateInput>
@@ -1056,6 +1771,10 @@ export type tournamentsCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ext
    */
   data: Prisma.tournamentsCreateManyInput | Prisma.tournamentsCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.tournamentsIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1070,6 +1789,10 @@ export type tournamentsUpdateArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Omit specific fields from the tournaments
    */
   omit?: Prisma.tournamentsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.tournamentsInclude<ExtArgs> | null
   /**
    * The data needed to update a tournaments.
    */
@@ -1122,6 +1845,10 @@ export type tournamentsUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Ext
    * Limit how many tournaments to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.tournamentsIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1136,6 +1863,10 @@ export type tournamentsUpsertArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Omit specific fields from the tournaments
    */
   omit?: Prisma.tournamentsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.tournamentsInclude<ExtArgs> | null
   /**
    * The filter to search for the tournaments to update in case it exists.
    */
@@ -1163,6 +1894,10 @@ export type tournamentsDeleteArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   omit?: Prisma.tournamentsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.tournamentsInclude<ExtArgs> | null
+  /**
    * Filter which tournaments to delete.
    */
   where: Prisma.tournamentsWhereUniqueInput
@@ -1183,6 +1918,102 @@ export type tournamentsDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
 }
 
 /**
+ * tournaments.nominations
+ */
+export type tournaments$nominationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the tournament_nominations
+   */
+  select?: Prisma.tournament_nominationsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the tournament_nominations
+   */
+  omit?: Prisma.tournament_nominationsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.tournament_nominationsInclude<ExtArgs> | null
+  where?: Prisma.tournament_nominationsWhereInput
+  orderBy?: Prisma.tournament_nominationsOrderByWithRelationInput | Prisma.tournament_nominationsOrderByWithRelationInput[]
+  cursor?: Prisma.tournament_nominationsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Tournament_nominationsScalarFieldEnum | Prisma.Tournament_nominationsScalarFieldEnum[]
+}
+
+/**
+ * tournaments.competitors
+ */
+export type tournaments$competitorsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the competitors
+   */
+  select?: Prisma.competitorsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the competitors
+   */
+  omit?: Prisma.competitorsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.competitorsInclude<ExtArgs> | null
+  where?: Prisma.competitorsWhereInput
+  orderBy?: Prisma.competitorsOrderByWithRelationInput | Prisma.competitorsOrderByWithRelationInput[]
+  cursor?: Prisma.competitorsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CompetitorsScalarFieldEnum | Prisma.CompetitorsScalarFieldEnum[]
+}
+
+/**
+ * tournaments.groups
+ */
+export type tournaments$groupsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the groups
+   */
+  select?: Prisma.groupsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the groups
+   */
+  omit?: Prisma.groupsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.groupsInclude<ExtArgs> | null
+  where?: Prisma.groupsWhereInput
+  orderBy?: Prisma.groupsOrderByWithRelationInput | Prisma.groupsOrderByWithRelationInput[]
+  cursor?: Prisma.groupsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.GroupsScalarFieldEnum | Prisma.GroupsScalarFieldEnum[]
+}
+
+/**
+ * tournaments.fights
+ */
+export type tournaments$fightsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the fights
+   */
+  select?: Prisma.fightsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the fights
+   */
+  omit?: Prisma.fightsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.fightsInclude<ExtArgs> | null
+  where?: Prisma.fightsWhereInput
+  orderBy?: Prisma.fightsOrderByWithRelationInput | Prisma.fightsOrderByWithRelationInput[]
+  cursor?: Prisma.fightsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FightsScalarFieldEnum | Prisma.FightsScalarFieldEnum[]
+}
+
+/**
  * tournaments without action
  */
 export type tournamentsDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1194,4 +2025,8 @@ export type tournamentsDefaultArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the tournaments
    */
   omit?: Prisma.tournamentsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.tournamentsInclude<ExtArgs> | null
 }

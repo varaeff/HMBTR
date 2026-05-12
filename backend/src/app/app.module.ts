@@ -13,6 +13,9 @@ import { CitiesModule } from '../cities/cities.module';
 import { ClubsModule } from '../clubs/clubs.module';
 import { NominationsModule } from '../nominations/nominations.module';
 import { CompetitorsModule } from '../competitors/competitors.module';
+import { GroupsModule } from '../groups/groups.module';
+import { GroupCompetitorsModule } from '../group-competitors/group-competitors.module';
+import { FightsModule } from '../fights/fights.module';
 import { AuthModule } from '../auth/auth.module';
 import { UsersModule } from '../users/users.module';
 import { JwtAuthGuardGlobal } from '../auth/guards/jwt-auth-global.guard';
@@ -30,6 +33,9 @@ import { EmailService } from '../common/services/email.service';
     ClubsModule,
     NominationsModule,
     CompetitorsModule,
+    GroupsModule,
+    GroupCompetitorsModule,
+    FightsModule,
   ],
   controllers: [AppController],
   providers: [
