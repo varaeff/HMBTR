@@ -88,6 +88,11 @@ export type bracket_slots = Prisma.bracket_slotsModel
  */
 export type competition_placements = Prisma.competition_placementsModel
 /**
+ * Model tournament_reports
+ * 
+ */
+export type tournament_reports = Prisma.tournament_reportsModel
+/**
  * Model users
  * 
  */

@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, computed, reactive } from 'vue'
 import { useTranslation } from 'i18next-vue'
+import { Download } from 'lucide-vue-next'
 
+import http from '@/api/http'
 import { useTournamentsListStore } from '@/stores/tournamentsList'
 import { useFightersListStore } from '@/stores/fightersList'
 import { useCommonDataStore } from '@/stores/commonData'
 import { useCompetitionStore } from '@/stores/competition'
+import { useApiUiStore } from '@/stores/apiUi'
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -23,6 +26,7 @@ import { useCollapsiblePersist } from '@/composables/useCollapsiblePersist'
 import { tData } from '@/lib/utils'
 import { dateToString } from '@/lib/dateUtils'
 import { hasAccess } from '@/lib/checkAccess'
+import { API_ROUTES } from '@shared/routes'
 
 import type { CompetitionBlock, Tournament } from '@/model'
 
@@ -34,6 +38,7 @@ const TournamentsListStore = useTournamentsListStore()
 const FightersListStore = useFightersListStore()
 const commonDataStore = useCommonDataStore()
 const competitionStore = useCompetitionStore()
+const apiUiStore = useApiUiStore()
 const { i18next } = useTranslation()
 
 const tournamentId = computed(() => +props.id)
@@ -42,8 +47,10 @@ const tournament = ref<Tournament | null>(null)
 const activeTab = ref<number>(0)
 const canEdit = hasAccess()
 const isNominationLoading = ref(false)
+const isReportDownloading = ref(false)
 const blockOpenStates = reactive<Record<string, boolean>>({})
 let nominationLoadRequestId = 0
+const REPORT_DOWNLOAD_TIMEOUT_MS = 120000
 
 const loadNominationData = async (nomId: number) => {
   const requestId = ++nominationLoadRequestId
@@ -105,6 +112,11 @@ const activeBlock = computed(() => competitionStore.getActiveBlock)
 const placements = computed(() => competitionStore.getPlacements)
 const nominationFinished = computed(
   () => competitionStore.getIsFinished || Boolean(currentTournamentNomination.value?.is_finished)
+)
+const allTournamentNominationsFinished = computed(
+  () =>
+    Boolean(tournament.value?.nominations.length) &&
+    tournament.value!.nominations.every((nomination) => nomination.is_finished)
 )
 
 const canEditCompetition = computed(() => canEdit && !nominationFinished.value)
@@ -172,6 +184,71 @@ const finishCompetition = async () => {
   }
 }
 
+const getFileNameFromContentDisposition = (contentDisposition?: string) => {
+  if (!contentDisposition) return `${tournamentName.value || 'tournament'}-results.pdf`
+
+  const encodedMatch = contentDisposition.match(/filename\*=UTF-8''([^;]+)/)
+  if (encodedMatch?.[1]) {
+    return decodeURIComponent(encodedMatch[1])
+  }
+
+  const plainMatch = contentDisposition.match(/filename="([^"]+)"/)
+  return plainMatch?.[1] ?? `${tournamentName.value || 'tournament'}-results.pdf`
+}
+
+const getReportErrorMessage = async (error: unknown) => {
+  const responseData = (error as any)?.response?.data
+
+  if (responseData instanceof Blob) {
+    const text = await responseData.text()
+
+    try {
+      const parsed = JSON.parse(text)
+      const details = Array.isArray(parsed.details) ? parsed.details.join(', ') : parsed.details
+
+      return details || parsed.error || text || 'Failed to download tournament report'
+    } catch {
+      return text || 'Failed to download tournament report'
+    }
+  }
+
+  return (
+    responseData?.details ||
+    responseData?.error ||
+    (error as Error)?.message ||
+    'Failed to download tournament report'
+  )
+}
+
+const downloadTournamentReport = async (language: 'en' | 'ru') => {
+  if (!tournament.value || isReportDownloading.value) return
+
+  isReportDownloading.value = true
+
+  try {
+    const { data, headers } = await http.get(API_ROUTES.TOURNAMENTS.REPORT(tournamentId.value), {
+      params: { lang: language },
+      responseType: 'blob',
+      timeout: REPORT_DOWNLOAD_TIMEOUT_MS
+    })
+    const url = URL.createObjectURL(data)
+    const link = document.createElement('a')
+
+    link.href = url
+    link.download = getFileNameFromContentDisposition(headers['content-disposition'])
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+  } catch (error) {
+    const message = await getReportErrorMessage(error)
+    apiUiStore.setError(message)
+    console.error('Failed to download tournament report:', message, error)
+  } finally {
+    isReportDownloading.value = false
+  }
+}
+
 const blockTitle = (block: CompetitionBlock) => {
   const type =
     block.type === 'GROUP'
@@ -214,6 +291,15 @@ watch(activeTab, (newVal) => {
   if (newVal) loadNominationData(newVal)
 })
 
+watch(nominationFinished, (isFinished) => {
+  const targetNom = currentTournamentNomination.value
+
+  if (isFinished && targetNom) {
+    targetNom.is_finished = true
+    targetNom.is_open = false
+  }
+})
+
 watch(tournamentNominations, (noms) => {
   if (noms.all.length && !activeTab.value) {
     activeTab.value = noms.all[0].id
@@ -226,6 +312,16 @@ watch(tournamentNominations, (noms) => {
     <h1 class="mb-4">{{ tournamentName }}</h1>
     <div v-if="tournament.id !== 0">
       {{ tournamentDetails }}
+    </div>
+    <div v-if="canEdit && allTournamentNominationsFinished" class="mt-4 flex flex-wrap gap-3">
+      <Button :disabled="isReportDownloading" @click="downloadTournamentReport('en')">
+        <Download class="size-4" />
+        PDF EN
+      </Button>
+      <Button :disabled="isReportDownloading" @click="downloadTournamentReport('ru')">
+        <Download class="size-4" />
+        PDF RU
+      </Button>
     </div>
   </div>
 

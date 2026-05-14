@@ -230,6 +230,7 @@ export type tournamentsWhereInput = {
   competitors?: Prisma.CompetitorsListRelationFilter
   groups?: Prisma.GroupsListRelationFilter
   fights?: Prisma.FightsListRelationFilter
+  reports?: Prisma.Tournament_reportsListRelationFilter
 }
 
 export type tournamentsOrderByWithRelationInput = {
@@ -244,6 +245,7 @@ export type tournamentsOrderByWithRelationInput = {
   competitors?: Prisma.competitorsOrderByRelationAggregateInput
   groups?: Prisma.groupsOrderByRelationAggregateInput
   fights?: Prisma.fightsOrderByRelationAggregateInput
+  reports?: Prisma.tournament_reportsOrderByRelationAggregateInput
 }
 
 export type tournamentsWhereUniqueInput = Prisma.AtLeast<{
@@ -261,6 +263,7 @@ export type tournamentsWhereUniqueInput = Prisma.AtLeast<{
   competitors?: Prisma.CompetitorsListRelationFilter
   groups?: Prisma.GroupsListRelationFilter
   fights?: Prisma.FightsListRelationFilter
+  reports?: Prisma.Tournament_reportsListRelationFilter
 }, "id">
 
 export type tournamentsOrderByWithAggregationInput = {
@@ -296,6 +299,7 @@ export type tournamentsCreateInput = {
   competitors?: Prisma.competitorsCreateNestedManyWithoutTournamentInput
   groups?: Prisma.groupsCreateNestedManyWithoutTournamentInput
   fights?: Prisma.fightsCreateNestedManyWithoutTournamentInput
+  reports?: Prisma.tournament_reportsCreateNestedManyWithoutTournamentInput
 }
 
 export type tournamentsUncheckedCreateInput = {
@@ -308,6 +312,7 @@ export type tournamentsUncheckedCreateInput = {
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutTournamentInput
   groups?: Prisma.groupsUncheckedCreateNestedManyWithoutTournamentInput
   fights?: Prisma.fightsUncheckedCreateNestedManyWithoutTournamentInput
+  reports?: Prisma.tournament_reportsUncheckedCreateNestedManyWithoutTournamentInput
 }
 
 export type tournamentsUpdateInput = {
@@ -319,6 +324,7 @@ export type tournamentsUpdateInput = {
   competitors?: Prisma.competitorsUpdateManyWithoutTournamentNestedInput
   groups?: Prisma.groupsUpdateManyWithoutTournamentNestedInput
   fights?: Prisma.fightsUpdateManyWithoutTournamentNestedInput
+  reports?: Prisma.tournament_reportsUpdateManyWithoutTournamentNestedInput
 }
 
 export type tournamentsUncheckedUpdateInput = {
@@ -331,6 +337,7 @@ export type tournamentsUncheckedUpdateInput = {
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutTournamentNestedInput
   groups?: Prisma.groupsUncheckedUpdateManyWithoutTournamentNestedInput
   fights?: Prisma.fightsUncheckedUpdateManyWithoutTournamentNestedInput
+  reports?: Prisma.tournament_reportsUncheckedUpdateManyWithoutTournamentNestedInput
 }
 
 export type tournamentsCreateManyInput = {
@@ -545,6 +552,20 @@ export type tournamentsUpdateOneRequiredWithoutFightsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.tournamentsUpdateToOneWithWhereWithoutFightsInput, Prisma.tournamentsUpdateWithoutFightsInput>, Prisma.tournamentsUncheckedUpdateWithoutFightsInput>
 }
 
+export type tournamentsCreateNestedOneWithoutReportsInput = {
+  create?: Prisma.XOR<Prisma.tournamentsCreateWithoutReportsInput, Prisma.tournamentsUncheckedCreateWithoutReportsInput>
+  connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutReportsInput
+  connect?: Prisma.tournamentsWhereUniqueInput
+}
+
+export type tournamentsUpdateOneRequiredWithoutReportsNestedInput = {
+  create?: Prisma.XOR<Prisma.tournamentsCreateWithoutReportsInput, Prisma.tournamentsUncheckedCreateWithoutReportsInput>
+  connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutReportsInput
+  upsert?: Prisma.tournamentsUpsertWithoutReportsInput
+  connect?: Prisma.tournamentsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.tournamentsUpdateToOneWithWhereWithoutReportsInput, Prisma.tournamentsUpdateWithoutReportsInput>, Prisma.tournamentsUncheckedUpdateWithoutReportsInput>
+}
+
 export type tournamentsCreateWithoutCountryInput = {
   name: string
   event_date?: Date | string | null
@@ -553,6 +574,7 @@ export type tournamentsCreateWithoutCountryInput = {
   competitors?: Prisma.competitorsCreateNestedManyWithoutTournamentInput
   groups?: Prisma.groupsCreateNestedManyWithoutTournamentInput
   fights?: Prisma.fightsCreateNestedManyWithoutTournamentInput
+  reports?: Prisma.tournament_reportsCreateNestedManyWithoutTournamentInput
 }
 
 export type tournamentsUncheckedCreateWithoutCountryInput = {
@@ -564,6 +586,7 @@ export type tournamentsUncheckedCreateWithoutCountryInput = {
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutTournamentInput
   groups?: Prisma.groupsUncheckedCreateNestedManyWithoutTournamentInput
   fights?: Prisma.fightsUncheckedCreateNestedManyWithoutTournamentInput
+  reports?: Prisma.tournament_reportsUncheckedCreateNestedManyWithoutTournamentInput
 }
 
 export type tournamentsCreateOrConnectWithoutCountryInput = {
@@ -611,6 +634,7 @@ export type tournamentsCreateWithoutCityInput = {
   competitors?: Prisma.competitorsCreateNestedManyWithoutTournamentInput
   groups?: Prisma.groupsCreateNestedManyWithoutTournamentInput
   fights?: Prisma.fightsCreateNestedManyWithoutTournamentInput
+  reports?: Prisma.tournament_reportsCreateNestedManyWithoutTournamentInput
 }
 
 export type tournamentsUncheckedCreateWithoutCityInput = {
@@ -622,6 +646,7 @@ export type tournamentsUncheckedCreateWithoutCityInput = {
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutTournamentInput
   groups?: Prisma.groupsUncheckedCreateNestedManyWithoutTournamentInput
   fights?: Prisma.fightsUncheckedCreateNestedManyWithoutTournamentInput
+  reports?: Prisma.tournament_reportsUncheckedCreateNestedManyWithoutTournamentInput
 }
 
 export type tournamentsCreateOrConnectWithoutCityInput = {
@@ -658,6 +683,7 @@ export type tournamentsCreateWithoutNominationsInput = {
   competitors?: Prisma.competitorsCreateNestedManyWithoutTournamentInput
   groups?: Prisma.groupsCreateNestedManyWithoutTournamentInput
   fights?: Prisma.fightsCreateNestedManyWithoutTournamentInput
+  reports?: Prisma.tournament_reportsCreateNestedManyWithoutTournamentInput
 }
 
 export type tournamentsUncheckedCreateWithoutNominationsInput = {
@@ -669,6 +695,7 @@ export type tournamentsUncheckedCreateWithoutNominationsInput = {
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutTournamentInput
   groups?: Prisma.groupsUncheckedCreateNestedManyWithoutTournamentInput
   fights?: Prisma.fightsUncheckedCreateNestedManyWithoutTournamentInput
+  reports?: Prisma.tournament_reportsUncheckedCreateNestedManyWithoutTournamentInput
 }
 
 export type tournamentsCreateOrConnectWithoutNominationsInput = {
@@ -695,6 +722,7 @@ export type tournamentsUpdateWithoutNominationsInput = {
   competitors?: Prisma.competitorsUpdateManyWithoutTournamentNestedInput
   groups?: Prisma.groupsUpdateManyWithoutTournamentNestedInput
   fights?: Prisma.fightsUpdateManyWithoutTournamentNestedInput
+  reports?: Prisma.tournament_reportsUpdateManyWithoutTournamentNestedInput
 }
 
 export type tournamentsUncheckedUpdateWithoutNominationsInput = {
@@ -706,6 +734,7 @@ export type tournamentsUncheckedUpdateWithoutNominationsInput = {
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutTournamentNestedInput
   groups?: Prisma.groupsUncheckedUpdateManyWithoutTournamentNestedInput
   fights?: Prisma.fightsUncheckedUpdateManyWithoutTournamentNestedInput
+  reports?: Prisma.tournament_reportsUncheckedUpdateManyWithoutTournamentNestedInput
 }
 
 export type tournamentsCreateWithoutCompetitorsInput = {
@@ -716,6 +745,7 @@ export type tournamentsCreateWithoutCompetitorsInput = {
   nominations?: Prisma.tournament_nominationsCreateNestedManyWithoutTournamentInput
   groups?: Prisma.groupsCreateNestedManyWithoutTournamentInput
   fights?: Prisma.fightsCreateNestedManyWithoutTournamentInput
+  reports?: Prisma.tournament_reportsCreateNestedManyWithoutTournamentInput
 }
 
 export type tournamentsUncheckedCreateWithoutCompetitorsInput = {
@@ -727,6 +757,7 @@ export type tournamentsUncheckedCreateWithoutCompetitorsInput = {
   nominations?: Prisma.tournament_nominationsUncheckedCreateNestedManyWithoutTournamentInput
   groups?: Prisma.groupsUncheckedCreateNestedManyWithoutTournamentInput
   fights?: Prisma.fightsUncheckedCreateNestedManyWithoutTournamentInput
+  reports?: Prisma.tournament_reportsUncheckedCreateNestedManyWithoutTournamentInput
 }
 
 export type tournamentsCreateOrConnectWithoutCompetitorsInput = {
@@ -753,6 +784,7 @@ export type tournamentsUpdateWithoutCompetitorsInput = {
   nominations?: Prisma.tournament_nominationsUpdateManyWithoutTournamentNestedInput
   groups?: Prisma.groupsUpdateManyWithoutTournamentNestedInput
   fights?: Prisma.fightsUpdateManyWithoutTournamentNestedInput
+  reports?: Prisma.tournament_reportsUpdateManyWithoutTournamentNestedInput
 }
 
 export type tournamentsUncheckedUpdateWithoutCompetitorsInput = {
@@ -764,6 +796,7 @@ export type tournamentsUncheckedUpdateWithoutCompetitorsInput = {
   nominations?: Prisma.tournament_nominationsUncheckedUpdateManyWithoutTournamentNestedInput
   groups?: Prisma.groupsUncheckedUpdateManyWithoutTournamentNestedInput
   fights?: Prisma.fightsUncheckedUpdateManyWithoutTournamentNestedInput
+  reports?: Prisma.tournament_reportsUncheckedUpdateManyWithoutTournamentNestedInput
 }
 
 export type tournamentsCreateWithoutGroupsInput = {
@@ -774,6 +807,7 @@ export type tournamentsCreateWithoutGroupsInput = {
   nominations?: Prisma.tournament_nominationsCreateNestedManyWithoutTournamentInput
   competitors?: Prisma.competitorsCreateNestedManyWithoutTournamentInput
   fights?: Prisma.fightsCreateNestedManyWithoutTournamentInput
+  reports?: Prisma.tournament_reportsCreateNestedManyWithoutTournamentInput
 }
 
 export type tournamentsUncheckedCreateWithoutGroupsInput = {
@@ -785,6 +819,7 @@ export type tournamentsUncheckedCreateWithoutGroupsInput = {
   nominations?: Prisma.tournament_nominationsUncheckedCreateNestedManyWithoutTournamentInput
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutTournamentInput
   fights?: Prisma.fightsUncheckedCreateNestedManyWithoutTournamentInput
+  reports?: Prisma.tournament_reportsUncheckedCreateNestedManyWithoutTournamentInput
 }
 
 export type tournamentsCreateOrConnectWithoutGroupsInput = {
@@ -811,6 +846,7 @@ export type tournamentsUpdateWithoutGroupsInput = {
   nominations?: Prisma.tournament_nominationsUpdateManyWithoutTournamentNestedInput
   competitors?: Prisma.competitorsUpdateManyWithoutTournamentNestedInput
   fights?: Prisma.fightsUpdateManyWithoutTournamentNestedInput
+  reports?: Prisma.tournament_reportsUpdateManyWithoutTournamentNestedInput
 }
 
 export type tournamentsUncheckedUpdateWithoutGroupsInput = {
@@ -822,6 +858,7 @@ export type tournamentsUncheckedUpdateWithoutGroupsInput = {
   nominations?: Prisma.tournament_nominationsUncheckedUpdateManyWithoutTournamentNestedInput
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutTournamentNestedInput
   fights?: Prisma.fightsUncheckedUpdateManyWithoutTournamentNestedInput
+  reports?: Prisma.tournament_reportsUncheckedUpdateManyWithoutTournamentNestedInput
 }
 
 export type tournamentsCreateWithoutFightsInput = {
@@ -832,6 +869,7 @@ export type tournamentsCreateWithoutFightsInput = {
   nominations?: Prisma.tournament_nominationsCreateNestedManyWithoutTournamentInput
   competitors?: Prisma.competitorsCreateNestedManyWithoutTournamentInput
   groups?: Prisma.groupsCreateNestedManyWithoutTournamentInput
+  reports?: Prisma.tournament_reportsCreateNestedManyWithoutTournamentInput
 }
 
 export type tournamentsUncheckedCreateWithoutFightsInput = {
@@ -843,6 +881,7 @@ export type tournamentsUncheckedCreateWithoutFightsInput = {
   nominations?: Prisma.tournament_nominationsUncheckedCreateNestedManyWithoutTournamentInput
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutTournamentInput
   groups?: Prisma.groupsUncheckedCreateNestedManyWithoutTournamentInput
+  reports?: Prisma.tournament_reportsUncheckedCreateNestedManyWithoutTournamentInput
 }
 
 export type tournamentsCreateOrConnectWithoutFightsInput = {
@@ -869,6 +908,7 @@ export type tournamentsUpdateWithoutFightsInput = {
   nominations?: Prisma.tournament_nominationsUpdateManyWithoutTournamentNestedInput
   competitors?: Prisma.competitorsUpdateManyWithoutTournamentNestedInput
   groups?: Prisma.groupsUpdateManyWithoutTournamentNestedInput
+  reports?: Prisma.tournament_reportsUpdateManyWithoutTournamentNestedInput
 }
 
 export type tournamentsUncheckedUpdateWithoutFightsInput = {
@@ -880,6 +920,69 @@ export type tournamentsUncheckedUpdateWithoutFightsInput = {
   nominations?: Prisma.tournament_nominationsUncheckedUpdateManyWithoutTournamentNestedInput
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutTournamentNestedInput
   groups?: Prisma.groupsUncheckedUpdateManyWithoutTournamentNestedInput
+  reports?: Prisma.tournament_reportsUncheckedUpdateManyWithoutTournamentNestedInput
+}
+
+export type tournamentsCreateWithoutReportsInput = {
+  name: string
+  event_date?: Date | string | null
+  country: Prisma.countriesCreateNestedOneWithoutTournamentsInput
+  city: Prisma.citiesCreateNestedOneWithoutTournamentsInput
+  nominations?: Prisma.tournament_nominationsCreateNestedManyWithoutTournamentInput
+  competitors?: Prisma.competitorsCreateNestedManyWithoutTournamentInput
+  groups?: Prisma.groupsCreateNestedManyWithoutTournamentInput
+  fights?: Prisma.fightsCreateNestedManyWithoutTournamentInput
+}
+
+export type tournamentsUncheckedCreateWithoutReportsInput = {
+  id?: number
+  name: string
+  event_date?: Date | string | null
+  country_id: number
+  city_id: number
+  nominations?: Prisma.tournament_nominationsUncheckedCreateNestedManyWithoutTournamentInput
+  competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutTournamentInput
+  groups?: Prisma.groupsUncheckedCreateNestedManyWithoutTournamentInput
+  fights?: Prisma.fightsUncheckedCreateNestedManyWithoutTournamentInput
+}
+
+export type tournamentsCreateOrConnectWithoutReportsInput = {
+  where: Prisma.tournamentsWhereUniqueInput
+  create: Prisma.XOR<Prisma.tournamentsCreateWithoutReportsInput, Prisma.tournamentsUncheckedCreateWithoutReportsInput>
+}
+
+export type tournamentsUpsertWithoutReportsInput = {
+  update: Prisma.XOR<Prisma.tournamentsUpdateWithoutReportsInput, Prisma.tournamentsUncheckedUpdateWithoutReportsInput>
+  create: Prisma.XOR<Prisma.tournamentsCreateWithoutReportsInput, Prisma.tournamentsUncheckedCreateWithoutReportsInput>
+  where?: Prisma.tournamentsWhereInput
+}
+
+export type tournamentsUpdateToOneWithWhereWithoutReportsInput = {
+  where?: Prisma.tournamentsWhereInput
+  data: Prisma.XOR<Prisma.tournamentsUpdateWithoutReportsInput, Prisma.tournamentsUncheckedUpdateWithoutReportsInput>
+}
+
+export type tournamentsUpdateWithoutReportsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  country?: Prisma.countriesUpdateOneRequiredWithoutTournamentsNestedInput
+  city?: Prisma.citiesUpdateOneRequiredWithoutTournamentsNestedInput
+  nominations?: Prisma.tournament_nominationsUpdateManyWithoutTournamentNestedInput
+  competitors?: Prisma.competitorsUpdateManyWithoutTournamentNestedInput
+  groups?: Prisma.groupsUpdateManyWithoutTournamentNestedInput
+  fights?: Prisma.fightsUpdateManyWithoutTournamentNestedInput
+}
+
+export type tournamentsUncheckedUpdateWithoutReportsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  country_id?: Prisma.IntFieldUpdateOperationsInput | number
+  city_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nominations?: Prisma.tournament_nominationsUncheckedUpdateManyWithoutTournamentNestedInput
+  competitors?: Prisma.competitorsUncheckedUpdateManyWithoutTournamentNestedInput
+  groups?: Prisma.groupsUncheckedUpdateManyWithoutTournamentNestedInput
+  fights?: Prisma.fightsUncheckedUpdateManyWithoutTournamentNestedInput
 }
 
 export type tournamentsCreateManyCountryInput = {
@@ -897,6 +1000,7 @@ export type tournamentsUpdateWithoutCountryInput = {
   competitors?: Prisma.competitorsUpdateManyWithoutTournamentNestedInput
   groups?: Prisma.groupsUpdateManyWithoutTournamentNestedInput
   fights?: Prisma.fightsUpdateManyWithoutTournamentNestedInput
+  reports?: Prisma.tournament_reportsUpdateManyWithoutTournamentNestedInput
 }
 
 export type tournamentsUncheckedUpdateWithoutCountryInput = {
@@ -908,6 +1012,7 @@ export type tournamentsUncheckedUpdateWithoutCountryInput = {
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutTournamentNestedInput
   groups?: Prisma.groupsUncheckedUpdateManyWithoutTournamentNestedInput
   fights?: Prisma.fightsUncheckedUpdateManyWithoutTournamentNestedInput
+  reports?: Prisma.tournament_reportsUncheckedUpdateManyWithoutTournamentNestedInput
 }
 
 export type tournamentsUncheckedUpdateManyWithoutCountryInput = {
@@ -932,6 +1037,7 @@ export type tournamentsUpdateWithoutCityInput = {
   competitors?: Prisma.competitorsUpdateManyWithoutTournamentNestedInput
   groups?: Prisma.groupsUpdateManyWithoutTournamentNestedInput
   fights?: Prisma.fightsUpdateManyWithoutTournamentNestedInput
+  reports?: Prisma.tournament_reportsUpdateManyWithoutTournamentNestedInput
 }
 
 export type tournamentsUncheckedUpdateWithoutCityInput = {
@@ -943,6 +1049,7 @@ export type tournamentsUncheckedUpdateWithoutCityInput = {
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutTournamentNestedInput
   groups?: Prisma.groupsUncheckedUpdateManyWithoutTournamentNestedInput
   fights?: Prisma.fightsUncheckedUpdateManyWithoutTournamentNestedInput
+  reports?: Prisma.tournament_reportsUncheckedUpdateManyWithoutTournamentNestedInput
 }
 
 export type tournamentsUncheckedUpdateManyWithoutCityInput = {
@@ -962,6 +1069,7 @@ export type TournamentsCountOutputType = {
   competitors: number
   groups: number
   fights: number
+  reports: number
 }
 
 export type TournamentsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -969,6 +1077,7 @@ export type TournamentsCountOutputTypeSelect<ExtArgs extends runtime.Types.Exten
   competitors?: boolean | TournamentsCountOutputTypeCountCompetitorsArgs
   groups?: boolean | TournamentsCountOutputTypeCountGroupsArgs
   fights?: boolean | TournamentsCountOutputTypeCountFightsArgs
+  reports?: boolean | TournamentsCountOutputTypeCountReportsArgs
 }
 
 /**
@@ -1009,6 +1118,13 @@ export type TournamentsCountOutputTypeCountFightsArgs<ExtArgs extends runtime.Ty
   where?: Prisma.fightsWhereInput
 }
 
+/**
+ * TournamentsCountOutputType without action
+ */
+export type TournamentsCountOutputTypeCountReportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.tournament_reportsWhereInput
+}
+
 
 export type tournamentsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1022,6 +1138,7 @@ export type tournamentsSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   competitors?: boolean | Prisma.tournaments$competitorsArgs<ExtArgs>
   groups?: boolean | Prisma.tournaments$groupsArgs<ExtArgs>
   fights?: boolean | Prisma.tournaments$fightsArgs<ExtArgs>
+  reports?: boolean | Prisma.tournaments$reportsArgs<ExtArgs>
   _count?: boolean | Prisma.TournamentsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tournaments"]>
 
@@ -1061,6 +1178,7 @@ export type tournamentsInclude<ExtArgs extends runtime.Types.Extensions.Internal
   competitors?: boolean | Prisma.tournaments$competitorsArgs<ExtArgs>
   groups?: boolean | Prisma.tournaments$groupsArgs<ExtArgs>
   fights?: boolean | Prisma.tournaments$fightsArgs<ExtArgs>
+  reports?: boolean | Prisma.tournaments$reportsArgs<ExtArgs>
   _count?: boolean | Prisma.TournamentsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type tournamentsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1081,6 +1199,7 @@ export type $tournamentsPayload<ExtArgs extends runtime.Types.Extensions.Interna
     competitors: Prisma.$competitorsPayload<ExtArgs>[]
     groups: Prisma.$groupsPayload<ExtArgs>[]
     fights: Prisma.$fightsPayload<ExtArgs>[]
+    reports: Prisma.$tournament_reportsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1488,6 +1607,7 @@ export interface Prisma__tournamentsClient<T, Null = never, ExtArgs extends runt
   competitors<T extends Prisma.tournaments$competitorsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournaments$competitorsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$competitorsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   groups<T extends Prisma.tournaments$groupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournaments$groupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$groupsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   fights<T extends Prisma.tournaments$fightsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournaments$fightsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fightsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reports<T extends Prisma.tournaments$reportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournaments$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$tournament_reportsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2011,6 +2131,30 @@ export type tournaments$fightsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.FightsScalarFieldEnum | Prisma.FightsScalarFieldEnum[]
+}
+
+/**
+ * tournaments.reports
+ */
+export type tournaments$reportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the tournament_reports
+   */
+  select?: Prisma.tournament_reportsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the tournament_reports
+   */
+  omit?: Prisma.tournament_reportsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.tournament_reportsInclude<ExtArgs> | null
+  where?: Prisma.tournament_reportsWhereInput
+  orderBy?: Prisma.tournament_reportsOrderByWithRelationInput | Prisma.tournament_reportsOrderByWithRelationInput[]
+  cursor?: Prisma.tournament_reportsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Tournament_reportsScalarFieldEnum | Prisma.Tournament_reportsScalarFieldEnum[]
 }
 
 /**

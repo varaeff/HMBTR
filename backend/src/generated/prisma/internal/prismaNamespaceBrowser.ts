@@ -65,6 +65,7 @@ export const ModelName = {
   competition_blocks: 'competition_blocks',
   bracket_slots: 'bracket_slots',
   competition_placements: 'competition_placements',
+  tournament_reports: 'tournament_reports',
   users: 'users'
 } as const
 
@@ -247,6 +248,18 @@ export const Competition_placementsScalarFieldEnum = {
 } as const
 
 export type Competition_placementsScalarFieldEnum = (typeof Competition_placementsScalarFieldEnum)[keyof typeof Competition_placementsScalarFieldEnum]
+
+
+export const Tournament_reportsScalarFieldEnum = {
+  id: 'id',
+  tournament_id: 'tournament_id',
+  language: 'language',
+  file_name: 'file_name',
+  pdf_data: 'pdf_data',
+  generated_at: 'generated_at'
+} as const
+
+export type Tournament_reportsScalarFieldEnum = (typeof Tournament_reportsScalarFieldEnum)[keyof typeof Tournament_reportsScalarFieldEnum]
 
 
 export const UsersScalarFieldEnum = {

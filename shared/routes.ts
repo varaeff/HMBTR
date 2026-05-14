@@ -11,6 +11,7 @@ export const API_ROUTES = {
     ROOT: "tournaments",
     COUNT: "count",
     NOMINATION: "nominations",
+    REPORT: (id: string | number) => `/tournaments/${id}/report`,
     BY_ID: (id: string | number) => `/tournaments/${id}`,
   },
   COUNTRIES: {

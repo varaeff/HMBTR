@@ -398,6 +398,7 @@ export const ModelName = {
   competition_blocks: 'competition_blocks',
   bracket_slots: 'bracket_slots',
   competition_placements: 'competition_placements',
+  tournament_reports: 'tournament_reports',
   users: 'users'
 } as const
 
@@ -414,7 +415,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "countries" | "cities" | "clubs" | "fighters" | "tournaments" | "nominations" | "tournament_nominations" | "competitors" | "groups" | "group_competitors" | "fights" | "competition_blocks" | "bracket_slots" | "competition_placements" | "users"
+    modelProps: "countries" | "cities" | "clubs" | "fighters" | "tournaments" | "nominations" | "tournament_nominations" | "competitors" | "groups" | "group_competitors" | "fights" | "competition_blocks" | "bracket_slots" | "competition_placements" | "tournament_reports" | "users"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1454,6 +1455,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    tournament_reports: {
+      payload: Prisma.$tournament_reportsPayload<ExtArgs>
+      fields: Prisma.tournament_reportsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.tournament_reportsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_reportsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.tournament_reportsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_reportsPayload>
+        }
+        findFirst: {
+          args: Prisma.tournament_reportsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_reportsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.tournament_reportsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_reportsPayload>
+        }
+        findMany: {
+          args: Prisma.tournament_reportsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_reportsPayload>[]
+        }
+        create: {
+          args: Prisma.tournament_reportsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_reportsPayload>
+        }
+        createMany: {
+          args: Prisma.tournament_reportsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.tournament_reportsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_reportsPayload>[]
+        }
+        delete: {
+          args: Prisma.tournament_reportsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_reportsPayload>
+        }
+        update: {
+          args: Prisma.tournament_reportsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_reportsPayload>
+        }
+        deleteMany: {
+          args: Prisma.tournament_reportsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.tournament_reportsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.tournament_reportsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_reportsPayload>[]
+        }
+        upsert: {
+          args: Prisma.tournament_reportsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_reportsPayload>
+        }
+        aggregate: {
+          args: Prisma.Tournament_reportsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTournament_reports>
+        }
+        groupBy: {
+          args: Prisma.tournament_reportsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Tournament_reportsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.tournament_reportsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Tournament_reportsCountAggregateOutputType> | number
+        }
+      }
+    }
     users: {
       payload: Prisma.$usersPayload<ExtArgs>
       fields: Prisma.usersFieldRefs
@@ -1732,6 +1807,18 @@ export const Competition_placementsScalarFieldEnum = {
 export type Competition_placementsScalarFieldEnum = (typeof Competition_placementsScalarFieldEnum)[keyof typeof Competition_placementsScalarFieldEnum]
 
 
+export const Tournament_reportsScalarFieldEnum = {
+  id: 'id',
+  tournament_id: 'tournament_id',
+  language: 'language',
+  file_name: 'file_name',
+  pdf_data: 'pdf_data',
+  generated_at: 'generated_at'
+} as const
+
+export type Tournament_reportsScalarFieldEnum = (typeof Tournament_reportsScalarFieldEnum)[keyof typeof Tournament_reportsScalarFieldEnum]
+
+
 export const UsersScalarFieldEnum = {
   id: 'id',
   username: 'username',
@@ -1825,6 +1912,20 @@ export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
  * Reference to a field of type 'Boolean'
  */
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
+ * Reference to a field of type 'Bytes'
+ */
+export type BytesFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Bytes'>
+    
+
+
+/**
+ * Reference to a field of type 'Bytes[]'
+ */
+export type ListBytesFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Bytes[]'>
     
 
 
@@ -1950,6 +2051,7 @@ export type GlobalOmitConfig = {
   competition_blocks?: Prisma.competition_blocksOmit
   bracket_slots?: Prisma.bracket_slotsOmit
   competition_placements?: Prisma.competition_placementsOmit
+  tournament_reports?: Prisma.tournament_reportsOmit
   users?: Prisma.usersOmit
 }
 

@@ -71,6 +71,7 @@ model tournaments {
   competitors competitors[]
   groups      groups[]
   fights      fights[]
+  reports     tournament_reports[]
 }
 
 model nominations {
@@ -224,6 +225,19 @@ model competition_placements {
 }
 
 // --- ПОЛЬЗОВАТЕЛИ ---
+
+model tournament_reports {
+  id            Int      @id @default(autoincrement())
+  tournament_id Int
+  language      String   @db.VarChar(8)
+  file_name     String   @db.VarChar(255)
+  pdf_data      Bytes
+  generated_at  DateTime @default(now())
+
+  tournament tournaments @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
+
+  @@unique([tournament_id, language])
+}
 
 model users {
   id           Int      @id @default(autoincrement())
