@@ -45,6 +45,7 @@ export const stageGroupFights = (groups: Group[]): BlockData[] => {
       if (schedule1[round]) {
         const [f1, f2] = schedule1[round]
         blockFights.push({
+          id: 0,
           number: globalFightCounter++,
           fighter1: f1,
           fighter2: f2,
@@ -56,6 +57,7 @@ export const stageGroupFights = (groups: Group[]): BlockData[] => {
       if (schedule2[round]) {
         const [f1, f2] = schedule2[round]
         blockFights.push({
+          id: 0,
           number: globalFightCounter++,
           fighter1: f1,
           fighter2: f2,

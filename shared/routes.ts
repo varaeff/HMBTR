@@ -67,6 +67,7 @@ export const API_ROUTES = {
   },
   FIGHTS: {
     ROOT: "fights",
+    SCORES: "/fights/scores",
     BY_TOURNAMENT: (tournamentId: string | number) =>
       `/fights/tournament/${tournamentId}`,
     BY_GROUP: (groupId: string | number) => `/fights/group/${groupId}`,

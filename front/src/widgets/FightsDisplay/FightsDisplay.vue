@@ -4,6 +4,10 @@ import { useTranslation } from 'i18next-vue'
 import { useCompetitionStore } from '@/stores/competition'
 import { FightCard } from '@/components/ui/fightCard'
 
+defineProps<{
+  hasAccess: boolean
+}>()
+
 const competitionStore = useCompetitionStore()
 const blocks = computed(() => competitionStore.getFightsBlocks)
 
@@ -14,8 +18,8 @@ const getGroupLabel = (letters: string[]) => {
 const { i18next } = useTranslation()
 const languageKey = computed(() => i18next.language)
 
-const handleScoreUpdate = (fightNumber: number, scores: { f1: number; f2: number }) => {
-  competitionStore.updateGlobalScore({ fightNumber, f1Score: scores.f1, f2Score: scores.f2 })
+const handleScoreUpdate = (fightId: number, fightNumber: number, scores: { f1: number; f2: number }) => {
+  competitionStore.updateGlobalScore({ fightId, fightNumber, f1Score: scores.f1, f2Score: scores.f2 })
 }
 </script>
 
@@ -31,7 +35,8 @@ const handleScoreUpdate = (fightNumber: number, scores: { f1: number; f2: number
           v-for="fight in block.fights"
           :key="`${blockIndex}-${fight.number}-${languageKey}`"
           :fight="fight"
-          @update:score="(scores) => handleScoreUpdate(fight.number, scores)"
+          :hasAccess="hasAccess"
+          @update:score="(scores) => handleScoreUpdate(fight.id, fight.number, scores)"
         />
       </div>
     </div>

@@ -20,7 +20,8 @@ import { useCollapsiblePersist } from '@/composables/useCollapsiblePersist'
 import { tData } from '@/lib/utils'
 import { generateGroups } from '@/lib/generateGroups'
 import { stageGroupFights } from '@/lib/generateFights'
-import { saveTournamentData, loadGroupsAndFights } from '@/lib/saveTournamentData'
+import { saveTournamentData } from '@/lib/saveTournamentData'
+import { loadTournamentData } from '@/lib/loadTournamentData'
 import { dateToString } from '@/lib/dateUtils'
 import { hasAccess } from '@/lib/checkAccess'
 
@@ -51,7 +52,7 @@ const loadNominationData = async (nomId: number) => {
   // Load groups and fights from database if stage > 0
   const targetNomination = tournament.value?.nominations.find((n) => n.nomination_id === nomId)
   if (targetNomination && targetNomination.stage > 0) {
-    const { groups, fightsBlocks } = await loadGroupsAndFights(
+    const { groups, fightsBlocks } = await loadTournamentData(
       tournamentId.value,
       nomId,
       targetNomination.stage
@@ -244,7 +245,7 @@ watch(tournamentNominations, (noms) => {
           }}</Button>
         </div>
 
-        <FightsDisplay v-if="competitionStore.getFightsBlocks.length" />
+        <FightsDisplay v-if="competitionStore.getFightsBlocks.length" :hasAccess="canEdit" />
       </CollapsibleSection>
     </TabsContent>
   </Tabs>

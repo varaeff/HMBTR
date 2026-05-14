@@ -13,6 +13,7 @@ dist
 dist-ssr
 coverage
 *.local
+agents
 
 /cypress/videos/
 /cypress/screenshots/

@@ -33,6 +33,7 @@ export interface Group {
 }
 
 export interface FightData {
+  id: number
   number: number
   fighter1: Fighter
   fighter2: Fighter

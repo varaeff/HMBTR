@@ -14,6 +14,17 @@ interface CompetitionState {
   nominationId: number
 }
 
+interface UpdateGlobalScoreParams {
+  fightId: number
+  fightNumber: number
+  f1Score: number
+  f2Score: number
+}
+
+const syncGroupStatistics = (groups: Group[], fightsBlocks: BlockData[]) => {
+  updateGroupsStatistics(groups, fightsBlocks)
+}
+
 export const useCompetitionStore = defineStore({
   id: 'competition',
 
@@ -62,13 +73,15 @@ export const useCompetitionStore = defineStore({
 
     setGroups(groups: Group[]) {
       this.groups = [...groups]
+      syncGroupStatistics(this.groups, this.fightsBlocks)
     },
 
     setFightsBlocks(blocks: BlockData[]) {
       this.fightsBlocks = blocks
+      syncGroupStatistics(this.groups, this.fightsBlocks)
     },
 
-    updateGlobalScore({ fightNumber, f1Score, f2Score }: any) {
+    async updateGlobalScore({ fightId, fightNumber, f1Score, f2Score }: UpdateGlobalScoreParams) {
       for (const block of this.fightsBlocks) {
         const fight = block.fights.find((f) => f.number === fightNumber)
         if (fight) {
@@ -77,12 +90,27 @@ export const useCompetitionStore = defineStore({
           break
         }
       }
-      updateGroupsStatistics(this.groups, this.fightsBlocks)
+      syncGroupStatistics(this.groups, this.fightsBlocks)
+
+      if (fightId <= 0) {
+        return
+      }
+
+      try {
+        await http.patch(API_ROUTES.FIGHTS.SCORES, {
+          fight_id: fightId,
+          competitor1_score: f1Score,
+          competitor2_score: f2Score
+        })
+      } catch (error) {
+        console.error('Error saving fight scores:', error)
+      }
     },
 
     updateStageData(groups: Group[], blocks: BlockData[]) {
       this.groups = [...groups]
       this.fightsBlocks = [...blocks]
+      syncGroupStatistics(this.groups, this.fightsBlocks)
     }
   },
 
