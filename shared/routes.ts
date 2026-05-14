@@ -73,4 +73,17 @@ export const API_ROUTES = {
     BY_GROUP: (groupId: string | number) => `/fights/group/${groupId}`,
     BY_ID: (id: string | number) => `/fights/${id}`,
   },
+  COMPETITION: {
+    ROOT: "competition",
+    STATE: (tournamentId: string | number, nominationId: string | number) =>
+      `/competition/${tournamentId}/${nominationId}`,
+    GROUP_BLOCK: "/competition/groups",
+    GROUP_FIGHTS: "/competition/groups/fights",
+    OLYMPIC_BLOCK: "/competition/olympic",
+    SCORES: "/competition/scores",
+    SAVE_RESULTS: "/competition/results",
+    SWAP_BRACKET_SLOTS: "/competition/bracket-slots/swap",
+    RESOLVE_TIES: "/competition/resolve-ties",
+    FINISH: "/competition/finish",
+  },
 } as const;

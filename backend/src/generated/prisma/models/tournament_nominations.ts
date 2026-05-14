@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as $Enums from "../enums"
-import type * as Prisma from "../internal/prismaNamespace"
+import type * as $Enums from "../enums.js"
+import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model tournament_nominations
@@ -238,6 +238,8 @@ export type tournament_nominationsWhereInput = {
   stage?: Prisma.IntFilter<"tournament_nominations"> | number
   tournament?: Prisma.XOR<Prisma.TournamentsScalarRelationFilter, Prisma.tournamentsWhereInput>
   nomination?: Prisma.XOR<Prisma.NominationsScalarRelationFilter, Prisma.nominationsWhereInput>
+  blocks?: Prisma.Competition_blocksListRelationFilter
+  placements?: Prisma.Competition_placementsListRelationFilter
 }
 
 export type tournament_nominationsOrderByWithRelationInput = {
@@ -249,6 +251,8 @@ export type tournament_nominationsOrderByWithRelationInput = {
   stage?: Prisma.SortOrder
   tournament?: Prisma.tournamentsOrderByWithRelationInput
   nomination?: Prisma.nominationsOrderByWithRelationInput
+  blocks?: Prisma.competition_blocksOrderByRelationAggregateInput
+  placements?: Prisma.competition_placementsOrderByRelationAggregateInput
 }
 
 export type tournament_nominationsWhereUniqueInput = Prisma.AtLeast<{
@@ -263,6 +267,8 @@ export type tournament_nominationsWhereUniqueInput = Prisma.AtLeast<{
   stage?: Prisma.IntFilter<"tournament_nominations"> | number
   tournament?: Prisma.XOR<Prisma.TournamentsScalarRelationFilter, Prisma.tournamentsWhereInput>
   nomination?: Prisma.XOR<Prisma.NominationsScalarRelationFilter, Prisma.nominationsWhereInput>
+  blocks?: Prisma.Competition_blocksListRelationFilter
+  placements?: Prisma.Competition_placementsListRelationFilter
 }, "id">
 
 export type tournament_nominationsOrderByWithAggregationInput = {
@@ -297,6 +303,8 @@ export type tournament_nominationsCreateInput = {
   stage?: number
   tournament: Prisma.tournamentsCreateNestedOneWithoutNominationsInput
   nomination: Prisma.nominationsCreateNestedOneWithoutTournamentsInput
+  blocks?: Prisma.competition_blocksCreateNestedManyWithoutTournament_nominationInput
+  placements?: Prisma.competition_placementsCreateNestedManyWithoutTournament_nominationInput
 }
 
 export type tournament_nominationsUncheckedCreateInput = {
@@ -306,6 +314,8 @@ export type tournament_nominationsUncheckedCreateInput = {
   is_open?: boolean
   is_finished?: boolean
   stage?: number
+  blocks?: Prisma.competition_blocksUncheckedCreateNestedManyWithoutTournament_nominationInput
+  placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutTournament_nominationInput
 }
 
 export type tournament_nominationsUpdateInput = {
@@ -314,6 +324,8 @@ export type tournament_nominationsUpdateInput = {
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   tournament?: Prisma.tournamentsUpdateOneRequiredWithoutNominationsNestedInput
   nomination?: Prisma.nominationsUpdateOneRequiredWithoutTournamentsNestedInput
+  blocks?: Prisma.competition_blocksUpdateManyWithoutTournament_nominationNestedInput
+  placements?: Prisma.competition_placementsUpdateManyWithoutTournament_nominationNestedInput
 }
 
 export type tournament_nominationsUncheckedUpdateInput = {
@@ -323,6 +335,8 @@ export type tournament_nominationsUncheckedUpdateInput = {
   is_open?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stage?: Prisma.IntFieldUpdateOperationsInput | number
+  blocks?: Prisma.competition_blocksUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutTournament_nominationNestedInput
 }
 
 export type tournament_nominationsCreateManyInput = {
@@ -398,6 +412,11 @@ export type tournament_nominationsSumOrderByAggregateInput = {
   tournament_id?: Prisma.SortOrder
   nomination_id?: Prisma.SortOrder
   stage?: Prisma.SortOrder
+}
+
+export type Tournament_nominationsScalarRelationFilter = {
+  is?: Prisma.tournament_nominationsWhereInput
+  isNot?: Prisma.tournament_nominationsWhereInput
 }
 
 export type tournament_nominationsCreateNestedManyWithoutTournamentInput = {
@@ -488,11 +507,41 @@ export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
 
+export type tournament_nominationsCreateNestedOneWithoutBlocksInput = {
+  create?: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutBlocksInput, Prisma.tournament_nominationsUncheckedCreateWithoutBlocksInput>
+  connectOrCreate?: Prisma.tournament_nominationsCreateOrConnectWithoutBlocksInput
+  connect?: Prisma.tournament_nominationsWhereUniqueInput
+}
+
+export type tournament_nominationsUpdateOneRequiredWithoutBlocksNestedInput = {
+  create?: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutBlocksInput, Prisma.tournament_nominationsUncheckedCreateWithoutBlocksInput>
+  connectOrCreate?: Prisma.tournament_nominationsCreateOrConnectWithoutBlocksInput
+  upsert?: Prisma.tournament_nominationsUpsertWithoutBlocksInput
+  connect?: Prisma.tournament_nominationsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.tournament_nominationsUpdateToOneWithWhereWithoutBlocksInput, Prisma.tournament_nominationsUpdateWithoutBlocksInput>, Prisma.tournament_nominationsUncheckedUpdateWithoutBlocksInput>
+}
+
+export type tournament_nominationsCreateNestedOneWithoutPlacementsInput = {
+  create?: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutPlacementsInput, Prisma.tournament_nominationsUncheckedCreateWithoutPlacementsInput>
+  connectOrCreate?: Prisma.tournament_nominationsCreateOrConnectWithoutPlacementsInput
+  connect?: Prisma.tournament_nominationsWhereUniqueInput
+}
+
+export type tournament_nominationsUpdateOneRequiredWithoutPlacementsNestedInput = {
+  create?: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutPlacementsInput, Prisma.tournament_nominationsUncheckedCreateWithoutPlacementsInput>
+  connectOrCreate?: Prisma.tournament_nominationsCreateOrConnectWithoutPlacementsInput
+  upsert?: Prisma.tournament_nominationsUpsertWithoutPlacementsInput
+  connect?: Prisma.tournament_nominationsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.tournament_nominationsUpdateToOneWithWhereWithoutPlacementsInput, Prisma.tournament_nominationsUpdateWithoutPlacementsInput>, Prisma.tournament_nominationsUncheckedUpdateWithoutPlacementsInput>
+}
+
 export type tournament_nominationsCreateWithoutTournamentInput = {
   is_open?: boolean
   is_finished?: boolean
   stage?: number
   nomination: Prisma.nominationsCreateNestedOneWithoutTournamentsInput
+  blocks?: Prisma.competition_blocksCreateNestedManyWithoutTournament_nominationInput
+  placements?: Prisma.competition_placementsCreateNestedManyWithoutTournament_nominationInput
 }
 
 export type tournament_nominationsUncheckedCreateWithoutTournamentInput = {
@@ -501,6 +550,8 @@ export type tournament_nominationsUncheckedCreateWithoutTournamentInput = {
   is_open?: boolean
   is_finished?: boolean
   stage?: number
+  blocks?: Prisma.competition_blocksUncheckedCreateNestedManyWithoutTournament_nominationInput
+  placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutTournament_nominationInput
 }
 
 export type tournament_nominationsCreateOrConnectWithoutTournamentInput = {
@@ -546,6 +597,8 @@ export type tournament_nominationsCreateWithoutNominationInput = {
   is_finished?: boolean
   stage?: number
   tournament: Prisma.tournamentsCreateNestedOneWithoutNominationsInput
+  blocks?: Prisma.competition_blocksCreateNestedManyWithoutTournament_nominationInput
+  placements?: Prisma.competition_placementsCreateNestedManyWithoutTournament_nominationInput
 }
 
 export type tournament_nominationsUncheckedCreateWithoutNominationInput = {
@@ -554,6 +607,8 @@ export type tournament_nominationsUncheckedCreateWithoutNominationInput = {
   is_open?: boolean
   is_finished?: boolean
   stage?: number
+  blocks?: Prisma.competition_blocksUncheckedCreateNestedManyWithoutTournament_nominationInput
+  placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutTournament_nominationInput
 }
 
 export type tournament_nominationsCreateOrConnectWithoutNominationInput = {
@@ -582,6 +637,114 @@ export type tournament_nominationsUpdateManyWithWhereWithoutNominationInput = {
   data: Prisma.XOR<Prisma.tournament_nominationsUpdateManyMutationInput, Prisma.tournament_nominationsUncheckedUpdateManyWithoutNominationInput>
 }
 
+export type tournament_nominationsCreateWithoutBlocksInput = {
+  is_open?: boolean
+  is_finished?: boolean
+  stage?: number
+  tournament: Prisma.tournamentsCreateNestedOneWithoutNominationsInput
+  nomination: Prisma.nominationsCreateNestedOneWithoutTournamentsInput
+  placements?: Prisma.competition_placementsCreateNestedManyWithoutTournament_nominationInput
+}
+
+export type tournament_nominationsUncheckedCreateWithoutBlocksInput = {
+  id?: number
+  tournament_id: number
+  nomination_id: number
+  is_open?: boolean
+  is_finished?: boolean
+  stage?: number
+  placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutTournament_nominationInput
+}
+
+export type tournament_nominationsCreateOrConnectWithoutBlocksInput = {
+  where: Prisma.tournament_nominationsWhereUniqueInput
+  create: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutBlocksInput, Prisma.tournament_nominationsUncheckedCreateWithoutBlocksInput>
+}
+
+export type tournament_nominationsUpsertWithoutBlocksInput = {
+  update: Prisma.XOR<Prisma.tournament_nominationsUpdateWithoutBlocksInput, Prisma.tournament_nominationsUncheckedUpdateWithoutBlocksInput>
+  create: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutBlocksInput, Prisma.tournament_nominationsUncheckedCreateWithoutBlocksInput>
+  where?: Prisma.tournament_nominationsWhereInput
+}
+
+export type tournament_nominationsUpdateToOneWithWhereWithoutBlocksInput = {
+  where?: Prisma.tournament_nominationsWhereInput
+  data: Prisma.XOR<Prisma.tournament_nominationsUpdateWithoutBlocksInput, Prisma.tournament_nominationsUncheckedUpdateWithoutBlocksInput>
+}
+
+export type tournament_nominationsUpdateWithoutBlocksInput = {
+  is_open?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament?: Prisma.tournamentsUpdateOneRequiredWithoutNominationsNestedInput
+  nomination?: Prisma.nominationsUpdateOneRequiredWithoutTournamentsNestedInput
+  placements?: Prisma.competition_placementsUpdateManyWithoutTournament_nominationNestedInput
+}
+
+export type tournament_nominationsUncheckedUpdateWithoutBlocksInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  is_open?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutTournament_nominationNestedInput
+}
+
+export type tournament_nominationsCreateWithoutPlacementsInput = {
+  is_open?: boolean
+  is_finished?: boolean
+  stage?: number
+  tournament: Prisma.tournamentsCreateNestedOneWithoutNominationsInput
+  nomination: Prisma.nominationsCreateNestedOneWithoutTournamentsInput
+  blocks?: Prisma.competition_blocksCreateNestedManyWithoutTournament_nominationInput
+}
+
+export type tournament_nominationsUncheckedCreateWithoutPlacementsInput = {
+  id?: number
+  tournament_id: number
+  nomination_id: number
+  is_open?: boolean
+  is_finished?: boolean
+  stage?: number
+  blocks?: Prisma.competition_blocksUncheckedCreateNestedManyWithoutTournament_nominationInput
+}
+
+export type tournament_nominationsCreateOrConnectWithoutPlacementsInput = {
+  where: Prisma.tournament_nominationsWhereUniqueInput
+  create: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutPlacementsInput, Prisma.tournament_nominationsUncheckedCreateWithoutPlacementsInput>
+}
+
+export type tournament_nominationsUpsertWithoutPlacementsInput = {
+  update: Prisma.XOR<Prisma.tournament_nominationsUpdateWithoutPlacementsInput, Prisma.tournament_nominationsUncheckedUpdateWithoutPlacementsInput>
+  create: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutPlacementsInput, Prisma.tournament_nominationsUncheckedCreateWithoutPlacementsInput>
+  where?: Prisma.tournament_nominationsWhereInput
+}
+
+export type tournament_nominationsUpdateToOneWithWhereWithoutPlacementsInput = {
+  where?: Prisma.tournament_nominationsWhereInput
+  data: Prisma.XOR<Prisma.tournament_nominationsUpdateWithoutPlacementsInput, Prisma.tournament_nominationsUncheckedUpdateWithoutPlacementsInput>
+}
+
+export type tournament_nominationsUpdateWithoutPlacementsInput = {
+  is_open?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament?: Prisma.tournamentsUpdateOneRequiredWithoutNominationsNestedInput
+  nomination?: Prisma.nominationsUpdateOneRequiredWithoutTournamentsNestedInput
+  blocks?: Prisma.competition_blocksUpdateManyWithoutTournament_nominationNestedInput
+}
+
+export type tournament_nominationsUncheckedUpdateWithoutPlacementsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  is_open?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  blocks?: Prisma.competition_blocksUncheckedUpdateManyWithoutTournament_nominationNestedInput
+}
+
 export type tournament_nominationsCreateManyTournamentInput = {
   id?: number
   nomination_id: number
@@ -595,6 +758,8 @@ export type tournament_nominationsUpdateWithoutTournamentInput = {
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   nomination?: Prisma.nominationsUpdateOneRequiredWithoutTournamentsNestedInput
+  blocks?: Prisma.competition_blocksUpdateManyWithoutTournament_nominationNestedInput
+  placements?: Prisma.competition_placementsUpdateManyWithoutTournament_nominationNestedInput
 }
 
 export type tournament_nominationsUncheckedUpdateWithoutTournamentInput = {
@@ -603,6 +768,8 @@ export type tournament_nominationsUncheckedUpdateWithoutTournamentInput = {
   is_open?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stage?: Prisma.IntFieldUpdateOperationsInput | number
+  blocks?: Prisma.competition_blocksUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutTournament_nominationNestedInput
 }
 
 export type tournament_nominationsUncheckedUpdateManyWithoutTournamentInput = {
@@ -626,6 +793,8 @@ export type tournament_nominationsUpdateWithoutNominationInput = {
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   tournament?: Prisma.tournamentsUpdateOneRequiredWithoutNominationsNestedInput
+  blocks?: Prisma.competition_blocksUpdateManyWithoutTournament_nominationNestedInput
+  placements?: Prisma.competition_placementsUpdateManyWithoutTournament_nominationNestedInput
 }
 
 export type tournament_nominationsUncheckedUpdateWithoutNominationInput = {
@@ -634,6 +803,8 @@ export type tournament_nominationsUncheckedUpdateWithoutNominationInput = {
   is_open?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stage?: Prisma.IntFieldUpdateOperationsInput | number
+  blocks?: Prisma.competition_blocksUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutTournament_nominationNestedInput
 }
 
 export type tournament_nominationsUncheckedUpdateManyWithoutNominationInput = {
@@ -645,6 +816,44 @@ export type tournament_nominationsUncheckedUpdateManyWithoutNominationInput = {
 }
 
 
+/**
+ * Count Type Tournament_nominationsCountOutputType
+ */
+
+export type Tournament_nominationsCountOutputType = {
+  blocks: number
+  placements: number
+}
+
+export type Tournament_nominationsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  blocks?: boolean | Tournament_nominationsCountOutputTypeCountBlocksArgs
+  placements?: boolean | Tournament_nominationsCountOutputTypeCountPlacementsArgs
+}
+
+/**
+ * Tournament_nominationsCountOutputType without action
+ */
+export type Tournament_nominationsCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Tournament_nominationsCountOutputType
+   */
+  select?: Prisma.Tournament_nominationsCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * Tournament_nominationsCountOutputType without action
+ */
+export type Tournament_nominationsCountOutputTypeCountBlocksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.competition_blocksWhereInput
+}
+
+/**
+ * Tournament_nominationsCountOutputType without action
+ */
+export type Tournament_nominationsCountOutputTypeCountPlacementsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.competition_placementsWhereInput
+}
+
 
 export type tournament_nominationsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -655,6 +864,9 @@ export type tournament_nominationsSelect<ExtArgs extends runtime.Types.Extension
   stage?: boolean
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   nomination?: boolean | Prisma.nominationsDefaultArgs<ExtArgs>
+  blocks?: boolean | Prisma.tournament_nominations$blocksArgs<ExtArgs>
+  placements?: boolean | Prisma.tournament_nominations$placementsArgs<ExtArgs>
+  _count?: boolean | Prisma.Tournament_nominationsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tournament_nominations"]>
 
 export type tournament_nominationsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -692,6 +904,9 @@ export type tournament_nominationsOmit<ExtArgs extends runtime.Types.Extensions.
 export type tournament_nominationsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   nomination?: boolean | Prisma.nominationsDefaultArgs<ExtArgs>
+  blocks?: boolean | Prisma.tournament_nominations$blocksArgs<ExtArgs>
+  placements?: boolean | Prisma.tournament_nominations$placementsArgs<ExtArgs>
+  _count?: boolean | Prisma.Tournament_nominationsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type tournament_nominationsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
@@ -707,6 +922,8 @@ export type $tournament_nominationsPayload<ExtArgs extends runtime.Types.Extensi
   objects: {
     tournament: Prisma.$tournamentsPayload<ExtArgs>
     nomination: Prisma.$nominationsPayload<ExtArgs>
+    blocks: Prisma.$competition_blocksPayload<ExtArgs>[]
+    placements: Prisma.$competition_placementsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1111,6 +1328,8 @@ export interface Prisma__tournament_nominationsClient<T, Null = never, ExtArgs e
   readonly [Symbol.toStringTag]: "PrismaPromise"
   tournament<T extends Prisma.tournamentsDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournamentsDefaultArgs<ExtArgs>>): Prisma.Prisma__tournamentsClient<runtime.Types.Result.GetResult<Prisma.$tournamentsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   nomination<T extends Prisma.nominationsDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.nominationsDefaultArgs<ExtArgs>>): Prisma.Prisma__nominationsClient<runtime.Types.Result.GetResult<Prisma.$nominationsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  blocks<T extends Prisma.tournament_nominations$blocksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournament_nominations$blocksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$competition_blocksPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  placements<T extends Prisma.tournament_nominations$placementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournament_nominations$placementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$competition_placementsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1539,6 +1758,54 @@ export type tournament_nominationsDeleteManyArgs<ExtArgs extends runtime.Types.E
    * Limit how many tournament_nominations to delete.
    */
   limit?: number
+}
+
+/**
+ * tournament_nominations.blocks
+ */
+export type tournament_nominations$blocksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the competition_blocks
+   */
+  select?: Prisma.competition_blocksSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the competition_blocks
+   */
+  omit?: Prisma.competition_blocksOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.competition_blocksInclude<ExtArgs> | null
+  where?: Prisma.competition_blocksWhereInput
+  orderBy?: Prisma.competition_blocksOrderByWithRelationInput | Prisma.competition_blocksOrderByWithRelationInput[]
+  cursor?: Prisma.competition_blocksWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Competition_blocksScalarFieldEnum | Prisma.Competition_blocksScalarFieldEnum[]
+}
+
+/**
+ * tournament_nominations.placements
+ */
+export type tournament_nominations$placementsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the competition_placements
+   */
+  select?: Prisma.competition_placementsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the competition_placements
+   */
+  omit?: Prisma.competition_placementsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.competition_placementsInclude<ExtArgs> | null
+  where?: Prisma.competition_placementsWhereInput
+  orderBy?: Prisma.competition_placementsOrderByWithRelationInput | Prisma.competition_placementsOrderByWithRelationInput[]
+  cursor?: Prisma.competition_placementsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Competition_placementsScalarFieldEnum | Prisma.Competition_placementsScalarFieldEnum[]
 }
 
 /**

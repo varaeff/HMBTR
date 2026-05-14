@@ -94,8 +94,10 @@ model tournament_nominations {
   is_finished   Boolean @default(false)
   stage         Int     @default(0)
 
-  tournament tournaments @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
-  nomination nominations @relation(fields: [nomination_id], references: [id], onDelete: Cascade)
+  tournament tournaments               @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
+  nomination nominations               @relation(fields: [nomination_id], references: [id], onDelete: Cascade)
+  blocks     competition_blocks[]
+  placements competition_placements[]
 }
 
 model competitors {
@@ -109,6 +111,8 @@ model competitors {
   tournament tournaments         @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
   nomination nominations         @relation(fields: [nomination_id], references: [id], onDelete: Cascade)
   groups     group_competitors[]
+  bracket_slots bracket_slots[]
+  placements competition_placements[]
 
   // Связи для таблицы боев (кто участвовал)
   fights_as_f1 fights[] @relation("Fighter1")
@@ -120,13 +124,16 @@ model groups {
   id            Int    @id @default(autoincrement())
   tournament_id Int
   nomination_id Int
+  block_id      Int?
   name          String @db.VarChar(255)
   stage         Int    @default(0)
 
   tournament tournaments         @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
   nomination nominations         @relation(fields: [nomination_id], references: [id], onDelete: Cascade)
+  block      competition_blocks? @relation(fields: [block_id], references: [id], onDelete: Cascade)
   fighters   group_competitors[]
   fights     fights[]
+  placements competition_placements[]
 }
 
 model group_competitors {
@@ -142,6 +149,7 @@ model fights {
   id                Int     @id @default(autoincrement())
   tournament_id     Int
   nomination_id     Int
+  block_id          Int?
   group_id          Int?
   competitor1_id    Int
   competitor2_id    Int
@@ -150,16 +158,69 @@ model fights {
   winner_id         Int?
   stage             Int     @default(0)
   fight_number      Int     @default(0)
+  bracket_round     Int?
+  bracket_position  Int?
+  is_bronze         Boolean @default(false)
   is_finished       Boolean @default(false)
 
   tournament tournaments @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
   nomination nominations @relation(fields: [nomination_id], references: [id], onDelete: Cascade)
+  block      competition_blocks? @relation(fields: [block_id], references: [id], onDelete: Cascade)
   group      groups?     @relation(fields: [group_id], references: [id])
 
   // Именованные связи для различения двух бойцов
   competitor1 competitors  @relation("Fighter1", fields: [competitor1_id], references: [id])
   competitor2 competitors  @relation("Fighter2", fields: [competitor2_id], references: [id])
   winner      competitors? @relation("Winner", fields: [winner_id], references: [id])
+}
+
+model competition_blocks {
+  id                       Int      @id @default(autoincrement())
+  tournament_nomination_id Int
+  tournament_id            Int
+  nomination_id            Int
+  type                     String   @db.VarChar(32)
+  stage                    Int
+  status                   String   @default("ACTIVE") @db.VarChar(32)
+  created_at               DateTime @default(now())
+
+  tournament_nomination tournament_nominations @relation(fields: [tournament_nomination_id], references: [id], onDelete: Cascade)
+  groups                groups[]
+  fights                fights[]
+  bracket_slots         bracket_slots[]
+  placements            competition_placements[]
+}
+
+model bracket_slots {
+  id            Int @id @default(autoincrement())
+  block_id      Int
+  competitor_id Int
+  seed_position Int
+  slot_position Int
+
+  block      competition_blocks @relation(fields: [block_id], references: [id], onDelete: Cascade)
+  competitor competitors        @relation(fields: [competitor_id], references: [id], onDelete: Cascade)
+
+  @@unique([block_id, slot_position])
+  @@unique([block_id, competitor_id])
+}
+
+model competition_placements {
+  id                       Int    @id @default(autoincrement())
+  tournament_nomination_id Int
+  block_id                 Int?
+  group_id                 Int?
+  competitor_id            Int
+  scope                    String @db.VarChar(32)
+  place                    Int
+
+  tournament_nomination tournament_nominations @relation(fields: [tournament_nomination_id], references: [id], onDelete: Cascade)
+  block                  competition_blocks?   @relation(fields: [block_id], references: [id], onDelete: Cascade)
+  group                  groups?               @relation(fields: [group_id], references: [id], onDelete: Cascade)
+  competitor             competitors           @relation(fields: [competitor_id], references: [id], onDelete: Cascade)
+
+  @@unique([tournament_nomination_id, scope, group_id, place], map: "competition_placements_group_place_key")
+  @@unique([tournament_nomination_id, scope, group_id, competitor_id], map: "competition_placements_group_competitor_key")
 }
 
 // --- ПОЛЬЗОВАТЕЛИ ---

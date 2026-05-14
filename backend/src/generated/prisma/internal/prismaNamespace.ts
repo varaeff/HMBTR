@@ -16,10 +16,10 @@
  */
 
 import * as runtime from "@prisma/client/runtime/client"
-import type * as Prisma from "../models"
-import { type PrismaClient } from "./class"
+import type * as Prisma from "../models.js"
+import { type PrismaClient } from "./class.js"
 
-export type * from '../models'
+export type * from '../models.js'
 
 export type DMMF = typeof runtime.DMMF
 
@@ -395,6 +395,9 @@ export const ModelName = {
   groups: 'groups',
   group_competitors: 'group_competitors',
   fights: 'fights',
+  competition_blocks: 'competition_blocks',
+  bracket_slots: 'bracket_slots',
+  competition_placements: 'competition_placements',
   users: 'users'
 } as const
 
@@ -411,7 +414,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "countries" | "cities" | "clubs" | "fighters" | "tournaments" | "nominations" | "tournament_nominations" | "competitors" | "groups" | "group_competitors" | "fights" | "users"
+    modelProps: "countries" | "cities" | "clubs" | "fighters" | "tournaments" | "nominations" | "tournament_nominations" | "competitors" | "groups" | "group_competitors" | "fights" | "competition_blocks" | "bracket_slots" | "competition_placements" | "users"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1229,6 +1232,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    competition_blocks: {
+      payload: Prisma.$competition_blocksPayload<ExtArgs>
+      fields: Prisma.competition_blocksFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.competition_blocksFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_blocksPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.competition_blocksFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_blocksPayload>
+        }
+        findFirst: {
+          args: Prisma.competition_blocksFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_blocksPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.competition_blocksFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_blocksPayload>
+        }
+        findMany: {
+          args: Prisma.competition_blocksFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_blocksPayload>[]
+        }
+        create: {
+          args: Prisma.competition_blocksCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_blocksPayload>
+        }
+        createMany: {
+          args: Prisma.competition_blocksCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.competition_blocksCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_blocksPayload>[]
+        }
+        delete: {
+          args: Prisma.competition_blocksDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_blocksPayload>
+        }
+        update: {
+          args: Prisma.competition_blocksUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_blocksPayload>
+        }
+        deleteMany: {
+          args: Prisma.competition_blocksDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.competition_blocksUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.competition_blocksUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_blocksPayload>[]
+        }
+        upsert: {
+          args: Prisma.competition_blocksUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_blocksPayload>
+        }
+        aggregate: {
+          args: Prisma.Competition_blocksAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCompetition_blocks>
+        }
+        groupBy: {
+          args: Prisma.competition_blocksGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Competition_blocksGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.competition_blocksCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Competition_blocksCountAggregateOutputType> | number
+        }
+      }
+    }
+    bracket_slots: {
+      payload: Prisma.$bracket_slotsPayload<ExtArgs>
+      fields: Prisma.bracket_slotsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.bracket_slotsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$bracket_slotsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.bracket_slotsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$bracket_slotsPayload>
+        }
+        findFirst: {
+          args: Prisma.bracket_slotsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$bracket_slotsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.bracket_slotsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$bracket_slotsPayload>
+        }
+        findMany: {
+          args: Prisma.bracket_slotsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$bracket_slotsPayload>[]
+        }
+        create: {
+          args: Prisma.bracket_slotsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$bracket_slotsPayload>
+        }
+        createMany: {
+          args: Prisma.bracket_slotsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.bracket_slotsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$bracket_slotsPayload>[]
+        }
+        delete: {
+          args: Prisma.bracket_slotsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$bracket_slotsPayload>
+        }
+        update: {
+          args: Prisma.bracket_slotsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$bracket_slotsPayload>
+        }
+        deleteMany: {
+          args: Prisma.bracket_slotsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.bracket_slotsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.bracket_slotsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$bracket_slotsPayload>[]
+        }
+        upsert: {
+          args: Prisma.bracket_slotsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$bracket_slotsPayload>
+        }
+        aggregate: {
+          args: Prisma.Bracket_slotsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBracket_slots>
+        }
+        groupBy: {
+          args: Prisma.bracket_slotsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Bracket_slotsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.bracket_slotsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Bracket_slotsCountAggregateOutputType> | number
+        }
+      }
+    }
+    competition_placements: {
+      payload: Prisma.$competition_placementsPayload<ExtArgs>
+      fields: Prisma.competition_placementsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.competition_placementsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_placementsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.competition_placementsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_placementsPayload>
+        }
+        findFirst: {
+          args: Prisma.competition_placementsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_placementsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.competition_placementsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_placementsPayload>
+        }
+        findMany: {
+          args: Prisma.competition_placementsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_placementsPayload>[]
+        }
+        create: {
+          args: Prisma.competition_placementsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_placementsPayload>
+        }
+        createMany: {
+          args: Prisma.competition_placementsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.competition_placementsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_placementsPayload>[]
+        }
+        delete: {
+          args: Prisma.competition_placementsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_placementsPayload>
+        }
+        update: {
+          args: Prisma.competition_placementsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_placementsPayload>
+        }
+        deleteMany: {
+          args: Prisma.competition_placementsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.competition_placementsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.competition_placementsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_placementsPayload>[]
+        }
+        upsert: {
+          args: Prisma.competition_placementsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_placementsPayload>
+        }
+        aggregate: {
+          args: Prisma.Competition_placementsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCompetition_placements>
+        }
+        groupBy: {
+          args: Prisma.competition_placementsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Competition_placementsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.competition_placementsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Competition_placementsCountAggregateOutputType> | number
+        }
+      }
+    }
     users: {
       payload: Prisma.$usersPayload<ExtArgs>
       fields: Prisma.usersFieldRefs
@@ -1430,6 +1655,7 @@ export const GroupsScalarFieldEnum = {
   id: 'id',
   tournament_id: 'tournament_id',
   nomination_id: 'nomination_id',
+  block_id: 'block_id',
   name: 'name',
   stage: 'stage'
 } as const
@@ -1450,6 +1676,7 @@ export const FightsScalarFieldEnum = {
   id: 'id',
   tournament_id: 'tournament_id',
   nomination_id: 'nomination_id',
+  block_id: 'block_id',
   group_id: 'group_id',
   competitor1_id: 'competitor1_id',
   competitor2_id: 'competitor2_id',
@@ -1458,10 +1685,51 @@ export const FightsScalarFieldEnum = {
   winner_id: 'winner_id',
   stage: 'stage',
   fight_number: 'fight_number',
+  bracket_round: 'bracket_round',
+  bracket_position: 'bracket_position',
+  is_bronze: 'is_bronze',
   is_finished: 'is_finished'
 } as const
 
 export type FightsScalarFieldEnum = (typeof FightsScalarFieldEnum)[keyof typeof FightsScalarFieldEnum]
+
+
+export const Competition_blocksScalarFieldEnum = {
+  id: 'id',
+  tournament_nomination_id: 'tournament_nomination_id',
+  tournament_id: 'tournament_id',
+  nomination_id: 'nomination_id',
+  type: 'type',
+  stage: 'stage',
+  status: 'status',
+  created_at: 'created_at'
+} as const
+
+export type Competition_blocksScalarFieldEnum = (typeof Competition_blocksScalarFieldEnum)[keyof typeof Competition_blocksScalarFieldEnum]
+
+
+export const Bracket_slotsScalarFieldEnum = {
+  id: 'id',
+  block_id: 'block_id',
+  competitor_id: 'competitor_id',
+  seed_position: 'seed_position',
+  slot_position: 'slot_position'
+} as const
+
+export type Bracket_slotsScalarFieldEnum = (typeof Bracket_slotsScalarFieldEnum)[keyof typeof Bracket_slotsScalarFieldEnum]
+
+
+export const Competition_placementsScalarFieldEnum = {
+  id: 'id',
+  tournament_nomination_id: 'tournament_nomination_id',
+  block_id: 'block_id',
+  group_id: 'group_id',
+  competitor_id: 'competitor_id',
+  scope: 'scope',
+  place: 'place'
+} as const
+
+export type Competition_placementsScalarFieldEnum = (typeof Competition_placementsScalarFieldEnum)[keyof typeof Competition_placementsScalarFieldEnum]
 
 
 export const UsersScalarFieldEnum = {
@@ -1679,6 +1947,9 @@ export type GlobalOmitConfig = {
   groups?: Prisma.groupsOmit
   group_competitors?: Prisma.group_competitorsOmit
   fights?: Prisma.fightsOmit
+  competition_blocks?: Prisma.competition_blocksOmit
+  bracket_slots?: Prisma.bracket_slotsOmit
+  competition_placements?: Prisma.competition_placementsOmit
   users?: Prisma.usersOmit
 }
 

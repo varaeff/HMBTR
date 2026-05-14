@@ -43,9 +43,18 @@ export const updateGroupsStatistics = (groups: Group[], blocks: BlockData[]): vo
 
   // 4. Сортировка внутри каждой группы: Победы -> Разница очков
   for (const group of groups) {
+    const resolvedPlace = new Map(
+      (group.placements ?? []).map((placement) => [placement.competitorId, placement.place])
+    )
+
     group.fighters.sort((a, b) => {
       if (b.wins !== a.wins) return b.wins - a.wins
-      return b.diff - a.diff
+      if (b.diff !== a.diff) return b.diff - a.diff
+
+      return (
+        (resolvedPlace.get(a.competitorId ?? 0) ?? Number.POSITIVE_INFINITY) -
+        (resolvedPlace.get(b.competitorId ?? 0) ?? Number.POSITIVE_INFINITY)
+      )
     })
   }
 }

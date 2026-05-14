@@ -80,6 +80,17 @@
   "tournamentPageGroupName": "Группа",
   "tournamentPageGroups": "Группы",
   "tournamentPageGenerateFights": "Сгенерировать бои",
+  "tournamentPageSaveResults": "Сохранить результаты",
+  "tournamentPageOlympicBracket": "Олимпийская сетка",
+  "tournamentPageNextSubgroups": "Подгруппы",
+  "tournamentPageGroupBlosk": "Групповой этап",
+  "tournamentPageOlympicBlosk": "Олимпийская сетка",
+  "tournamentPage1_8Final": "1/8 финала",
+  "tournamentPage1_4Final": "1/4 финала",
+  "tournamentPageSemifinals": "Полуфиналы",
+  "tournamentPageFinal": "Финал",
+  "tournamentPageRound": "Раунд",
+  "tournamentPageBronzeFight": "Бой за 3-е место",
 
   "groupsTableFighter": "Боец",
   "groupsTableClub": "Клуб",
@@ -112,5 +123,12 @@
 
   "forbiddenPageTitle": "403",
   "forbiddenPageMessage": "У вас недостаточно прав для доступа к этой странице.",
-  "forbiddenPageHomeButton": "На главную"
+  "forbiddenPageHomeButton": "На главную",
+
+  "tieResolverResolveTie": "Определение мест",
+  "tieResolverSaveOrder": "Сохранить порядок",
+  "tieResolverUp": "Вверх",
+  "tieResolverDown": "Вниз",
+
+  "CompetitionPodiumTopThree": "Тройка призёров"
 }

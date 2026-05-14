@@ -17,8 +17,8 @@
 
 import * as runtime from "@prisma/client/runtime/index-browser"
 
-export type * from '../models'
-export type * from './prismaNamespace'
+export type * from '../models.js'
+export type * from './prismaNamespace.js'
 
 export const Decimal = runtime.Decimal
 
@@ -62,6 +62,9 @@ export const ModelName = {
   groups: 'groups',
   group_competitors: 'group_competitors',
   fights: 'fights',
+  competition_blocks: 'competition_blocks',
+  bracket_slots: 'bracket_slots',
+  competition_placements: 'competition_placements',
   users: 'users'
 } as const
 
@@ -169,6 +172,7 @@ export const GroupsScalarFieldEnum = {
   id: 'id',
   tournament_id: 'tournament_id',
   nomination_id: 'nomination_id',
+  block_id: 'block_id',
   name: 'name',
   stage: 'stage'
 } as const
@@ -189,6 +193,7 @@ export const FightsScalarFieldEnum = {
   id: 'id',
   tournament_id: 'tournament_id',
   nomination_id: 'nomination_id',
+  block_id: 'block_id',
   group_id: 'group_id',
   competitor1_id: 'competitor1_id',
   competitor2_id: 'competitor2_id',
@@ -197,10 +202,51 @@ export const FightsScalarFieldEnum = {
   winner_id: 'winner_id',
   stage: 'stage',
   fight_number: 'fight_number',
+  bracket_round: 'bracket_round',
+  bracket_position: 'bracket_position',
+  is_bronze: 'is_bronze',
   is_finished: 'is_finished'
 } as const
 
 export type FightsScalarFieldEnum = (typeof FightsScalarFieldEnum)[keyof typeof FightsScalarFieldEnum]
+
+
+export const Competition_blocksScalarFieldEnum = {
+  id: 'id',
+  tournament_nomination_id: 'tournament_nomination_id',
+  tournament_id: 'tournament_id',
+  nomination_id: 'nomination_id',
+  type: 'type',
+  stage: 'stage',
+  status: 'status',
+  created_at: 'created_at'
+} as const
+
+export type Competition_blocksScalarFieldEnum = (typeof Competition_blocksScalarFieldEnum)[keyof typeof Competition_blocksScalarFieldEnum]
+
+
+export const Bracket_slotsScalarFieldEnum = {
+  id: 'id',
+  block_id: 'block_id',
+  competitor_id: 'competitor_id',
+  seed_position: 'seed_position',
+  slot_position: 'slot_position'
+} as const
+
+export type Bracket_slotsScalarFieldEnum = (typeof Bracket_slotsScalarFieldEnum)[keyof typeof Bracket_slotsScalarFieldEnum]
+
+
+export const Competition_placementsScalarFieldEnum = {
+  id: 'id',
+  tournament_nomination_id: 'tournament_nomination_id',
+  block_id: 'block_id',
+  group_id: 'group_id',
+  competitor_id: 'competitor_id',
+  scope: 'scope',
+  place: 'place'
+} as const
+
+export type Competition_placementsScalarFieldEnum = (typeof Competition_placementsScalarFieldEnum)[keyof typeof Competition_placementsScalarFieldEnum]
 
 
 export const UsersScalarFieldEnum = {

@@ -6,12 +6,17 @@ import { tData } from '@/lib/utils'
 import { Table, TableHeader, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import type { GroupFighter, Group } from '@/model'
 
-const props = defineProps<{ isFixed: boolean }>()
+const props = defineProps<{ isFixed: boolean; groups?: Group[] }>()
 const competitionStore = useCompetitionStore()
 const { i18next } = useTranslation()
 const languageKey = computed(() => i18next.language)
+const displayGroups = computed(() => props.groups ?? competitionStore.getGroups)
 
 const activeDrag = ref<{ fighter: GroupFighter; groupIdx: number; fighterIdx: number } | null>(null)
+
+const getGroupLetterIndex = (letter: string) => letter.toUpperCase().charCodeAt(0) - 65
+
+const getGroupLetter = (index: number) => String.fromCharCode(65 + index)
 
 const onDragStart = (fighter: GroupFighter, groupIdx: number, fighterIdx: number) => {
   if (props.isFixed) return
@@ -29,7 +34,7 @@ const moveFighter = (targetGroupIdx: number | 'new', targetFighterIdx?: number) 
   const { groupIdx: sGIdx, fighterIdx: sFIdx, fighter } = activeDrag.value
 
   // Создаем глубокую копию групп и их бойцов
-  let nextGroups: Group[] = competitionStore.getGroups.map((group) => ({
+  let nextGroups: Group[] = displayGroups.value.map((group) => ({
     ...group,
     fighters: [...group.fighters]
   }))
@@ -52,11 +57,15 @@ const moveFighter = (targetGroupIdx: number | 'new', targetFighterIdx?: number) 
   }
 
   // 3. Фильтруем пустые группы и ПЕРЕСЧИТЫВАЕМ буквы по порядку
+  const firstLetterIndex = getGroupLetterIndex(displayGroups.value[0]?.letter ?? 'A')
+  const startIndex =
+    Number.isFinite(firstLetterIndex) && firstLetterIndex >= 0 ? firstLetterIndex : 0
+
   const updatedGroups = nextGroups
     .filter((g) => g.fighters.length > 0)
     .map((g, idx) => ({
       ...g,
-      letter: String.fromCharCode(65 + idx) // 65 = 'A'
+      letter: getGroupLetter(startIndex + idx)
     }))
 
   competitionStore.setGroups(updatedGroups)
@@ -74,7 +83,7 @@ const handleDrop = (e: DragEvent, gIdx: number | 'new', fIdx?: number) => {
     @dragover.prevent
     @drop="handleDrop($event, 'new')"
   >
-    <div v-for="(group, gIdx) in competitionStore.getGroups" :key="group.letter + languageKey">
+    <div v-for="(group, gIdx) in displayGroups" :key="group.letter + languageKey">
       <Table
         class="border rounded-lg p-4 bg-card w-64 shadow-sm"
         @dragover.prevent

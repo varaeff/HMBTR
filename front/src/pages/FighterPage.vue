@@ -5,7 +5,8 @@ import { useFightersListStore } from '@/stores/fightersList'
 import NoPhoto from '@/entities/NoPhoto.jpg'
 import { Button } from '@/components/ui/button'
 import type { Fighter } from '@/model'
-import { dateToString, tData } from '@/lib/utils'
+import { tData } from '@/lib/utils'
+import { dateToString } from '@/lib/dateUtils'
 
 const props = defineProps<{
   id: string

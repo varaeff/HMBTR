@@ -13,10 +13,10 @@
  * 🟢 You can import this file directly.
  */
 
-import * as Prisma from './internal/prismaNamespaceBrowser'
+import * as Prisma from './internal/prismaNamespaceBrowser.js'
 export { Prisma }
-export * as $Enums from './enums'
-export * from './enums';
+export * as $Enums from './enums.js'
+export * from './enums.js';
 /**
  * Model countries
  * 
@@ -72,6 +72,21 @@ export type group_competitors = Prisma.group_competitorsModel
  * 
  */
 export type fights = Prisma.fightsModel
+/**
+ * Model competition_blocks
+ * 
+ */
+export type competition_blocks = Prisma.competition_blocksModel
+/**
+ * Model bracket_slots
+ * 
+ */
+export type bracket_slots = Prisma.bracket_slotsModel
+/**
+ * Model competition_placements
+ * 
+ */
+export type competition_placements = Prisma.competition_placementsModel
 /**
  * Model users
  * 

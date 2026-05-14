@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as $Enums from "../enums"
-import type * as Prisma from "../internal/prismaNamespace"
+import type * as $Enums from "../enums.js"
+import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model groups
@@ -30,6 +30,7 @@ export type GroupsAvgAggregateOutputType = {
   id: number | null
   tournament_id: number | null
   nomination_id: number | null
+  block_id: number | null
   stage: number | null
 }
 
@@ -37,6 +38,7 @@ export type GroupsSumAggregateOutputType = {
   id: number | null
   tournament_id: number | null
   nomination_id: number | null
+  block_id: number | null
   stage: number | null
 }
 
@@ -44,6 +46,7 @@ export type GroupsMinAggregateOutputType = {
   id: number | null
   tournament_id: number | null
   nomination_id: number | null
+  block_id: number | null
   name: string | null
   stage: number | null
 }
@@ -52,6 +55,7 @@ export type GroupsMaxAggregateOutputType = {
   id: number | null
   tournament_id: number | null
   nomination_id: number | null
+  block_id: number | null
   name: string | null
   stage: number | null
 }
@@ -60,6 +64,7 @@ export type GroupsCountAggregateOutputType = {
   id: number
   tournament_id: number
   nomination_id: number
+  block_id: number
   name: number
   stage: number
   _all: number
@@ -70,6 +75,7 @@ export type GroupsAvgAggregateInputType = {
   id?: true
   tournament_id?: true
   nomination_id?: true
+  block_id?: true
   stage?: true
 }
 
@@ -77,6 +83,7 @@ export type GroupsSumAggregateInputType = {
   id?: true
   tournament_id?: true
   nomination_id?: true
+  block_id?: true
   stage?: true
 }
 
@@ -84,6 +91,7 @@ export type GroupsMinAggregateInputType = {
   id?: true
   tournament_id?: true
   nomination_id?: true
+  block_id?: true
   name?: true
   stage?: true
 }
@@ -92,6 +100,7 @@ export type GroupsMaxAggregateInputType = {
   id?: true
   tournament_id?: true
   nomination_id?: true
+  block_id?: true
   name?: true
   stage?: true
 }
@@ -100,6 +109,7 @@ export type GroupsCountAggregateInputType = {
   id?: true
   tournament_id?: true
   nomination_id?: true
+  block_id?: true
   name?: true
   stage?: true
   _all?: true
@@ -195,6 +205,7 @@ export type GroupsGroupByOutputType = {
   id: number
   tournament_id: number
   nomination_id: number
+  block_id: number | null
   name: string
   stage: number
   _count: GroupsCountAggregateOutputType | null
@@ -226,24 +237,30 @@ export type groupsWhereInput = {
   id?: Prisma.IntFilter<"groups"> | number
   tournament_id?: Prisma.IntFilter<"groups"> | number
   nomination_id?: Prisma.IntFilter<"groups"> | number
+  block_id?: Prisma.IntNullableFilter<"groups"> | number | null
   name?: Prisma.StringFilter<"groups"> | string
   stage?: Prisma.IntFilter<"groups"> | number
   tournament?: Prisma.XOR<Prisma.TournamentsScalarRelationFilter, Prisma.tournamentsWhereInput>
   nomination?: Prisma.XOR<Prisma.NominationsScalarRelationFilter, Prisma.nominationsWhereInput>
+  block?: Prisma.XOR<Prisma.Competition_blocksNullableScalarRelationFilter, Prisma.competition_blocksWhereInput> | null
   fighters?: Prisma.Group_competitorsListRelationFilter
   fights?: Prisma.FightsListRelationFilter
+  placements?: Prisma.Competition_placementsListRelationFilter
 }
 
 export type groupsOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   nomination_id?: Prisma.SortOrder
+  block_id?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   stage?: Prisma.SortOrder
   tournament?: Prisma.tournamentsOrderByWithRelationInput
   nomination?: Prisma.nominationsOrderByWithRelationInput
+  block?: Prisma.competition_blocksOrderByWithRelationInput
   fighters?: Prisma.group_competitorsOrderByRelationAggregateInput
   fights?: Prisma.fightsOrderByRelationAggregateInput
+  placements?: Prisma.competition_placementsOrderByRelationAggregateInput
 }
 
 export type groupsWhereUniqueInput = Prisma.AtLeast<{
@@ -253,18 +270,22 @@ export type groupsWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.groupsWhereInput | Prisma.groupsWhereInput[]
   tournament_id?: Prisma.IntFilter<"groups"> | number
   nomination_id?: Prisma.IntFilter<"groups"> | number
+  block_id?: Prisma.IntNullableFilter<"groups"> | number | null
   name?: Prisma.StringFilter<"groups"> | string
   stage?: Prisma.IntFilter<"groups"> | number
   tournament?: Prisma.XOR<Prisma.TournamentsScalarRelationFilter, Prisma.tournamentsWhereInput>
   nomination?: Prisma.XOR<Prisma.NominationsScalarRelationFilter, Prisma.nominationsWhereInput>
+  block?: Prisma.XOR<Prisma.Competition_blocksNullableScalarRelationFilter, Prisma.competition_blocksWhereInput> | null
   fighters?: Prisma.Group_competitorsListRelationFilter
   fights?: Prisma.FightsListRelationFilter
+  placements?: Prisma.Competition_placementsListRelationFilter
 }, "id">
 
 export type groupsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   nomination_id?: Prisma.SortOrder
+  block_id?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   stage?: Prisma.SortOrder
   _count?: Prisma.groupsCountOrderByAggregateInput
@@ -281,6 +302,7 @@ export type groupsScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"groups"> | number
   tournament_id?: Prisma.IntWithAggregatesFilter<"groups"> | number
   nomination_id?: Prisma.IntWithAggregatesFilter<"groups"> | number
+  block_id?: Prisma.IntNullableWithAggregatesFilter<"groups"> | number | null
   name?: Prisma.StringWithAggregatesFilter<"groups"> | string
   stage?: Prisma.IntWithAggregatesFilter<"groups"> | number
 }
@@ -290,18 +312,22 @@ export type groupsCreateInput = {
   stage?: number
   tournament: Prisma.tournamentsCreateNestedOneWithoutGroupsInput
   nomination: Prisma.nominationsCreateNestedOneWithoutGroupsInput
+  block?: Prisma.competition_blocksCreateNestedOneWithoutGroupsInput
   fighters?: Prisma.group_competitorsCreateNestedManyWithoutGroupInput
   fights?: Prisma.fightsCreateNestedManyWithoutGroupInput
+  placements?: Prisma.competition_placementsCreateNestedManyWithoutGroupInput
 }
 
 export type groupsUncheckedCreateInput = {
   id?: number
   tournament_id: number
   nomination_id: number
+  block_id?: number | null
   name: string
   stage?: number
   fighters?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutGroupInput
   fights?: Prisma.fightsUncheckedCreateNestedManyWithoutGroupInput
+  placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type groupsUpdateInput = {
@@ -309,24 +335,29 @@ export type groupsUpdateInput = {
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   tournament?: Prisma.tournamentsUpdateOneRequiredWithoutGroupsNestedInput
   nomination?: Prisma.nominationsUpdateOneRequiredWithoutGroupsNestedInput
+  block?: Prisma.competition_blocksUpdateOneWithoutGroupsNestedInput
   fighters?: Prisma.group_competitorsUpdateManyWithoutGroupNestedInput
   fights?: Prisma.fightsUpdateManyWithoutGroupNestedInput
+  placements?: Prisma.competition_placementsUpdateManyWithoutGroupNestedInput
 }
 
 export type groupsUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
   nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  block_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fighters?: Prisma.group_competitorsUncheckedUpdateManyWithoutGroupNestedInput
   fights?: Prisma.fightsUncheckedUpdateManyWithoutGroupNestedInput
+  placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutGroupNestedInput
 }
 
 export type groupsCreateManyInput = {
   id?: number
   tournament_id: number
   nomination_id: number
+  block_id?: number | null
   name: string
   stage?: number
 }
@@ -340,6 +371,7 @@ export type groupsUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
   nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  block_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
 }
@@ -358,6 +390,7 @@ export type groupsCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   nomination_id?: Prisma.SortOrder
+  block_id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   stage?: Prisma.SortOrder
 }
@@ -366,6 +399,7 @@ export type groupsAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   nomination_id?: Prisma.SortOrder
+  block_id?: Prisma.SortOrder
   stage?: Prisma.SortOrder
 }
 
@@ -373,6 +407,7 @@ export type groupsMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   nomination_id?: Prisma.SortOrder
+  block_id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   stage?: Prisma.SortOrder
 }
@@ -381,6 +416,7 @@ export type groupsMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   nomination_id?: Prisma.SortOrder
+  block_id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   stage?: Prisma.SortOrder
 }
@@ -389,6 +425,7 @@ export type groupsSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   nomination_id?: Prisma.SortOrder
+  block_id?: Prisma.SortOrder
   stage?: Prisma.SortOrder
 }
 
@@ -516,21 +553,83 @@ export type groupsUpdateOneWithoutFightsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.groupsUpdateToOneWithWhereWithoutFightsInput, Prisma.groupsUpdateWithoutFightsInput>, Prisma.groupsUncheckedUpdateWithoutFightsInput>
 }
 
+export type groupsCreateNestedManyWithoutBlockInput = {
+  create?: Prisma.XOR<Prisma.groupsCreateWithoutBlockInput, Prisma.groupsUncheckedCreateWithoutBlockInput> | Prisma.groupsCreateWithoutBlockInput[] | Prisma.groupsUncheckedCreateWithoutBlockInput[]
+  connectOrCreate?: Prisma.groupsCreateOrConnectWithoutBlockInput | Prisma.groupsCreateOrConnectWithoutBlockInput[]
+  createMany?: Prisma.groupsCreateManyBlockInputEnvelope
+  connect?: Prisma.groupsWhereUniqueInput | Prisma.groupsWhereUniqueInput[]
+}
+
+export type groupsUncheckedCreateNestedManyWithoutBlockInput = {
+  create?: Prisma.XOR<Prisma.groupsCreateWithoutBlockInput, Prisma.groupsUncheckedCreateWithoutBlockInput> | Prisma.groupsCreateWithoutBlockInput[] | Prisma.groupsUncheckedCreateWithoutBlockInput[]
+  connectOrCreate?: Prisma.groupsCreateOrConnectWithoutBlockInput | Prisma.groupsCreateOrConnectWithoutBlockInput[]
+  createMany?: Prisma.groupsCreateManyBlockInputEnvelope
+  connect?: Prisma.groupsWhereUniqueInput | Prisma.groupsWhereUniqueInput[]
+}
+
+export type groupsUpdateManyWithoutBlockNestedInput = {
+  create?: Prisma.XOR<Prisma.groupsCreateWithoutBlockInput, Prisma.groupsUncheckedCreateWithoutBlockInput> | Prisma.groupsCreateWithoutBlockInput[] | Prisma.groupsUncheckedCreateWithoutBlockInput[]
+  connectOrCreate?: Prisma.groupsCreateOrConnectWithoutBlockInput | Prisma.groupsCreateOrConnectWithoutBlockInput[]
+  upsert?: Prisma.groupsUpsertWithWhereUniqueWithoutBlockInput | Prisma.groupsUpsertWithWhereUniqueWithoutBlockInput[]
+  createMany?: Prisma.groupsCreateManyBlockInputEnvelope
+  set?: Prisma.groupsWhereUniqueInput | Prisma.groupsWhereUniqueInput[]
+  disconnect?: Prisma.groupsWhereUniqueInput | Prisma.groupsWhereUniqueInput[]
+  delete?: Prisma.groupsWhereUniqueInput | Prisma.groupsWhereUniqueInput[]
+  connect?: Prisma.groupsWhereUniqueInput | Prisma.groupsWhereUniqueInput[]
+  update?: Prisma.groupsUpdateWithWhereUniqueWithoutBlockInput | Prisma.groupsUpdateWithWhereUniqueWithoutBlockInput[]
+  updateMany?: Prisma.groupsUpdateManyWithWhereWithoutBlockInput | Prisma.groupsUpdateManyWithWhereWithoutBlockInput[]
+  deleteMany?: Prisma.groupsScalarWhereInput | Prisma.groupsScalarWhereInput[]
+}
+
+export type groupsUncheckedUpdateManyWithoutBlockNestedInput = {
+  create?: Prisma.XOR<Prisma.groupsCreateWithoutBlockInput, Prisma.groupsUncheckedCreateWithoutBlockInput> | Prisma.groupsCreateWithoutBlockInput[] | Prisma.groupsUncheckedCreateWithoutBlockInput[]
+  connectOrCreate?: Prisma.groupsCreateOrConnectWithoutBlockInput | Prisma.groupsCreateOrConnectWithoutBlockInput[]
+  upsert?: Prisma.groupsUpsertWithWhereUniqueWithoutBlockInput | Prisma.groupsUpsertWithWhereUniqueWithoutBlockInput[]
+  createMany?: Prisma.groupsCreateManyBlockInputEnvelope
+  set?: Prisma.groupsWhereUniqueInput | Prisma.groupsWhereUniqueInput[]
+  disconnect?: Prisma.groupsWhereUniqueInput | Prisma.groupsWhereUniqueInput[]
+  delete?: Prisma.groupsWhereUniqueInput | Prisma.groupsWhereUniqueInput[]
+  connect?: Prisma.groupsWhereUniqueInput | Prisma.groupsWhereUniqueInput[]
+  update?: Prisma.groupsUpdateWithWhereUniqueWithoutBlockInput | Prisma.groupsUpdateWithWhereUniqueWithoutBlockInput[]
+  updateMany?: Prisma.groupsUpdateManyWithWhereWithoutBlockInput | Prisma.groupsUpdateManyWithWhereWithoutBlockInput[]
+  deleteMany?: Prisma.groupsScalarWhereInput | Prisma.groupsScalarWhereInput[]
+}
+
+export type groupsCreateNestedOneWithoutPlacementsInput = {
+  create?: Prisma.XOR<Prisma.groupsCreateWithoutPlacementsInput, Prisma.groupsUncheckedCreateWithoutPlacementsInput>
+  connectOrCreate?: Prisma.groupsCreateOrConnectWithoutPlacementsInput
+  connect?: Prisma.groupsWhereUniqueInput
+}
+
+export type groupsUpdateOneWithoutPlacementsNestedInput = {
+  create?: Prisma.XOR<Prisma.groupsCreateWithoutPlacementsInput, Prisma.groupsUncheckedCreateWithoutPlacementsInput>
+  connectOrCreate?: Prisma.groupsCreateOrConnectWithoutPlacementsInput
+  upsert?: Prisma.groupsUpsertWithoutPlacementsInput
+  disconnect?: Prisma.groupsWhereInput | boolean
+  delete?: Prisma.groupsWhereInput | boolean
+  connect?: Prisma.groupsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.groupsUpdateToOneWithWhereWithoutPlacementsInput, Prisma.groupsUpdateWithoutPlacementsInput>, Prisma.groupsUncheckedUpdateWithoutPlacementsInput>
+}
+
 export type groupsCreateWithoutTournamentInput = {
   name: string
   stage?: number
   nomination: Prisma.nominationsCreateNestedOneWithoutGroupsInput
+  block?: Prisma.competition_blocksCreateNestedOneWithoutGroupsInput
   fighters?: Prisma.group_competitorsCreateNestedManyWithoutGroupInput
   fights?: Prisma.fightsCreateNestedManyWithoutGroupInput
+  placements?: Prisma.competition_placementsCreateNestedManyWithoutGroupInput
 }
 
 export type groupsUncheckedCreateWithoutTournamentInput = {
   id?: number
   nomination_id: number
+  block_id?: number | null
   name: string
   stage?: number
   fighters?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutGroupInput
   fights?: Prisma.fightsUncheckedCreateNestedManyWithoutGroupInput
+  placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type groupsCreateOrConnectWithoutTournamentInput = {
@@ -566,6 +665,7 @@ export type groupsScalarWhereInput = {
   id?: Prisma.IntFilter<"groups"> | number
   tournament_id?: Prisma.IntFilter<"groups"> | number
   nomination_id?: Prisma.IntFilter<"groups"> | number
+  block_id?: Prisma.IntNullableFilter<"groups"> | number | null
   name?: Prisma.StringFilter<"groups"> | string
   stage?: Prisma.IntFilter<"groups"> | number
 }
@@ -574,17 +674,21 @@ export type groupsCreateWithoutNominationInput = {
   name: string
   stage?: number
   tournament: Prisma.tournamentsCreateNestedOneWithoutGroupsInput
+  block?: Prisma.competition_blocksCreateNestedOneWithoutGroupsInput
   fighters?: Prisma.group_competitorsCreateNestedManyWithoutGroupInput
   fights?: Prisma.fightsCreateNestedManyWithoutGroupInput
+  placements?: Prisma.competition_placementsCreateNestedManyWithoutGroupInput
 }
 
 export type groupsUncheckedCreateWithoutNominationInput = {
   id?: number
   tournament_id: number
+  block_id?: number | null
   name: string
   stage?: number
   fighters?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutGroupInput
   fights?: Prisma.fightsUncheckedCreateNestedManyWithoutGroupInput
+  placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type groupsCreateOrConnectWithoutNominationInput = {
@@ -618,16 +722,20 @@ export type groupsCreateWithoutFightersInput = {
   stage?: number
   tournament: Prisma.tournamentsCreateNestedOneWithoutGroupsInput
   nomination: Prisma.nominationsCreateNestedOneWithoutGroupsInput
+  block?: Prisma.competition_blocksCreateNestedOneWithoutGroupsInput
   fights?: Prisma.fightsCreateNestedManyWithoutGroupInput
+  placements?: Prisma.competition_placementsCreateNestedManyWithoutGroupInput
 }
 
 export type groupsUncheckedCreateWithoutFightersInput = {
   id?: number
   tournament_id: number
   nomination_id: number
+  block_id?: number | null
   name: string
   stage?: number
   fights?: Prisma.fightsUncheckedCreateNestedManyWithoutGroupInput
+  placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type groupsCreateOrConnectWithoutFightersInput = {
@@ -651,16 +759,20 @@ export type groupsUpdateWithoutFightersInput = {
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   tournament?: Prisma.tournamentsUpdateOneRequiredWithoutGroupsNestedInput
   nomination?: Prisma.nominationsUpdateOneRequiredWithoutGroupsNestedInput
+  block?: Prisma.competition_blocksUpdateOneWithoutGroupsNestedInput
   fights?: Prisma.fightsUpdateManyWithoutGroupNestedInput
+  placements?: Prisma.competition_placementsUpdateManyWithoutGroupNestedInput
 }
 
 export type groupsUncheckedUpdateWithoutFightersInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
   nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  block_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fights?: Prisma.fightsUncheckedUpdateManyWithoutGroupNestedInput
+  placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutGroupNestedInput
 }
 
 export type groupsCreateWithoutFightsInput = {
@@ -668,16 +780,20 @@ export type groupsCreateWithoutFightsInput = {
   stage?: number
   tournament: Prisma.tournamentsCreateNestedOneWithoutGroupsInput
   nomination: Prisma.nominationsCreateNestedOneWithoutGroupsInput
+  block?: Prisma.competition_blocksCreateNestedOneWithoutGroupsInput
   fighters?: Prisma.group_competitorsCreateNestedManyWithoutGroupInput
+  placements?: Prisma.competition_placementsCreateNestedManyWithoutGroupInput
 }
 
 export type groupsUncheckedCreateWithoutFightsInput = {
   id?: number
   tournament_id: number
   nomination_id: number
+  block_id?: number | null
   name: string
   stage?: number
   fighters?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutGroupInput
+  placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type groupsCreateOrConnectWithoutFightsInput = {
@@ -701,21 +817,131 @@ export type groupsUpdateWithoutFightsInput = {
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   tournament?: Prisma.tournamentsUpdateOneRequiredWithoutGroupsNestedInput
   nomination?: Prisma.nominationsUpdateOneRequiredWithoutGroupsNestedInput
+  block?: Prisma.competition_blocksUpdateOneWithoutGroupsNestedInput
   fighters?: Prisma.group_competitorsUpdateManyWithoutGroupNestedInput
+  placements?: Prisma.competition_placementsUpdateManyWithoutGroupNestedInput
 }
 
 export type groupsUncheckedUpdateWithoutFightsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
   nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  block_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fighters?: Prisma.group_competitorsUncheckedUpdateManyWithoutGroupNestedInput
+  placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutGroupNestedInput
+}
+
+export type groupsCreateWithoutBlockInput = {
+  name: string
+  stage?: number
+  tournament: Prisma.tournamentsCreateNestedOneWithoutGroupsInput
+  nomination: Prisma.nominationsCreateNestedOneWithoutGroupsInput
+  fighters?: Prisma.group_competitorsCreateNestedManyWithoutGroupInput
+  fights?: Prisma.fightsCreateNestedManyWithoutGroupInput
+  placements?: Prisma.competition_placementsCreateNestedManyWithoutGroupInput
+}
+
+export type groupsUncheckedCreateWithoutBlockInput = {
+  id?: number
+  tournament_id: number
+  nomination_id: number
+  name: string
+  stage?: number
+  fighters?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutGroupInput
+  fights?: Prisma.fightsUncheckedCreateNestedManyWithoutGroupInput
+  placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutGroupInput
+}
+
+export type groupsCreateOrConnectWithoutBlockInput = {
+  where: Prisma.groupsWhereUniqueInput
+  create: Prisma.XOR<Prisma.groupsCreateWithoutBlockInput, Prisma.groupsUncheckedCreateWithoutBlockInput>
+}
+
+export type groupsCreateManyBlockInputEnvelope = {
+  data: Prisma.groupsCreateManyBlockInput | Prisma.groupsCreateManyBlockInput[]
+  skipDuplicates?: boolean
+}
+
+export type groupsUpsertWithWhereUniqueWithoutBlockInput = {
+  where: Prisma.groupsWhereUniqueInput
+  update: Prisma.XOR<Prisma.groupsUpdateWithoutBlockInput, Prisma.groupsUncheckedUpdateWithoutBlockInput>
+  create: Prisma.XOR<Prisma.groupsCreateWithoutBlockInput, Prisma.groupsUncheckedCreateWithoutBlockInput>
+}
+
+export type groupsUpdateWithWhereUniqueWithoutBlockInput = {
+  where: Prisma.groupsWhereUniqueInput
+  data: Prisma.XOR<Prisma.groupsUpdateWithoutBlockInput, Prisma.groupsUncheckedUpdateWithoutBlockInput>
+}
+
+export type groupsUpdateManyWithWhereWithoutBlockInput = {
+  where: Prisma.groupsScalarWhereInput
+  data: Prisma.XOR<Prisma.groupsUpdateManyMutationInput, Prisma.groupsUncheckedUpdateManyWithoutBlockInput>
+}
+
+export type groupsCreateWithoutPlacementsInput = {
+  name: string
+  stage?: number
+  tournament: Prisma.tournamentsCreateNestedOneWithoutGroupsInput
+  nomination: Prisma.nominationsCreateNestedOneWithoutGroupsInput
+  block?: Prisma.competition_blocksCreateNestedOneWithoutGroupsInput
+  fighters?: Prisma.group_competitorsCreateNestedManyWithoutGroupInput
+  fights?: Prisma.fightsCreateNestedManyWithoutGroupInput
+}
+
+export type groupsUncheckedCreateWithoutPlacementsInput = {
+  id?: number
+  tournament_id: number
+  nomination_id: number
+  block_id?: number | null
+  name: string
+  stage?: number
+  fighters?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutGroupInput
+  fights?: Prisma.fightsUncheckedCreateNestedManyWithoutGroupInput
+}
+
+export type groupsCreateOrConnectWithoutPlacementsInput = {
+  where: Prisma.groupsWhereUniqueInput
+  create: Prisma.XOR<Prisma.groupsCreateWithoutPlacementsInput, Prisma.groupsUncheckedCreateWithoutPlacementsInput>
+}
+
+export type groupsUpsertWithoutPlacementsInput = {
+  update: Prisma.XOR<Prisma.groupsUpdateWithoutPlacementsInput, Prisma.groupsUncheckedUpdateWithoutPlacementsInput>
+  create: Prisma.XOR<Prisma.groupsCreateWithoutPlacementsInput, Prisma.groupsUncheckedCreateWithoutPlacementsInput>
+  where?: Prisma.groupsWhereInput
+}
+
+export type groupsUpdateToOneWithWhereWithoutPlacementsInput = {
+  where?: Prisma.groupsWhereInput
+  data: Prisma.XOR<Prisma.groupsUpdateWithoutPlacementsInput, Prisma.groupsUncheckedUpdateWithoutPlacementsInput>
+}
+
+export type groupsUpdateWithoutPlacementsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament?: Prisma.tournamentsUpdateOneRequiredWithoutGroupsNestedInput
+  nomination?: Prisma.nominationsUpdateOneRequiredWithoutGroupsNestedInput
+  block?: Prisma.competition_blocksUpdateOneWithoutGroupsNestedInput
+  fighters?: Prisma.group_competitorsUpdateManyWithoutGroupNestedInput
+  fights?: Prisma.fightsUpdateManyWithoutGroupNestedInput
+}
+
+export type groupsUncheckedUpdateWithoutPlacementsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  block_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  fighters?: Prisma.group_competitorsUncheckedUpdateManyWithoutGroupNestedInput
+  fights?: Prisma.fightsUncheckedUpdateManyWithoutGroupNestedInput
 }
 
 export type groupsCreateManyTournamentInput = {
   id?: number
   nomination_id: number
+  block_id?: number | null
   name: string
   stage?: number
 }
@@ -724,22 +950,27 @@ export type groupsUpdateWithoutTournamentInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   nomination?: Prisma.nominationsUpdateOneRequiredWithoutGroupsNestedInput
+  block?: Prisma.competition_blocksUpdateOneWithoutGroupsNestedInput
   fighters?: Prisma.group_competitorsUpdateManyWithoutGroupNestedInput
   fights?: Prisma.fightsUpdateManyWithoutGroupNestedInput
+  placements?: Prisma.competition_placementsUpdateManyWithoutGroupNestedInput
 }
 
 export type groupsUncheckedUpdateWithoutTournamentInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  block_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fighters?: Prisma.group_competitorsUncheckedUpdateManyWithoutGroupNestedInput
   fights?: Prisma.fightsUncheckedUpdateManyWithoutGroupNestedInput
+  placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutGroupNestedInput
 }
 
 export type groupsUncheckedUpdateManyWithoutTournamentInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  block_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
 }
@@ -747,6 +978,7 @@ export type groupsUncheckedUpdateManyWithoutTournamentInput = {
 export type groupsCreateManyNominationInput = {
   id?: number
   tournament_id: number
+  block_id?: number | null
   name: string
   stage?: number
 }
@@ -755,22 +987,64 @@ export type groupsUpdateWithoutNominationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   tournament?: Prisma.tournamentsUpdateOneRequiredWithoutGroupsNestedInput
+  block?: Prisma.competition_blocksUpdateOneWithoutGroupsNestedInput
   fighters?: Prisma.group_competitorsUpdateManyWithoutGroupNestedInput
   fights?: Prisma.fightsUpdateManyWithoutGroupNestedInput
+  placements?: Prisma.competition_placementsUpdateManyWithoutGroupNestedInput
 }
 
 export type groupsUncheckedUpdateWithoutNominationInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  block_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fighters?: Prisma.group_competitorsUncheckedUpdateManyWithoutGroupNestedInput
   fights?: Prisma.fightsUncheckedUpdateManyWithoutGroupNestedInput
+  placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutGroupNestedInput
 }
 
 export type groupsUncheckedUpdateManyWithoutNominationInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  block_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type groupsCreateManyBlockInput = {
+  id?: number
+  tournament_id: number
+  nomination_id: number
+  name: string
+  stage?: number
+}
+
+export type groupsUpdateWithoutBlockInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament?: Prisma.tournamentsUpdateOneRequiredWithoutGroupsNestedInput
+  nomination?: Prisma.nominationsUpdateOneRequiredWithoutGroupsNestedInput
+  fighters?: Prisma.group_competitorsUpdateManyWithoutGroupNestedInput
+  fights?: Prisma.fightsUpdateManyWithoutGroupNestedInput
+  placements?: Prisma.competition_placementsUpdateManyWithoutGroupNestedInput
+}
+
+export type groupsUncheckedUpdateWithoutBlockInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  fighters?: Prisma.group_competitorsUncheckedUpdateManyWithoutGroupNestedInput
+  fights?: Prisma.fightsUncheckedUpdateManyWithoutGroupNestedInput
+  placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutGroupNestedInput
+}
+
+export type groupsUncheckedUpdateManyWithoutBlockInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
 }
@@ -783,11 +1057,13 @@ export type groupsUncheckedUpdateManyWithoutNominationInput = {
 export type GroupsCountOutputType = {
   fighters: number
   fights: number
+  placements: number
 }
 
 export type GroupsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   fighters?: boolean | GroupsCountOutputTypeCountFightersArgs
   fights?: boolean | GroupsCountOutputTypeCountFightsArgs
+  placements?: boolean | GroupsCountOutputTypeCountPlacementsArgs
 }
 
 /**
@@ -814,17 +1090,27 @@ export type GroupsCountOutputTypeCountFightsArgs<ExtArgs extends runtime.Types.E
   where?: Prisma.fightsWhereInput
 }
 
+/**
+ * GroupsCountOutputType without action
+ */
+export type GroupsCountOutputTypeCountPlacementsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.competition_placementsWhereInput
+}
+
 
 export type groupsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   tournament_id?: boolean
   nomination_id?: boolean
+  block_id?: boolean
   name?: boolean
   stage?: boolean
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   nomination?: boolean | Prisma.nominationsDefaultArgs<ExtArgs>
+  block?: boolean | Prisma.groups$blockArgs<ExtArgs>
   fighters?: boolean | Prisma.groups$fightersArgs<ExtArgs>
   fights?: boolean | Prisma.groups$fightsArgs<ExtArgs>
+  placements?: boolean | Prisma.groups$placementsArgs<ExtArgs>
   _count?: boolean | Prisma.GroupsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["groups"]>
 
@@ -832,45 +1118,54 @@ export type groupsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   id?: boolean
   tournament_id?: boolean
   nomination_id?: boolean
+  block_id?: boolean
   name?: boolean
   stage?: boolean
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   nomination?: boolean | Prisma.nominationsDefaultArgs<ExtArgs>
+  block?: boolean | Prisma.groups$blockArgs<ExtArgs>
 }, ExtArgs["result"]["groups"]>
 
 export type groupsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   tournament_id?: boolean
   nomination_id?: boolean
+  block_id?: boolean
   name?: boolean
   stage?: boolean
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   nomination?: boolean | Prisma.nominationsDefaultArgs<ExtArgs>
+  block?: boolean | Prisma.groups$blockArgs<ExtArgs>
 }, ExtArgs["result"]["groups"]>
 
 export type groupsSelectScalar = {
   id?: boolean
   tournament_id?: boolean
   nomination_id?: boolean
+  block_id?: boolean
   name?: boolean
   stage?: boolean
 }
 
-export type groupsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tournament_id" | "nomination_id" | "name" | "stage", ExtArgs["result"]["groups"]>
+export type groupsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tournament_id" | "nomination_id" | "block_id" | "name" | "stage", ExtArgs["result"]["groups"]>
 export type groupsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   nomination?: boolean | Prisma.nominationsDefaultArgs<ExtArgs>
+  block?: boolean | Prisma.groups$blockArgs<ExtArgs>
   fighters?: boolean | Prisma.groups$fightersArgs<ExtArgs>
   fights?: boolean | Prisma.groups$fightsArgs<ExtArgs>
+  placements?: boolean | Prisma.groups$placementsArgs<ExtArgs>
   _count?: boolean | Prisma.GroupsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type groupsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   nomination?: boolean | Prisma.nominationsDefaultArgs<ExtArgs>
+  block?: boolean | Prisma.groups$blockArgs<ExtArgs>
 }
 export type groupsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   nomination?: boolean | Prisma.nominationsDefaultArgs<ExtArgs>
+  block?: boolean | Prisma.groups$blockArgs<ExtArgs>
 }
 
 export type $groupsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -878,13 +1173,16 @@ export type $groupsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   objects: {
     tournament: Prisma.$tournamentsPayload<ExtArgs>
     nomination: Prisma.$nominationsPayload<ExtArgs>
+    block: Prisma.$competition_blocksPayload<ExtArgs> | null
     fighters: Prisma.$group_competitorsPayload<ExtArgs>[]
     fights: Prisma.$fightsPayload<ExtArgs>[]
+    placements: Prisma.$competition_placementsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     tournament_id: number
     nomination_id: number
+    block_id: number | null
     name: string
     stage: number
   }, ExtArgs["result"]["groups"]>
@@ -1283,8 +1581,10 @@ export interface Prisma__groupsClient<T, Null = never, ExtArgs extends runtime.T
   readonly [Symbol.toStringTag]: "PrismaPromise"
   tournament<T extends Prisma.tournamentsDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournamentsDefaultArgs<ExtArgs>>): Prisma.Prisma__tournamentsClient<runtime.Types.Result.GetResult<Prisma.$tournamentsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   nomination<T extends Prisma.nominationsDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.nominationsDefaultArgs<ExtArgs>>): Prisma.Prisma__nominationsClient<runtime.Types.Result.GetResult<Prisma.$nominationsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  block<T extends Prisma.groups$blockArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.groups$blockArgs<ExtArgs>>): Prisma.Prisma__competition_blocksClient<runtime.Types.Result.GetResult<Prisma.$competition_blocksPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   fighters<T extends Prisma.groups$fightersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.groups$fightersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$group_competitorsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   fights<T extends Prisma.groups$fightsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.groups$fightsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fightsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  placements<T extends Prisma.groups$placementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.groups$placementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$competition_placementsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1317,6 +1617,7 @@ export interface groupsFieldRefs {
   readonly id: Prisma.FieldRef<"groups", 'Int'>
   readonly tournament_id: Prisma.FieldRef<"groups", 'Int'>
   readonly nomination_id: Prisma.FieldRef<"groups", 'Int'>
+  readonly block_id: Prisma.FieldRef<"groups", 'Int'>
   readonly name: Prisma.FieldRef<"groups", 'String'>
   readonly stage: Prisma.FieldRef<"groups", 'Int'>
 }
@@ -1715,6 +2016,25 @@ export type groupsDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
 }
 
 /**
+ * groups.block
+ */
+export type groups$blockArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the competition_blocks
+   */
+  select?: Prisma.competition_blocksSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the competition_blocks
+   */
+  omit?: Prisma.competition_blocksOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.competition_blocksInclude<ExtArgs> | null
+  where?: Prisma.competition_blocksWhereInput
+}
+
+/**
  * groups.fighters
  */
 export type groups$fightersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1760,6 +2080,30 @@ export type groups$fightsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.FightsScalarFieldEnum | Prisma.FightsScalarFieldEnum[]
+}
+
+/**
+ * groups.placements
+ */
+export type groups$placementsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the competition_placements
+   */
+  select?: Prisma.competition_placementsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the competition_placements
+   */
+  omit?: Prisma.competition_placementsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.competition_placementsInclude<ExtArgs> | null
+  where?: Prisma.competition_placementsWhereInput
+  orderBy?: Prisma.competition_placementsOrderByWithRelationInput | Prisma.competition_placementsOrderByWithRelationInput[]
+  cursor?: Prisma.competition_placementsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Competition_placementsScalarFieldEnum | Prisma.Competition_placementsScalarFieldEnum[]
 }
 
 /**

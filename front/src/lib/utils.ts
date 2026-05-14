@@ -17,13 +17,12 @@ export const parseInput = (checkString: string, inputType: string): string => {
   return checkString
 }
 
-export const tData = (text: string): string => {
+export const tData = (text: string, language = i18n.language || 'ru'): string => {
   if (!text) return ''
 
-  const currentLanguage = i18n.language || 'ru'
   const hasCyrillic = /[а-яё]/i.test(text)
 
-  if (currentLanguage === 'en' && hasCyrillic) {
+  if (language === 'en' && hasCyrillic) {
     return transliterate(text)
   }
 

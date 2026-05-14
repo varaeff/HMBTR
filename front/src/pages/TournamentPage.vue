@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted, computed, reactive } from 'vue'
 import { useTranslation } from 'i18next-vue'
 
 import { useTournamentsListStore } from '@/stores/tournamentsList'
@@ -15,17 +15,16 @@ import { FightersSelect } from '@/widgets/FightersSelect'
 import { NominationCompetitors } from '@/widgets/NominationCompetitors'
 import { NominationGroups } from '@/widgets/NominationGroups'
 import { CollapsibleSection } from '@/widgets/CollapsibleSection'
+import { OlympicBracket } from '@/widgets/OlympicBracket'
+import { TieResolver } from '@/widgets/TieResolver'
+import { CompetitionPodium } from '@/widgets/CompetitionPodium'
 
 import { useCollapsiblePersist } from '@/composables/useCollapsiblePersist'
 import { tData } from '@/lib/utils'
-import { generateGroups } from '@/lib/generateGroups'
-import { stageGroupFights } from '@/lib/generateFights'
-import { saveTournamentData } from '@/lib/saveTournamentData'
-import { loadTournamentData } from '@/lib/loadTournamentData'
 import { dateToString } from '@/lib/dateUtils'
 import { hasAccess } from '@/lib/checkAccess'
 
-import type { Tournament } from '@/model'
+import type { CompetitionBlock, Tournament } from '@/model'
 
 const props = defineProps<{
   id: string
@@ -42,33 +41,31 @@ const tournament = ref<Tournament | null>(null)
 
 const activeTab = ref<number>(0)
 const canEdit = hasAccess()
+const isNominationLoading = ref(false)
+const blockOpenStates = reactive<Record<string, boolean>>({})
+let nominationLoadRequestId = 0
 
 const loadNominationData = async (nomId: number) => {
-  competitionStore.setGroups([])
-  competitionStore.setFightsBlocks([])
-  competitionStore.setTournamentAndNomination(tournamentId.value, nomId)
-  await competitionStore.setCompetitors()
+  const requestId = ++nominationLoadRequestId
 
-  // Load groups and fights from database if stage > 0
-  const targetNomination = tournament.value?.nominations.find((n) => n.nomination_id === nomId)
-  if (targetNomination && targetNomination.stage > 0) {
-    const { groups, fightsBlocks } = await loadTournamentData(
-      tournamentId.value,
-      nomId,
-      targetNomination.stage
-    )
-    competitionStore.setGroups(groups)
-    competitionStore.setFightsBlocks(fightsBlocks)
+  isNominationLoading.value = true
+  competitionStore.resetCompetitionState()
+  competitionStore.setTournamentAndNomination(tournamentId.value, nomId)
+
+  try {
+    await competitionStore.setCompetitors()
+    if (requestId !== nominationLoadRequestId) return
+
+    await competitionStore.loadCompetitionState()
+  } finally {
+    if (requestId === nominationLoadRequestId) {
+      isNominationLoading.value = false
+    }
   }
 }
 
 const isCompetitorsListOpen = useCollapsiblePersist(
   'competitors',
-  computed(() => `${tournamentId.value}-${activeTab.value}`)
-)
-
-const isGroupsFirstOpen = useCollapsiblePersist(
-  'groups-first',
   computed(() => `${tournamentId.value}-${activeTab.value}`)
 )
 
@@ -85,29 +82,65 @@ const tournamentNominations = computed(() => {
   return { all, open: all.filter((n) => statusMap.get(n.id)) }
 })
 
+const currentTournamentNomination = computed(() =>
+  tournament.value?.nominations.find((n) => n.nomination_id === activeTab.value)
+)
+
 const isCurrentNominationOpen = computed(() =>
   tournamentNominations.value.open.some((n) => n.id === activeTab.value)
 )
 
-const tournamentName = computed(() => tournament.value?.name ?? '')
+const currentLanguage = computed(() => i18next.language)
+const tournamentName = computed(() => tData(tournament.value?.name ?? '', currentLanguage.value))
 
 const tournamentDetails = computed(() => {
   if (!tournament.value) return ''
-  return `${tData(tournament.value.country)}, ${tData(tournament.value.city)},
+  return `${tData(tournament.value.country, currentLanguage.value)}, ${tData(tournament.value.city, currentLanguage.value)},
       ${dateToString(tournament.value.event_date)}`
 })
 
 const nominationCompetitors = computed(() => competitionStore.getNominationFighters)
+const blocks = computed(() => competitionStore.getBlocks)
+const activeBlock = computed(() => competitionStore.getActiveBlock)
+const placements = computed(() => competitionStore.getPlacements)
+const nominationFinished = computed(
+  () => competitionStore.getIsFinished || Boolean(currentTournamentNomination.value?.is_finished)
+)
 
-const haveLessThanThree = computed(() => {
-  if (!competitionStore.getGroups.length) return true
+const canEditCompetition = computed(() => canEdit && !nominationFinished.value)
 
-  return competitionStore.getGroups.every((group) => group.fighters.length > 2)
+const activeGroupBlockComplete = computed(() => {
+  if (!activeBlock.value || activeBlock.value.type !== 'GROUP') return false
+  return (
+    activeBlock.value.fights.length > 0 &&
+    activeBlock.value.fights.every((fight) => fight.isFinished)
+  )
 })
 
-const isFightsGenerated = computed(() => {
-  return competitionStore.getFightsBlocks.length > 0
+const activeGroupFightsGenerated = computed(() => {
+  return Boolean(activeBlock.value?.type === 'GROUP' && activeBlock.value.fights.length > 0)
 })
+
+const canGenerateGroupFights = computed(() => {
+  if (!activeBlock.value || activeBlock.value.type !== 'GROUP' || activeGroupFightsGenerated.value)
+    return false
+  return (
+    activeBlock.value.groups.length > 0 &&
+    activeBlock.value.groups.every((group) => group.fighters.length > 2)
+  )
+})
+
+const activeAdvancerCount = computed(() => {
+  if (!activeBlock.value || activeBlock.value.type !== 'GROUP') return 0
+  if (!activeGroupBlockComplete.value || competitionStore.getPendingTie) return 0
+  return activeBlock.value.groups.length === 1
+    ? activeBlock.value.groups[0].fighters.length
+    : activeBlock.value.groups.length * 2
+})
+
+const canOfferOlympic = computed(() =>
+  [4, 8, 16].includes(activeAdvancerCount.value || nominationCompetitors.value.length)
+)
 
 const closeRegistration = async () => {
   await TournamentsListStore.updateTournamentNomination(tournamentId.value, activeTab.value, false)
@@ -118,38 +151,53 @@ const closeRegistration = async () => {
   }
 }
 
-const createGroups = () => {
-  competitionStore.setGroups(generateGroups(nominationCompetitors.value, 0))
-  competitionStore.setFightsBlocks([])
-  isCompetitorsListOpen.value = false
+const createGroupBlock = () => {
+  competitionStore.createGroupBlock()
 }
 
-const generateFights = async () => {
-  const groupsToGenerate = competitionStore.getGroups
-  const fightsBlocks = stageGroupFights(groupsToGenerate)
-  competitionStore.setFightsBlocks(fightsBlocks)
+const createOlympicBlock = () => {
+  competitionStore.createOlympicBlock()
+}
 
-  // Get the current stage from tournament_nominations
-  const targetNomination = tournament.value?.nominations.find(
-    (n) => n.nomination_id === activeTab.value
-  )
+const generateGroupFights = (blockId: number) => {
+  competitionStore.generateGroupFights(blockId)
+}
 
-  if (targetNomination) {
-    try {
-      await saveTournamentData({
-        tournamentId: tournamentId.value,
-        nominationId: activeTab.value,
-        currentStage: targetNomination.stage,
-        groups: groupsToGenerate,
-        fightsBlocks: fightsBlocks
-      })
-
-      // Update the stage in the local tournament object
-      targetNomination.stage += 1
-    } catch (error) {
-      console.error('Failed to save tournament data:', error)
-    }
+const finishCompetition = async () => {
+  await competitionStore.finishCompetition()
+  const targetNom = tournament.value?.nominations.find((n) => n.nomination_id === activeTab.value)
+  if (targetNom) {
+    targetNom.is_finished = true
+    targetNom.is_open = false
   }
+}
+
+const blockTitle = (block: CompetitionBlock) => {
+  const type =
+    block.type === 'GROUP'
+      ? i18next.t('tournamentPageGroupBlosk')
+      : i18next.t('tournamentPageOlympicBlosk')
+  return block.type === 'GROUP' ? `${type} ${block.stage}` : `${type}`
+}
+
+const blockStorageKey = (block: CompetitionBlock) =>
+  `HMBTR-collapsible-competition-block-${tournamentId.value}-${activeTab.value}-${block.id}`
+
+const getBlockIsOpen = (block: CompetitionBlock) => {
+  const key = blockStorageKey(block)
+
+  if (!(key in blockOpenStates)) {
+    const stored = localStorage.getItem(key)
+    blockOpenStates[key] = stored === null ? true : stored === 'true'
+  }
+
+  return blockOpenStates[key]
+}
+
+const setBlockIsOpen = (block: CompetitionBlock, isOpen: boolean) => {
+  const key = blockStorageKey(block)
+  blockOpenStates[key] = isOpen
+  localStorage.setItem(key, String(isOpen))
 }
 
 onMounted(async () => {
@@ -169,14 +217,13 @@ watch(activeTab, (newVal) => {
 watch(tournamentNominations, (noms) => {
   if (noms.all.length && !activeTab.value) {
     activeTab.value = noms.all[0].id
-    loadNominationData(noms.all[0].id)
   }
 })
 </script>
 
 <template>
   <div class="flex flex-col justify-center items-center mb-5" v-if="tournament">
-    <h1 class="mb-4">{{ tData(tournamentName) }}</h1>
+    <h1 class="mb-4">{{ tournamentName }}</h1>
     <div v-if="tournament.id !== 0">
       {{ tournamentDetails }}
     </div>
@@ -184,7 +231,7 @@ watch(tournamentNominations, (noms) => {
 
   <div
     class="flex flex-col justify-center items-center mb-5"
-    v-if="tournament && canEdit && tournamentNominations.open.length"
+    v-if="tournament && canEdit && tournamentNominations.open.length && !nominationFinished"
   >
     <h3 class="mb-4">{{ $t('tournamentPageFightersSelectLabel') }}</h3>
     <FightersSelect :tournamentId="tournament.id" :nominations="tournamentNominations.open" />
@@ -208,45 +255,112 @@ watch(tournamentNominations, (noms) => {
     </TabsList>
 
     <TabsContent :key="activeTab" :value="activeTab" class="mt-0">
-      <CollapsibleSection
-        v-if="nominationCompetitors.length"
-        :title="$t('tournamentPageRegisteredFighters')"
-        v-model:isOpen="isCompetitorsListOpen"
-      >
-        <NominationCompetitors
-          :competitors="nominationCompetitors"
-          :activeTab="activeTab"
-          :hasAccess="canEdit"
-          :isOpen="isCurrentNominationOpen"
-          @close="closeRegistration"
-        />
-      </CollapsibleSection>
+      <template v-if="!isNominationLoading">
+        <CompetitionPodium :placements="placements" />
 
-      <div
-        class="flex flex-col justify-center items-center my-5"
-        v-if="canEdit && !isCurrentNominationOpen && !competitionStore.getGroups.length"
-      >
-        <Button @click="createGroups">{{ $t('tournamentPageCreateGroups') }}</Button>
-      </div>
-
-      <CollapsibleSection
-        v-if="competitionStore.getGroups.length"
-        :title="$t('tournamentPageStage1')"
-        v-model:isOpen="isGroupsFirstOpen"
-      >
-        <NominationGroups v-if="competitionStore.getGroups.length" :isFixed="isFightsGenerated" />
+        <CollapsibleSection
+          v-if="nominationCompetitors.length"
+          :title="$t('tournamentPageRegisteredFighters')"
+          v-model:isOpen="isCompetitorsListOpen"
+        >
+          <NominationCompetitors
+            :competitors="nominationCompetitors"
+            :activeTab="activeTab"
+            :hasAccess="canEditCompetition"
+            :isOpen="isCurrentNominationOpen"
+            :hasBlocks="blocks.length > 0"
+            @close="closeRegistration"
+          />
+        </CollapsibleSection>
 
         <div
-          class="flex flex-col justify-center items-center my-5"
-          v-if="canEdit && competitionStore.getGroups.length && !isFightsGenerated"
+          class="flex flex-wrap justify-center gap-3 my-5"
+          v-if="
+            canEditCompetition &&
+            !isCurrentNominationOpen &&
+            !blocks.length &&
+            nominationCompetitors.length >= 3
+          "
         >
-          <Button :disabled="!haveLessThanThree" @click="generateFights">{{
-            $t('tournamentPageGenerateFights')
+          <Button @click="createGroupBlock">{{ $t('tournamentPageCreateGroups') }}</Button>
+          <Button v-if="canOfferOlympic" @click="createOlympicBlock">{{
+            $t('tournamentPageOlympicBracket')
           }}</Button>
         </div>
 
-        <FightsDisplay v-if="competitionStore.getFightsBlocks.length" :hasAccess="canEdit" />
-      </CollapsibleSection>
+        <div
+          class="flex justify-center my-5 text-sm text-muted-foreground"
+          v-if="
+            canEditCompetition &&
+            !isCurrentNominationOpen &&
+            !blocks.length &&
+            nominationCompetitors.length > 0 &&
+            nominationCompetitors.length < 3
+          "
+        >
+          At least 3 fighters are required.
+        </div>
+
+        <section v-for="block in blocks" :key="block.id" class="my-6">
+          <CollapsibleSection
+            :title="blockTitle(block)"
+            :isOpen="getBlockIsOpen(block)"
+            @update:isOpen="(isOpen) => setBlockIsOpen(block, isOpen)"
+          >
+            <template v-if="block.type === 'GROUP'">
+              <NominationGroups
+                :groups="block.groups"
+                :isFixed="
+                  !canEditCompetition || block.status !== 'ACTIVE' || block.fights.length > 0
+                "
+              />
+              <div
+                class="flex flex-col items-center my-5"
+                v-if="canEditCompetition && block.status === 'ACTIVE' && block.fights.length === 0"
+              >
+                <Button :disabled="!canGenerateGroupFights" @click="generateGroupFights(block.id)">
+                  {{ $t('tournamentPageGenerateFights') }}
+                </Button>
+              </div>
+              <FightsDisplay
+                v-if="block.fightsBlocks.length"
+                :blockId="block.id"
+                :blocksData="block.fightsBlocks"
+                :hasAccess="canEditCompetition && block.status === 'ACTIVE'"
+              />
+            </template>
+
+            <OlympicBracket
+              v-else
+              :block="block"
+              :hasAccess="canEditCompetition && block.status === 'ACTIVE'"
+            />
+          </CollapsibleSection>
+        </section>
+
+        <TieResolver v-if="canEditCompetition" />
+
+        <div
+          class="flex flex-wrap justify-center gap-3 my-5"
+          v-if="
+            canEditCompetition &&
+            activeBlock?.type === 'GROUP' &&
+            activeGroupBlockComplete &&
+            !competitionStore.getPendingTie &&
+            !nominationFinished
+          "
+        >
+          <Button v-if="activeBlock.groups.length === 1" @click="finishCompetition"
+            >Finish nomination</Button
+          >
+          <template v-else>
+            <Button @click="createGroupBlock">{{ $t('tournamentPageNextSubgroups') }}</Button>
+            <Button v-if="canOfferOlympic" @click="createOlympicBlock">{{
+              $t('tournamentPageOlympicBracket')
+            }}</Button>
+          </template>
+        </div>
+      </template>
     </TabsContent>
   </Tabs>
 </template>

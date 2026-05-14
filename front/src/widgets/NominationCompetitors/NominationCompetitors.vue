@@ -9,11 +9,12 @@ const props = defineProps<{
   competitors: Fighter[]
   activeTab: number
   isOpen: boolean
+  hasBlocks: boolean
   hasAccess: boolean
 }>()
 
 const emit = defineEmits<{
-  (e: 'close'): void
+  (e: 'close'): Promise<void> | void
 }>()
 
 const competitionStore = useCompetitionStore()
@@ -23,7 +24,7 @@ const isPending = ref(false)
 const handleClose = async () => {
   try {
     isPending.value = true
-    emit('close')
+    await emit('close')
   } finally {
     isPending.value = false
   }
@@ -84,7 +85,7 @@ const removeCompetitor = async (fighterId: number) => {
       {{ $t('tournamentPageCloseRegistrationButton') }}
     </Button>
   </div>
-  <div v-if="!props.isOpen" class="flex justify-center mt-4">
+  <div v-if="!props.isOpen && !props.hasBlocks" class="flex justify-center mt-4">
     {{ $t('tournamentPageRegistrationClosed') }}
   </div>
 </template>

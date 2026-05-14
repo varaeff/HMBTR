@@ -80,6 +80,17 @@
   "tournamentPageGroupName": "Group",
   "tournamentPageGroups": "Groups",
   "tournamentPageGenerateFights": "Generate fights",
+  "tournamentPageSaveResults": "Save results",
+  "tournamentPageOlympicBracket": "Olympic bracket",
+  "tournamentPageNextSubgroups": "Next subgroups",
+  "tournamentPageGroupBlosk": "Group stage",
+  "tournamentPageOlympicBlosk": "Olympic stage",
+  "tournamentPage1_8Final": "1/8 final",
+  "tournamentPage1_4Final": "1/4 final",
+  "tournamentPageSemifinals": "Semifinals",
+  "tournamentPageFinal": "Final",
+  "tournamentPageRound": "Round",
+  "tournamentPageBronzeFight": "Bronze fight",
 
   "groupsTableFighter": "Fighter",
   "groupsTableClub": "Club",
@@ -112,5 +123,12 @@
 
   "forbiddenPageTitle": "403",
   "forbiddenPageMessage": "You do not have enough permissions to access this page.",
-  "forbiddenPageHomeButton": "To the main page"
+  "forbiddenPageHomeButton": "To the main page",
+
+  "tieResolverResolveTie": "Resolve tie",
+  "tieResolverSaveOrder": "Save order",
+  "tieResolverUp": "Up",
+  "tieResolverDown": "Down",
+
+  "CompetitionPodiumTopThree": "Top three winners"
 }

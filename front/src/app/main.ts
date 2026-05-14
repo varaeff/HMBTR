@@ -11,23 +11,27 @@ import '@fontsource/inter/600.css'
 import '@fontsource/inter/700.css'
 import { useAuthInit } from '@/composables/useAuthInit'
 
-const app = createApp(App)
-const pinia = createPinia()
-app.use(pinia)
+const bootstrap = async () => {
+  const app = createApp(App)
+  const pinia = createPinia()
+  app.use(pinia)
 
-setupInterceptors(pinia)
+  setupInterceptors(pinia)
 
-const { initAuth } = useAuthInit()
-await initAuth()
+  const { initAuth } = useAuthInit()
+  await initAuth()
 
-app.use(router)
+  app.use(router)
 
-setupI18n(app)
+  setupI18n(app)
 
-app.directive('focus', {
-  mounted(el) {
-    el.focus()
-  }
-})
+  app.directive('focus', {
+    mounted(el) {
+      el.focus()
+    }
+  })
 
-app.mount('#app')
+  app.mount('#app')
+}
+
+bootstrap()

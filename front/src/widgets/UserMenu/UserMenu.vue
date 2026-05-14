@@ -1,17 +1,29 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useTranslation } from 'i18next-vue'
 import { useAuthStore } from '@/stores/auth'
 import { useAuthService } from '@/composables/useAuthService'
 import { useRouter } from 'vue-router'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { tData } from '@/lib/utils'
 
 const authStore = useAuthStore()
 const { user } = storeToRefs(authStore)
 const authService = useAuthService()
 const router = useRouter()
 const isLoggingOut = ref(false)
+const { i18next } = useTranslation()
+
+const currentLanguage = computed(() => i18next.language)
+const displayName = computed(() =>
+  [user.value?.name, user.value?.surname]
+    .filter(Boolean)
+    .map((part) => tData(part as string, currentLanguage.value))
+    .join(' ')
+)
+const displayUsername = computed(() => tData(user.value?.username ?? '', currentLanguage.value))
 
 const handleLogout = async () => {
   isLoggingOut.value = true
@@ -34,12 +46,12 @@ const handleLogout = async () => {
   <div v-if="user" class="flex items-center space-x-4">
     <Popover>
       <PopoverTrigger as-child>
-        <Button variant="ghost" class="-mb-2"> {{ user.name }} {{ user.surname }} </Button>
+        <Button variant="ghost" class="-mb-2">{{ displayName }}</Button>
       </PopoverTrigger>
       <PopoverContent class="w-64">
         <div class="space-y-4">
           <div>
-            <p class="font-semibold text-sm">{{ user.username }}</p>
+            <p class="font-semibold text-sm">{{ displayUsername }}</p>
             <p class="text-xs text-muted-foreground mt-1">
               <span v-if="user.is_admin">{{ $t('userMenuAdmin') }}</span>
               <span v-else-if="user.is_organizer">{{ $t('userMenuOrganizer') }}</span>

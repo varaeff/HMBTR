@@ -40,6 +40,20 @@ const [DefineMonthTemplate, ReuseMonthTemplate] = createReusableTemplate<{ date:
 const [DefineYearTemplate, ReuseYearTemplate] = createReusableTemplate<{ date: DateValue }>()
 
 const forwarded = useForwardPropsEmits(delegatedProps, emits)
+
+const updatePlaceholderMonth = (...args: unknown[]) => {
+  const event = args[0] as Event | undefined
+  placeholder.value = placeholder.value.set({
+    month: Number((event?.target as HTMLSelectElement | null)?.value),
+  })
+}
+
+const updatePlaceholderYear = (...args: unknown[]) => {
+  const event = args[0] as Event | undefined
+  placeholder.value = placeholder.value.set({
+    year: Number((event?.target as HTMLSelectElement | null)?.value),
+  })
+}
 </script>
 
 <template>
@@ -51,11 +65,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
         </div>
         <NativeSelect
           class="text-xs h-8 pr-6 pl-2 text-transparent relative"
-          @change="(e: Event) => {
-            placeholder = placeholder.set({
-              month: Number((e?.target as any)?.value),
-            })
-          }"
+          @change="updatePlaceholderMonth"
         >
           <NativeSelectOption v-for="(month) in createYear({ dateObj: date })" :key="month.toString()" :value="month.month" :selected="date.month === month.month">
             {{ formatter.custom(toDate(month), { month: 'short' }) }}
@@ -73,11 +83,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
         </div>
         <NativeSelect
           class="text-xs h-8 pr-6 pl-2 text-transparent relative"
-          @change="(e: Event) => {
-            placeholder = placeholder.set({
-              year: Number((e?.target as any)?.value),
-            })
-          }"
+          @change="updatePlaceholderYear"
         >
           <NativeSelectOption v-for="(year) in yearRange" :key="year.toString()" :value="year.year" :selected="date.year === year.year">
             {{ formatter.custom(toDate(year), { year: 'numeric' }) }}
