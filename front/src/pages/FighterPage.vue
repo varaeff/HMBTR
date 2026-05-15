@@ -5,6 +5,7 @@ import { useFightersListStore } from '@/stores/fightersList'
 import { useAuthStore } from '@/stores/auth'
 import NoPhoto from '@/entities/NoPhoto.jpg'
 import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
 import { ImageUpload } from '@/components/ui/imageUpload'
 import { AlertWidget } from '@/widgets/AlertWidget'
 import { DatePicker } from '@/widgets/DatePicker'
@@ -41,7 +42,8 @@ const editFighter = reactive({
   country_id: 0,
   city_id: 0,
   club_id: 0,
-  pic: ''
+  pic: '',
+  is_male: true
 })
 
 const buttonDisabled = useRequiredFields(editFighter, ['surname', 'name', 'country', 'city'])
@@ -76,6 +78,7 @@ const fillEditForm = () => {
   editFighter.city_id = fighter.value.city_id ?? 0
   editFighter.club_id = fighter.value.club_id ?? 0
   editFighter.pic = fighter.value.pic ?? ''
+  editFighter.is_male = fighter.value.is_male ?? true
   fighterBirthday.value = toCalendarDate(fighter.value.birthday)
 }
 
@@ -100,7 +103,8 @@ const saveFighter = async () => {
     country_id: editFighter.country_id,
     city_id: editFighter.city_id,
     club_id: editFighter.club_id || null,
-    pic: editFighter.pic
+    pic: editFighter.pic,
+    is_male: editFighter.is_male
   }
 
   if (fighterBirthday.value) {
@@ -146,6 +150,29 @@ const saveFighter = async () => {
             :needClub="true"
             @request-add="handleRequestAdd"
           />
+          <div class="space-y-2">
+            <Label>{{ $t('addFighterGenderLabel') }}</Label>
+            <div class="flex gap-3">
+              <Label class="flex cursor-pointer items-center gap-2">
+                <input
+                  v-model="editFighter.is_male"
+                  type="radio"
+                  name="fighter-gender"
+                  :value="true"
+                />
+                {{ $t('addFighterGenderMale') }}
+              </Label>
+              <Label class="flex cursor-pointer items-center gap-2">
+                <input
+                  v-model="editFighter.is_male"
+                  type="radio"
+                  name="fighter-gender"
+                  :value="false"
+                />
+                {{ $t('addFighterGenderFemale') }}
+              </Label>
+            </div>
+          </div>
           <DatePicker :placeholder="$t('addFighterDateOfBirth')" v-model:date="fighterBirthday" />
         </div>
       </div>

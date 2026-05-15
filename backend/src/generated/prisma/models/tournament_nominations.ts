@@ -503,10 +503,6 @@ export type tournament_nominationsUncheckedUpdateManyWithoutNominationNestedInpu
   deleteMany?: Prisma.tournament_nominationsScalarWhereInput | Prisma.tournament_nominationsScalarWhereInput[]
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type tournament_nominationsCreateNestedOneWithoutBlocksInput = {
   create?: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutBlocksInput, Prisma.tournament_nominationsUncheckedCreateWithoutBlocksInput>
   connectOrCreate?: Prisma.tournament_nominationsCreateOrConnectWithoutBlocksInput

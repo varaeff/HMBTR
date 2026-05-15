@@ -1677,7 +1677,8 @@ export const FightersScalarFieldEnum = {
   country_id: 'country_id',
   city_id: 'city_id',
   club_id: 'club_id',
-  pic: 'pic'
+  pic: 'pic',
+  is_male: 'is_male'
 } as const
 
 export type FightersScalarFieldEnum = (typeof FightersScalarFieldEnum)[keyof typeof FightersScalarFieldEnum]
@@ -1697,7 +1698,8 @@ export type TournamentsScalarFieldEnum = (typeof TournamentsScalarFieldEnum)[key
 export const NominationsScalarFieldEnum = {
   id: 'id',
   name_ru: 'name_ru',
-  name_en: 'name_en'
+  name_en: 'name_en',
+  is_male: 'is_male'
 } as const
 
 export type NominationsScalarFieldEnum = (typeof NominationsScalarFieldEnum)[keyof typeof NominationsScalarFieldEnum]

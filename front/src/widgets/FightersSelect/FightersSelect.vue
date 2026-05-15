@@ -33,6 +33,10 @@ const open = ref(false)
 const selectedFighter = ref<string>('')
 const competitorNominationsIds = ref<number[]>([])
 
+const selectedFighterData = computed(() =>
+  fightersListStore.fightersList.find((fighter) => fighter.id.toString() === selectedFighter.value)
+)
+
 const fightersList = computed(() => {
   const data: Fighter[] = fightersListStore.filteredFightersList
   return data
@@ -45,12 +49,26 @@ const fightersList = computed(() => {
     }))
 })
 
+const matchingNominations = computed(() => {
+  if (!selectedFighterData.value) return []
+
+  return props.nominations.filter(
+    (nomination) => nomination.is_male === (selectedFighterData.value?.is_male ?? true)
+  )
+})
+
 const getFighters = async () => {
   await fightersListStore.getFightersList()
 }
 
 const addFighter = () => {
   router.push(`/addFighter#${props.tournamentId.toString()}`)
+}
+
+const selectFighter = (fighterId: string) => {
+  selectedFighter.value = fighterId
+  competitorNominationsIds.value = []
+  open.value = false
 }
 
 const registerFighter = async () => {
@@ -105,8 +123,7 @@ onMounted(async () => {
               :value="fighter.value"
               @select="
                 () => {
-                  selectedFighter = fighter.value
-                  open = false
+                  selectFighter(fighter.value)
                 }
               "
             >
@@ -128,7 +145,7 @@ onMounted(async () => {
 
   <div v-if="selectedFighter" class="flex flex-col gap-4 justify-center p-4">
     <div class="flex gap-4">
-      <div v-for="nom in nominations" :key="nom.id" class="flex items-center gap-3">
+      <div v-for="nom in matchingNominations" :key="nom.id" class="flex items-center gap-3">
         <Checkbox
           :id="`nom-${nom.id}`"
           :model-value="competitorNominationsIds.includes(nom.id)"

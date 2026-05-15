@@ -26,6 +26,9 @@
   "addFighterNamePage": "Добавление нового бойца",
   "addFighterHint": "Обязательны к заполнению следующие поля: фамилия, имя, страна, город",
   "addFighterFormLabel": "Введите данные бойца",
+  "addFighterGenderLabel": "Пол",
+  "addFighterGenderMale": "Мужской",
+  "addFighterGenderFemale": "Женский",
   "addFighterDateOfBirth": "Дата рождения",
   "addFighterSaveData": "Сохранить данные",
 

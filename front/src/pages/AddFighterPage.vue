@@ -8,6 +8,7 @@ import { AlertWidget } from '@/widgets/AlertWidget'
 import { DatePicker } from '@/widgets/DatePicker'
 import { FullNameWidget } from '@/widgets/FullNameWidget'
 import { SelectLocationBlock } from '@/widgets/SelectLocationBlock'
+import { Label } from '@/components/ui/label'
 import { toISODate, toDateFormat } from '@/lib/dateUtils'
 import { useRequiredFields } from '@/composables/useRequiredFields'
 import { useAddEntityAlert } from '@/composables/useAddEntityAlert'
@@ -31,6 +32,7 @@ const newFighter = reactive({
   city_id: 0,
   club_id: 0,
   pic: '',
+  is_male: true,
   birthday: null as Date | null
 })
 
@@ -101,6 +103,29 @@ const saveNewFighter = async () => {
             :needClub="true"
             @request-add="handleRequestAdd"
           />
+          <div class="space-y-2">
+            <Label>{{ $t('addFighterGenderLabel') }}</Label>
+            <div class="flex gap-3">
+              <Label class="flex cursor-pointer items-center gap-2">
+                <input
+                  v-model="newFighter.is_male"
+                  type="radio"
+                  name="fighter-gender"
+                  :value="true"
+                />
+                {{ $t('addFighterGenderMale') }}
+              </Label>
+              <Label class="flex cursor-pointer items-center gap-2">
+                <input
+                  v-model="newFighter.is_male"
+                  type="radio"
+                  name="fighter-gender"
+                  :value="false"
+                />
+                {{ $t('addFighterGenderFemale') }}
+              </Label>
+            </div>
+          </div>
           <DatePicker :placeholder="$t('addFighterDateOfBirth')" v-model:date="fighterBirthday" />
         </div>
       </div>

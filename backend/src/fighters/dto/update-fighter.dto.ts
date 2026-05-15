@@ -1,4 +1,10 @@
-import { IsString, IsNumber, IsOptional, IsDateString } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsOptional,
+  IsDateString,
+  IsBoolean,
+} from 'class-validator';
 
 export class UpdateFighterDto {
   @IsOptional() @IsString() name?: string;
@@ -9,4 +15,5 @@ export class UpdateFighterDto {
   @IsOptional() @IsNumber() city_id?: number;
   @IsOptional() @IsNumber() club_id?: number | null;
   @IsOptional() @IsString() pic?: string;
+  @IsOptional() @IsBoolean() is_male?: boolean;
 }

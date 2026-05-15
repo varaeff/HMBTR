@@ -50,6 +50,7 @@ export type FightersMinAggregateOutputType = {
   city_id: number | null
   club_id: number | null
   pic: string | null
+  is_male: boolean | null
 }
 
 export type FightersMaxAggregateOutputType = {
@@ -62,6 +63,7 @@ export type FightersMaxAggregateOutputType = {
   city_id: number | null
   club_id: number | null
   pic: string | null
+  is_male: boolean | null
 }
 
 export type FightersCountAggregateOutputType = {
@@ -74,6 +76,7 @@ export type FightersCountAggregateOutputType = {
   city_id: number
   club_id: number
   pic: number
+  is_male: number
   _all: number
 }
 
@@ -102,6 +105,7 @@ export type FightersMinAggregateInputType = {
   city_id?: true
   club_id?: true
   pic?: true
+  is_male?: true
 }
 
 export type FightersMaxAggregateInputType = {
@@ -114,6 +118,7 @@ export type FightersMaxAggregateInputType = {
   city_id?: true
   club_id?: true
   pic?: true
+  is_male?: true
 }
 
 export type FightersCountAggregateInputType = {
@@ -126,6 +131,7 @@ export type FightersCountAggregateInputType = {
   city_id?: true
   club_id?: true
   pic?: true
+  is_male?: true
   _all?: true
 }
 
@@ -225,6 +231,7 @@ export type FightersGroupByOutputType = {
   city_id: number
   club_id: number | null
   pic: string | null
+  is_male: boolean
   _count: FightersCountAggregateOutputType | null
   _avg: FightersAvgAggregateOutputType | null
   _sum: FightersSumAggregateOutputType | null
@@ -260,6 +267,7 @@ export type fightersWhereInput = {
   city_id?: Prisma.IntFilter<"fighters"> | number
   club_id?: Prisma.IntNullableFilter<"fighters"> | number | null
   pic?: Prisma.StringNullableFilter<"fighters"> | string | null
+  is_male?: Prisma.BoolFilter<"fighters"> | boolean
   country?: Prisma.XOR<Prisma.CountriesScalarRelationFilter, Prisma.countriesWhereInput>
   city?: Prisma.XOR<Prisma.CitiesScalarRelationFilter, Prisma.citiesWhereInput>
   club?: Prisma.XOR<Prisma.ClubsNullableScalarRelationFilter, Prisma.clubsWhereInput> | null
@@ -276,6 +284,7 @@ export type fightersOrderByWithRelationInput = {
   city_id?: Prisma.SortOrder
   club_id?: Prisma.SortOrderInput | Prisma.SortOrder
   pic?: Prisma.SortOrderInput | Prisma.SortOrder
+  is_male?: Prisma.SortOrder
   country?: Prisma.countriesOrderByWithRelationInput
   city?: Prisma.citiesOrderByWithRelationInput
   club?: Prisma.clubsOrderByWithRelationInput
@@ -295,6 +304,7 @@ export type fightersWhereUniqueInput = Prisma.AtLeast<{
   city_id?: Prisma.IntFilter<"fighters"> | number
   club_id?: Prisma.IntNullableFilter<"fighters"> | number | null
   pic?: Prisma.StringNullableFilter<"fighters"> | string | null
+  is_male?: Prisma.BoolFilter<"fighters"> | boolean
   country?: Prisma.XOR<Prisma.CountriesScalarRelationFilter, Prisma.countriesWhereInput>
   city?: Prisma.XOR<Prisma.CitiesScalarRelationFilter, Prisma.citiesWhereInput>
   club?: Prisma.XOR<Prisma.ClubsNullableScalarRelationFilter, Prisma.clubsWhereInput> | null
@@ -311,6 +321,7 @@ export type fightersOrderByWithAggregationInput = {
   city_id?: Prisma.SortOrder
   club_id?: Prisma.SortOrderInput | Prisma.SortOrder
   pic?: Prisma.SortOrderInput | Prisma.SortOrder
+  is_male?: Prisma.SortOrder
   _count?: Prisma.fightersCountOrderByAggregateInput
   _avg?: Prisma.fightersAvgOrderByAggregateInput
   _max?: Prisma.fightersMaxOrderByAggregateInput
@@ -331,6 +342,7 @@ export type fightersScalarWhereWithAggregatesInput = {
   city_id?: Prisma.IntWithAggregatesFilter<"fighters"> | number
   club_id?: Prisma.IntNullableWithAggregatesFilter<"fighters"> | number | null
   pic?: Prisma.StringNullableWithAggregatesFilter<"fighters"> | string | null
+  is_male?: Prisma.BoolWithAggregatesFilter<"fighters"> | boolean
 }
 
 export type fightersCreateInput = {
@@ -339,6 +351,7 @@ export type fightersCreateInput = {
   patronymic?: string | null
   birthday?: Date | string | null
   pic?: string | null
+  is_male?: boolean
   country: Prisma.countriesCreateNestedOneWithoutFightersInput
   city: Prisma.citiesCreateNestedOneWithoutFightersInput
   club?: Prisma.clubsCreateNestedOneWithoutFightersInput
@@ -355,6 +368,7 @@ export type fightersUncheckedCreateInput = {
   city_id: number
   club_id?: number | null
   pic?: string | null
+  is_male?: boolean
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutFighterInput
 }
 
@@ -364,6 +378,7 @@ export type fightersUpdateInput = {
   patronymic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthday?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   country?: Prisma.countriesUpdateOneRequiredWithoutFightersNestedInput
   city?: Prisma.citiesUpdateOneRequiredWithoutFightersNestedInput
   club?: Prisma.clubsUpdateOneWithoutFightersNestedInput
@@ -380,6 +395,7 @@ export type fightersUncheckedUpdateInput = {
   city_id?: Prisma.IntFieldUpdateOperationsInput | number
   club_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutFighterNestedInput
 }
 
@@ -393,6 +409,7 @@ export type fightersCreateManyInput = {
   city_id: number
   club_id?: number | null
   pic?: string | null
+  is_male?: boolean
 }
 
 export type fightersUpdateManyMutationInput = {
@@ -401,6 +418,7 @@ export type fightersUpdateManyMutationInput = {
   patronymic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthday?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type fightersUncheckedUpdateManyInput = {
@@ -413,6 +431,7 @@ export type fightersUncheckedUpdateManyInput = {
   city_id?: Prisma.IntFieldUpdateOperationsInput | number
   club_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type FightersListRelationFilter = {
@@ -435,6 +454,7 @@ export type fightersCountOrderByAggregateInput = {
   city_id?: Prisma.SortOrder
   club_id?: Prisma.SortOrder
   pic?: Prisma.SortOrder
+  is_male?: Prisma.SortOrder
 }
 
 export type fightersAvgOrderByAggregateInput = {
@@ -454,6 +474,7 @@ export type fightersMaxOrderByAggregateInput = {
   city_id?: Prisma.SortOrder
   club_id?: Prisma.SortOrder
   pic?: Prisma.SortOrder
+  is_male?: Prisma.SortOrder
 }
 
 export type fightersMinOrderByAggregateInput = {
@@ -466,6 +487,7 @@ export type fightersMinOrderByAggregateInput = {
   city_id?: Prisma.SortOrder
   club_id?: Prisma.SortOrder
   pic?: Prisma.SortOrder
+  is_male?: Prisma.SortOrder
 }
 
 export type fightersSumOrderByAggregateInput = {
@@ -614,6 +636,10 @@ export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
 }
 
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
 export type NullableIntFieldUpdateOperationsInput = {
   set?: number | null
   increment?: number
@@ -642,6 +668,7 @@ export type fightersCreateWithoutCountryInput = {
   patronymic?: string | null
   birthday?: Date | string | null
   pic?: string | null
+  is_male?: boolean
   city: Prisma.citiesCreateNestedOneWithoutFightersInput
   club?: Prisma.clubsCreateNestedOneWithoutFightersInput
   competitors?: Prisma.competitorsCreateNestedManyWithoutFighterInput
@@ -656,6 +683,7 @@ export type fightersUncheckedCreateWithoutCountryInput = {
   city_id: number
   club_id?: number | null
   pic?: string | null
+  is_male?: boolean
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutFighterInput
 }
 
@@ -698,6 +726,7 @@ export type fightersScalarWhereInput = {
   city_id?: Prisma.IntFilter<"fighters"> | number
   club_id?: Prisma.IntNullableFilter<"fighters"> | number | null
   pic?: Prisma.StringNullableFilter<"fighters"> | string | null
+  is_male?: Prisma.BoolFilter<"fighters"> | boolean
 }
 
 export type fightersCreateWithoutCityInput = {
@@ -706,6 +735,7 @@ export type fightersCreateWithoutCityInput = {
   patronymic?: string | null
   birthday?: Date | string | null
   pic?: string | null
+  is_male?: boolean
   country: Prisma.countriesCreateNestedOneWithoutFightersInput
   club?: Prisma.clubsCreateNestedOneWithoutFightersInput
   competitors?: Prisma.competitorsCreateNestedManyWithoutFighterInput
@@ -720,6 +750,7 @@ export type fightersUncheckedCreateWithoutCityInput = {
   country_id: number
   club_id?: number | null
   pic?: string | null
+  is_male?: boolean
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutFighterInput
 }
 
@@ -755,6 +786,7 @@ export type fightersCreateWithoutClubInput = {
   patronymic?: string | null
   birthday?: Date | string | null
   pic?: string | null
+  is_male?: boolean
   country: Prisma.countriesCreateNestedOneWithoutFightersInput
   city: Prisma.citiesCreateNestedOneWithoutFightersInput
   competitors?: Prisma.competitorsCreateNestedManyWithoutFighterInput
@@ -769,6 +801,7 @@ export type fightersUncheckedCreateWithoutClubInput = {
   country_id: number
   city_id: number
   pic?: string | null
+  is_male?: boolean
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutFighterInput
 }
 
@@ -804,6 +837,7 @@ export type fightersCreateWithoutCompetitorsInput = {
   patronymic?: string | null
   birthday?: Date | string | null
   pic?: string | null
+  is_male?: boolean
   country: Prisma.countriesCreateNestedOneWithoutFightersInput
   city: Prisma.citiesCreateNestedOneWithoutFightersInput
   club?: Prisma.clubsCreateNestedOneWithoutFightersInput
@@ -819,6 +853,7 @@ export type fightersUncheckedCreateWithoutCompetitorsInput = {
   city_id: number
   club_id?: number | null
   pic?: string | null
+  is_male?: boolean
 }
 
 export type fightersCreateOrConnectWithoutCompetitorsInput = {
@@ -843,6 +878,7 @@ export type fightersUpdateWithoutCompetitorsInput = {
   patronymic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthday?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   country?: Prisma.countriesUpdateOneRequiredWithoutFightersNestedInput
   city?: Prisma.citiesUpdateOneRequiredWithoutFightersNestedInput
   club?: Prisma.clubsUpdateOneWithoutFightersNestedInput
@@ -858,6 +894,7 @@ export type fightersUncheckedUpdateWithoutCompetitorsInput = {
   city_id?: Prisma.IntFieldUpdateOperationsInput | number
   club_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type fightersCreateManyCountryInput = {
@@ -869,6 +906,7 @@ export type fightersCreateManyCountryInput = {
   city_id: number
   club_id?: number | null
   pic?: string | null
+  is_male?: boolean
 }
 
 export type fightersUpdateWithoutCountryInput = {
@@ -877,6 +915,7 @@ export type fightersUpdateWithoutCountryInput = {
   patronymic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthday?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   city?: Prisma.citiesUpdateOneRequiredWithoutFightersNestedInput
   club?: Prisma.clubsUpdateOneWithoutFightersNestedInput
   competitors?: Prisma.competitorsUpdateManyWithoutFighterNestedInput
@@ -891,6 +930,7 @@ export type fightersUncheckedUpdateWithoutCountryInput = {
   city_id?: Prisma.IntFieldUpdateOperationsInput | number
   club_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutFighterNestedInput
 }
 
@@ -903,6 +943,7 @@ export type fightersUncheckedUpdateManyWithoutCountryInput = {
   city_id?: Prisma.IntFieldUpdateOperationsInput | number
   club_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type fightersCreateManyCityInput = {
@@ -914,6 +955,7 @@ export type fightersCreateManyCityInput = {
   country_id: number
   club_id?: number | null
   pic?: string | null
+  is_male?: boolean
 }
 
 export type fightersUpdateWithoutCityInput = {
@@ -922,6 +964,7 @@ export type fightersUpdateWithoutCityInput = {
   patronymic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthday?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   country?: Prisma.countriesUpdateOneRequiredWithoutFightersNestedInput
   club?: Prisma.clubsUpdateOneWithoutFightersNestedInput
   competitors?: Prisma.competitorsUpdateManyWithoutFighterNestedInput
@@ -936,6 +979,7 @@ export type fightersUncheckedUpdateWithoutCityInput = {
   country_id?: Prisma.IntFieldUpdateOperationsInput | number
   club_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutFighterNestedInput
 }
 
@@ -948,6 +992,7 @@ export type fightersUncheckedUpdateManyWithoutCityInput = {
   country_id?: Prisma.IntFieldUpdateOperationsInput | number
   club_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type fightersCreateManyClubInput = {
@@ -959,6 +1004,7 @@ export type fightersCreateManyClubInput = {
   country_id: number
   city_id: number
   pic?: string | null
+  is_male?: boolean
 }
 
 export type fightersUpdateWithoutClubInput = {
@@ -967,6 +1013,7 @@ export type fightersUpdateWithoutClubInput = {
   patronymic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthday?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   country?: Prisma.countriesUpdateOneRequiredWithoutFightersNestedInput
   city?: Prisma.citiesUpdateOneRequiredWithoutFightersNestedInput
   competitors?: Prisma.competitorsUpdateManyWithoutFighterNestedInput
@@ -981,6 +1028,7 @@ export type fightersUncheckedUpdateWithoutClubInput = {
   country_id?: Prisma.IntFieldUpdateOperationsInput | number
   city_id?: Prisma.IntFieldUpdateOperationsInput | number
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutFighterNestedInput
 }
 
@@ -993,6 +1041,7 @@ export type fightersUncheckedUpdateManyWithoutClubInput = {
   country_id?: Prisma.IntFieldUpdateOperationsInput | number
   city_id?: Prisma.IntFieldUpdateOperationsInput | number
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
@@ -1036,6 +1085,7 @@ export type fightersSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   city_id?: boolean
   club_id?: boolean
   pic?: boolean
+  is_male?: boolean
   country?: boolean | Prisma.countriesDefaultArgs<ExtArgs>
   city?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
   club?: boolean | Prisma.fighters$clubArgs<ExtArgs>
@@ -1053,6 +1103,7 @@ export type fightersSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   city_id?: boolean
   club_id?: boolean
   pic?: boolean
+  is_male?: boolean
   country?: boolean | Prisma.countriesDefaultArgs<ExtArgs>
   city?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
   club?: boolean | Prisma.fighters$clubArgs<ExtArgs>
@@ -1068,6 +1119,7 @@ export type fightersSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   city_id?: boolean
   club_id?: boolean
   pic?: boolean
+  is_male?: boolean
   country?: boolean | Prisma.countriesDefaultArgs<ExtArgs>
   city?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
   club?: boolean | Prisma.fighters$clubArgs<ExtArgs>
@@ -1083,9 +1135,10 @@ export type fightersSelectScalar = {
   city_id?: boolean
   club_id?: boolean
   pic?: boolean
+  is_male?: boolean
 }
 
-export type fightersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "surname" | "patronymic" | "birthday" | "country_id" | "city_id" | "club_id" | "pic", ExtArgs["result"]["fighters"]>
+export type fightersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "surname" | "patronymic" | "birthday" | "country_id" | "city_id" | "club_id" | "pic" | "is_male", ExtArgs["result"]["fighters"]>
 export type fightersInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   country?: boolean | Prisma.countriesDefaultArgs<ExtArgs>
   city?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
@@ -1122,6 +1175,7 @@ export type $fightersPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     city_id: number
     club_id: number | null
     pic: string | null
+    is_male: boolean
   }, ExtArgs["result"]["fighters"]>
   composites: {}
 }
@@ -1558,6 +1612,7 @@ export interface fightersFieldRefs {
   readonly city_id: Prisma.FieldRef<"fighters", 'Int'>
   readonly club_id: Prisma.FieldRef<"fighters", 'Int'>
   readonly pic: Prisma.FieldRef<"fighters", 'String'>
+  readonly is_male: Prisma.FieldRef<"fighters", 'Boolean'>
 }
     
 

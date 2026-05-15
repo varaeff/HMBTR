@@ -38,18 +38,21 @@ export type NominationsMinAggregateOutputType = {
   id: number | null
   name_ru: string | null
   name_en: string | null
+  is_male: boolean | null
 }
 
 export type NominationsMaxAggregateOutputType = {
   id: number | null
   name_ru: string | null
   name_en: string | null
+  is_male: boolean | null
 }
 
 export type NominationsCountAggregateOutputType = {
   id: number
   name_ru: number
   name_en: number
+  is_male: number
   _all: number
 }
 
@@ -66,18 +69,21 @@ export type NominationsMinAggregateInputType = {
   id?: true
   name_ru?: true
   name_en?: true
+  is_male?: true
 }
 
 export type NominationsMaxAggregateInputType = {
   id?: true
   name_ru?: true
   name_en?: true
+  is_male?: true
 }
 
 export type NominationsCountAggregateInputType = {
   id?: true
   name_ru?: true
   name_en?: true
+  is_male?: true
   _all?: true
 }
 
@@ -171,6 +177,7 @@ export type NominationsGroupByOutputType = {
   id: number
   name_ru: string
   name_en: string
+  is_male: boolean
   _count: NominationsCountAggregateOutputType | null
   _avg: NominationsAvgAggregateOutputType | null
   _sum: NominationsSumAggregateOutputType | null
@@ -200,6 +207,7 @@ export type nominationsWhereInput = {
   id?: Prisma.IntFilter<"nominations"> | number
   name_ru?: Prisma.StringFilter<"nominations"> | string
   name_en?: Prisma.StringFilter<"nominations"> | string
+  is_male?: Prisma.BoolFilter<"nominations"> | boolean
   tournaments?: Prisma.Tournament_nominationsListRelationFilter
   competitors?: Prisma.CompetitorsListRelationFilter
   groups?: Prisma.GroupsListRelationFilter
@@ -210,6 +218,7 @@ export type nominationsOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name_ru?: Prisma.SortOrder
   name_en?: Prisma.SortOrder
+  is_male?: Prisma.SortOrder
   tournaments?: Prisma.tournament_nominationsOrderByRelationAggregateInput
   competitors?: Prisma.competitorsOrderByRelationAggregateInput
   groups?: Prisma.groupsOrderByRelationAggregateInput
@@ -223,6 +232,7 @@ export type nominationsWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.nominationsWhereInput | Prisma.nominationsWhereInput[]
   name_ru?: Prisma.StringFilter<"nominations"> | string
   name_en?: Prisma.StringFilter<"nominations"> | string
+  is_male?: Prisma.BoolFilter<"nominations"> | boolean
   tournaments?: Prisma.Tournament_nominationsListRelationFilter
   competitors?: Prisma.CompetitorsListRelationFilter
   groups?: Prisma.GroupsListRelationFilter
@@ -233,6 +243,7 @@ export type nominationsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name_ru?: Prisma.SortOrder
   name_en?: Prisma.SortOrder
+  is_male?: Prisma.SortOrder
   _count?: Prisma.nominationsCountOrderByAggregateInput
   _avg?: Prisma.nominationsAvgOrderByAggregateInput
   _max?: Prisma.nominationsMaxOrderByAggregateInput
@@ -247,11 +258,13 @@ export type nominationsScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"nominations"> | number
   name_ru?: Prisma.StringWithAggregatesFilter<"nominations"> | string
   name_en?: Prisma.StringWithAggregatesFilter<"nominations"> | string
+  is_male?: Prisma.BoolWithAggregatesFilter<"nominations"> | boolean
 }
 
 export type nominationsCreateInput = {
   name_ru: string
   name_en: string
+  is_male?: boolean
   tournaments?: Prisma.tournament_nominationsCreateNestedManyWithoutNominationInput
   competitors?: Prisma.competitorsCreateNestedManyWithoutNominationInput
   groups?: Prisma.groupsCreateNestedManyWithoutNominationInput
@@ -262,6 +275,7 @@ export type nominationsUncheckedCreateInput = {
   id?: number
   name_ru: string
   name_en: string
+  is_male?: boolean
   tournaments?: Prisma.tournament_nominationsUncheckedCreateNestedManyWithoutNominationInput
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutNominationInput
   groups?: Prisma.groupsUncheckedCreateNestedManyWithoutNominationInput
@@ -271,6 +285,7 @@ export type nominationsUncheckedCreateInput = {
 export type nominationsUpdateInput = {
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tournaments?: Prisma.tournament_nominationsUpdateManyWithoutNominationNestedInput
   competitors?: Prisma.competitorsUpdateManyWithoutNominationNestedInput
   groups?: Prisma.groupsUpdateManyWithoutNominationNestedInput
@@ -281,6 +296,7 @@ export type nominationsUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tournaments?: Prisma.tournament_nominationsUncheckedUpdateManyWithoutNominationNestedInput
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutNominationNestedInput
   groups?: Prisma.groupsUncheckedUpdateManyWithoutNominationNestedInput
@@ -291,23 +307,27 @@ export type nominationsCreateManyInput = {
   id?: number
   name_ru: string
   name_en: string
+  is_male?: boolean
 }
 
 export type nominationsUpdateManyMutationInput = {
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type nominationsUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type nominationsCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name_ru?: Prisma.SortOrder
   name_en?: Prisma.SortOrder
+  is_male?: Prisma.SortOrder
 }
 
 export type nominationsAvgOrderByAggregateInput = {
@@ -318,12 +338,14 @@ export type nominationsMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name_ru?: Prisma.SortOrder
   name_en?: Prisma.SortOrder
+  is_male?: Prisma.SortOrder
 }
 
 export type nominationsMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name_ru?: Prisma.SortOrder
   name_en?: Prisma.SortOrder
+  is_male?: Prisma.SortOrder
 }
 
 export type nominationsSumOrderByAggregateInput = {
@@ -394,6 +416,7 @@ export type nominationsUpdateOneRequiredWithoutFightsNestedInput = {
 export type nominationsCreateWithoutTournamentsInput = {
   name_ru: string
   name_en: string
+  is_male?: boolean
   competitors?: Prisma.competitorsCreateNestedManyWithoutNominationInput
   groups?: Prisma.groupsCreateNestedManyWithoutNominationInput
   fights?: Prisma.fightsCreateNestedManyWithoutNominationInput
@@ -403,6 +426,7 @@ export type nominationsUncheckedCreateWithoutTournamentsInput = {
   id?: number
   name_ru: string
   name_en: string
+  is_male?: boolean
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutNominationInput
   groups?: Prisma.groupsUncheckedCreateNestedManyWithoutNominationInput
   fights?: Prisma.fightsUncheckedCreateNestedManyWithoutNominationInput
@@ -427,6 +451,7 @@ export type nominationsUpdateToOneWithWhereWithoutTournamentsInput = {
 export type nominationsUpdateWithoutTournamentsInput = {
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   competitors?: Prisma.competitorsUpdateManyWithoutNominationNestedInput
   groups?: Prisma.groupsUpdateManyWithoutNominationNestedInput
   fights?: Prisma.fightsUpdateManyWithoutNominationNestedInput
@@ -436,6 +461,7 @@ export type nominationsUncheckedUpdateWithoutTournamentsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutNominationNestedInput
   groups?: Prisma.groupsUncheckedUpdateManyWithoutNominationNestedInput
   fights?: Prisma.fightsUncheckedUpdateManyWithoutNominationNestedInput
@@ -444,6 +470,7 @@ export type nominationsUncheckedUpdateWithoutTournamentsInput = {
 export type nominationsCreateWithoutCompetitorsInput = {
   name_ru: string
   name_en: string
+  is_male?: boolean
   tournaments?: Prisma.tournament_nominationsCreateNestedManyWithoutNominationInput
   groups?: Prisma.groupsCreateNestedManyWithoutNominationInput
   fights?: Prisma.fightsCreateNestedManyWithoutNominationInput
@@ -453,6 +480,7 @@ export type nominationsUncheckedCreateWithoutCompetitorsInput = {
   id?: number
   name_ru: string
   name_en: string
+  is_male?: boolean
   tournaments?: Prisma.tournament_nominationsUncheckedCreateNestedManyWithoutNominationInput
   groups?: Prisma.groupsUncheckedCreateNestedManyWithoutNominationInput
   fights?: Prisma.fightsUncheckedCreateNestedManyWithoutNominationInput
@@ -477,6 +505,7 @@ export type nominationsUpdateToOneWithWhereWithoutCompetitorsInput = {
 export type nominationsUpdateWithoutCompetitorsInput = {
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tournaments?: Prisma.tournament_nominationsUpdateManyWithoutNominationNestedInput
   groups?: Prisma.groupsUpdateManyWithoutNominationNestedInput
   fights?: Prisma.fightsUpdateManyWithoutNominationNestedInput
@@ -486,6 +515,7 @@ export type nominationsUncheckedUpdateWithoutCompetitorsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tournaments?: Prisma.tournament_nominationsUncheckedUpdateManyWithoutNominationNestedInput
   groups?: Prisma.groupsUncheckedUpdateManyWithoutNominationNestedInput
   fights?: Prisma.fightsUncheckedUpdateManyWithoutNominationNestedInput
@@ -494,6 +524,7 @@ export type nominationsUncheckedUpdateWithoutCompetitorsInput = {
 export type nominationsCreateWithoutGroupsInput = {
   name_ru: string
   name_en: string
+  is_male?: boolean
   tournaments?: Prisma.tournament_nominationsCreateNestedManyWithoutNominationInput
   competitors?: Prisma.competitorsCreateNestedManyWithoutNominationInput
   fights?: Prisma.fightsCreateNestedManyWithoutNominationInput
@@ -503,6 +534,7 @@ export type nominationsUncheckedCreateWithoutGroupsInput = {
   id?: number
   name_ru: string
   name_en: string
+  is_male?: boolean
   tournaments?: Prisma.tournament_nominationsUncheckedCreateNestedManyWithoutNominationInput
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutNominationInput
   fights?: Prisma.fightsUncheckedCreateNestedManyWithoutNominationInput
@@ -527,6 +559,7 @@ export type nominationsUpdateToOneWithWhereWithoutGroupsInput = {
 export type nominationsUpdateWithoutGroupsInput = {
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tournaments?: Prisma.tournament_nominationsUpdateManyWithoutNominationNestedInput
   competitors?: Prisma.competitorsUpdateManyWithoutNominationNestedInput
   fights?: Prisma.fightsUpdateManyWithoutNominationNestedInput
@@ -536,6 +569,7 @@ export type nominationsUncheckedUpdateWithoutGroupsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tournaments?: Prisma.tournament_nominationsUncheckedUpdateManyWithoutNominationNestedInput
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutNominationNestedInput
   fights?: Prisma.fightsUncheckedUpdateManyWithoutNominationNestedInput
@@ -544,6 +578,7 @@ export type nominationsUncheckedUpdateWithoutGroupsInput = {
 export type nominationsCreateWithoutFightsInput = {
   name_ru: string
   name_en: string
+  is_male?: boolean
   tournaments?: Prisma.tournament_nominationsCreateNestedManyWithoutNominationInput
   competitors?: Prisma.competitorsCreateNestedManyWithoutNominationInput
   groups?: Prisma.groupsCreateNestedManyWithoutNominationInput
@@ -553,6 +588,7 @@ export type nominationsUncheckedCreateWithoutFightsInput = {
   id?: number
   name_ru: string
   name_en: string
+  is_male?: boolean
   tournaments?: Prisma.tournament_nominationsUncheckedCreateNestedManyWithoutNominationInput
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutNominationInput
   groups?: Prisma.groupsUncheckedCreateNestedManyWithoutNominationInput
@@ -577,6 +613,7 @@ export type nominationsUpdateToOneWithWhereWithoutFightsInput = {
 export type nominationsUpdateWithoutFightsInput = {
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tournaments?: Prisma.tournament_nominationsUpdateManyWithoutNominationNestedInput
   competitors?: Prisma.competitorsUpdateManyWithoutNominationNestedInput
   groups?: Prisma.groupsUpdateManyWithoutNominationNestedInput
@@ -586,6 +623,7 @@ export type nominationsUncheckedUpdateWithoutFightsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tournaments?: Prisma.tournament_nominationsUncheckedUpdateManyWithoutNominationNestedInput
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutNominationNestedInput
   groups?: Prisma.groupsUncheckedUpdateManyWithoutNominationNestedInput
@@ -653,6 +691,7 @@ export type nominationsSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   id?: boolean
   name_ru?: boolean
   name_en?: boolean
+  is_male?: boolean
   tournaments?: boolean | Prisma.nominations$tournamentsArgs<ExtArgs>
   competitors?: boolean | Prisma.nominations$competitorsArgs<ExtArgs>
   groups?: boolean | Prisma.nominations$groupsArgs<ExtArgs>
@@ -664,21 +703,24 @@ export type nominationsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   id?: boolean
   name_ru?: boolean
   name_en?: boolean
+  is_male?: boolean
 }, ExtArgs["result"]["nominations"]>
 
 export type nominationsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name_ru?: boolean
   name_en?: boolean
+  is_male?: boolean
 }, ExtArgs["result"]["nominations"]>
 
 export type nominationsSelectScalar = {
   id?: boolean
   name_ru?: boolean
   name_en?: boolean
+  is_male?: boolean
 }
 
-export type nominationsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name_ru" | "name_en", ExtArgs["result"]["nominations"]>
+export type nominationsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name_ru" | "name_en" | "is_male", ExtArgs["result"]["nominations"]>
 export type nominationsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tournaments?: boolean | Prisma.nominations$tournamentsArgs<ExtArgs>
   competitors?: boolean | Prisma.nominations$competitorsArgs<ExtArgs>
@@ -701,6 +743,7 @@ export type $nominationsPayload<ExtArgs extends runtime.Types.Extensions.Interna
     id: number
     name_ru: string
     name_en: string
+    is_male: boolean
   }, ExtArgs["result"]["nominations"]>
   composites: {}
 }
@@ -1131,6 +1174,7 @@ export interface nominationsFieldRefs {
   readonly id: Prisma.FieldRef<"nominations", 'Int'>
   readonly name_ru: Prisma.FieldRef<"nominations", 'String'>
   readonly name_en: Prisma.FieldRef<"nominations", 'String'>
+  readonly is_male: Prisma.FieldRef<"nominations", 'Boolean'>
 }
     
 

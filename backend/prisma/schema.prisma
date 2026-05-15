@@ -51,6 +51,7 @@ model fighters {
   city_id    Int
   club_id    Int?      
   pic        String?
+  is_male    Boolean   @default(true)
 
   country     countries     @relation(fields: [country_id], references: [id])
   city        cities        @relation(fields: [city_id], references: [id])
@@ -78,6 +79,7 @@ model nominations {
   id      Int    @id @default(autoincrement())
   name_ru String @db.VarChar(255)
   name_en String @db.VarChar(255)
+  is_male Boolean @default(true)
 
   tournaments tournament_nominations[]
   competitors competitors[]

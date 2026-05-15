@@ -8,6 +8,7 @@ export interface FighterDB {
   city_id: number
   club_id?: number | null
   pic?: string
+  is_male?: boolean
 }
 
 export interface Fighter {
@@ -23,6 +24,7 @@ export interface Fighter {
   city: string
   club?: string
   pic?: string
+  is_male?: boolean
 }
 
 export interface GroupFighter extends Fighter {
@@ -119,6 +121,7 @@ export interface Nomination {
   id: number
   name_ru: string
   name_en: string
+  is_male: boolean
 }
 
 export interface User {

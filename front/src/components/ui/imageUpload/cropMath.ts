@@ -18,13 +18,9 @@ export interface Point {
   y: number
 }
 
-const clamp = (value: number, min: number, max: number) =>
-  Math.min(Math.max(value, min), max)
+const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max)
 
-export const createInitialCropArea = (
-  image: Dimensions,
-  minSize = MIN_CROP_SIZE
-): CropArea => {
+export const createInitialCropArea = (image: Dimensions, minSize = MIN_CROP_SIZE): CropArea => {
   const size = Math.max(minSize, Math.min(image.width, image.height))
 
   return clampCropArea(
@@ -97,7 +93,11 @@ export const resizeCropAreaByDisplayDelta = (
     Math.abs(horizontalDelta) >= Math.abs(verticalDelta) ? horizontalDelta : verticalDelta
 
   if (handle === 'se') {
-    const size = clamp(crop.size + sizeDelta, minSize, Math.min(image.width - crop.x, image.height - crop.y))
+    const size = clamp(
+      crop.size + sizeDelta,
+      minSize,
+      Math.min(image.width - crop.x, image.height - crop.y)
+    )
 
     return { ...crop, size }
   }

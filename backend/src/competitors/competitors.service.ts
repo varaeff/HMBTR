@@ -27,6 +27,9 @@ export class CompetitorsService {
     if (!nomination) {
       throw new NotFoundException('Nomination not found');
     }
+    if (fighter.is_male !== nomination.is_male) {
+      throw new BadRequestException('Fighter gender does not match nomination');
+    }
 
     // Check if competitor already exists
     const exists = await this.prisma.competitors.findFirst({

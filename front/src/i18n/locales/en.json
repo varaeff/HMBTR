@@ -26,6 +26,9 @@
   "addFighterNamePage": "Adding new fighter",
   "addFighterHint": "The following fields are required: last name, first name, country, city",
   "addFighterFormLabel": "Input fighters data",
+  "addFighterGenderLabel": "Gender",
+  "addFighterGenderMale": "Male",
+  "addFighterGenderFemale": "Female",
   "addFighterDateOfBirth": "Date of birth",
   "addFighterSaveData": "Save data",
 

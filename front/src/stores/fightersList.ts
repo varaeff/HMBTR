@@ -24,7 +24,8 @@ const parseFighter = async (fighterDB: FighterDB): Promise<Fighter> => {
     country: await commonDataStore.fetchCountry(fighterDB.country_id),
     city: await commonDataStore.fetchCity(fighterDB.city_id),
     club: fighterDB.club_id ? await commonDataStore.fetchClub(fighterDB.club_id) : undefined,
-    pic: fighterDB.pic
+    pic: fighterDB.pic,
+    is_male: fighterDB.is_male ?? true
   }
 }
 
