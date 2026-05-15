@@ -2,6 +2,7 @@ export const API_ROUTES = {
   FIGHTERS: {
     ROOT: "fighters",
     COUNT: "count",
+    BY_ID_PATH: ":id",
     BY_ID: (id: string | number) => `/fighters/${id}`,
   },
   NOMINATIONS: {

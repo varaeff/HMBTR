@@ -66,6 +66,21 @@ export function useLocationSelect(props: LocationProps, emit: any) {
 
   onMounted(async () => {
     countries.value = await store.fetchCountries()
+
+    const countryId = findIdByName(countries.value, countryModel.value)
+    if (!countryId) return
+
+    emit('update:country_id', countryId)
+    cities.value = await store.fetchCitiesByCountry(countryId)
+
+    const cityId = findIdByName(cities.value, cityModel.value)
+    if (!cityId) return
+
+    emit('update:city_id', cityId)
+    clubs.value = await store.fetchClubsByCity(cityId)
+
+    const clubId = findIdByName(clubs.value, clubModel.value)
+    emit('update:club_id', clubId)
   })
 
   watch(countryModel, async (newVal) => {

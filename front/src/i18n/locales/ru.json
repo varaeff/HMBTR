@@ -35,6 +35,12 @@
 
   "addPhoto": "Добавить фотографию",
   "changePhoto": "Изменить фотографию",
+  "imageUploadMinResolution": "Разрешение изображения должно быть минимум 700 на 700 пикселей.",
+  "imageUploadProcessingError": "Не удалось обработать изображение.",
+  "imageUploadCropTitle": "Настройте обрезку фотографии",
+  "imageUploadCropApply": "Применить обрезку",
+  "imageUploadCropCancel": "Отмена",
+  "imageUploadResizeCrop": "Изменить область обрезки",
 
   "LocationBlockCountry": "Страна",
   "LocationBlockCity": "Город",
@@ -57,6 +63,10 @@
   "fighterPageClub": "Клуб:",
   "fighterPageDateOfBirth": "Дата рождения:",
   "fighterPageBackButton": "К списку бойцов",
+  "fighterPageEditButton": "Редактировать",
+  "fighterPageSaveButton": "Сохранить изменения",
+  "fighterPageCancelButton": "Отмена",
+  "fighterPageEditFormLabel": "Редактировать данные бойца",
 
   "tournamentsPageNamePage": "Учтённые турниры",
   "tournamentsPagePlaceholder": "Введите название или город",

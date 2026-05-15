@@ -35,6 +35,12 @@
 
   "addPhoto": "Add photo",
   "changePhoto": "Change photo",
+  "imageUploadMinResolution": "Image resolution must be at least 700 by 700 pixels.",
+  "imageUploadProcessingError": "Could not process image.",
+  "imageUploadCropTitle": "Adjust photo crop",
+  "imageUploadCropApply": "Apply crop",
+  "imageUploadCropCancel": "Cancel",
+  "imageUploadResizeCrop": "Resize crop area",
 
   "LocationBlockCountry": "Country",
   "LocationBlockCity": "City",
@@ -57,6 +63,10 @@
   "fighterPageClub": "Club:",
   "fighterPageDateOfBirth": "Date of Burth:",
   "fighterPageBackButton": "To fighters list",
+  "fighterPageEditButton": "Edit",
+  "fighterPageSaveButton": "Save changes",
+  "fighterPageCancelButton": "Cancel",
+  "fighterPageEditFormLabel": "Edit fighter data",
 
   "tournamentsPageNamePage": "Registered tournaments",
   "tournamentsPagePlaceholder": "Enter name or city",

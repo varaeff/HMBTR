@@ -16,6 +16,9 @@ export interface Fighter {
   surname: string
   patronymic?: string
   birthday?: Date | null
+  country_id?: number
+  city_id?: number
+  club_id?: number | null
   country: string
   city: string
   club?: string

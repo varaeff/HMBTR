@@ -18,6 +18,9 @@ const parseFighter = async (fighterDB: FighterDB): Promise<Fighter> => {
     surname: fighterDB.surname,
     patronymic: fighterDB.patronymic,
     birthday: fighterDB.birthday ? new Date(fighterDB.birthday) : null,
+    country_id: fighterDB.country_id,
+    city_id: fighterDB.city_id,
+    club_id: fighterDB.club_id,
     country: await commonDataStore.fetchCountry(fighterDB.country_id),
     city: await commonDataStore.fetchCity(fighterDB.city_id),
     club: fighterDB.club_id ? await commonDataStore.fetchClub(fighterDB.club_id) : undefined,
@@ -78,6 +81,20 @@ export const useFightersListStore = defineStore({
     async addNewFighter(this: FightersListState, fighterDB: FighterDB, fighter: Fighter) {
       await http.post(API_ROUTES.FIGHTERS.ROOT, fighterDB)
       this.fighters.push(fighter)
+    },
+
+    async updateFighter(this: FightersListState, id: number, fighterDB: FighterDB) {
+      const response = await http.put(API_ROUTES.FIGHTERS.BY_ID(id), fighterDB)
+      const updatedFighter = await parseFighter(response.data as FighterDB)
+      const fighterIndex = this.fighters.findIndex((fighter) => fighter.id === id)
+
+      if (fighterIndex >= 0) {
+        this.fighters[fighterIndex] = updatedFighter
+      } else {
+        this.fighters.push(updatedFighter)
+      }
+
+      return updatedFighter
     },
 
     clearSearchString() {

@@ -43,7 +43,8 @@ const saveNewFighter = async () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { birthday, ...rest } = newFighter
   const saveData: FighterDB = {
-    ...rest
+    ...rest,
+    club_id: newFighter.club_id || null
   }
 
   if (fighterBirthday.value) {
