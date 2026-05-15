@@ -62,10 +62,11 @@ export const createMarkdownTable = (
   headers: string[],
   rows: Array<Array<string | number | null | undefined>>,
 ) => {
-  const headerRow = `| ${headers.map(escapeMarkdownCell).join(' |')} |`;
-  const separator = `| ${headers.map(() => '---').join(' |')} |`;
+  const headerRow = `|${headers.map((header) => `&nbsp;&nbsp;${escapeMarkdownCell(header)}`).join('|')}|`;
+  const separator = `|${headers.map(() => ':---').join('|')}|`;
   const bodyRows = rows.map(
-    (row) => `| ${row.map(escapeMarkdownCell).join(' |')} |`,
+    (row) =>
+      `|${row.map((cell) => `&nbsp;&nbsp;${escapeMarkdownCell(cell)}`).join('|')}|`,
   );
 
   return [headerRow, separator, ...bodyRows].join('\n');

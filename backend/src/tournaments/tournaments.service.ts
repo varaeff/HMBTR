@@ -29,12 +29,74 @@ type FighterName = {
   patronymic?: string | null;
 };
 
+type NominationDefinition = {
+  name_en: string;
+  name_ru: string;
+};
+
 type GroupStanding = {
   competitorId: number;
   fighter: FighterName;
   wins: number;
   diff: number;
   manualPlace?: number;
+};
+
+type Fight = {
+  fight_number: number;
+  group_id: number | null;
+  competitor1_id: number | null;
+  competitor2_id: number | null;
+  competitor1_score: number;
+  competitor2_score: number;
+  bracket_round: number | null;
+  bracket_position: number | null;
+  is_bronze: boolean;
+  is_finished: boolean;
+  competitor1: { fighter: FighterName };
+  competitor2: { fighter: FighterName };
+  winner: { fighter: FighterName } | null;
+};
+
+type Group = {
+  id: number;
+  name: string;
+  fighters: {
+    competitor_id: number;
+    competitor: { fighter: FighterName };
+  }[];
+  placements: {
+    place: number;
+    competitor_id: number;
+  }[];
+};
+
+type Block = {
+  type: string;
+  stage: number;
+  groups: Group[];
+  fights: Fight[];
+};
+
+type Nomination = {
+  nomination_id: number;
+  nomination: NominationDefinition;
+  placements: {
+    place: number;
+    competitor: { fighter: FighterName };
+  }[];
+  blocks: Block[];
+};
+
+type Tournament = {
+  name: string;
+  event_date: Date | null;
+  country: { name: string };
+  city: { name: string };
+  competitors: {
+    nomination_id: number;
+  }[];
+  nominations: Nomination[];
 };
 
 const SCOPE_FINAL = 'FINAL';
@@ -54,6 +116,12 @@ const REPORT_COPY = {
     noFinalResults: 'No final placements were saved.',
     groupStage: 'Group stage',
     olympicStage: 'Olympic stage',
+    oneEighthFinal: '1/8 final',
+    oneQuarterFinal: '1/4 final',
+    semifinals: 'Semifinals',
+    final: 'Final',
+    round: 'Round',
+    bronzeFight: 'Bronze fight',
     group: 'Group',
     results: 'Results',
     fights: 'Fights',
@@ -62,7 +130,8 @@ const REPORT_COPY = {
     wins: 'Wins',
     diff: 'Diff',
     fighter1: 'Fighter1',
-    vs: 'VS',
+    vs: '  VS  ',
+    blank: '      ',
     fighter2: 'Fighter2',
     score: 'Score',
     winner: 'Winner',
@@ -83,6 +152,12 @@ const REPORT_COPY = {
     noFinalResults: 'Итоговые места не сохранены.',
     groupStage: 'Групповой этап',
     olympicStage: 'Олимпийская сетка',
+    oneEighthFinal: '1/8 финала',
+    oneQuarterFinal: '1/4 финала',
+    semifinals: 'Полуфиналы',
+    final: 'Финал',
+    round: 'Раунд',
+    bronzeFight: 'Бой за 3-е место',
     group: 'Группа',
     results: 'Результаты',
     fights: 'Бои',
@@ -91,7 +166,8 @@ const REPORT_COPY = {
     wins: 'Победы',
     diff: 'Разница',
     fighter1: 'Боец 1',
-    vs: 'VS',
+    vs: '  VS  ',
+    blank: '      ',
     fighter2: 'Боец 2',
     score: 'Счет',
     winner: 'Победитель',
@@ -341,7 +417,7 @@ export class TournamentsService {
   }
 
   private buildReportMarkdown(
-    tournament: any,
+    tournament: Tournament,
     totalFighters: number,
     language: string,
   ) {
@@ -373,7 +449,7 @@ export class TournamentsService {
     ];
 
     for (const tournamentNomination of tournament.nominations) {
-      const nominationName = this.getNominationName(
+      const nominationName: string = this.getNominationName(
         tournamentNomination.nomination,
         language,
       );
@@ -407,14 +483,9 @@ export class TournamentsService {
       }
 
       for (const block of tournamentNomination.blocks) {
-        sections.push(
-          '',
-          `### ${block.type === 'GROUP' ? copy.groupStage : copy.olympicStage} ${block.stage}`,
-          '',
-        );
-
         if (block.type === 'GROUP') {
-          this.appendGroupBlockMarkdown(sections, block, copy);
+          sections.push('', `### ${copy.groupStage} ${block.stage}`, '');
+          this.appendGroupBlockMarkdown(sections, block, copy, language);
         } else {
           this.appendOlympicBlockMarkdown(sections, block, copy);
         }
@@ -426,8 +497,9 @@ export class TournamentsService {
 
   private appendGroupBlockMarkdown(
     sections: string[],
-    block: any,
+    block: Block,
     copy: ReportCopy,
+    language: string,
   ) {
     for (const group of block.groups) {
       const fights = block.fights.filter(
@@ -442,7 +514,11 @@ export class TournamentsService {
         '',
         `#### ${copy.group} ${group.name}`,
         '',
-        `${group.fighters.length} ${copy.fighter.toLowerCase()}, ${completedFights}/${fights.length} ${copy.fightsCompleted}`,
+        `${group.fighters.length} ${this.getGroupFighterWord(
+          group.fighters.length,
+          language,
+          copy,
+        )}, ${completedFights}/${fights.length} ${copy.fightsCompleted}`,
         '',
         `**${copy.results}**`,
         '',
@@ -467,22 +543,59 @@ export class TournamentsService {
 
   private appendOlympicBlockMarkdown(
     sections: string[],
-    block: any,
+    block: Block,
     copy: ReportCopy,
   ) {
-    sections.push(
-      block.fights.length
-        ? this.createFightsTable(block.fights, copy)
-        : copy.noData,
-    );
+    if (!block.fights.length) {
+      sections.push('', copy.noData);
+      return;
+    }
+
+    const rounds = this.getOlympicRounds(block.fights);
+    const finalRound = [...rounds]
+      .sort((first, second) => second.round - first.round)
+      .find((round) => round.fights.length === 1);
+    const preliminaryRounds = finalRound
+      ? rounds.filter((round) => round.round !== finalRound.round)
+      : rounds;
+    const bronzeFights = block.fights
+      .filter((fight) => fight.is_bronze)
+      .sort(this.compareBracketFights);
+
+    for (const round of preliminaryRounds) {
+      sections.push(
+        '',
+        `### ${this.getOlympicRoundLabel(round.fights, copy)}`,
+        '',
+        this.createFightsTable(round.fights, copy),
+      );
+    }
+
+    if (bronzeFights.length) {
+      sections.push(
+        '',
+        `### ${copy.bronzeFight}`,
+        '',
+        this.createFightsTable(bronzeFights, copy),
+      );
+    }
+
+    if (finalRound) {
+      sections.push(
+        '',
+        `### ${this.getOlympicRoundLabel(finalRound.fights, copy)}`,
+        '',
+        this.createFightsTable(finalRound.fights, copy),
+      );
+    }
   }
 
-  private createFightsTable(fights: any[], copy: ReportCopy) {
+  private createFightsTable(fights: Fight[], copy: ReportCopy) {
     return createMarkdownTable(
       [copy.fighter1, copy.vs, copy.fighter2, copy.score, copy.winner],
       fights.map((fight) => [
         this.formatFighterName(fight.competitor1.fighter),
-        copy.vs,
+        copy.blank,
         this.formatFighterName(fight.competitor2.fighter),
         fight.is_finished
           ? `${fight.competitor1_score}:${fight.competitor2_score}`
@@ -492,7 +605,7 @@ export class TournamentsService {
     );
   }
 
-  private getGroupStandings(group: any, fights: any[]): GroupStanding[] {
+  private getGroupStandings(group: Group, fights: Fight[]): GroupStanding[] {
     const standings = new Map<number, GroupStanding>();
     const manualPlaces = new Map<number, number>(
       group.placements.map((placement) => [
@@ -513,6 +626,9 @@ export class TournamentsService {
 
     fights.forEach((fight) => {
       if (!fight.is_finished) return;
+      if (fight.competitor1_id === null || fight.competitor2_id === null) {
+        return;
+      }
 
       const first = standings.get(fight.competitor1_id);
       const second = standings.get(fight.competitor2_id);
@@ -542,7 +658,57 @@ export class TournamentsService {
     });
   }
 
-  private getNominationName(nomination: any, language: string) {
+  private getOlympicRounds(fights: Fight[]) {
+    const roundMap = new Map<number, Fight[]>();
+
+    fights
+      .filter((fight) => !fight.is_bronze)
+      .forEach((fight) => {
+        const round = fight.bracket_round ?? 1;
+        roundMap.set(round, [...(roundMap.get(round) ?? []), fight]);
+      });
+
+    return [...roundMap.entries()]
+      .sort(([firstRound], [secondRound]) => firstRound - secondRound)
+      .map(([round, roundFights]) => ({
+        round,
+        fights: roundFights.sort(this.compareBracketFights),
+      }));
+  }
+
+  private getOlympicRoundLabel(fights: Fight[], copy: ReportCopy) {
+    switch (fights.length) {
+      case 8:
+        return copy.oneEighthFinal;
+      case 4:
+        return copy.oneQuarterFinal;
+      case 2:
+        return copy.semifinals;
+      case 1:
+        return copy.final;
+      default:
+        return copy.round;
+    }
+  }
+
+  private compareBracketFights(this: void, first: Fight, second: Fight) {
+    return (first.bracket_position ?? 0) - (second.bracket_position ?? 0);
+  }
+
+  private getGroupFighterWord(
+    count: number,
+    language: string,
+    copy: ReportCopy,
+  ) {
+    if (language !== 'ru') return copy.fighter.toLowerCase();
+
+    return count === 3 || count === 4 ? 'бойца' : 'бойцов';
+  }
+
+  private getNominationName(
+    nomination: NominationDefinition,
+    language: string,
+  ) {
     return language === 'ru' ? nomination.name_ru : nomination.name_en;
   }
 
