@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useTranslation } from 'i18next-vue'
 import { tData } from '@/lib/utils'
 import { useCompetitionStore } from '@/stores/competition'
 import { Button } from '@/components/ui/button'
@@ -20,8 +21,12 @@ const emit = defineEmits<{
 }>()
 
 const competitionStore = useCompetitionStore()
+const { i18next } = useTranslation()
 
 const isPending = ref(false)
+const currentLanguage = computed(() => i18next.language)
+
+const localizedData = (text?: string) => tData(text ?? '', currentLanguage.value)
 
 const handleClose = async () => {
   try {
@@ -57,11 +62,12 @@ const removeCompetitor = async (fighterId: number) => {
       <div class="flex justify-between items-center">
         <div class="flex gap-2">
           <div class="inline-flex items-center gap-1">
-            {{ index + 1 }}. {{ tData(competitor.surname) }} {{ tData(competitor.name) }}
+            {{ index + 1 }}. {{ localizedData(competitor.surname) }}
+            {{ localizedData(competitor.name) }}
             <CardStatusIcon :type="activeCardTypes?.[competitor.id]" />
           </div>
           <div class="text-muted-foreground">
-            {{ tData(competitor.city) }} {{ tData(competitor.club || '') }}
+            {{ localizedData(competitor.city) }} {{ localizedData(competitor.club) }}
           </div>
         </div>
 

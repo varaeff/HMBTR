@@ -5,6 +5,7 @@ import { RouterLink } from 'vue-router'
 import { useDisciplinaryCardsStore } from '@/stores/disciplinaryCards'
 import { Button } from '@/components/ui/button'
 import { Table, TableHeader, TableBody, TableCell, TableRow } from '@/components/ui/table'
+import { tData } from '@/lib/utils'
 import type { DisciplinaryCard, DisciplinaryCardType } from '@/model'
 
 const props = defineProps<{
@@ -32,6 +33,7 @@ const draft = reactive<CardDraft>({
   received_at: '',
   reason: ''
 })
+const currentLanguage = computed(() => i18next.language)
 
 const sortedCards = computed(() =>
   [...props.cards].sort((a, b) => {
@@ -48,15 +50,22 @@ const fightLabel = (card: DisciplinaryCard) => {
   const base = `#${card.fight_number}`
   if (card.group_name) return `${base}, ${i18next.t('disciplinaryCardsGroup')} ${card.group_name}`
   if (card.is_bronze) return `${base}, ${i18next.t('tournamentPageBronzeFight')}`
-  if (card.bracket_round) return `${base}, ${i18next.t('tournamentPageRound')} ${card.bracket_round}`
+  if (card.bracket_round)
+    return `${base}, ${i18next.t('tournamentPageRound')} ${card.bracket_round}`
   return base
 }
 
 const opponentName = (card: DisciplinaryCard) =>
-  [card.opponent_surname, card.opponent_name, card.opponent_patronymic].filter(Boolean).join(' ')
+  [card.opponent_surname, card.opponent_name, card.opponent_patronymic]
+    .filter((part): part is string => Boolean(part))
+    .map((part) => tData(part, currentLanguage.value))
+    .join(' ')
 
 const fighterName = (card: DisciplinaryCard) =>
-  [card.fighter_surname, card.fighter_name, card.fighter_patronymic].filter(Boolean).join(' ')
+  [card.fighter_surname, card.fighter_name, card.fighter_patronymic]
+    .filter((part): part is string => Boolean(part))
+    .map((part) => tData(part, currentLanguage.value))
+    .join(' ')
 
 const isFighterMode = computed(() => props.mode === 'fighter')
 
@@ -97,7 +106,9 @@ const deleteCard = async (card: DisciplinaryCard) => {
         }}</TableCell>
         <TableCell v-else class="font-bold">{{ $t('disciplinaryCardsFighter') }}</TableCell>
         <TableCell class="font-bold">{{ $t('disciplinaryCardsDate') }}</TableCell>
-        <TableCell v-if="!isFighterMode" class="font-bold">{{ $t('disciplinaryCardsFight') }}</TableCell>
+        <TableCell v-if="!isFighterMode" class="font-bold">{{
+          $t('disciplinaryCardsFight')
+        }}</TableCell>
         <TableCell v-if="!isFighterMode" class="font-bold">{{
           $t('disciplinaryCardsOpponent')
         }}</TableCell>
@@ -126,12 +137,16 @@ const deleteCard = async (card: DisciplinaryCard) => {
                 query: { nomination: card.nomination_id }
               }"
             >
-              {{ card.tournament_name }}
+              {{ tData(card.tournament_name, currentLanguage) }}
             </RouterLink>
           </TableCell>
           <TableCell v-else>{{ fighterName(card) }}</TableCell>
           <TableCell>
-            <input v-model="draft.received_at" type="date" class="h-8 rounded border bg-background px-2" />
+            <input
+              v-model="draft.received_at"
+              type="date"
+              class="h-8 rounded border bg-background px-2"
+            />
           </TableCell>
           <TableCell v-if="!isFighterMode">{{ fightLabel(card) }}</TableCell>
           <TableCell v-if="!isFighterMode">{{ opponentName(card) }}</TableCell>
@@ -152,11 +167,11 @@ const deleteCard = async (card: DisciplinaryCard) => {
           <TableCell>
             <span
               class="rounded px-2 py-1 text-xs font-semibold"
-              :class="card.type === 'RED' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-800'"
+              :class="
+                card.type === 'RED' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-800'
+              "
             >
-              {{
-                card.type === 'RED' ? $t('disciplinaryCardsRed') : $t('disciplinaryCardsYellow')
-              }}
+              {{ card.type === 'RED' ? $t('disciplinaryCardsRed') : $t('disciplinaryCardsYellow') }}
             </span>
           </TableCell>
           <TableCell v-if="isFighterMode">
@@ -168,7 +183,7 @@ const deleteCard = async (card: DisciplinaryCard) => {
                 query: { nomination: card.nomination_id }
               }"
             >
-              {{ card.tournament_name }}
+              {{ tData(card.tournament_name, currentLanguage) }}
             </RouterLink>
           </TableCell>
           <TableCell v-else>{{ fighterName(card) }}</TableCell>
