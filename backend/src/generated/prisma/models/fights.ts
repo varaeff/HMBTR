@@ -41,6 +41,7 @@ export type FightsAvgAggregateOutputType = {
   fight_number: number | null
   bracket_round: number | null
   bracket_position: number | null
+  forfeit_card_id: number | null
 }
 
 export type FightsSumAggregateOutputType = {
@@ -58,6 +59,7 @@ export type FightsSumAggregateOutputType = {
   fight_number: number | null
   bracket_round: number | null
   bracket_position: number | null
+  forfeit_card_id: number | null
 }
 
 export type FightsMinAggregateOutputType = {
@@ -77,6 +79,7 @@ export type FightsMinAggregateOutputType = {
   bracket_position: number | null
   is_bronze: boolean | null
   is_finished: boolean | null
+  forfeit_card_id: number | null
 }
 
 export type FightsMaxAggregateOutputType = {
@@ -96,6 +99,7 @@ export type FightsMaxAggregateOutputType = {
   bracket_position: number | null
   is_bronze: boolean | null
   is_finished: boolean | null
+  forfeit_card_id: number | null
 }
 
 export type FightsCountAggregateOutputType = {
@@ -115,6 +119,7 @@ export type FightsCountAggregateOutputType = {
   bracket_position: number
   is_bronze: number
   is_finished: number
+  forfeit_card_id: number
   _all: number
 }
 
@@ -134,6 +139,7 @@ export type FightsAvgAggregateInputType = {
   fight_number?: true
   bracket_round?: true
   bracket_position?: true
+  forfeit_card_id?: true
 }
 
 export type FightsSumAggregateInputType = {
@@ -151,6 +157,7 @@ export type FightsSumAggregateInputType = {
   fight_number?: true
   bracket_round?: true
   bracket_position?: true
+  forfeit_card_id?: true
 }
 
 export type FightsMinAggregateInputType = {
@@ -170,6 +177,7 @@ export type FightsMinAggregateInputType = {
   bracket_position?: true
   is_bronze?: true
   is_finished?: true
+  forfeit_card_id?: true
 }
 
 export type FightsMaxAggregateInputType = {
@@ -189,6 +197,7 @@ export type FightsMaxAggregateInputType = {
   bracket_position?: true
   is_bronze?: true
   is_finished?: true
+  forfeit_card_id?: true
 }
 
 export type FightsCountAggregateInputType = {
@@ -208,6 +217,7 @@ export type FightsCountAggregateInputType = {
   bracket_position?: true
   is_bronze?: true
   is_finished?: true
+  forfeit_card_id?: true
   _all?: true
 }
 
@@ -314,6 +324,7 @@ export type FightsGroupByOutputType = {
   bracket_position: number | null
   is_bronze: boolean
   is_finished: boolean
+  forfeit_card_id: number | null
   _count: FightsCountAggregateOutputType | null
   _avg: FightsAvgAggregateOutputType | null
   _sum: FightsSumAggregateOutputType | null
@@ -356,6 +367,7 @@ export type fightsWhereInput = {
   bracket_position?: Prisma.IntNullableFilter<"fights"> | number | null
   is_bronze?: Prisma.BoolFilter<"fights"> | boolean
   is_finished?: Prisma.BoolFilter<"fights"> | boolean
+  forfeit_card_id?: Prisma.IntNullableFilter<"fights"> | number | null
   tournament?: Prisma.XOR<Prisma.TournamentsScalarRelationFilter, Prisma.tournamentsWhereInput>
   nomination?: Prisma.XOR<Prisma.NominationsScalarRelationFilter, Prisma.nominationsWhereInput>
   block?: Prisma.XOR<Prisma.Competition_blocksNullableScalarRelationFilter, Prisma.competition_blocksWhereInput> | null
@@ -363,6 +375,7 @@ export type fightsWhereInput = {
   competitor1?: Prisma.XOR<Prisma.CompetitorsScalarRelationFilter, Prisma.competitorsWhereInput>
   competitor2?: Prisma.XOR<Prisma.CompetitorsScalarRelationFilter, Prisma.competitorsWhereInput>
   winner?: Prisma.XOR<Prisma.CompetitorsNullableScalarRelationFilter, Prisma.competitorsWhereInput> | null
+  disciplinary_cards?: Prisma.Disciplinary_cardsListRelationFilter
 }
 
 export type fightsOrderByWithRelationInput = {
@@ -382,6 +395,7 @@ export type fightsOrderByWithRelationInput = {
   bracket_position?: Prisma.SortOrderInput | Prisma.SortOrder
   is_bronze?: Prisma.SortOrder
   is_finished?: Prisma.SortOrder
+  forfeit_card_id?: Prisma.SortOrderInput | Prisma.SortOrder
   tournament?: Prisma.tournamentsOrderByWithRelationInput
   nomination?: Prisma.nominationsOrderByWithRelationInput
   block?: Prisma.competition_blocksOrderByWithRelationInput
@@ -389,6 +403,7 @@ export type fightsOrderByWithRelationInput = {
   competitor1?: Prisma.competitorsOrderByWithRelationInput
   competitor2?: Prisma.competitorsOrderByWithRelationInput
   winner?: Prisma.competitorsOrderByWithRelationInput
+  disciplinary_cards?: Prisma.disciplinary_cardsOrderByRelationAggregateInput
 }
 
 export type fightsWhereUniqueInput = Prisma.AtLeast<{
@@ -411,6 +426,7 @@ export type fightsWhereUniqueInput = Prisma.AtLeast<{
   bracket_position?: Prisma.IntNullableFilter<"fights"> | number | null
   is_bronze?: Prisma.BoolFilter<"fights"> | boolean
   is_finished?: Prisma.BoolFilter<"fights"> | boolean
+  forfeit_card_id?: Prisma.IntNullableFilter<"fights"> | number | null
   tournament?: Prisma.XOR<Prisma.TournamentsScalarRelationFilter, Prisma.tournamentsWhereInput>
   nomination?: Prisma.XOR<Prisma.NominationsScalarRelationFilter, Prisma.nominationsWhereInput>
   block?: Prisma.XOR<Prisma.Competition_blocksNullableScalarRelationFilter, Prisma.competition_blocksWhereInput> | null
@@ -418,6 +434,7 @@ export type fightsWhereUniqueInput = Prisma.AtLeast<{
   competitor1?: Prisma.XOR<Prisma.CompetitorsScalarRelationFilter, Prisma.competitorsWhereInput>
   competitor2?: Prisma.XOR<Prisma.CompetitorsScalarRelationFilter, Prisma.competitorsWhereInput>
   winner?: Prisma.XOR<Prisma.CompetitorsNullableScalarRelationFilter, Prisma.competitorsWhereInput> | null
+  disciplinary_cards?: Prisma.Disciplinary_cardsListRelationFilter
 }, "id">
 
 export type fightsOrderByWithAggregationInput = {
@@ -437,6 +454,7 @@ export type fightsOrderByWithAggregationInput = {
   bracket_position?: Prisma.SortOrderInput | Prisma.SortOrder
   is_bronze?: Prisma.SortOrder
   is_finished?: Prisma.SortOrder
+  forfeit_card_id?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.fightsCountOrderByAggregateInput
   _avg?: Prisma.fightsAvgOrderByAggregateInput
   _max?: Prisma.fightsMaxOrderByAggregateInput
@@ -464,6 +482,7 @@ export type fightsScalarWhereWithAggregatesInput = {
   bracket_position?: Prisma.IntNullableWithAggregatesFilter<"fights"> | number | null
   is_bronze?: Prisma.BoolWithAggregatesFilter<"fights"> | boolean
   is_finished?: Prisma.BoolWithAggregatesFilter<"fights"> | boolean
+  forfeit_card_id?: Prisma.IntNullableWithAggregatesFilter<"fights"> | number | null
 }
 
 export type fightsCreateInput = {
@@ -475,6 +494,7 @@ export type fightsCreateInput = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
   tournament: Prisma.tournamentsCreateNestedOneWithoutFightsInput
   nomination: Prisma.nominationsCreateNestedOneWithoutFightsInput
   block?: Prisma.competition_blocksCreateNestedOneWithoutFightsInput
@@ -482,6 +502,7 @@ export type fightsCreateInput = {
   competitor1: Prisma.competitorsCreateNestedOneWithoutFights_as_f1Input
   competitor2: Prisma.competitorsCreateNestedOneWithoutFights_as_f2Input
   winner?: Prisma.competitorsCreateNestedOneWithoutFights_wonInput
+  disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutFightInput
 }
 
 export type fightsUncheckedCreateInput = {
@@ -501,6 +522,8 @@ export type fightsUncheckedCreateInput = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutFightInput
 }
 
 export type fightsUpdateInput = {
@@ -512,6 +535,7 @@ export type fightsUpdateInput = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   tournament?: Prisma.tournamentsUpdateOneRequiredWithoutFightsNestedInput
   nomination?: Prisma.nominationsUpdateOneRequiredWithoutFightsNestedInput
   block?: Prisma.competition_blocksUpdateOneWithoutFightsNestedInput
@@ -519,6 +543,7 @@ export type fightsUpdateInput = {
   competitor1?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f1NestedInput
   competitor2?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f2NestedInput
   winner?: Prisma.competitorsUpdateOneWithoutFights_wonNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateInput = {
@@ -538,6 +563,8 @@ export type fightsUncheckedUpdateInput = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFightNestedInput
 }
 
 export type fightsCreateManyInput = {
@@ -557,6 +584,7 @@ export type fightsCreateManyInput = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
 }
 
 export type fightsUpdateManyMutationInput = {
@@ -568,6 +596,7 @@ export type fightsUpdateManyMutationInput = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type fightsUncheckedUpdateManyInput = {
@@ -587,6 +616,7 @@ export type fightsUncheckedUpdateManyInput = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type FightsListRelationFilter = {
@@ -616,6 +646,7 @@ export type fightsCountOrderByAggregateInput = {
   bracket_position?: Prisma.SortOrder
   is_bronze?: Prisma.SortOrder
   is_finished?: Prisma.SortOrder
+  forfeit_card_id?: Prisma.SortOrder
 }
 
 export type fightsAvgOrderByAggregateInput = {
@@ -633,6 +664,7 @@ export type fightsAvgOrderByAggregateInput = {
   fight_number?: Prisma.SortOrder
   bracket_round?: Prisma.SortOrder
   bracket_position?: Prisma.SortOrder
+  forfeit_card_id?: Prisma.SortOrder
 }
 
 export type fightsMaxOrderByAggregateInput = {
@@ -652,6 +684,7 @@ export type fightsMaxOrderByAggregateInput = {
   bracket_position?: Prisma.SortOrder
   is_bronze?: Prisma.SortOrder
   is_finished?: Prisma.SortOrder
+  forfeit_card_id?: Prisma.SortOrder
 }
 
 export type fightsMinOrderByAggregateInput = {
@@ -671,6 +704,7 @@ export type fightsMinOrderByAggregateInput = {
   bracket_position?: Prisma.SortOrder
   is_bronze?: Prisma.SortOrder
   is_finished?: Prisma.SortOrder
+  forfeit_card_id?: Prisma.SortOrder
 }
 
 export type fightsSumOrderByAggregateInput = {
@@ -688,6 +722,12 @@ export type fightsSumOrderByAggregateInput = {
   fight_number?: Prisma.SortOrder
   bracket_round?: Prisma.SortOrder
   bracket_position?: Prisma.SortOrder
+  forfeit_card_id?: Prisma.SortOrder
+}
+
+export type FightsScalarRelationFilter = {
+  is?: Prisma.fightsWhereInput
+  isNot?: Prisma.fightsWhereInput
 }
 
 export type fightsCreateNestedManyWithoutTournamentInput = {
@@ -942,6 +982,20 @@ export type fightsUncheckedUpdateManyWithoutGroupNestedInput = {
   deleteMany?: Prisma.fightsScalarWhereInput | Prisma.fightsScalarWhereInput[]
 }
 
+export type fightsCreateNestedOneWithoutDisciplinary_cardsInput = {
+  create?: Prisma.XOR<Prisma.fightsCreateWithoutDisciplinary_cardsInput, Prisma.fightsUncheckedCreateWithoutDisciplinary_cardsInput>
+  connectOrCreate?: Prisma.fightsCreateOrConnectWithoutDisciplinary_cardsInput
+  connect?: Prisma.fightsWhereUniqueInput
+}
+
+export type fightsUpdateOneRequiredWithoutDisciplinary_cardsNestedInput = {
+  create?: Prisma.XOR<Prisma.fightsCreateWithoutDisciplinary_cardsInput, Prisma.fightsUncheckedCreateWithoutDisciplinary_cardsInput>
+  connectOrCreate?: Prisma.fightsCreateOrConnectWithoutDisciplinary_cardsInput
+  upsert?: Prisma.fightsUpsertWithoutDisciplinary_cardsInput
+  connect?: Prisma.fightsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.fightsUpdateToOneWithWhereWithoutDisciplinary_cardsInput, Prisma.fightsUpdateWithoutDisciplinary_cardsInput>, Prisma.fightsUncheckedUpdateWithoutDisciplinary_cardsInput>
+}
+
 export type fightsCreateNestedManyWithoutBlockInput = {
   create?: Prisma.XOR<Prisma.fightsCreateWithoutBlockInput, Prisma.fightsUncheckedCreateWithoutBlockInput> | Prisma.fightsCreateWithoutBlockInput[] | Prisma.fightsUncheckedCreateWithoutBlockInput[]
   connectOrCreate?: Prisma.fightsCreateOrConnectWithoutBlockInput | Prisma.fightsCreateOrConnectWithoutBlockInput[]
@@ -993,12 +1047,14 @@ export type fightsCreateWithoutTournamentInput = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
   nomination: Prisma.nominationsCreateNestedOneWithoutFightsInput
   block?: Prisma.competition_blocksCreateNestedOneWithoutFightsInput
   group?: Prisma.groupsCreateNestedOneWithoutFightsInput
   competitor1: Prisma.competitorsCreateNestedOneWithoutFights_as_f1Input
   competitor2: Prisma.competitorsCreateNestedOneWithoutFights_as_f2Input
   winner?: Prisma.competitorsCreateNestedOneWithoutFights_wonInput
+  disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutFightInput
 }
 
 export type fightsUncheckedCreateWithoutTournamentInput = {
@@ -1017,6 +1073,8 @@ export type fightsUncheckedCreateWithoutTournamentInput = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutFightInput
 }
 
 export type fightsCreateOrConnectWithoutTournamentInput = {
@@ -1065,6 +1123,7 @@ export type fightsScalarWhereInput = {
   bracket_position?: Prisma.IntNullableFilter<"fights"> | number | null
   is_bronze?: Prisma.BoolFilter<"fights"> | boolean
   is_finished?: Prisma.BoolFilter<"fights"> | boolean
+  forfeit_card_id?: Prisma.IntNullableFilter<"fights"> | number | null
 }
 
 export type fightsCreateWithoutNominationInput = {
@@ -1076,12 +1135,14 @@ export type fightsCreateWithoutNominationInput = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
   tournament: Prisma.tournamentsCreateNestedOneWithoutFightsInput
   block?: Prisma.competition_blocksCreateNestedOneWithoutFightsInput
   group?: Prisma.groupsCreateNestedOneWithoutFightsInput
   competitor1: Prisma.competitorsCreateNestedOneWithoutFights_as_f1Input
   competitor2: Prisma.competitorsCreateNestedOneWithoutFights_as_f2Input
   winner?: Prisma.competitorsCreateNestedOneWithoutFights_wonInput
+  disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutFightInput
 }
 
 export type fightsUncheckedCreateWithoutNominationInput = {
@@ -1100,6 +1161,8 @@ export type fightsUncheckedCreateWithoutNominationInput = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutFightInput
 }
 
 export type fightsCreateOrConnectWithoutNominationInput = {
@@ -1137,12 +1200,14 @@ export type fightsCreateWithoutCompetitor1Input = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
   tournament: Prisma.tournamentsCreateNestedOneWithoutFightsInput
   nomination: Prisma.nominationsCreateNestedOneWithoutFightsInput
   block?: Prisma.competition_blocksCreateNestedOneWithoutFightsInput
   group?: Prisma.groupsCreateNestedOneWithoutFightsInput
   competitor2: Prisma.competitorsCreateNestedOneWithoutFights_as_f2Input
   winner?: Prisma.competitorsCreateNestedOneWithoutFights_wonInput
+  disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutFightInput
 }
 
 export type fightsUncheckedCreateWithoutCompetitor1Input = {
@@ -1161,6 +1226,8 @@ export type fightsUncheckedCreateWithoutCompetitor1Input = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutFightInput
 }
 
 export type fightsCreateOrConnectWithoutCompetitor1Input = {
@@ -1182,12 +1249,14 @@ export type fightsCreateWithoutCompetitor2Input = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
   tournament: Prisma.tournamentsCreateNestedOneWithoutFightsInput
   nomination: Prisma.nominationsCreateNestedOneWithoutFightsInput
   block?: Prisma.competition_blocksCreateNestedOneWithoutFightsInput
   group?: Prisma.groupsCreateNestedOneWithoutFightsInput
   competitor1: Prisma.competitorsCreateNestedOneWithoutFights_as_f1Input
   winner?: Prisma.competitorsCreateNestedOneWithoutFights_wonInput
+  disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutFightInput
 }
 
 export type fightsUncheckedCreateWithoutCompetitor2Input = {
@@ -1206,6 +1275,8 @@ export type fightsUncheckedCreateWithoutCompetitor2Input = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutFightInput
 }
 
 export type fightsCreateOrConnectWithoutCompetitor2Input = {
@@ -1227,12 +1298,14 @@ export type fightsCreateWithoutWinnerInput = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
   tournament: Prisma.tournamentsCreateNestedOneWithoutFightsInput
   nomination: Prisma.nominationsCreateNestedOneWithoutFightsInput
   block?: Prisma.competition_blocksCreateNestedOneWithoutFightsInput
   group?: Prisma.groupsCreateNestedOneWithoutFightsInput
   competitor1: Prisma.competitorsCreateNestedOneWithoutFights_as_f1Input
   competitor2: Prisma.competitorsCreateNestedOneWithoutFights_as_f2Input
+  disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutFightInput
 }
 
 export type fightsUncheckedCreateWithoutWinnerInput = {
@@ -1251,6 +1324,8 @@ export type fightsUncheckedCreateWithoutWinnerInput = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutFightInput
 }
 
 export type fightsCreateOrConnectWithoutWinnerInput = {
@@ -1320,12 +1395,14 @@ export type fightsCreateWithoutGroupInput = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
   tournament: Prisma.tournamentsCreateNestedOneWithoutFightsInput
   nomination: Prisma.nominationsCreateNestedOneWithoutFightsInput
   block?: Prisma.competition_blocksCreateNestedOneWithoutFightsInput
   competitor1: Prisma.competitorsCreateNestedOneWithoutFights_as_f1Input
   competitor2: Prisma.competitorsCreateNestedOneWithoutFights_as_f2Input
   winner?: Prisma.competitorsCreateNestedOneWithoutFights_wonInput
+  disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutFightInput
 }
 
 export type fightsUncheckedCreateWithoutGroupInput = {
@@ -1344,6 +1421,8 @@ export type fightsUncheckedCreateWithoutGroupInput = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutFightInput
 }
 
 export type fightsCreateOrConnectWithoutGroupInput = {
@@ -1372,6 +1451,100 @@ export type fightsUpdateManyWithWhereWithoutGroupInput = {
   data: Prisma.XOR<Prisma.fightsUpdateManyMutationInput, Prisma.fightsUncheckedUpdateManyWithoutGroupInput>
 }
 
+export type fightsCreateWithoutDisciplinary_cardsInput = {
+  competitor1_score?: number
+  competitor2_score?: number
+  stage?: number
+  fight_number?: number
+  bracket_round?: number | null
+  bracket_position?: number | null
+  is_bronze?: boolean
+  is_finished?: boolean
+  forfeit_card_id?: number | null
+  tournament: Prisma.tournamentsCreateNestedOneWithoutFightsInput
+  nomination: Prisma.nominationsCreateNestedOneWithoutFightsInput
+  block?: Prisma.competition_blocksCreateNestedOneWithoutFightsInput
+  group?: Prisma.groupsCreateNestedOneWithoutFightsInput
+  competitor1: Prisma.competitorsCreateNestedOneWithoutFights_as_f1Input
+  competitor2: Prisma.competitorsCreateNestedOneWithoutFights_as_f2Input
+  winner?: Prisma.competitorsCreateNestedOneWithoutFights_wonInput
+}
+
+export type fightsUncheckedCreateWithoutDisciplinary_cardsInput = {
+  id?: number
+  tournament_id: number
+  nomination_id: number
+  block_id?: number | null
+  group_id?: number | null
+  competitor1_id: number
+  competitor2_id: number
+  competitor1_score?: number
+  competitor2_score?: number
+  winner_id?: number | null
+  stage?: number
+  fight_number?: number
+  bracket_round?: number | null
+  bracket_position?: number | null
+  is_bronze?: boolean
+  is_finished?: boolean
+  forfeit_card_id?: number | null
+}
+
+export type fightsCreateOrConnectWithoutDisciplinary_cardsInput = {
+  where: Prisma.fightsWhereUniqueInput
+  create: Prisma.XOR<Prisma.fightsCreateWithoutDisciplinary_cardsInput, Prisma.fightsUncheckedCreateWithoutDisciplinary_cardsInput>
+}
+
+export type fightsUpsertWithoutDisciplinary_cardsInput = {
+  update: Prisma.XOR<Prisma.fightsUpdateWithoutDisciplinary_cardsInput, Prisma.fightsUncheckedUpdateWithoutDisciplinary_cardsInput>
+  create: Prisma.XOR<Prisma.fightsCreateWithoutDisciplinary_cardsInput, Prisma.fightsUncheckedCreateWithoutDisciplinary_cardsInput>
+  where?: Prisma.fightsWhereInput
+}
+
+export type fightsUpdateToOneWithWhereWithoutDisciplinary_cardsInput = {
+  where?: Prisma.fightsWhereInput
+  data: Prisma.XOR<Prisma.fightsUpdateWithoutDisciplinary_cardsInput, Prisma.fightsUncheckedUpdateWithoutDisciplinary_cardsInput>
+}
+
+export type fightsUpdateWithoutDisciplinary_cardsInput = {
+  competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  fight_number?: Prisma.IntFieldUpdateOperationsInput | number
+  bracket_round?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tournament?: Prisma.tournamentsUpdateOneRequiredWithoutFightsNestedInput
+  nomination?: Prisma.nominationsUpdateOneRequiredWithoutFightsNestedInput
+  block?: Prisma.competition_blocksUpdateOneWithoutFightsNestedInput
+  group?: Prisma.groupsUpdateOneWithoutFightsNestedInput
+  competitor1?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f1NestedInput
+  competitor2?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f2NestedInput
+  winner?: Prisma.competitorsUpdateOneWithoutFights_wonNestedInput
+}
+
+export type fightsUncheckedUpdateWithoutDisciplinary_cardsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  block_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  group_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  competitor1_id?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_id?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  winner_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  fight_number?: Prisma.IntFieldUpdateOperationsInput | number
+  bracket_round?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+}
+
 export type fightsCreateWithoutBlockInput = {
   competitor1_score?: number
   competitor2_score?: number
@@ -1381,12 +1554,14 @@ export type fightsCreateWithoutBlockInput = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
   tournament: Prisma.tournamentsCreateNestedOneWithoutFightsInput
   nomination: Prisma.nominationsCreateNestedOneWithoutFightsInput
   group?: Prisma.groupsCreateNestedOneWithoutFightsInput
   competitor1: Prisma.competitorsCreateNestedOneWithoutFights_as_f1Input
   competitor2: Prisma.competitorsCreateNestedOneWithoutFights_as_f2Input
   winner?: Prisma.competitorsCreateNestedOneWithoutFights_wonInput
+  disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutFightInput
 }
 
 export type fightsUncheckedCreateWithoutBlockInput = {
@@ -1405,6 +1580,8 @@ export type fightsUncheckedCreateWithoutBlockInput = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutFightInput
 }
 
 export type fightsCreateOrConnectWithoutBlockInput = {
@@ -1449,6 +1626,7 @@ export type fightsCreateManyTournamentInput = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
 }
 
 export type fightsUpdateWithoutTournamentInput = {
@@ -1460,12 +1638,14 @@ export type fightsUpdateWithoutTournamentInput = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   nomination?: Prisma.nominationsUpdateOneRequiredWithoutFightsNestedInput
   block?: Prisma.competition_blocksUpdateOneWithoutFightsNestedInput
   group?: Prisma.groupsUpdateOneWithoutFightsNestedInput
   competitor1?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f1NestedInput
   competitor2?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f2NestedInput
   winner?: Prisma.competitorsUpdateOneWithoutFights_wonNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateWithoutTournamentInput = {
@@ -1484,6 +1664,8 @@ export type fightsUncheckedUpdateWithoutTournamentInput = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateManyWithoutTournamentInput = {
@@ -1502,6 +1684,7 @@ export type fightsUncheckedUpdateManyWithoutTournamentInput = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type fightsCreateManyNominationInput = {
@@ -1520,6 +1703,7 @@ export type fightsCreateManyNominationInput = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
 }
 
 export type fightsUpdateWithoutNominationInput = {
@@ -1531,12 +1715,14 @@ export type fightsUpdateWithoutNominationInput = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   tournament?: Prisma.tournamentsUpdateOneRequiredWithoutFightsNestedInput
   block?: Prisma.competition_blocksUpdateOneWithoutFightsNestedInput
   group?: Prisma.groupsUpdateOneWithoutFightsNestedInput
   competitor1?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f1NestedInput
   competitor2?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f2NestedInput
   winner?: Prisma.competitorsUpdateOneWithoutFights_wonNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateWithoutNominationInput = {
@@ -1555,6 +1741,8 @@ export type fightsUncheckedUpdateWithoutNominationInput = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateManyWithoutNominationInput = {
@@ -1573,6 +1761,7 @@ export type fightsUncheckedUpdateManyWithoutNominationInput = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type fightsCreateManyCompetitor1Input = {
@@ -1591,6 +1780,7 @@ export type fightsCreateManyCompetitor1Input = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
 }
 
 export type fightsCreateManyCompetitor2Input = {
@@ -1609,6 +1799,7 @@ export type fightsCreateManyCompetitor2Input = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
 }
 
 export type fightsCreateManyWinnerInput = {
@@ -1627,6 +1818,7 @@ export type fightsCreateManyWinnerInput = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
 }
 
 export type fightsUpdateWithoutCompetitor1Input = {
@@ -1638,12 +1830,14 @@ export type fightsUpdateWithoutCompetitor1Input = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   tournament?: Prisma.tournamentsUpdateOneRequiredWithoutFightsNestedInput
   nomination?: Prisma.nominationsUpdateOneRequiredWithoutFightsNestedInput
   block?: Prisma.competition_blocksUpdateOneWithoutFightsNestedInput
   group?: Prisma.groupsUpdateOneWithoutFightsNestedInput
   competitor2?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f2NestedInput
   winner?: Prisma.competitorsUpdateOneWithoutFights_wonNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateWithoutCompetitor1Input = {
@@ -1662,6 +1856,8 @@ export type fightsUncheckedUpdateWithoutCompetitor1Input = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateManyWithoutCompetitor1Input = {
@@ -1680,6 +1876,7 @@ export type fightsUncheckedUpdateManyWithoutCompetitor1Input = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type fightsUpdateWithoutCompetitor2Input = {
@@ -1691,12 +1888,14 @@ export type fightsUpdateWithoutCompetitor2Input = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   tournament?: Prisma.tournamentsUpdateOneRequiredWithoutFightsNestedInput
   nomination?: Prisma.nominationsUpdateOneRequiredWithoutFightsNestedInput
   block?: Prisma.competition_blocksUpdateOneWithoutFightsNestedInput
   group?: Prisma.groupsUpdateOneWithoutFightsNestedInput
   competitor1?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f1NestedInput
   winner?: Prisma.competitorsUpdateOneWithoutFights_wonNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateWithoutCompetitor2Input = {
@@ -1715,6 +1914,8 @@ export type fightsUncheckedUpdateWithoutCompetitor2Input = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateManyWithoutCompetitor2Input = {
@@ -1733,6 +1934,7 @@ export type fightsUncheckedUpdateManyWithoutCompetitor2Input = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type fightsUpdateWithoutWinnerInput = {
@@ -1744,12 +1946,14 @@ export type fightsUpdateWithoutWinnerInput = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   tournament?: Prisma.tournamentsUpdateOneRequiredWithoutFightsNestedInput
   nomination?: Prisma.nominationsUpdateOneRequiredWithoutFightsNestedInput
   block?: Prisma.competition_blocksUpdateOneWithoutFightsNestedInput
   group?: Prisma.groupsUpdateOneWithoutFightsNestedInput
   competitor1?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f1NestedInput
   competitor2?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f2NestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateWithoutWinnerInput = {
@@ -1768,6 +1972,8 @@ export type fightsUncheckedUpdateWithoutWinnerInput = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateManyWithoutWinnerInput = {
@@ -1786,6 +1992,7 @@ export type fightsUncheckedUpdateManyWithoutWinnerInput = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type fightsCreateManyGroupInput = {
@@ -1804,6 +2011,7 @@ export type fightsCreateManyGroupInput = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
 }
 
 export type fightsUpdateWithoutGroupInput = {
@@ -1815,12 +2023,14 @@ export type fightsUpdateWithoutGroupInput = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   tournament?: Prisma.tournamentsUpdateOneRequiredWithoutFightsNestedInput
   nomination?: Prisma.nominationsUpdateOneRequiredWithoutFightsNestedInput
   block?: Prisma.competition_blocksUpdateOneWithoutFightsNestedInput
   competitor1?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f1NestedInput
   competitor2?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f2NestedInput
   winner?: Prisma.competitorsUpdateOneWithoutFights_wonNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateWithoutGroupInput = {
@@ -1839,6 +2049,8 @@ export type fightsUncheckedUpdateWithoutGroupInput = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateManyWithoutGroupInput = {
@@ -1857,6 +2069,7 @@ export type fightsUncheckedUpdateManyWithoutGroupInput = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type fightsCreateManyBlockInput = {
@@ -1875,6 +2088,7 @@ export type fightsCreateManyBlockInput = {
   bracket_position?: number | null
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: number | null
 }
 
 export type fightsUpdateWithoutBlockInput = {
@@ -1886,12 +2100,14 @@ export type fightsUpdateWithoutBlockInput = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   tournament?: Prisma.tournamentsUpdateOneRequiredWithoutFightsNestedInput
   nomination?: Prisma.nominationsUpdateOneRequiredWithoutFightsNestedInput
   group?: Prisma.groupsUpdateOneWithoutFightsNestedInput
   competitor1?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f1NestedInput
   competitor2?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f2NestedInput
   winner?: Prisma.competitorsUpdateOneWithoutFights_wonNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateWithoutBlockInput = {
@@ -1910,6 +2126,8 @@ export type fightsUncheckedUpdateWithoutBlockInput = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateManyWithoutBlockInput = {
@@ -1928,8 +2146,38 @@ export type fightsUncheckedUpdateManyWithoutBlockInput = {
   bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
+
+/**
+ * Count Type FightsCountOutputType
+ */
+
+export type FightsCountOutputType = {
+  disciplinary_cards: number
+}
+
+export type FightsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  disciplinary_cards?: boolean | FightsCountOutputTypeCountDisciplinary_cardsArgs
+}
+
+/**
+ * FightsCountOutputType without action
+ */
+export type FightsCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FightsCountOutputType
+   */
+  select?: Prisma.FightsCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * FightsCountOutputType without action
+ */
+export type FightsCountOutputTypeCountDisciplinary_cardsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.disciplinary_cardsWhereInput
+}
 
 
 export type fightsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1949,6 +2197,7 @@ export type fightsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   bracket_position?: boolean
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: boolean
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   nomination?: boolean | Prisma.nominationsDefaultArgs<ExtArgs>
   block?: boolean | Prisma.fights$blockArgs<ExtArgs>
@@ -1956,6 +2205,8 @@ export type fightsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   competitor1?: boolean | Prisma.competitorsDefaultArgs<ExtArgs>
   competitor2?: boolean | Prisma.competitorsDefaultArgs<ExtArgs>
   winner?: boolean | Prisma.fights$winnerArgs<ExtArgs>
+  disciplinary_cards?: boolean | Prisma.fights$disciplinary_cardsArgs<ExtArgs>
+  _count?: boolean | Prisma.FightsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["fights"]>
 
 export type fightsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1975,6 +2226,7 @@ export type fightsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   bracket_position?: boolean
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: boolean
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   nomination?: boolean | Prisma.nominationsDefaultArgs<ExtArgs>
   block?: boolean | Prisma.fights$blockArgs<ExtArgs>
@@ -2001,6 +2253,7 @@ export type fightsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   bracket_position?: boolean
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: boolean
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   nomination?: boolean | Prisma.nominationsDefaultArgs<ExtArgs>
   block?: boolean | Prisma.fights$blockArgs<ExtArgs>
@@ -2027,9 +2280,10 @@ export type fightsSelectScalar = {
   bracket_position?: boolean
   is_bronze?: boolean
   is_finished?: boolean
+  forfeit_card_id?: boolean
 }
 
-export type fightsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tournament_id" | "nomination_id" | "block_id" | "group_id" | "competitor1_id" | "competitor2_id" | "competitor1_score" | "competitor2_score" | "winner_id" | "stage" | "fight_number" | "bracket_round" | "bracket_position" | "is_bronze" | "is_finished", ExtArgs["result"]["fights"]>
+export type fightsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tournament_id" | "nomination_id" | "block_id" | "group_id" | "competitor1_id" | "competitor2_id" | "competitor1_score" | "competitor2_score" | "winner_id" | "stage" | "fight_number" | "bracket_round" | "bracket_position" | "is_bronze" | "is_finished" | "forfeit_card_id", ExtArgs["result"]["fights"]>
 export type fightsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   nomination?: boolean | Prisma.nominationsDefaultArgs<ExtArgs>
@@ -2038,6 +2292,8 @@ export type fightsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   competitor1?: boolean | Prisma.competitorsDefaultArgs<ExtArgs>
   competitor2?: boolean | Prisma.competitorsDefaultArgs<ExtArgs>
   winner?: boolean | Prisma.fights$winnerArgs<ExtArgs>
+  disciplinary_cards?: boolean | Prisma.fights$disciplinary_cardsArgs<ExtArgs>
+  _count?: boolean | Prisma.FightsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type fightsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
@@ -2068,6 +2324,7 @@ export type $fightsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     competitor1: Prisma.$competitorsPayload<ExtArgs>
     competitor2: Prisma.$competitorsPayload<ExtArgs>
     winner: Prisma.$competitorsPayload<ExtArgs> | null
+    disciplinary_cards: Prisma.$disciplinary_cardsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -2086,6 +2343,7 @@ export type $fightsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     bracket_position: number | null
     is_bronze: boolean
     is_finished: boolean
+    forfeit_card_id: number | null
   }, ExtArgs["result"]["fights"]>
   composites: {}
 }
@@ -2487,6 +2745,7 @@ export interface Prisma__fightsClient<T, Null = never, ExtArgs extends runtime.T
   competitor1<T extends Prisma.competitorsDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competitorsDefaultArgs<ExtArgs>>): Prisma.Prisma__competitorsClient<runtime.Types.Result.GetResult<Prisma.$competitorsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   competitor2<T extends Prisma.competitorsDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competitorsDefaultArgs<ExtArgs>>): Prisma.Prisma__competitorsClient<runtime.Types.Result.GetResult<Prisma.$competitorsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   winner<T extends Prisma.fights$winnerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.fights$winnerArgs<ExtArgs>>): Prisma.Prisma__competitorsClient<runtime.Types.Result.GetResult<Prisma.$competitorsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  disciplinary_cards<T extends Prisma.fights$disciplinary_cardsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.fights$disciplinary_cardsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$disciplinary_cardsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2532,6 +2791,7 @@ export interface fightsFieldRefs {
   readonly bracket_position: Prisma.FieldRef<"fights", 'Int'>
   readonly is_bronze: Prisma.FieldRef<"fights", 'Boolean'>
   readonly is_finished: Prisma.FieldRef<"fights", 'Boolean'>
+  readonly forfeit_card_id: Prisma.FieldRef<"fights", 'Int'>
 }
     
 
@@ -2982,6 +3242,30 @@ export type fights$winnerArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   include?: Prisma.competitorsInclude<ExtArgs> | null
   where?: Prisma.competitorsWhereInput
+}
+
+/**
+ * fights.disciplinary_cards
+ */
+export type fights$disciplinary_cardsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the disciplinary_cards
+   */
+  select?: Prisma.disciplinary_cardsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the disciplinary_cards
+   */
+  omit?: Prisma.disciplinary_cardsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.disciplinary_cardsInclude<ExtArgs> | null
+  where?: Prisma.disciplinary_cardsWhereInput
+  orderBy?: Prisma.disciplinary_cardsOrderByWithRelationInput | Prisma.disciplinary_cardsOrderByWithRelationInput[]
+  cursor?: Prisma.disciplinary_cardsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Disciplinary_cardsScalarFieldEnum | Prisma.Disciplinary_cardsScalarFieldEnum[]
 }
 
 /**

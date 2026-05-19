@@ -272,6 +272,7 @@ export type fightersWhereInput = {
   city?: Prisma.XOR<Prisma.CitiesScalarRelationFilter, Prisma.citiesWhereInput>
   club?: Prisma.XOR<Prisma.ClubsNullableScalarRelationFilter, Prisma.clubsWhereInput> | null
   competitors?: Prisma.CompetitorsListRelationFilter
+  disciplinary_cards?: Prisma.Disciplinary_cardsListRelationFilter
 }
 
 export type fightersOrderByWithRelationInput = {
@@ -289,6 +290,7 @@ export type fightersOrderByWithRelationInput = {
   city?: Prisma.citiesOrderByWithRelationInput
   club?: Prisma.clubsOrderByWithRelationInput
   competitors?: Prisma.competitorsOrderByRelationAggregateInput
+  disciplinary_cards?: Prisma.disciplinary_cardsOrderByRelationAggregateInput
 }
 
 export type fightersWhereUniqueInput = Prisma.AtLeast<{
@@ -309,6 +311,7 @@ export type fightersWhereUniqueInput = Prisma.AtLeast<{
   city?: Prisma.XOR<Prisma.CitiesScalarRelationFilter, Prisma.citiesWhereInput>
   club?: Prisma.XOR<Prisma.ClubsNullableScalarRelationFilter, Prisma.clubsWhereInput> | null
   competitors?: Prisma.CompetitorsListRelationFilter
+  disciplinary_cards?: Prisma.Disciplinary_cardsListRelationFilter
 }, "id">
 
 export type fightersOrderByWithAggregationInput = {
@@ -356,6 +359,7 @@ export type fightersCreateInput = {
   city: Prisma.citiesCreateNestedOneWithoutFightersInput
   club?: Prisma.clubsCreateNestedOneWithoutFightersInput
   competitors?: Prisma.competitorsCreateNestedManyWithoutFighterInput
+  disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutFighterInput
 }
 
 export type fightersUncheckedCreateInput = {
@@ -370,6 +374,7 @@ export type fightersUncheckedCreateInput = {
   pic?: string | null
   is_male?: boolean
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutFighterInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutFighterInput
 }
 
 export type fightersUpdateInput = {
@@ -383,6 +388,7 @@ export type fightersUpdateInput = {
   city?: Prisma.citiesUpdateOneRequiredWithoutFightersNestedInput
   club?: Prisma.clubsUpdateOneWithoutFightersNestedInput
   competitors?: Prisma.competitorsUpdateManyWithoutFighterNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutFighterNestedInput
 }
 
 export type fightersUncheckedUpdateInput = {
@@ -397,6 +403,7 @@ export type fightersUncheckedUpdateInput = {
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutFighterNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFighterNestedInput
 }
 
 export type fightersCreateManyInput = {
@@ -662,6 +669,20 @@ export type fightersUpdateOneRequiredWithoutCompetitorsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.fightersUpdateToOneWithWhereWithoutCompetitorsInput, Prisma.fightersUpdateWithoutCompetitorsInput>, Prisma.fightersUncheckedUpdateWithoutCompetitorsInput>
 }
 
+export type fightersCreateNestedOneWithoutDisciplinary_cardsInput = {
+  create?: Prisma.XOR<Prisma.fightersCreateWithoutDisciplinary_cardsInput, Prisma.fightersUncheckedCreateWithoutDisciplinary_cardsInput>
+  connectOrCreate?: Prisma.fightersCreateOrConnectWithoutDisciplinary_cardsInput
+  connect?: Prisma.fightersWhereUniqueInput
+}
+
+export type fightersUpdateOneRequiredWithoutDisciplinary_cardsNestedInput = {
+  create?: Prisma.XOR<Prisma.fightersCreateWithoutDisciplinary_cardsInput, Prisma.fightersUncheckedCreateWithoutDisciplinary_cardsInput>
+  connectOrCreate?: Prisma.fightersCreateOrConnectWithoutDisciplinary_cardsInput
+  upsert?: Prisma.fightersUpsertWithoutDisciplinary_cardsInput
+  connect?: Prisma.fightersWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.fightersUpdateToOneWithWhereWithoutDisciplinary_cardsInput, Prisma.fightersUpdateWithoutDisciplinary_cardsInput>, Prisma.fightersUncheckedUpdateWithoutDisciplinary_cardsInput>
+}
+
 export type fightersCreateWithoutCountryInput = {
   name: string
   surname: string
@@ -672,6 +693,7 @@ export type fightersCreateWithoutCountryInput = {
   city: Prisma.citiesCreateNestedOneWithoutFightersInput
   club?: Prisma.clubsCreateNestedOneWithoutFightersInput
   competitors?: Prisma.competitorsCreateNestedManyWithoutFighterInput
+  disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutFighterInput
 }
 
 export type fightersUncheckedCreateWithoutCountryInput = {
@@ -685,6 +707,7 @@ export type fightersUncheckedCreateWithoutCountryInput = {
   pic?: string | null
   is_male?: boolean
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutFighterInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutFighterInput
 }
 
 export type fightersCreateOrConnectWithoutCountryInput = {
@@ -739,6 +762,7 @@ export type fightersCreateWithoutCityInput = {
   country: Prisma.countriesCreateNestedOneWithoutFightersInput
   club?: Prisma.clubsCreateNestedOneWithoutFightersInput
   competitors?: Prisma.competitorsCreateNestedManyWithoutFighterInput
+  disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutFighterInput
 }
 
 export type fightersUncheckedCreateWithoutCityInput = {
@@ -752,6 +776,7 @@ export type fightersUncheckedCreateWithoutCityInput = {
   pic?: string | null
   is_male?: boolean
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutFighterInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutFighterInput
 }
 
 export type fightersCreateOrConnectWithoutCityInput = {
@@ -790,6 +815,7 @@ export type fightersCreateWithoutClubInput = {
   country: Prisma.countriesCreateNestedOneWithoutFightersInput
   city: Prisma.citiesCreateNestedOneWithoutFightersInput
   competitors?: Prisma.competitorsCreateNestedManyWithoutFighterInput
+  disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutFighterInput
 }
 
 export type fightersUncheckedCreateWithoutClubInput = {
@@ -803,6 +829,7 @@ export type fightersUncheckedCreateWithoutClubInput = {
   pic?: string | null
   is_male?: boolean
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutFighterInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutFighterInput
 }
 
 export type fightersCreateOrConnectWithoutClubInput = {
@@ -841,6 +868,7 @@ export type fightersCreateWithoutCompetitorsInput = {
   country: Prisma.countriesCreateNestedOneWithoutFightersInput
   city: Prisma.citiesCreateNestedOneWithoutFightersInput
   club?: Prisma.clubsCreateNestedOneWithoutFightersInput
+  disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutFighterInput
 }
 
 export type fightersUncheckedCreateWithoutCompetitorsInput = {
@@ -854,6 +882,7 @@ export type fightersUncheckedCreateWithoutCompetitorsInput = {
   club_id?: number | null
   pic?: string | null
   is_male?: boolean
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutFighterInput
 }
 
 export type fightersCreateOrConnectWithoutCompetitorsInput = {
@@ -882,6 +911,7 @@ export type fightersUpdateWithoutCompetitorsInput = {
   country?: Prisma.countriesUpdateOneRequiredWithoutFightersNestedInput
   city?: Prisma.citiesUpdateOneRequiredWithoutFightersNestedInput
   club?: Prisma.clubsUpdateOneWithoutFightersNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutFighterNestedInput
 }
 
 export type fightersUncheckedUpdateWithoutCompetitorsInput = {
@@ -895,6 +925,77 @@ export type fightersUncheckedUpdateWithoutCompetitorsInput = {
   club_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFighterNestedInput
+}
+
+export type fightersCreateWithoutDisciplinary_cardsInput = {
+  name: string
+  surname: string
+  patronymic?: string | null
+  birthday?: Date | string | null
+  pic?: string | null
+  is_male?: boolean
+  country: Prisma.countriesCreateNestedOneWithoutFightersInput
+  city: Prisma.citiesCreateNestedOneWithoutFightersInput
+  club?: Prisma.clubsCreateNestedOneWithoutFightersInput
+  competitors?: Prisma.competitorsCreateNestedManyWithoutFighterInput
+}
+
+export type fightersUncheckedCreateWithoutDisciplinary_cardsInput = {
+  id?: number
+  name: string
+  surname: string
+  patronymic?: string | null
+  birthday?: Date | string | null
+  country_id: number
+  city_id: number
+  club_id?: number | null
+  pic?: string | null
+  is_male?: boolean
+  competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutFighterInput
+}
+
+export type fightersCreateOrConnectWithoutDisciplinary_cardsInput = {
+  where: Prisma.fightersWhereUniqueInput
+  create: Prisma.XOR<Prisma.fightersCreateWithoutDisciplinary_cardsInput, Prisma.fightersUncheckedCreateWithoutDisciplinary_cardsInput>
+}
+
+export type fightersUpsertWithoutDisciplinary_cardsInput = {
+  update: Prisma.XOR<Prisma.fightersUpdateWithoutDisciplinary_cardsInput, Prisma.fightersUncheckedUpdateWithoutDisciplinary_cardsInput>
+  create: Prisma.XOR<Prisma.fightersCreateWithoutDisciplinary_cardsInput, Prisma.fightersUncheckedCreateWithoutDisciplinary_cardsInput>
+  where?: Prisma.fightersWhereInput
+}
+
+export type fightersUpdateToOneWithWhereWithoutDisciplinary_cardsInput = {
+  where?: Prisma.fightersWhereInput
+  data: Prisma.XOR<Prisma.fightersUpdateWithoutDisciplinary_cardsInput, Prisma.fightersUncheckedUpdateWithoutDisciplinary_cardsInput>
+}
+
+export type fightersUpdateWithoutDisciplinary_cardsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  surname?: Prisma.StringFieldUpdateOperationsInput | string
+  patronymic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthday?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  country?: Prisma.countriesUpdateOneRequiredWithoutFightersNestedInput
+  city?: Prisma.citiesUpdateOneRequiredWithoutFightersNestedInput
+  club?: Prisma.clubsUpdateOneWithoutFightersNestedInput
+  competitors?: Prisma.competitorsUpdateManyWithoutFighterNestedInput
+}
+
+export type fightersUncheckedUpdateWithoutDisciplinary_cardsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  surname?: Prisma.StringFieldUpdateOperationsInput | string
+  patronymic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthday?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  country_id?: Prisma.IntFieldUpdateOperationsInput | number
+  city_id?: Prisma.IntFieldUpdateOperationsInput | number
+  club_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  competitors?: Prisma.competitorsUncheckedUpdateManyWithoutFighterNestedInput
 }
 
 export type fightersCreateManyCountryInput = {
@@ -919,6 +1020,7 @@ export type fightersUpdateWithoutCountryInput = {
   city?: Prisma.citiesUpdateOneRequiredWithoutFightersNestedInput
   club?: Prisma.clubsUpdateOneWithoutFightersNestedInput
   competitors?: Prisma.competitorsUpdateManyWithoutFighterNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutFighterNestedInput
 }
 
 export type fightersUncheckedUpdateWithoutCountryInput = {
@@ -932,6 +1034,7 @@ export type fightersUncheckedUpdateWithoutCountryInput = {
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutFighterNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFighterNestedInput
 }
 
 export type fightersUncheckedUpdateManyWithoutCountryInput = {
@@ -968,6 +1071,7 @@ export type fightersUpdateWithoutCityInput = {
   country?: Prisma.countriesUpdateOneRequiredWithoutFightersNestedInput
   club?: Prisma.clubsUpdateOneWithoutFightersNestedInput
   competitors?: Prisma.competitorsUpdateManyWithoutFighterNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutFighterNestedInput
 }
 
 export type fightersUncheckedUpdateWithoutCityInput = {
@@ -981,6 +1085,7 @@ export type fightersUncheckedUpdateWithoutCityInput = {
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutFighterNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFighterNestedInput
 }
 
 export type fightersUncheckedUpdateManyWithoutCityInput = {
@@ -1017,6 +1122,7 @@ export type fightersUpdateWithoutClubInput = {
   country?: Prisma.countriesUpdateOneRequiredWithoutFightersNestedInput
   city?: Prisma.citiesUpdateOneRequiredWithoutFightersNestedInput
   competitors?: Prisma.competitorsUpdateManyWithoutFighterNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutFighterNestedInput
 }
 
 export type fightersUncheckedUpdateWithoutClubInput = {
@@ -1030,6 +1136,7 @@ export type fightersUncheckedUpdateWithoutClubInput = {
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutFighterNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFighterNestedInput
 }
 
 export type fightersUncheckedUpdateManyWithoutClubInput = {
@@ -1051,10 +1158,12 @@ export type fightersUncheckedUpdateManyWithoutClubInput = {
 
 export type FightersCountOutputType = {
   competitors: number
+  disciplinary_cards: number
 }
 
 export type FightersCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   competitors?: boolean | FightersCountOutputTypeCountCompetitorsArgs
+  disciplinary_cards?: boolean | FightersCountOutputTypeCountDisciplinary_cardsArgs
 }
 
 /**
@@ -1074,6 +1183,13 @@ export type FightersCountOutputTypeCountCompetitorsArgs<ExtArgs extends runtime.
   where?: Prisma.competitorsWhereInput
 }
 
+/**
+ * FightersCountOutputType without action
+ */
+export type FightersCountOutputTypeCountDisciplinary_cardsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.disciplinary_cardsWhereInput
+}
+
 
 export type fightersSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1090,6 +1206,7 @@ export type fightersSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   city?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
   club?: boolean | Prisma.fighters$clubArgs<ExtArgs>
   competitors?: boolean | Prisma.fighters$competitorsArgs<ExtArgs>
+  disciplinary_cards?: boolean | Prisma.fighters$disciplinary_cardsArgs<ExtArgs>
   _count?: boolean | Prisma.FightersCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["fighters"]>
 
@@ -1144,6 +1261,7 @@ export type fightersInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   city?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
   club?: boolean | Prisma.fighters$clubArgs<ExtArgs>
   competitors?: boolean | Prisma.fighters$competitorsArgs<ExtArgs>
+  disciplinary_cards?: boolean | Prisma.fighters$disciplinary_cardsArgs<ExtArgs>
   _count?: boolean | Prisma.FightersCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type fightersIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1164,6 +1282,7 @@ export type $fightersPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     city: Prisma.$citiesPayload<ExtArgs>
     club: Prisma.$clubsPayload<ExtArgs> | null
     competitors: Prisma.$competitorsPayload<ExtArgs>[]
+    disciplinary_cards: Prisma.$disciplinary_cardsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1574,6 +1693,7 @@ export interface Prisma__fightersClient<T, Null = never, ExtArgs extends runtime
   city<T extends Prisma.citiesDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.citiesDefaultArgs<ExtArgs>>): Prisma.Prisma__citiesClient<runtime.Types.Result.GetResult<Prisma.$citiesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   club<T extends Prisma.fighters$clubArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.fighters$clubArgs<ExtArgs>>): Prisma.Prisma__clubsClient<runtime.Types.Result.GetResult<Prisma.$clubsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   competitors<T extends Prisma.fighters$competitorsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.fighters$competitorsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$competitorsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  disciplinary_cards<T extends Prisma.fighters$disciplinary_cardsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.fighters$disciplinary_cardsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$disciplinary_cardsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2049,6 +2169,30 @@ export type fighters$competitorsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.CompetitorsScalarFieldEnum | Prisma.CompetitorsScalarFieldEnum[]
+}
+
+/**
+ * fighters.disciplinary_cards
+ */
+export type fighters$disciplinary_cardsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the disciplinary_cards
+   */
+  select?: Prisma.disciplinary_cardsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the disciplinary_cards
+   */
+  omit?: Prisma.disciplinary_cardsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.disciplinary_cardsInclude<ExtArgs> | null
+  where?: Prisma.disciplinary_cardsWhereInput
+  orderBy?: Prisma.disciplinary_cardsOrderByWithRelationInput | Prisma.disciplinary_cardsOrderByWithRelationInput[]
+  cursor?: Prisma.disciplinary_cardsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Disciplinary_cardsScalarFieldEnum | Prisma.Disciplinary_cardsScalarFieldEnum[]
 }
 
 /**

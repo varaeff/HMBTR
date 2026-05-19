@@ -17,6 +17,7 @@ import { GroupsModule } from '../groups/groups.module';
 import { GroupCompetitorsModule } from '../group-competitors/group-competitors.module';
 import { FightsModule } from '../fights/fights.module';
 import { CompetitionModule } from '../competition/competition.module';
+import { DisciplinaryCardsModule } from '../disciplinary-cards/disciplinary-cards.module';
 import { AuthModule } from '../auth/auth.module';
 import { UsersModule } from '../users/users.module';
 import { JwtAuthGuardGlobal } from '../auth/guards/jwt-auth-global.guard';
@@ -38,6 +39,7 @@ import { EmailService } from '../common/services/email.service';
     GroupCompetitorsModule,
     FightsModule,
     CompetitionModule,
+    DisciplinaryCardsModule,
   ],
   controllers: [AppController],
   providers: [

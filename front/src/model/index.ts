@@ -195,3 +195,46 @@ export interface PendingTie {
   groupId: number
   competitorIds: number[]
 }
+
+export type DisciplinaryCardType = 'YELLOW' | 'RED'
+export type DisciplinaryCardSource = 'MANUAL' | 'AUTOMATIC'
+
+export interface DisciplinaryCard {
+  id: number
+  fighter_id: number
+  tournament_id: number
+  fight_id: number
+  type: DisciplinaryCardType
+  source: DisciplinaryCardSource
+  received_at: string
+  reason: string
+  expires_at: string
+  created_at: string
+  updated_at: string
+  fight_number: number
+  fight_stage: number
+  tournament_name: string
+  nomination_id: number
+  bracket_round: number | null
+  bracket_position: number | null
+  is_bronze: boolean
+  group_name: string | null
+  opponent_id: number
+  fighter_name: string
+  fighter_surname: string
+  fighter_patronymic: string | null
+  opponent_name: string
+  opponent_surname: string
+  opponent_patronymic: string | null
+}
+
+export interface CreateDisciplinaryCardPayload {
+  fighter_id: number
+  tournament_id: number
+  fight_id: number
+  type: DisciplinaryCardType
+  received_at: string
+  reason: string
+}
+
+export type UpdateDisciplinaryCardPayload = Partial<CreateDisciplinaryCardPayload>

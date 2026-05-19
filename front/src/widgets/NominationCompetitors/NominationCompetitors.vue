@@ -3,7 +3,8 @@ import { computed, ref } from 'vue'
 import { tData } from '@/lib/utils'
 import { useCompetitionStore } from '@/stores/competition'
 import { Button } from '@/components/ui/button'
-import type { Fighter } from '@/model'
+import { CardStatusIcon } from '@/widgets/DisciplinaryCards'
+import type { DisciplinaryCardType, Fighter } from '@/model'
 
 const props = defineProps<{
   competitors: Fighter[]
@@ -11,6 +12,7 @@ const props = defineProps<{
   isOpen: boolean
   hasBlocks: boolean
   hasAccess: boolean
+  activeCardTypes?: Partial<Record<number, DisciplinaryCardType>>
 }>()
 
 const emit = defineEmits<{
@@ -54,7 +56,10 @@ const removeCompetitor = async (fighterId: number) => {
     >
       <div class="flex justify-between items-center">
         <div class="flex gap-2">
-          <div>{{ index + 1 }}. {{ tData(competitor.surname) }} {{ tData(competitor.name) }}</div>
+          <div class="inline-flex items-center gap-1">
+            {{ index + 1 }}. {{ tData(competitor.surname) }} {{ tData(competitor.name) }}
+            <CardStatusIcon :type="activeCardTypes?.[competitor.id]" />
+          </div>
           <div class="text-muted-foreground">
             {{ tData(competitor.city) }} {{ tData(competitor.club || '') }}
           </div>

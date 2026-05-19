@@ -395,6 +395,7 @@ export const ModelName = {
   groups: 'groups',
   group_competitors: 'group_competitors',
   fights: 'fights',
+  disciplinary_cards: 'disciplinary_cards',
   competition_blocks: 'competition_blocks',
   bracket_slots: 'bracket_slots',
   competition_placements: 'competition_placements',
@@ -415,7 +416,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "countries" | "cities" | "clubs" | "fighters" | "tournaments" | "nominations" | "tournament_nominations" | "competitors" | "groups" | "group_competitors" | "fights" | "competition_blocks" | "bracket_slots" | "competition_placements" | "tournament_reports" | "users"
+    modelProps: "countries" | "cities" | "clubs" | "fighters" | "tournaments" | "nominations" | "tournament_nominations" | "competitors" | "groups" | "group_competitors" | "fights" | "disciplinary_cards" | "competition_blocks" | "bracket_slots" | "competition_placements" | "tournament_reports" | "users"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1233,6 +1234,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    disciplinary_cards: {
+      payload: Prisma.$disciplinary_cardsPayload<ExtArgs>
+      fields: Prisma.disciplinary_cardsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.disciplinary_cardsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$disciplinary_cardsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.disciplinary_cardsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$disciplinary_cardsPayload>
+        }
+        findFirst: {
+          args: Prisma.disciplinary_cardsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$disciplinary_cardsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.disciplinary_cardsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$disciplinary_cardsPayload>
+        }
+        findMany: {
+          args: Prisma.disciplinary_cardsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$disciplinary_cardsPayload>[]
+        }
+        create: {
+          args: Prisma.disciplinary_cardsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$disciplinary_cardsPayload>
+        }
+        createMany: {
+          args: Prisma.disciplinary_cardsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.disciplinary_cardsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$disciplinary_cardsPayload>[]
+        }
+        delete: {
+          args: Prisma.disciplinary_cardsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$disciplinary_cardsPayload>
+        }
+        update: {
+          args: Prisma.disciplinary_cardsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$disciplinary_cardsPayload>
+        }
+        deleteMany: {
+          args: Prisma.disciplinary_cardsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.disciplinary_cardsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.disciplinary_cardsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$disciplinary_cardsPayload>[]
+        }
+        upsert: {
+          args: Prisma.disciplinary_cardsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$disciplinary_cardsPayload>
+        }
+        aggregate: {
+          args: Prisma.Disciplinary_cardsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDisciplinary_cards>
+        }
+        groupBy: {
+          args: Prisma.disciplinary_cardsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Disciplinary_cardsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.disciplinary_cardsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Disciplinary_cardsCountAggregateOutputType> | number
+        }
+      }
+    }
     competition_blocks: {
       payload: Prisma.$competition_blocksPayload<ExtArgs>
       fields: Prisma.competition_blocksFieldRefs
@@ -1765,10 +1840,28 @@ export const FightsScalarFieldEnum = {
   bracket_round: 'bracket_round',
   bracket_position: 'bracket_position',
   is_bronze: 'is_bronze',
-  is_finished: 'is_finished'
+  is_finished: 'is_finished',
+  forfeit_card_id: 'forfeit_card_id'
 } as const
 
 export type FightsScalarFieldEnum = (typeof FightsScalarFieldEnum)[keyof typeof FightsScalarFieldEnum]
+
+
+export const Disciplinary_cardsScalarFieldEnum = {
+  id: 'id',
+  fighter_id: 'fighter_id',
+  tournament_id: 'tournament_id',
+  fight_id: 'fight_id',
+  type: 'type',
+  source: 'source',
+  received_at: 'received_at',
+  reason: 'reason',
+  expires_at: 'expires_at',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type Disciplinary_cardsScalarFieldEnum = (typeof Disciplinary_cardsScalarFieldEnum)[keyof typeof Disciplinary_cardsScalarFieldEnum]
 
 
 export const Competition_blocksScalarFieldEnum = {
@@ -2050,6 +2143,7 @@ export type GlobalOmitConfig = {
   groups?: Prisma.groupsOmit
   group_competitors?: Prisma.group_competitorsOmit
   fights?: Prisma.fightsOmit
+  disciplinary_cards?: Prisma.disciplinary_cardsOmit
   competition_blocks?: Prisma.competition_blocksOmit
   bracket_slots?: Prisma.bracket_slotsOmit
   competition_placements?: Prisma.competition_placementsOmit

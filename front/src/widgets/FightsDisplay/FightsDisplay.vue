@@ -4,12 +4,20 @@ import { useTranslation } from 'i18next-vue'
 import { useCompetitionStore } from '@/stores/competition'
 import { Button } from '@/components/ui/button'
 import { FightCard } from '@/components/ui/fightCard'
-import type { BlockData, FightData } from '@/model'
+import type { BlockData, DisciplinaryCardType, FightData } from '@/model'
 
 const props = defineProps<{
   hasAccess: boolean
+  canIssueCards?: boolean
+  tournamentId?: number
+  cardDate?: string
+  activeCardTypes?: Partial<Record<number, DisciplinaryCardType>>
   blockId?: number
   blocksData?: BlockData[]
+}>()
+
+const emit = defineEmits<{
+  (e: 'card-issued'): void
 }>()
 
 const competitionStore = useCompetitionStore()
@@ -65,7 +73,12 @@ const saveBlockResults = (block: BlockData) => {
           :key="`${blockIndex}-${fight.number}-${languageKey}`"
           :fight="fight"
           :hasAccess="hasAccess && !fight.isFinished"
+          :canIssueCards="canIssueCards && !fight.isFinished"
+          :tournamentId="tournamentId"
+          :cardDate="cardDate"
+          :activeCardTypes="activeCardTypes"
           @update:score="(scores) => handleScoreUpdate(fight.id, fight.number, scores)"
+          @card-issued="emit('card-issued')"
         />
       </div>
 

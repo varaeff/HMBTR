@@ -966,7 +966,7 @@ export class CompetitionService {
     }
   }
 
-  private async progressOlympicBlock(blockId: number) {
+  async progressOlympicBlock(blockId: number) {
     await this.prisma.$transaction(async (tx) => {
       const block = await tx.competition_blocks.findUnique({
         where: { id: blockId },

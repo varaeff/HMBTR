@@ -73,6 +73,11 @@ export type group_competitors = Prisma.group_competitorsModel
  */
 export type fights = Prisma.fightsModel
 /**
+ * Model disciplinary_cards
+ * 
+ */
+export type disciplinary_cards = Prisma.disciplinary_cardsModel
+/**
  * Model competition_blocks
  * 
  */

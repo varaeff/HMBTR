@@ -57,6 +57,7 @@ model fighters {
   city        cities        @relation(fields: [city_id], references: [id])
   club        clubs?        @relation(fields: [club_id], references: [id])
   competitors competitors[]
+  disciplinary_cards disciplinary_cards[]
 }
 
 model tournaments {
@@ -73,6 +74,7 @@ model tournaments {
   groups      groups[]
   fights      fights[]
   reports     tournament_reports[]
+  disciplinary_cards disciplinary_cards[]
 }
 
 model nominations {
@@ -165,6 +167,7 @@ model fights {
   bracket_position  Int?
   is_bronze         Boolean @default(false)
   is_finished       Boolean @default(false)
+  forfeit_card_id   Int?
 
   tournament tournaments @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
   nomination nominations @relation(fields: [nomination_id], references: [id], onDelete: Cascade)
@@ -175,6 +178,31 @@ model fights {
   competitor1 competitors  @relation("Fighter1", fields: [competitor1_id], references: [id])
   competitor2 competitors  @relation("Fighter2", fields: [competitor2_id], references: [id])
   winner      competitors? @relation("Winner", fields: [winner_id], references: [id])
+  disciplinary_cards disciplinary_cards[]
+
+  @@index([forfeit_card_id])
+}
+
+model disciplinary_cards {
+  id            Int      @id @default(autoincrement())
+  fighter_id    Int
+  tournament_id Int
+  fight_id      Int
+  type          String   @db.VarChar(16)
+  source        String   @default("MANUAL") @db.VarChar(16)
+  received_at   DateTime @db.Date
+  reason        String   @db.Text
+  expires_at    DateTime @db.Date
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  fighter    fighters    @relation(fields: [fighter_id], references: [id], onDelete: Cascade)
+  tournament tournaments @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
+  fight      fights      @relation(fields: [fight_id], references: [id], onDelete: Cascade)
+
+  @@index([fighter_id, type, received_at, expires_at])
+  @@index([tournament_id])
+  @@index([fight_id])
 }
 
 model competition_blocks {

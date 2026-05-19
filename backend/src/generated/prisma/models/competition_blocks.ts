@@ -560,10 +560,6 @@ export type competition_blocksUpdateOneWithoutFightsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.competition_blocksUpdateToOneWithWhereWithoutFightsInput, Prisma.competition_blocksUpdateWithoutFightsInput>, Prisma.competition_blocksUncheckedUpdateWithoutFightsInput>
 }
 
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
-}
-
 export type competition_blocksCreateNestedOneWithoutBracket_slotsInput = {
   create?: Prisma.XOR<Prisma.competition_blocksCreateWithoutBracket_slotsInput, Prisma.competition_blocksUncheckedCreateWithoutBracket_slotsInput>
   connectOrCreate?: Prisma.competition_blocksCreateOrConnectWithoutBracket_slotsInput

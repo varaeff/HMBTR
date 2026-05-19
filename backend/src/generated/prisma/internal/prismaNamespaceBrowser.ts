@@ -62,6 +62,7 @@ export const ModelName = {
   groups: 'groups',
   group_competitors: 'group_competitors',
   fights: 'fights',
+  disciplinary_cards: 'disciplinary_cards',
   competition_blocks: 'competition_blocks',
   bracket_slots: 'bracket_slots',
   competition_placements: 'competition_placements',
@@ -208,10 +209,28 @@ export const FightsScalarFieldEnum = {
   bracket_round: 'bracket_round',
   bracket_position: 'bracket_position',
   is_bronze: 'is_bronze',
-  is_finished: 'is_finished'
+  is_finished: 'is_finished',
+  forfeit_card_id: 'forfeit_card_id'
 } as const
 
 export type FightsScalarFieldEnum = (typeof FightsScalarFieldEnum)[keyof typeof FightsScalarFieldEnum]
+
+
+export const Disciplinary_cardsScalarFieldEnum = {
+  id: 'id',
+  fighter_id: 'fighter_id',
+  tournament_id: 'tournament_id',
+  fight_id: 'fight_id',
+  type: 'type',
+  source: 'source',
+  received_at: 'received_at',
+  reason: 'reason',
+  expires_at: 'expires_at',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type Disciplinary_cardsScalarFieldEnum = (typeof Disciplinary_cardsScalarFieldEnum)[keyof typeof Disciplinary_cardsScalarFieldEnum]
 
 
 export const Competition_blocksScalarFieldEnum = {

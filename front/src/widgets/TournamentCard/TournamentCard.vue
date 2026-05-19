@@ -27,6 +27,12 @@ onMounted(async () => {
 const tournamentPlace = computed(() => {
   return props.tournament.city ? `${props.tournament.country}, ${props.tournament.city}` : ''
 })
+
+const isTournamentCompleted = computed(
+  () =>
+    props.tournament.nominations.length > 0 &&
+    props.tournament.nominations.every((nomination) => nomination.is_finished)
+)
 </script>
 
 <template>
@@ -43,6 +49,9 @@ const tournamentPlace = computed(() => {
         <Badge v-for="nom in nominations" :key="nom.id" variant="default">
           {{ nom[`name_${i18next.language as 'ru' | 'en'}`] }}
         </Badge>
+      </div>
+      <div v-if="isTournamentCompleted" class="mt-2 text-center font-bold">
+        {{ $t('tournamentCardCompleted') }}
       </div>
     </CardContent>
   </Card>

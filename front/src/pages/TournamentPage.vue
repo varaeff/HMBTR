@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, computed, reactive } from 'vue'
 import { useTranslation } from 'i18next-vue'
+import { useRoute } from 'vue-router'
 import { Download } from 'lucide-vue-next'
 
 import http from '@/api/http'
@@ -9,6 +10,7 @@ import { useFightersListStore } from '@/stores/fightersList'
 import { useCommonDataStore } from '@/stores/commonData'
 import { useCompetitionStore } from '@/stores/competition'
 import { useApiUiStore } from '@/stores/apiUi'
+import { useDisciplinaryCardsStore } from '@/stores/disciplinaryCards'
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -21,14 +23,15 @@ import { CollapsibleSection } from '@/widgets/CollapsibleSection'
 import { OlympicBracket } from '@/widgets/OlympicBracket'
 import { TieResolver } from '@/widgets/TieResolver'
 import { CompetitionPodium } from '@/widgets/CompetitionPodium'
+import { TournamentCardsTable } from '@/widgets/DisciplinaryCards'
 
 import { useCollapsiblePersist } from '@/composables/useCollapsiblePersist'
 import { tData } from '@/lib/utils'
 import { dateToString } from '@/lib/dateUtils'
-import { hasAccess } from '@/lib/checkAccess'
+import { hasAccess, hasAdminAccess } from '@/lib/checkAccess'
 import { API_ROUTES } from '@shared/routes'
 
-import type { CompetitionBlock, Tournament } from '@/model'
+import type { CompetitionBlock, DisciplinaryCardType, Tournament } from '@/model'
 
 const props = defineProps<{
   id: string
@@ -39,18 +42,30 @@ const FightersListStore = useFightersListStore()
 const commonDataStore = useCommonDataStore()
 const competitionStore = useCompetitionStore()
 const apiUiStore = useApiUiStore()
+const cardsStore = useDisciplinaryCardsStore()
 const { i18next } = useTranslation()
+const route = useRoute()
 
 const tournamentId = computed(() => +props.id)
 const tournament = ref<Tournament | null>(null)
 
 const activeTab = ref<number>(0)
 const canEdit = hasAccess()
+const canDeleteCards = Boolean(hasAdminAccess())
 const isNominationLoading = ref(false)
 const isReportDownloading = ref(false)
+const isCardsOpen = ref(true)
 const blockOpenStates = reactive<Record<string, boolean>>({})
 let nominationLoadRequestId = 0
 const REPORT_DOWNLOAD_TIMEOUT_MS = 120000
+
+const getRouteNominationId = () => {
+  const rawNomination = route.query.nomination
+  const nominationValue = Array.isArray(rawNomination) ? rawNomination[0] : rawNomination
+  const parsed = Number(nominationValue)
+
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : null
+}
 
 const loadNominationData = async (nomId: number) => {
   const requestId = ++nominationLoadRequestId
@@ -120,6 +135,46 @@ const allTournamentNominationsFinished = computed(
 )
 
 const canEditCompetition = computed(() => canEdit && !nominationFinished.value)
+const canManageCards = computed(() => canEdit)
+
+const toDateInputValue = (date: Date) => {
+  const parsed = new Date(date)
+  const year = parsed.getUTCFullYear()
+  const month = String(parsed.getUTCMonth() + 1).padStart(2, '0')
+  const day = String(parsed.getUTCDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
+}
+
+const cardIssueDate = computed(() =>
+  tournament.value?.event_date ? toDateInputValue(tournament.value.event_date) : toDateInputValue(new Date())
+)
+
+const tournamentCardCheckDate = computed(() => {
+  if (tournament.value?.event_date) return tournament.value.event_date
+  return new Date()
+})
+
+const isCardActive = (receivedAt: string, expiresAt: string) => {
+  const checkDate = new Date(tournamentCardCheckDate.value).setHours(0, 0, 0, 0)
+  const received = new Date(receivedAt).setHours(0, 0, 0, 0)
+  const expires = new Date(expiresAt).setHours(0, 0, 0, 0)
+
+  return received <= checkDate && expires >= checkDate
+}
+
+const activeCardTypes = computed<Partial<Record<number, DisciplinaryCardType>>>(() => {
+  const statuses: Partial<Record<number, DisciplinaryCardType>> = {}
+
+  for (const card of cardsStore.tournamentCards) {
+    if (!isCardActive(card.received_at, card.expires_at)) continue
+    if (card.type === 'RED' || statuses[card.fighter_id] !== 'RED') {
+      statuses[card.fighter_id] = card.type
+    }
+  }
+
+  return statuses
+})
 
 const activeGroupBlockComplete = computed(() => {
   if (!activeBlock.value || activeBlock.value.type !== 'GROUP') return false
@@ -249,6 +304,13 @@ const downloadTournamentReport = async (language: 'en' | 'ru') => {
   }
 }
 
+const refreshCardsAndCompetition = async () => {
+  await cardsStore.loadTournamentCards(tournamentId.value)
+  if (activeTab.value) {
+    await competitionStore.loadCompetitionState()
+  }
+}
+
 const blockTitle = (block: CompetitionBlock) => {
   const type =
     block.type === 'GROUP'
@@ -281,7 +343,8 @@ onMounted(async () => {
   const [, fetchedTournament] = await Promise.all([
     commonDataStore.fetchNominations(),
     TournamentsListStore.showTournamentDetails(tournamentId.value),
-    FightersListStore.getFightersList()
+    FightersListStore.getFightersList(),
+    cardsStore.loadTournamentCards(tournamentId.value)
   ])
 
   tournament.value = fetchedTournament
@@ -302,9 +365,28 @@ watch(nominationFinished, (isFinished) => {
 
 watch(tournamentNominations, (noms) => {
   if (noms.all.length && !activeTab.value) {
-    activeTab.value = noms.all[0].id
+    const routeNominationId = getRouteNominationId()
+    activeTab.value =
+      routeNominationId && noms.all.some((nomination) => nomination.id === routeNominationId)
+        ? routeNominationId
+        : noms.all[0].id
   }
 })
+
+watch(
+  () => route.query.nomination,
+  () => {
+    const routeNominationId = getRouteNominationId()
+
+    if (
+      routeNominationId &&
+      routeNominationId !== activeTab.value &&
+      tournamentNominations.value.all.some((nomination) => nomination.id === routeNominationId)
+    ) {
+      activeTab.value = routeNominationId
+    }
+  },
+)
 </script>
 
 <template>
@@ -332,6 +414,19 @@ watch(tournamentNominations, (noms) => {
     <h3 class="mb-4">{{ $t('tournamentPageFightersSelectLabel') }}</h3>
     <FightersSelect :tournamentId="tournament.id" :nominations="tournamentNominations.open" />
   </div>
+
+  <CollapsibleSection
+    v-if="tournament && cardsStore.tournamentCards.length"
+    :title="$t('disciplinaryCardsTitle')"
+    v-model:isOpen="isCardsOpen"
+  >
+    <TournamentCardsTable
+      :cards="cardsStore.tournamentCards"
+      :canManage="canManageCards"
+      :canDelete="canDeleteCards"
+      @changed="refreshCardsAndCompetition"
+    />
+  </CollapsibleSection>
 
   <Tabs v-if="tournament && tournamentNominations.all.length" v-model="activeTab" class="m-4">
     <TabsList
@@ -365,6 +460,7 @@ watch(tournamentNominations, (noms) => {
             :hasAccess="canEditCompetition"
             :isOpen="isCurrentNominationOpen"
             :hasBlocks="blocks.length > 0"
+            :activeCardTypes="activeCardTypes"
             @close="closeRegistration"
           />
         </CollapsibleSection>
@@ -406,6 +502,7 @@ watch(tournamentNominations, (noms) => {
             <template v-if="block.type === 'GROUP'">
               <NominationGroups
                 :groups="block.groups"
+                :activeCardTypes="activeCardTypes"
                 :isFixed="
                   !canEditCompetition || block.status !== 'ACTIVE' || block.fights.length > 0
                 "
@@ -423,6 +520,11 @@ watch(tournamentNominations, (noms) => {
                 :blockId="block.id"
                 :blocksData="block.fightsBlocks"
                 :hasAccess="canEditCompetition && block.status === 'ACTIVE'"
+                :canIssueCards="canManageCards"
+                :tournamentId="tournamentId"
+                :cardDate="cardIssueDate"
+                :activeCardTypes="activeCardTypes"
+                @card-issued="refreshCardsAndCompetition"
               />
             </template>
 
@@ -430,6 +532,11 @@ watch(tournamentNominations, (noms) => {
               v-else
               :block="block"
               :hasAccess="canEditCompetition && block.status === 'ACTIVE'"
+              :canIssueCards="canManageCards"
+              :tournamentId="tournamentId"
+              :cardDate="cardIssueDate"
+              :activeCardTypes="activeCardTypes"
+              @card-issued="refreshCardsAndCompetition"
             />
           </CollapsibleSection>
         </section>

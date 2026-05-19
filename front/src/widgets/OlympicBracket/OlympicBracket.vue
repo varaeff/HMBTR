@@ -9,11 +9,20 @@ import { FightCard } from '@/components/ui/fightCard'
 
 import { tData } from '@/lib/utils'
 
-import type { BracketSlot, CompetitionBlock, FightData } from '@/model'
+import type { BracketSlot, CompetitionBlock, DisciplinaryCardType, FightData } from '@/model'
+import { CardStatusIcon } from '@/widgets/DisciplinaryCards'
 
 const props = defineProps<{
   block: CompetitionBlock
   hasAccess: boolean
+  canIssueCards?: boolean
+  tournamentId?: number
+  cardDate?: string
+  activeCardTypes?: Partial<Record<number, DisciplinaryCardType>>
+}>()
+
+const emit = defineEmits<{
+  (e: 'card-issued'): void
 }>()
 
 const competitionStore = useCompetitionStore()
@@ -151,6 +160,7 @@ const dropOnSlot = (targetPosition: number) => {
           >
             <div class="font-semibold leading-tight">
               {{ tData(slot.fighter.surname) }} {{ tData(slot.fighter.name) }}
+              <CardStatusIcon :type="activeCardTypes?.[slot.fighter.id]" />
             </div>
             <div class="mt-1 text-muted-foreground">
               {{ tData(slot.fighter.city)
@@ -170,7 +180,12 @@ const dropOnSlot = (targetPosition: number) => {
             :key="fight.id"
             :fight="fight"
             :hasAccess="hasAccess && block.status === 'ACTIVE' && !fight.isFinished"
+            :canIssueCards="canIssueCards && !fight.isFinished"
+            :tournamentId="tournamentId"
+            :cardDate="cardDate"
+            :activeCardTypes="activeCardTypes"
             @update:score="(scores) => handleScoreUpdate(fight.id, fight.number, scores)"
+            @card-issued="emit('card-issued')"
           />
         </div>
         <div v-if="hasAccess && hasUnsavedFights(round.fights)" class="flex justify-center pt-2">
@@ -188,7 +203,12 @@ const dropOnSlot = (targetPosition: number) => {
             :key="fight.id"
             :fight="fight"
             :hasAccess="hasAccess && block.status === 'ACTIVE' && !fight.isFinished"
+            :canIssueCards="canIssueCards && !fight.isFinished"
+            :tournamentId="tournamentId"
+            :cardDate="cardDate"
+            :activeCardTypes="activeCardTypes"
             @update:score="(scores) => handleScoreUpdate(fight.id, fight.number, scores)"
+            @card-issued="emit('card-issued')"
           />
         </div>
         <div v-if="hasAccess && hasUnsavedFights(bronzeFights)" class="flex justify-center pt-2">
@@ -206,7 +226,12 @@ const dropOnSlot = (targetPosition: number) => {
             :key="fight.id"
             :fight="fight"
             :hasAccess="hasAccess && block.status === 'ACTIVE' && !fight.isFinished"
+            :canIssueCards="canIssueCards && !fight.isFinished"
+            :tournamentId="tournamentId"
+            :cardDate="cardDate"
+            :activeCardTypes="activeCardTypes"
             @update:score="(scores) => handleScoreUpdate(fight.id, fight.number, scores)"
+            @card-issued="emit('card-issued')"
           />
         </div>
         <div

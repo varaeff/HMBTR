@@ -3,6 +3,7 @@ import { reactive, ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useFightersListStore } from '@/stores/fightersList'
 import { useAuthStore } from '@/stores/auth'
+import { useDisciplinaryCardsStore } from '@/stores/disciplinaryCards'
 import NoPhoto from '@/entities/NoPhoto.jpg'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -11,6 +12,7 @@ import { AlertWidget } from '@/widgets/AlertWidget'
 import { DatePicker } from '@/widgets/DatePicker'
 import { FullNameWidget } from '@/widgets/FullNameWidget'
 import { SelectLocationBlock } from '@/widgets/SelectLocationBlock'
+import { TournamentCardsTable } from '@/widgets/DisciplinaryCards'
 import { toISODate } from '@/lib/dateUtils'
 import { useRequiredFields } from '@/composables/useRequiredFields'
 import { useAddEntityAlert } from '@/composables/useAddEntityAlert'
@@ -18,6 +20,7 @@ import { CalendarDate } from '@internationalized/date'
 import type { Fighter, FighterDB } from '@/model'
 import { tData } from '@/lib/utils'
 import { dateToString } from '@/lib/dateUtils'
+import { hasAccess, hasAdminAccess } from '@/lib/checkAccess'
 
 const props = defineProps<{
   id: string
@@ -27,6 +30,7 @@ const router = useRouter()
 const fighter = ref<Fighter | null | undefined>(null)
 const FightersListStore = useFightersListStore()
 const authStore = useAuthStore()
+const cardsStore = useDisciplinaryCardsStore()
 const fighterId = computed(() => +props.id)
 const isEditing = ref(false)
 const fighterBirthday = ref<CalendarDate | undefined>()
@@ -48,9 +52,15 @@ const editFighter = reactive({
 
 const buttonDisabled = useRequiredFields(editFighter, ['surname', 'name', 'country', 'city'])
 const canEdit = computed(() => authStore.isAdmin)
+const canManageCards = computed(() => hasAccess())
+const canDeleteCards = computed(() => Boolean(hasAdminAccess()))
 
 onMounted(async () => {
-  fighter.value = await FightersListStore.showFighterDetails(fighterId.value)
+  const [fetchedFighter] = await Promise.all([
+    FightersListStore.showFighterDetails(fighterId.value),
+    cardsStore.loadFighterCards(fighterId.value)
+  ])
+  fighter.value = fetchedFighter
 })
 
 const fullName = computed(() => {
@@ -224,5 +234,15 @@ const saveFighter = async () => {
     <Button variant="default" size="default" @click="router.push(`/fighters`)">
       {{ $t('fighterPageBackButton') }}
     </Button>
+  </div>
+  <div v-if="!isEditing && cardsStore.fighterCards.length" class="mx-auto mt-8 max-w-5xl">
+    <h3 class="mb-3">{{ $t('disciplinaryCardsTitle') }}</h3>
+    <TournamentCardsTable
+      :cards="cardsStore.fighterCards"
+      :canManage="canManageCards"
+      :canDelete="canDeleteCards"
+      mode="fighter"
+      @changed="cardsStore.loadFighterCards(fighterId)"
+    />
   </div>
 </template>

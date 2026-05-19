@@ -4,9 +4,14 @@ import { useTranslation } from 'i18next-vue'
 import { useCompetitionStore } from '@/stores/competition'
 import { tData } from '@/lib/utils'
 import { Table, TableHeader, TableBody, TableCell, TableRow } from '@/components/ui/table'
-import type { GroupFighter, Group } from '@/model'
+import { CardStatusIcon } from '@/widgets/DisciplinaryCards'
+import type { DisciplinaryCardType, GroupFighter, Group } from '@/model'
 
-const props = defineProps<{ isFixed: boolean; groups?: Group[] }>()
+const props = defineProps<{
+  isFixed: boolean
+  groups?: Group[]
+  activeCardTypes?: Partial<Record<number, DisciplinaryCardType>>
+}>()
 const competitionStore = useCompetitionStore()
 const { i18next } = useTranslation()
 const languageKey = computed(() => i18next.language)
@@ -124,7 +129,10 @@ const handleDrop = (e: DragEvent, gIdx: number | 'new', fIdx?: number) => {
           >
             <TableCell class="text-muted-foreground">{{ fIdx + 1 }}.</TableCell>
             <TableCell class="font-medium"
-              >{{ tData(fighter.surname) }} {{ tData(fighter.name) }}</TableCell
+              ><span class="inline-flex items-center gap-1">
+                {{ tData(fighter.surname) }} {{ tData(fighter.name) }}
+                <CardStatusIcon :type="activeCardTypes?.[fighter.id]" />
+              </span></TableCell
             >
             <TableCell class="flex text-muted-foreground">
               {{ tData(fighter.city) }}

@@ -5,10 +5,14 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCompetitorDto } from './dto/create-competitor.dto';
+import { DisciplinaryCardsService } from '../disciplinary-cards/disciplinary-cards.service';
 
 @Injectable()
 export class CompetitorsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private disciplinaryCardsService: DisciplinaryCardsService,
+  ) {}
 
   async addCompetitor(dto: CreateCompetitorDto) {
     // Verify that fighter, tournament, and nomination exist
@@ -29,6 +33,16 @@ export class CompetitorsService {
     }
     if (fighter.is_male !== nomination.is_male) {
       throw new BadRequestException('Fighter gender does not match nomination');
+    }
+    if (
+      await this.disciplinaryCardsService.hasActiveRedForTournament(
+        dto.fighter_id,
+        dto.tournament_id,
+      )
+    ) {
+      throw new BadRequestException(
+        'Fighter has an active red card for this tournament',
+      );
     }
 
     // Check if competitor already exists

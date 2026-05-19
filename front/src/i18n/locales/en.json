@@ -71,10 +71,6 @@
   "fighterPageCancelButton": "Cancel",
   "fighterPageEditFormLabel": "Edit fighter data",
 
-  "tournamentsPageNamePage": "Registered tournaments",
-  "tournamentsPagePlaceholder": "Enter name or city",
-  "tournamentsPageAddButton": "Add tournament",
-
   "addTournamentNamePage": "Add new tournament",
   "addTournamentHint": "Fill in all fields and select at least one nomination",
   "addTournamentNameCard": "Input tournament data",
@@ -82,6 +78,12 @@
   "addTournamentDate": "Date",
   "addTournamentNominations": "Select nominations",
   "addTournamentSave": "Save data",
+
+  "tournamentsPageNamePage": "Registered tournaments",
+  "tournamentsPagePlaceholder": "Enter name or city",
+  "tournamentsPageAddButton": "Add tournament",
+
+  "tournamentCardCompleted": "COMPLETED",
 
   "tournamentPageFightersSelectLabel": "Add Fighters",
   "tournamentPageRegisteredFighters": "Registered fighters",
@@ -143,5 +145,27 @@
   "tieResolverUp": "Up",
   "tieResolverDown": "Down",
 
-  "CompetitionPodiumTopThree": "Top three winners"
+  "CompetitionPodiumTopThree": "Top three winners",
+
+  "disciplinaryCardsTitle": "Disciplinary cards",
+  "disciplinaryCardsIssueTitle": "Issue card",
+  "disciplinaryCardsIssueDescription": "Choose the card type and enter the reason for this fight.",
+  "disciplinaryCardsType": "Type",
+  "disciplinaryCardsYellow": "Yellow",
+  "disciplinaryCardsRed": "Red",
+  "disciplinaryCardsDate": "Date",
+  "disciplinaryCardsFighter": "Fighter",
+  "disciplinaryCardsTournament": "Tournament",
+  "disciplinaryCardsFight": "Fight",
+  "disciplinaryCardsOpponent": "Opponent",
+  "disciplinaryCardsReason": "Reason",
+  "disciplinaryCardsExpires": "Expires",
+  "disciplinaryCardsActions": "Actions",
+  "disciplinaryCardsSave": "Save",
+  "disciplinaryCardsCancel": "Cancel",
+  "disciplinaryCardsEdit": "Edit",
+  "disciplinaryCardsDelete": "Delete",
+  "disciplinaryCardsGroup": "group",
+  "disciplinaryCardsActiveYellow": "Active yellow card",
+  "disciplinaryCardsActiveRed": "Active red card"
 }
