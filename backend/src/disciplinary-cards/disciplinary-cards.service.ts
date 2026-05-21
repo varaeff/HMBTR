@@ -38,6 +38,7 @@ export interface DisciplinaryCard {
   opponent_name: string;
   opponent_surname: string;
   opponent_patronymic: string | null;
+  can_delete: boolean;
 }
 
 interface StoredDisciplinaryCard {
@@ -52,12 +53,6 @@ interface StoredDisciplinaryCard {
   expires_at: Date;
   created_at: Date;
   updated_at: Date;
-}
-
-interface ActiveRedCard {
-  id: number;
-  fighter_id: number;
-  received_at: Date;
 }
 
 const CARD_YELLOW: DisciplinaryCardType = 'YELLOW';
@@ -119,46 +114,26 @@ export class DisciplinaryCardsService {
     await this.ensureStorageReady();
 
     const existing = await this.getStoredCard(id);
-    const fighterId = dto.fighter_id ?? existing.fighter_id;
-    const tournamentId = dto.tournament_id ?? existing.tournament_id;
-    const fightId = dto.fight_id ?? existing.fight_id;
-    const type = dto.type ?? existing.type;
-    const receivedAt = dto.received_at
-      ? this.toDateOnly(dto.received_at)
-      : this.toDateOnly(existing.received_at);
     const reason = dto.reason ?? existing.reason;
-
-    await this.validateCardTarget(fighterId, tournamentId, fightId, {
-      requireUnfinishedFight: dto.fight_id !== undefined,
-    });
-    const expiresAt = await this.calculateExpiration(
-      type,
-      fighterId,
-      receivedAt,
-      existing.source,
-    );
+    const expiresAt = dto.expires_at
+      ? this.toDateOnly(dto.expires_at)
+      : this.toDateOnly(existing.expires_at);
 
     await this.prisma.$executeRaw`
       UPDATE "disciplinary_cards"
       SET
-        "fighter_id" = ${fighterId},
-        "tournament_id" = ${tournamentId},
-        "fight_id" = ${fightId},
-        "type" = ${type},
-        "received_at" = ${receivedAt},
         "reason" = ${reason},
         "expires_at" = ${expiresAt},
         "updated_at" = CURRENT_TIMESTAMP
       WHERE "id" = ${id}
     `;
 
-    if (existing.type === CARD_RED && type !== CARD_RED) {
-      await this.resetForfeitsForCard(existing.id);
-      await this.applyRedCardForfeits(existing.tournament_id);
+    if (existing.type === CARD_RED) {
+      await this.competitionService.resetForfeitsForCard(existing.id);
+      await this.competitionService.applyRedCardForfeits(
+        existing.tournament_id,
+      );
     }
-
-    const card = await this.getStoredCard(id);
-    await this.applyConsequences(card);
 
     return this.findOne(id);
   }
@@ -175,8 +150,8 @@ export class DisciplinaryCardsService {
     `;
 
     if (card.type === CARD_RED) {
-      await this.resetForfeitsForCard(card.id);
-      await this.applyRedCardForfeits(card.tournament_id);
+      await this.competitionService.resetForfeitsForCard(card.id);
+      await this.competitionService.applyRedCardForfeits(card.tournament_id);
     }
   }
 
@@ -198,7 +173,9 @@ export class DisciplinaryCardsService {
   }
 
   private async ensureStorageReady() {
-    const rows = await this.prisma.$queryRaw<Array<{ table_name: string | null }>>`
+    const rows = await this.prisma.$queryRaw<
+      Array<{ table_name: string | null }>
+    >`
       SELECT to_regclass('public.disciplinary_cards')::text AS "table_name"
     `;
 
@@ -254,11 +231,17 @@ export class DisciplinaryCardsService {
         card_fighter."patronymic" AS "fighter_patronymic",
         opponent."name" AS "opponent_name",
         opponent."surname" AS "opponent_surname",
-        opponent."patronymic" AS "opponent_patronymic"
+        opponent."patronymic" AS "opponent_patronymic",
+        CASE
+          WHEN cb."status" = 'ACTIVE' AND tn."is_finished" = false THEN true
+          ELSE false
+        END AS "can_delete"
       FROM "disciplinary_cards" dc
       JOIN "fighters" card_fighter ON card_fighter."id" = dc."fighter_id"
       JOIN "tournaments" t ON t."id" = dc."tournament_id"
       JOIN "fights" f ON f."id" = dc."fight_id"
+      LEFT JOIN "competition_blocks" cb ON cb."id" = f."block_id"
+      LEFT JOIN "tournament_nominations" tn ON tn."id" = cb."tournament_nomination_id"
       LEFT JOIN "groups" g ON g."id" = f."group_id"
       JOIN "competitors" own_competitor
         ON own_competitor."fighter_id" = dc."fighter_id"
@@ -397,7 +380,8 @@ export class DisciplinaryCardsService {
       return;
     }
 
-    await this.applyRedCardForfeits(card.tournament_id);
+    await this.removeUnformedOtherNominationCompetitors(card);
+    await this.competitionService.applyRedCardForfeits(card.tournament_id);
   }
 
   private async createAutomaticRedIfNeeded(card: StoredDisciplinaryCard) {
@@ -445,83 +429,56 @@ export class DisciplinaryCardsService {
       expiresAt: this.addDays(card.received_at, 45),
     });
 
-    await this.applyRedCardForfeits(redCard.tournament_id);
+    await this.applyConsequences(redCard);
   }
 
-  private async applyRedCardForfeits(tournamentId: number) {
-    const checkDate = await this.getTournamentCheckDate(tournamentId);
-    const fights = await this.prisma.fights.findMany({
+  private async removeUnformedOtherNominationCompetitors(
+    card: StoredDisciplinaryCard,
+  ) {
+    const sourceFight = await this.prisma.fights.findUnique({
+      where: { id: card.fight_id },
+      select: { nomination_id: true },
+    });
+
+    if (!sourceFight) throw new NotFoundException('Fight not found');
+
+    const competitors = await this.prisma.competitors.findMany({
       where: {
-        tournament_id: tournamentId,
-        is_finished: false,
+        fighter_id: card.fighter_id,
+        tournament_id: card.tournament_id,
+        nomination_id: { not: sourceFight.nomination_id },
       },
-      include: {
-        block: true,
-        competitor1: true,
-        competitor2: true,
+      select: {
+        id: true,
+        nomination_id: true,
       },
     });
 
-    if (!fights.length) return;
+    if (!competitors.length) return;
 
-    const fighterIds = [
-      ...new Set(
-        fights.flatMap((fight) => [
-          fight.competitor1.fighter_id,
-          fight.competitor2.fighter_id,
-        ]),
-      ),
+    const nominationIds = [
+      ...new Set(competitors.map((competitor) => competitor.nomination_id)),
     ];
-    const activeReds = await this.getActiveRedCards(fighterIds, checkDate);
-    const activeRedByFighter = new Map(
-      activeReds.map((card) => [card.fighter_id, card]),
-    );
-    const olympicBlockIds = new Set<number>();
-
-    for (const fight of fights) {
-      const firstRed = activeRedByFighter.get(fight.competitor1.fighter_id);
-      const secondRed = activeRedByFighter.get(fight.competitor2.fighter_id);
-      const losingCompetitorId = this.getRedCardLosingCompetitorId({
-        firstCompetitorId: fight.competitor1_id,
-        secondCompetitorId: fight.competitor2_id,
-        firstRed,
-        secondRed,
-      });
-
-      if (!losingCompetitorId) continue;
-
-      const firstLoses = losingCompetitorId === fight.competitor1_id;
-      await this.prisma.fights.update({
-        where: { id: fight.id },
-        data: {
-          competitor1_score: firstLoses ? 0 : 10,
-          competitor2_score: firstLoses ? 10 : 0,
-          winner_id: firstLoses ? fight.competitor2_id : fight.competitor1_id,
-          is_finished: true,
-          forfeit_card_id: firstLoses ? firstRed?.id : secondRed?.id,
-        },
-      });
-
-      if (fight.block?.type === 'OLYMPIC' && fight.block_id) {
-        olympicBlockIds.add(fight.block_id);
-      }
-    }
-
-    for (const blockId of olympicBlockIds) {
-      await this.competitionService.progressOlympicBlock(blockId);
-    }
-  }
-
-  private async resetForfeitsForCard(cardId: number) {
-    await this.prisma.fights.updateMany({
-      where: { forfeit_card_id: cardId },
-      data: {
-        competitor1_score: 0,
-        competitor2_score: 0,
-        winner_id: null,
-        is_finished: false,
-        forfeit_card_id: null,
+    const formedBlocks = await this.prisma.competition_blocks.findMany({
+      where: {
+        tournament_id: card.tournament_id,
+        nomination_id: { in: nominationIds },
       },
+      select: { nomination_id: true },
+    });
+    const formedNominationIds = new Set(
+      formedBlocks.map((block) => block.nomination_id),
+    );
+    const removableCompetitorIds = competitors
+      .filter(
+        (competitor) => !formedNominationIds.has(competitor.nomination_id),
+      )
+      .map((competitor) => competitor.id);
+
+    if (!removableCompetitorIds.length) return;
+
+    await this.prisma.competitors.deleteMany({
+      where: { id: { in: removableCompetitorIds } },
     });
   }
 
@@ -546,55 +503,6 @@ export class DisciplinaryCardsService {
         'Cannot delete a card after this stage is completed',
       );
     }
-  }
-
-  private getRedCardLosingCompetitorId(params: {
-    firstCompetitorId: number;
-    secondCompetitorId: number;
-    firstRed?: ActiveRedCard;
-    secondRed?: ActiveRedCard;
-  }) {
-    if (params.firstRed && !params.secondRed) return params.firstCompetitorId;
-    if (!params.firstRed && params.secondRed) return params.secondCompetitorId;
-    if (!params.firstRed || !params.secondRed) return null;
-
-    const firstTime = params.firstRed.received_at.getTime();
-    const secondTime = params.secondRed.received_at.getTime();
-
-    if (firstTime !== secondTime) {
-      return firstTime < secondTime
-        ? params.firstCompetitorId
-        : params.secondCompetitorId;
-    }
-
-    return params.firstRed.id <= params.secondRed.id
-      ? params.firstCompetitorId
-      : params.secondCompetitorId;
-  }
-
-  private async getActiveRedCards(fighterIds: number[], checkDate: Date) {
-    const activeCards: ActiveRedCard[] = [];
-
-    for (const fighterId of fighterIds) {
-      const rows = await this.prisma.$queryRaw<ActiveRedCard[]>`
-        SELECT
-          "id",
-          "fighter_id",
-          "received_at"
-        FROM "disciplinary_cards"
-        WHERE "fighter_id" = ${fighterId}
-          AND "type" = 'RED'
-          AND "received_at" <= ${checkDate}
-          AND "expires_at" >= ${checkDate}
-        ORDER BY "received_at" ASC, "id" ASC
-        LIMIT 1
-      `;
-      const card = rows[0];
-
-      if (card) activeCards.push(card);
-    }
-
-    return activeCards;
   }
 
   private async calculateExpiration(

@@ -6,12 +6,18 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { RatingsService } from '../ratings/ratings.service';
 import {
+  findThirdPlaceAdvancementTie,
   findTieForPlaces,
   generateCompetitionGroups,
   generateRoundRobinPairs,
+  getOlympicThirdPlaceShortfall,
+  OLYMPIC_BRACKET_SIZES,
   rankCompetitors,
   seedOlympicSlots,
+  seedOlympicSlotsWithThirdPlacePairing,
+  selectOlympicAdvancers,
 } from './competition.logic';
+import type { RankedCompetitor, RankedGroup } from './competition.logic';
 import { CreateCompetitionBlockDto } from './dto/create-competition-block.dto';
 import { FinishCompetitionDto } from './dto/finish-competition.dto';
 import { GenerateGroupFightsDto } from './dto/generate-group-fights.dto';
@@ -26,6 +32,21 @@ const STATUS_ACTIVE = 'ACTIVE';
 const STATUS_LOCKED = 'LOCKED';
 const SCOPE_GROUP = 'GROUP';
 const SCOPE_FINAL = 'FINAL';
+const SCOPE_OLYMPIC_THIRD = 'OLYMPIC_THIRD';
+
+export type PendingTieScope = typeof SCOPE_GROUP | typeof SCOPE_OLYMPIC_THIRD;
+
+export interface PendingTieResult {
+  blockId: number;
+  groupId: number | null;
+  competitorIds: number[];
+  scope: PendingTieScope;
+}
+
+interface GroupRankings {
+  stats: RankedCompetitor[];
+  manualOrder: number[];
+}
 
 const getGroupLetter = (index: number) => String.fromCharCode(65 + index);
 
@@ -39,6 +60,12 @@ type PrismaTx = Omit<
   | '$extends'
   | 'onModuleInit'
 >;
+
+interface ActiveRedCard {
+  id: number;
+  fighter_id: number;
+  received_at: Date;
+}
 
 @Injectable()
 export class CompetitionService {
@@ -108,12 +135,22 @@ export class CompetitionService {
     const activeBlock = blocks.find((block) => block.status === STATUS_ACTIVE);
     const activeGroupsCount =
       activeBlock?.type === BLOCK_GROUP ? activeBlock.groups.length : 0;
-    const pendingTie = activeBlock
+    let pendingTie = activeBlock
       ? await this.getPendingTie(
           activeBlock.id,
           activeGroupsCount === 1 ? 3 : 2,
         )
       : null;
+    if (
+      !pendingTie &&
+      activeBlock?.type === BLOCK_GROUP &&
+      activeGroupsCount > 1
+    ) {
+      pendingTie = await this.getPendingOlympicThirdPlaceTieTx(
+        this.prisma,
+        activeBlock.id,
+      );
+    }
 
     return {
       tournamentNomination,
@@ -299,6 +336,8 @@ export class CompetitionService {
       );
     });
 
+    await this.applyRedCardForfeits(block.tournament_id);
+
     return this.getState(block.tournament_id, block.nomination_id);
   }
 
@@ -318,14 +357,18 @@ export class CompetitionService {
         tournamentNomination.id,
       );
       const competitors = activeBlock
-        ? await this.getAdvancingCompetitorsTx(tx, activeBlock.id)
+        ? await this.getAdvancingCompetitorsTx(
+            tx,
+            activeBlock.id,
+            Boolean(dto.include_third_places),
+          )
         : await this.getRegisteredCompetitorsTx(
             tx,
             dto.tournament_id,
             dto.nomination_id,
           );
 
-      if (![4, 8, 16].includes(competitors.length)) {
+      if (!OLYMPIC_BRACKET_SIZES.some((size) => size === competitors.length)) {
         throw new BadRequestException(
           'Olympic bracket requires 4, 8 or 16 fighters',
         );
@@ -350,7 +393,9 @@ export class CompetitionService {
         },
       });
 
-      const seeded = seedOlympicSlots(competitors);
+      const seeded = dto.include_third_places
+        ? seedOlympicSlotsWithThirdPlacePairing(competitors)
+        : seedOlympicSlots(competitors);
       await Promise.all(
         seeded.map((competitor, index) =>
           tx.bracket_slots.create({
@@ -544,17 +589,142 @@ export class CompetitionService {
     return this.getState(block.tournament_id, block.nomination_id);
   }
 
+  async applyRedCardForfeits(tournamentId: number) {
+    if (!(await this.disciplinaryCardStorageExists())) return;
+
+    const checkDate = await this.getTournamentCheckDate(tournamentId);
+    const fights = await this.prisma.fights.findMany({
+      where: {
+        tournament_id: tournamentId,
+        is_finished: false,
+      },
+      include: {
+        block: true,
+        competitor1: true,
+        competitor2: true,
+      },
+    });
+
+    if (!fights.length) return;
+
+    const fighterIds = [
+      ...new Set(
+        fights.flatMap((fight) => [
+          fight.competitor1.fighter_id,
+          fight.competitor2.fighter_id,
+        ]),
+      ),
+    ];
+    const activeReds = await this.getActiveRedCards(fighterIds, checkDate);
+    const activeRedByFighter = new Map(
+      activeReds.map((card) => [card.fighter_id, card]),
+    );
+    const olympicBlockIds = new Set<number>();
+
+    for (const fight of fights) {
+      const firstRed = activeRedByFighter.get(fight.competitor1.fighter_id);
+      const secondRed = activeRedByFighter.get(fight.competitor2.fighter_id);
+      const losingCompetitorId = this.getRedCardLosingCompetitorId({
+        firstCompetitorId: fight.competitor1_id,
+        secondCompetitorId: fight.competitor2_id,
+        firstRed,
+        secondRed,
+      });
+
+      if (!losingCompetitorId) continue;
+
+      const firstLoses = losingCompetitorId === fight.competitor1_id;
+      await this.prisma.fights.update({
+        where: { id: fight.id },
+        data: {
+          competitor1_score: firstLoses ? 0 : 10,
+          competitor2_score: firstLoses ? 10 : 0,
+          winner_id: firstLoses ? fight.competitor2_id : fight.competitor1_id,
+          is_finished: true,
+          forfeit_card_id: firstLoses ? firstRed?.id : secondRed?.id,
+        },
+      });
+
+      if (fight.block?.type === BLOCK_OLYMPIC && fight.block_id) {
+        olympicBlockIds.add(fight.block_id);
+      }
+    }
+
+    for (const blockId of olympicBlockIds) {
+      await this.progressOlympicBlock(blockId);
+    }
+  }
+
+  async resetForfeitsForCard(cardId: number) {
+    await this.prisma.fights.updateMany({
+      where: { forfeit_card_id: cardId },
+      data: {
+        competitor1_score: 0,
+        competitor2_score: 0,
+        winner_id: null,
+        is_finished: false,
+        forfeit_card_id: null,
+      },
+    });
+  }
+
   async resolveTies(dto: ResolveTiesDto) {
     const tournamentNomination = await this.getTournamentNomination(
       dto.tournament_id,
       dto.nomination_id,
     );
+    const tieScope = dto.tie_scope ?? SCOPE_GROUP;
+
     await this.prisma.$transaction(async (tx) => {
+      if (tieScope === SCOPE_OLYMPIC_THIRD) {
+        if (!dto.block_id) {
+          throw new BadRequestException('Block is required');
+        }
+
+        const block = await tx.competition_blocks.findUnique({
+          where: { id: dto.block_id },
+        });
+        if (
+          !block ||
+          block.tournament_nomination_id !== tournamentNomination.id ||
+          block.type !== BLOCK_GROUP
+        ) {
+          throw new BadRequestException('Group block is required');
+        }
+
+        await tx.competition_placements.deleteMany({
+          where: {
+            tournament_nomination_id: tournamentNomination.id,
+            scope: SCOPE_OLYMPIC_THIRD,
+            block_id: dto.block_id,
+          },
+        });
+        await Promise.all(
+          dto.ordered_competitor_ids.map((competitorId, index) =>
+            tx.competition_placements.create({
+              data: {
+                tournament_nomination_id: tournamentNomination.id,
+                block_id: dto.block_id,
+                competitor_id: competitorId,
+                scope: SCOPE_OLYMPIC_THIRD,
+                place: index + 1,
+              },
+            }),
+          ),
+        );
+        return;
+      }
+
+      if (!dto.group_id) {
+        throw new BadRequestException('Group is required');
+      }
+      const groupId = dto.group_id;
+
       await tx.competition_placements.deleteMany({
         where: {
           tournament_nomination_id: tournamentNomination.id,
           scope: SCOPE_GROUP,
-          group_id: dto.group_id,
+          group_id: groupId,
         },
       });
       await Promise.all(
@@ -562,7 +732,7 @@ export class CompetitionService {
           tx.competition_placements.create({
             data: {
               tournament_nomination_id: tournamentNomination.id,
-              group_id: dto.group_id,
+              group_id: groupId,
               competitor_id: competitorId,
               scope: SCOPE_GROUP,
               place: index + 1,
@@ -824,7 +994,11 @@ export class CompetitionService {
     }
   }
 
-  private async getAdvancingCompetitorsTx(tx: PrismaTx, blockId: number) {
+  private async getAdvancingCompetitorsTx(
+    tx: PrismaTx,
+    blockId: number,
+    includeThirdPlaces = false,
+  ) {
     const block = await tx.competition_blocks.findUnique({
       where: { id: blockId },
     });
@@ -846,27 +1020,191 @@ export class CompetitionService {
       );
     }
 
-    const advancerIds: number[] = [];
+    const rankedGroups: RankedGroup[] = [];
     for (const group of groups) {
       const rankings = await this.getGroupRankingsTx(tx, blockId, group.id);
       const ranked = rankCompetitors(rankings.stats, rankings.manualOrder);
-      advancerIds.push(
-        ...ranked.slice(0, 2).map((competitor) => competitor.competitorId),
-      );
+      rankedGroups.push({ name: group.name, ranked });
+    }
+    const thirdPlaceManualOrder =
+      await this.getOlympicThirdPlaceManualOrderTx(tx, blockId);
+    if (includeThirdPlaces) {
+      const olympicThirdPlaceTie =
+        await this.getPendingOlympicThirdPlaceTieFromRankedTx(
+          tx,
+          blockId,
+          rankedGroups,
+          thirdPlaceManualOrder,
+        );
+      if (olympicThirdPlaceTie) {
+        throw new BadRequestException(
+          'Resolve ranking ties before creating the next block',
+        );
+      }
     }
 
-    return tx.competitors.findMany({
+    const advancers = selectOlympicAdvancers(
+      rankedGroups,
+      includeThirdPlaces,
+      thirdPlaceManualOrder,
+    );
+    const advancerIds = advancers.map((advancer) => advancer.competitorId);
+    const competitors = await tx.competitors.findMany({
       where: { id: { in: advancerIds } },
       include: { fighter: true },
-      orderBy: { id: 'asc' },
     });
+    const competitorById = new Map(
+      competitors.map((competitor) => [competitor.id, competitor]),
+    );
+
+    return advancers.map((advancer) => {
+      const competitor = competitorById.get(advancer.competitorId);
+      if (!competitor) {
+        throw new BadRequestException('Advancing competitor not found');
+      }
+
+      return {
+        ...competitor,
+        olympicGroupName: advancer.groupName,
+        olympicGroupPlace: advancer.groupPlace,
+      };
+    });
+  }
+
+  private async getOlympicThirdPlaceManualOrderTx(
+    tx: PrismaTx,
+    blockId: number,
+  ) {
+    return (
+      await tx.competition_placements.findMany({
+        where: { scope: SCOPE_OLYMPIC_THIRD, block_id: blockId },
+        orderBy: { place: 'asc' },
+      })
+    ).map((placement) => placement.competitor_id);
+  }
+
+  private async getPendingOlympicThirdPlaceTieTx(
+    tx: PrismaTx,
+    blockId: number,
+  ): Promise<PendingTieResult | null> {
+    const block = await tx.competition_blocks.findUnique({
+      where: { id: blockId },
+    });
+    if (!block || block.type !== BLOCK_GROUP) return null;
+
+    const groups = await tx.groups.findMany({
+      where: { block_id: blockId },
+      orderBy: { name: 'asc' },
+    });
+    const rankedGroups: RankedGroup[] = [];
+    const groupRankings = new Map<string, GroupRankings>();
+
+    for (const group of groups) {
+      try {
+        const rankings = await this.getGroupRankingsTx(tx, blockId, group.id);
+        const ranked = rankCompetitors(rankings.stats, rankings.manualOrder);
+        rankedGroups.push({ name: group.name, ranked });
+        groupRankings.set(group.name, rankings);
+      } catch {
+        return null;
+      }
+    }
+
+    const thirdPlaceManualOrder =
+      await this.getOlympicThirdPlaceManualOrderTx(tx, blockId);
+
+    return this.getPendingOlympicThirdPlaceTieFromRankedTx(
+      tx,
+      blockId,
+      rankedGroups,
+      thirdPlaceManualOrder,
+      groupRankings,
+    );
+  }
+
+  private async getPendingOlympicThirdPlaceTieFromRankedTx(
+    tx: PrismaTx,
+    blockId: number,
+    rankedGroups: RankedGroup[],
+    thirdPlaceManualOrder: number[],
+    cachedGroupRankings = new Map<string, GroupRankings>(),
+  ): Promise<PendingTieResult | null> {
+    const shortfall = getOlympicThirdPlaceShortfall(rankedGroups);
+    if (shortfall <= 0) return null;
+
+    const thirdPlaceCount = rankedGroups.filter(
+      (group) => group.ranked.length >= 3,
+    ).length;
+    if (thirdPlaceCount < shortfall) return null;
+
+    const selectedThirdPlaces = selectOlympicAdvancers(
+      rankedGroups,
+      true,
+      thirdPlaceManualOrder,
+    ).filter((advancer) => advancer.groupPlace === 3);
+    const unresolvedThirdPlaceTie = findThirdPlaceAdvancementTie(
+      rankedGroups,
+      thirdPlaceManualOrder,
+    );
+    const thirdPlaceGroupNamesToCheck = new Set(
+      selectedThirdPlaces.map((thirdPlace) => thirdPlace.groupName),
+    );
+    for (const rankedGroup of rankedGroups) {
+      const thirdPlace = rankedGroup.ranked[2];
+      if (
+        thirdPlace &&
+        unresolvedThirdPlaceTie.includes(thirdPlace.competitorId)
+      ) {
+        thirdPlaceGroupNamesToCheck.add(rankedGroup.name);
+      }
+    }
+
+    const groups = await tx.groups.findMany({
+      where: { block_id: blockId },
+      orderBy: { name: 'asc' },
+    });
+    const groupByName = new Map(groups.map((group) => [group.name, group]));
+
+    for (const groupName of thirdPlaceGroupNamesToCheck) {
+      const group = groupByName.get(groupName);
+      if (!group) continue;
+
+      const cachedRankings = cachedGroupRankings.get(group.name);
+      const rankings =
+        cachedRankings ??
+        (await this.getGroupRankingsTx(tx, blockId, group.id));
+      const ranked = rankCompetitors(rankings.stats, rankings.manualOrder);
+      const unresolved = findTieForPlaces(ranked, 3).filter(
+        (competitorId) => !rankings.manualOrder.includes(competitorId),
+      );
+
+      if (unresolved.length) {
+        return {
+          blockId,
+          groupId: group.id,
+          competitorIds: unresolved,
+          scope: SCOPE_GROUP,
+        };
+      }
+    }
+
+    if (unresolvedThirdPlaceTie.length) {
+      return {
+        blockId,
+        groupId: null,
+        competitorIds: unresolvedThirdPlaceTie,
+        scope: SCOPE_OLYMPIC_THIRD,
+      };
+    }
+
+    return null;
   }
 
   private async getGroupRankingsTx(
     tx: PrismaTx,
     blockId: number,
     groupId: number,
-  ) {
+  ): Promise<GroupRankings> {
     const groupCompetitors = await tx.group_competitors.findMany({
       where: { group_id: groupId },
       orderBy: { competitor_id: 'asc' },
@@ -908,11 +1246,102 @@ export class CompetitionService {
     return { stats, manualOrder };
   }
 
-  private async getPendingTie(blockId: number, places: number) {
+  private async disciplinaryCardStorageExists() {
+    const rows = await this.prisma.$queryRaw<
+      Array<{ table_name: string | null }>
+    >`
+      SELECT to_regclass('public.disciplinary_cards')::text AS "table_name"
+    `;
+
+    return Boolean(rows[0]?.table_name);
+  }
+
+  private async getActiveRedCards(fighterIds: number[], checkDate: Date) {
+    const activeCards: ActiveRedCard[] = [];
+
+    for (const fighterId of fighterIds) {
+      const rows = await this.prisma.$queryRaw<ActiveRedCard[]>`
+        SELECT
+          "id",
+          "fighter_id",
+          "received_at"
+        FROM "disciplinary_cards"
+        WHERE "fighter_id" = ${fighterId}
+          AND "type" = 'RED'
+          AND "received_at" <= ${checkDate}
+          AND "expires_at" >= ${checkDate}
+        ORDER BY "received_at" ASC, "id" ASC
+        LIMIT 1
+      `;
+      const card = rows[0];
+
+      if (card) activeCards.push(card);
+    }
+
+    return activeCards;
+  }
+
+  private getRedCardLosingCompetitorId(params: {
+    firstCompetitorId: number;
+    secondCompetitorId: number;
+    firstRed?: ActiveRedCard;
+    secondRed?: ActiveRedCard;
+  }) {
+    if (params.firstRed && !params.secondRed) return params.firstCompetitorId;
+    if (!params.firstRed && params.secondRed) return params.secondCompetitorId;
+    if (!params.firstRed || !params.secondRed) return null;
+
+    const firstTime = params.firstRed.received_at.getTime();
+    const secondTime = params.secondRed.received_at.getTime();
+
+    if (firstTime !== secondTime) {
+      return firstTime < secondTime
+        ? params.firstCompetitorId
+        : params.secondCompetitorId;
+    }
+
+    return params.firstRed.id <= params.secondRed.id
+      ? params.firstCompetitorId
+      : params.secondCompetitorId;
+  }
+
+  private async getTournamentCheckDate(tournamentId: number) {
+    const tournament = await this.prisma.tournaments.findUnique({
+      where: { id: tournamentId },
+      select: { event_date: true },
+    });
+
+    if (!tournament) throw new NotFoundException('Tournament not found');
+
+    return tournament.event_date
+      ? this.toDateOnly(tournament.event_date)
+      : this.toDateOnly(new Date());
+  }
+
+  private toDateOnly(value: string | Date) {
+    const date = value instanceof Date ? value : new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      throw new BadRequestException('Invalid date');
+    }
+
+    return new Date(
+      Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()),
+    );
+  }
+
+  private async getPendingTie(
+    blockId: number,
+    places: number,
+  ): Promise<PendingTieResult | null> {
     return this.getPendingTieTx(this.prisma, blockId, places);
   }
 
-  private async getPendingTieTx(tx: PrismaTx, blockId: number, places: number) {
+  private async getPendingTieTx(
+    tx: PrismaTx,
+    blockId: number,
+    places: number,
+  ): Promise<PendingTieResult | null> {
     const block = await tx.competition_blocks.findUnique({
       where: { id: blockId },
     });
@@ -937,6 +1366,7 @@ export class CompetitionService {
             blockId,
             groupId: group.id,
             competitorIds: unresolved,
+            scope: SCOPE_GROUP,
           };
         }
       } catch {

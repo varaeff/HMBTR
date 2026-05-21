@@ -6,7 +6,7 @@ import { useDisciplinaryCardsStore } from '@/stores/disciplinaryCards'
 import { Button } from '@/components/ui/button'
 import { Table, TableHeader, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import { tData } from '@/lib/utils'
-import type { DisciplinaryCard, DisciplinaryCardType } from '@/model'
+import type { DisciplinaryCard } from '@/model'
 
 const props = defineProps<{
   cards: DisciplinaryCard[]
@@ -20,18 +20,16 @@ const emit = defineEmits<{
 }>()
 
 interface CardDraft {
-  type: DisciplinaryCardType
-  received_at: string
   reason: string
+  expires_at: string
 }
 
 const cardsStore = useDisciplinaryCardsStore()
 const { i18next } = useTranslation()
 const editingId = ref<number | null>(null)
 const draft = reactive<CardDraft>({
-  type: 'YELLOW',
-  received_at: '',
-  reason: ''
+  reason: '',
+  expires_at: ''
 })
 const currentLanguage = computed(() => i18next.language)
 
@@ -68,12 +66,16 @@ const fighterName = (card: DisciplinaryCard) =>
     .join(' ')
 
 const isFighterMode = computed(() => props.mode === 'fighter')
+const canShowActions = computed(
+  () => props.canManage || (props.canDelete && props.cards.some((card) => card.can_delete))
+)
+
+const canDeleteCard = (card: DisciplinaryCard) => props.canDelete && card.can_delete
 
 const startEdit = (card: DisciplinaryCard) => {
   editingId.value = card.id
-  draft.type = card.type
-  draft.received_at = dateInputValue(card.received_at)
   draft.reason = card.reason
+  draft.expires_at = dateInputValue(card.expires_at)
 }
 
 const cancelEdit = () => {
@@ -82,9 +84,8 @@ const cancelEdit = () => {
 
 const saveEdit = async (card: DisciplinaryCard) => {
   await cardsStore.updateCard(card.id, {
-    type: draft.type,
-    received_at: draft.received_at,
-    reason: draft.reason
+    reason: draft.reason,
+    expires_at: draft.expires_at
   })
   editingId.value = null
   emit('changed')
@@ -114,7 +115,7 @@ const deleteCard = async (card: DisciplinaryCard) => {
         }}</TableCell>
         <TableCell class="font-bold">{{ $t('disciplinaryCardsReason') }}</TableCell>
         <TableCell class="font-bold">{{ $t('disciplinaryCardsExpires') }}</TableCell>
-        <TableCell v-if="canManage || canDelete" class="font-bold text-right">{{
+        <TableCell v-if="canShowActions" class="font-bold text-right">{{
           $t('disciplinaryCardsActions')
         }}</TableCell>
       </TableRow>
@@ -123,7 +124,7 @@ const deleteCard = async (card: DisciplinaryCard) => {
       <TableRow v-for="card in sortedCards" :key="card.id">
         <template v-if="editingId === card.id">
           <TableCell>
-            <select v-model="draft.type" class="h-8 rounded border bg-background px-2">
+            <select :value="card.type" disabled class="h-8 rounded border bg-muted px-2">
               <option value="YELLOW">{{ $t('disciplinaryCardsYellow') }}</option>
               <option value="RED">{{ $t('disciplinaryCardsRed') }}</option>
             </select>
@@ -143,9 +144,10 @@ const deleteCard = async (card: DisciplinaryCard) => {
           <TableCell v-else>{{ fighterName(card) }}</TableCell>
           <TableCell>
             <input
-              v-model="draft.received_at"
+              :value="dateInputValue(card.received_at)"
               type="date"
-              class="h-8 rounded border bg-background px-2"
+              disabled
+              class="h-8 rounded border bg-muted px-2"
             />
           </TableCell>
           <TableCell v-if="!isFighterMode">{{ fightLabel(card) }}</TableCell>
@@ -153,7 +155,13 @@ const deleteCard = async (card: DisciplinaryCard) => {
           <TableCell>
             <input v-model="draft.reason" class="h-8 w-full rounded border bg-background px-2" />
           </TableCell>
-          <TableCell>{{ formatDate(card.expires_at) }}</TableCell>
+          <TableCell>
+            <input
+              v-model="draft.expires_at"
+              type="date"
+              class="h-8 rounded border bg-background px-2"
+            />
+          </TableCell>
           <TableCell class="text-right">
             <div class="flex justify-end gap-2">
               <Button size="sm" @click="saveEdit(card)">{{ $t('disciplinaryCardsSave') }}</Button>
@@ -192,12 +200,17 @@ const deleteCard = async (card: DisciplinaryCard) => {
           <TableCell v-if="!isFighterMode">{{ opponentName(card) }}</TableCell>
           <TableCell>{{ card.reason }}</TableCell>
           <TableCell>{{ formatDate(card.expires_at) }}</TableCell>
-          <TableCell v-if="canManage || canDelete" class="text-right">
+          <TableCell v-if="canShowActions" class="text-right">
             <div class="flex justify-end gap-2">
               <Button v-if="canManage" size="sm" variant="outline" @click="startEdit(card)">
                 {{ $t('disciplinaryCardsEdit') }}
               </Button>
-              <Button v-if="canDelete" size="sm" variant="destructive" @click="deleteCard(card)">
+              <Button
+                v-if="canDeleteCard(card)"
+                size="sm"
+                variant="destructive"
+                @click="deleteCard(card)"
+              >
                 {{ $t('disciplinaryCardsDelete') }}
               </Button>
             </div>

@@ -26,6 +26,10 @@ const createI18n = async () => {
           disciplinaryCardsActions: 'Actions',
           disciplinaryCardsYellow: 'Yellow',
           disciplinaryCardsRed: 'Red',
+          disciplinaryCardsSave: 'Save',
+          disciplinaryCardsCancel: 'Cancel',
+          disciplinaryCardsEdit: 'Edit',
+          disciplinaryCardsDelete: 'Delete',
           disciplinaryCardsGroup: 'group',
           tournamentPageBronzeFight: 'bronze fight',
           tournamentPageRound: 'round'
@@ -43,6 +47,10 @@ const createI18n = async () => {
           disciplinaryCardsActions: 'Actions',
           disciplinaryCardsYellow: 'Yellow',
           disciplinaryCardsRed: 'Red',
+          disciplinaryCardsSave: 'Save',
+          disciplinaryCardsCancel: 'Cancel',
+          disciplinaryCardsEdit: 'Edit',
+          disciplinaryCardsDelete: 'Delete',
           disciplinaryCardsGroup: 'group',
           tournamentPageBronzeFight: 'bronze fight',
           tournamentPageRound: 'round'
@@ -80,7 +88,8 @@ const card: DisciplinaryCard = {
   fighter_patronymic: null,
   opponent_name: '\u041f\u0435\u0442\u0440',
   opponent_surname: '\u041f\u0435\u0442\u0440\u043e\u0432',
-  opponent_patronymic: null
+  opponent_patronymic: null,
+  can_delete: true
 }
 
 describe('TournamentCardsTable', () => {
@@ -98,7 +107,7 @@ describe('TournamentCardsTable', () => {
       global: {
         plugins: [[I18NextVue, { i18next: instance }], pinia],
         stubs: {
-          Button: { template: '<button><slot /></button>' }
+          Button: { template: '<button v-bind="$attrs"><slot /></button>' }
         }
       }
     })
@@ -122,6 +131,66 @@ describe('TournamentCardsTable', () => {
     expect(wrapper.text()).not.toContain(
       '\u041f\u0435\u0442\u0440\u043e\u0432 \u041f\u0435\u0442\u0440'
     )
+
+    wrapper.unmount()
+  })
+
+  it('hides delete for cards that the backend marks as not deletable', async () => {
+    const pinia = createPinia()
+    setActivePinia(pinia)
+    const instance = await createI18n()
+
+    const wrapper = mount(TournamentCardsTable, {
+      props: {
+        cards: [{ ...card, can_delete: false }],
+        canManage: false,
+        canDelete: true
+      },
+      global: {
+        plugins: [[I18NextVue, { i18next: instance }], pinia],
+        stubs: {
+          Button: { template: '<button v-bind="$attrs"><slot /></button>' }
+        }
+      }
+    })
+
+    expect(wrapper.text()).not.toContain('Delete')
+    expect(wrapper.text()).not.toContain('Actions')
+
+    wrapper.unmount()
+  })
+
+  it('edits expiration while keeping card type and issue date disabled', async () => {
+    const pinia = createPinia()
+    setActivePinia(pinia)
+    const instance = await createI18n()
+
+    const wrapper = mount(TournamentCardsTable, {
+      props: {
+        cards: [card],
+        canManage: true,
+        canDelete: false
+      },
+      global: {
+        plugins: [[I18NextVue, { i18next: instance }], pinia],
+        stubs: {
+          Button: { template: '<button v-bind="$attrs"><slot /></button>' }
+        }
+      }
+    })
+
+    await wrapper.find('button').trigger('click')
+
+    const typeSelect = wrapper.find('select')
+    const dateInputs = wrapper.findAll('input[type="date"]')
+    const receivedAtInput = dateInputs[0].element as HTMLInputElement
+    const expiresAtInput = dateInputs[1].element as HTMLInputElement
+
+    expect(typeSelect.attributes('disabled')).toBeDefined()
+    expect(dateInputs[0].attributes('disabled')).toBeDefined()
+    expect(receivedAtInput.value).toBe('2026-05-19')
+    expect(dateInputs[1].attributes('disabled')).toBeUndefined()
+    expect(expiresAtInput.value).toBe('2026-06-19')
 
     wrapper.unmount()
   })

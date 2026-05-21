@@ -1,4 +1,4 @@
-import { IsNumber } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional } from 'class-validator';
 
 export class CreateCompetitionBlockDto {
   @IsNumber()
@@ -6,4 +6,8 @@ export class CreateCompetitionBlockDto {
 
   @IsNumber()
   nomination_id: number;
+
+  @IsOptional()
+  @IsBoolean()
+  include_third_places?: boolean;
 }

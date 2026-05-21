@@ -11,6 +11,7 @@ const props = defineProps<{
   isFixed: boolean
   groups?: Group[]
   activeCardTypes?: Partial<Record<number, DisciplinaryCardType>>
+  highlightedAdvancerCompetitorIds?: Set<number>
 }>()
 const competitionStore = useCompetitionStore()
 const { i18next } = useTranslation()
@@ -80,6 +81,15 @@ const handleDrop = (e: DragEvent, gIdx: number | 'new', fIdx?: number) => {
   e.preventDefault()
   moveFighter(gIdx, fIdx)
 }
+
+const isHighlightedAdvancer = (fighter: GroupFighter, fighterIndex: number) => {
+  if (!props.isFixed) return false
+  if (fighterIndex < 2 && fighter.wins > 0) return true
+
+  return Boolean(
+    fighter.competitorId && props.highlightedAdvancerCompetitorIds?.has(fighter.competitorId)
+  )
+}
 </script>
 
 <template>
@@ -123,7 +133,7 @@ const handleDrop = (e: DragEvent, gIdx: number | 'new', fIdx?: number) => {
               {
                 'opacity-30 grayscale': activeDrag?.fighter.id === fighter.id,
                 'bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:hover:bg-green-800/30':
-                  props.isFixed && fIdx < 2 && fighter.wins > 0
+                  isHighlightedAdvancer(fighter, fIdx)
               }
             ]"
           >
@@ -131,9 +141,8 @@ const handleDrop = (e: DragEvent, gIdx: number | 'new', fIdx?: number) => {
             <TableCell class="font-medium"
               ><span class="inline-flex items-center gap-1">
                 {{ tData(fighter.surname) }} {{ tData(fighter.name) }}
-                <CardStatusIcon :type="activeCardTypes?.[fighter.id]" />
-              </span></TableCell
-            >
+                <CardStatusIcon :type="activeCardTypes?.[fighter.id]" /> </span
+            ></TableCell>
             <TableCell class="flex text-muted-foreground">
               {{ tData(fighter.city) }}
               <p v-if="fighter.club">, {{ tData(fighter.club) }}</p>

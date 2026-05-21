@@ -9,15 +9,18 @@ const pendingTie = computed(() => competitionStore.getPendingTie)
 const tiedFighters = computed(() => {
   const ids = new Set(pendingTie.value?.competitorIds ?? [])
   const groupId = pendingTie.value?.groupId
-  const group = competitionStore.getBlocks
+  const blockId = pendingTie.value?.blockId
+  const groups = competitionStore.getBlocks
+    .filter((block) => blockId === undefined || block.id === blockId)
     .flatMap((block) => block.groups)
-    .find((group) => group.id === groupId)
+  const group = groupId === null ? null : groups.find((group) => group.id === groupId)
 
-  if (!group) return []
+  if (groupId !== null && !group) return []
 
   const seen = new Set<number>()
+  const fighters = group ? group.fighters : groups.flatMap((group) => group.fighters)
 
-  return group.fighters.filter((fighter) => {
+  return fighters.filter((fighter) => {
     if (!fighter.competitorId || !ids.has(fighter.competitorId) || seen.has(fighter.competitorId)) {
       return false
     }
@@ -49,7 +52,7 @@ const fighterByCompetitorId = (competitorId: number) =>
 
 const save = () => {
   if (!pendingTie.value) return
-  competitionStore.resolveTie(pendingTie.value.groupId, order.value)
+  competitionStore.resolveTie(pendingTie.value, order.value)
 }
 </script>
 

@@ -58,6 +58,7 @@ const isCardsOpen = ref(true)
 const blockOpenStates = reactive<Record<string, boolean>>({})
 let nominationLoadRequestId = 0
 const REPORT_DOWNLOAD_TIMEOUT_MS = 120000
+const OLYMPIC_BRACKET_SIZES = [4, 8, 16] as const
 
 const getRouteNominationId = () => {
   const rawNomination = route.query.nomination
@@ -125,6 +126,18 @@ const nominationCompetitors = computed(() => competitionStore.getNominationFight
 const blocks = computed(() => competitionStore.getBlocks)
 const activeBlock = computed(() => competitionStore.getActiveBlock)
 const placements = computed(() => competitionStore.getPlacements)
+const pendingTie = computed(() => competitionStore.getPendingTie)
+const hasBlockingGroupAdvancementTie = computed(
+  () => Boolean(pendingTie.value) && pendingTie.value?.scope !== 'OLYMPIC_THIRD'
+)
+const olympicCompetitorIds = computed(
+  () =>
+    new Set(
+      blocks.value
+        .filter((block) => block.type === 'OLYMPIC')
+        .flatMap((block) => block.bracketSlots.map((slot) => slot.competitorId))
+    )
+)
 const nominationFinished = computed(
   () => competitionStore.getIsFinished || Boolean(currentTournamentNomination.value?.is_finished)
 )
@@ -147,7 +160,9 @@ const toDateInputValue = (date: Date) => {
 }
 
 const cardIssueDate = computed(() =>
-  tournament.value?.event_date ? toDateInputValue(tournament.value.event_date) : toDateInputValue(new Date())
+  tournament.value?.event_date
+    ? toDateInputValue(tournament.value.event_date)
+    : toDateInputValue(new Date())
 )
 
 const tournamentCardCheckDate = computed(() => {
@@ -199,7 +214,7 @@ const canGenerateGroupFights = computed(() => {
 
 const activeAdvancerCount = computed(() => {
   if (!activeBlock.value || activeBlock.value.type !== 'GROUP') return 0
-  if (!activeGroupBlockComplete.value || competitionStore.getPendingTie) return 0
+  if (!activeGroupBlockComplete.value || hasBlockingGroupAdvancementTie.value) return 0
   return activeBlock.value.groups.length === 1
     ? activeBlock.value.groups[0].fighters.length
     : activeBlock.value.groups.length * 2
@@ -207,6 +222,36 @@ const activeAdvancerCount = computed(() => {
 
 const canOfferOlympic = computed(() =>
   [4, 8, 16].includes(activeAdvancerCount.value || nominationCompetitors.value.length)
+)
+
+const nextOlympicBracketSize = computed(() => {
+  const competitorCount = activeAdvancerCount.value
+  if (!competitorCount) return null
+
+  return OLYMPIC_BRACKET_SIZES.find((size) => size >= competitorCount) ?? null
+})
+
+const olympicBracketShortfall = computed(() => {
+  const targetSize = nextOlympicBracketSize.value
+  if (!targetSize || targetSize === activeAdvancerCount.value) return 0
+
+  return targetSize - activeAdvancerCount.value
+})
+
+const activeThirdPlaceCount = computed(() => {
+  if (!activeBlock.value || activeBlock.value.type !== 'GROUP') return 0
+  if (!activeGroupBlockComplete.value || hasBlockingGroupAdvancementTie.value) return 0
+  if (activeBlock.value.groups.length < 2) return 0
+
+  return activeBlock.value.groups.filter((group) => group.fighters.length >= 3).length
+})
+
+const canOfferOlympicWithThirdPlaces = computed(
+  () =>
+    !canOfferOlympic.value &&
+    pendingTie.value?.scope !== 'OLYMPIC_THIRD' &&
+    olympicBracketShortfall.value > 0 &&
+    activeThirdPlaceCount.value >= olympicBracketShortfall.value
 )
 
 const closeRegistration = async () => {
@@ -222,8 +267,8 @@ const createGroupBlock = () => {
   competitionStore.createGroupBlock()
 }
 
-const createOlympicBlock = () => {
-  competitionStore.createOlympicBlock()
+const createOlympicBlock = (includeThirdPlaces = false) => {
+  competitionStore.createOlympicBlock(includeThirdPlaces)
 }
 
 const generateGroupFights = (blockId: number) => {
@@ -251,14 +296,29 @@ const getFileNameFromContentDisposition = (contentDisposition?: string) => {
   return plainMatch?.[1] ?? `${tournamentName.value || 'tournament'}-results.pdf`
 }
 
+interface ApiErrorWithResponse {
+  response?: {
+    data?: unknown
+  }
+  message?: string
+}
+
+interface ReportErrorData {
+  details?: string[] | string
+  error?: string
+}
+
+const isReportErrorData = (value: unknown): value is ReportErrorData =>
+  typeof value === 'object' && value !== null
+
 const getReportErrorMessage = async (error: unknown) => {
-  const responseData = (error as any)?.response?.data
+  const responseData = (error as ApiErrorWithResponse).response?.data
 
   if (responseData instanceof Blob) {
     const text = await responseData.text()
 
     try {
-      const parsed = JSON.parse(text)
+      const parsed = JSON.parse(text) as ReportErrorData
       const details = Array.isArray(parsed.details) ? parsed.details.join(', ') : parsed.details
 
       return details || parsed.error || text || 'Failed to download tournament report'
@@ -267,12 +327,15 @@ const getReportErrorMessage = async (error: unknown) => {
     }
   }
 
-  return (
-    responseData?.details ||
-    responseData?.error ||
-    (error as Error)?.message ||
-    'Failed to download tournament report'
-  )
+  if (isReportErrorData(responseData)) {
+    const details = Array.isArray(responseData.details)
+      ? responseData.details.join(', ')
+      : responseData.details
+
+    return details || responseData.error || 'Failed to download tournament report'
+  }
+
+  return (error as ApiErrorWithResponse).message || 'Failed to download tournament report'
 }
 
 const downloadTournamentReport = async (language: 'en' | 'ru') => {
@@ -306,6 +369,7 @@ const downloadTournamentReport = async (language: 'en' | 'ru') => {
 
 const refreshCardsAndCompetition = async () => {
   await cardsStore.loadTournamentCards(tournamentId.value)
+  await competitionStore.setCompetitors()
   if (activeTab.value) {
     await competitionStore.loadCompetitionState()
   }
@@ -385,7 +449,7 @@ watch(
     ) {
       activeTab.value = routeNominationId
     }
-  },
+  }
 )
 </script>
 
@@ -475,7 +539,7 @@ watch(
           "
         >
           <Button @click="createGroupBlock">{{ $t('tournamentPageCreateGroups') }}</Button>
-          <Button v-if="canOfferOlympic" @click="createOlympicBlock">{{
+          <Button v-if="canOfferOlympic" @click="() => createOlympicBlock()">{{
             $t('tournamentPageOlympicBracket')
           }}</Button>
         </div>
@@ -503,6 +567,7 @@ watch(
               <NominationGroups
                 :groups="block.groups"
                 :activeCardTypes="activeCardTypes"
+                :highlightedAdvancerCompetitorIds="olympicCompetitorIds"
                 :isFixed="
                   !canEditCompetition || block.status !== 'ACTIVE' || block.fights.length > 0
                 "
@@ -549,7 +614,7 @@ watch(
             canEditCompetition &&
             activeBlock?.type === 'GROUP' &&
             activeGroupBlockComplete &&
-            !competitionStore.getPendingTie &&
+            !hasBlockingGroupAdvancementTie &&
             !nominationFinished
           "
         >
@@ -558,9 +623,12 @@ watch(
           >
           <template v-else>
             <Button @click="createGroupBlock">{{ $t('tournamentPageNextSubgroups') }}</Button>
-            <Button v-if="canOfferOlympic" @click="createOlympicBlock">{{
+            <Button v-if="canOfferOlympic" @click="() => createOlympicBlock()">{{
               $t('tournamentPageOlympicBracket')
             }}</Button>
+            <Button v-if="canOfferOlympicWithThirdPlaces" @click="() => createOlympicBlock(true)">
+              {{ $t('tournamentPageOlympicBracketWithThirdPlaces') }}
+            </Button>
           </template>
         </div>
       </template>

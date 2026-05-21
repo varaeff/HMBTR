@@ -45,6 +45,87 @@ interface FightResultDraft {
   competitor2Score: number
 }
 
+interface RawFighter {
+  id?: number
+  name?: string
+  surname?: string
+  patronymic?: string | null
+  birthday?: string | Date | null
+  city_id?: number | null
+  club_id?: number | null
+  pic?: string
+}
+
+interface RawCompetitor {
+  id: number
+  fighter_id: number
+  fighter?: RawFighter | null
+}
+
+interface RawFight {
+  id: number
+  fight_number: number
+  group_id?: number
+  competitor1: RawCompetitor
+  competitor2: RawCompetitor
+  competitor1_id?: number
+  competitor2_id?: number
+  competitor1_score: number
+  competitor2_score: number
+  bracket_round?: number
+  bracket_position?: number
+  is_bronze?: boolean
+  is_finished?: boolean
+}
+
+interface RawGroupPlacement {
+  place: number
+  competitor_id: number
+}
+
+interface RawGroupCompetitor {
+  competitor: RawCompetitor
+}
+
+interface RawGroup {
+  id?: number
+  name: string
+  fighters?: RawGroupCompetitor[]
+  placements?: RawGroupPlacement[]
+}
+
+interface RawBracketSlot {
+  id: number
+  competitor_id: number
+  seed_position: number
+  slot_position: number
+  competitor: RawCompetitor
+}
+
+interface RawCompetitionBlock {
+  id: number
+  type: CompetitionBlock['type']
+  stage: number
+  status: CompetitionBlock['status']
+  groups?: RawGroup[]
+  fights?: RawFight[]
+  bracket_slots?: RawBracketSlot[]
+}
+
+interface RawCompetitionPlacement {
+  place: number
+  competitor_id: number
+  competitor: RawCompetitor
+}
+
+interface RawCompetitionState {
+  blocks?: RawCompetitionBlock[]
+  placements?: RawCompetitionPlacement[]
+  activeBlockId?: number | null
+  pendingTie?: PendingTie | null
+  isFinished?: boolean
+}
+
 const getFightResultDraftsKey = (tournamentId: number, nominationId: number) =>
   `HMBTR-competition-result-drafts-${tournamentId}-${nominationId}`
 
@@ -77,11 +158,11 @@ const writeFightResultDrafts = (
   localStorage.setItem(key, JSON.stringify(drafts))
 }
 
-const createFallbackFighter = (rawFighter: any): Fighter => ({
+const createFallbackFighter = (rawFighter?: RawFighter | null): Fighter => ({
   id: rawFighter?.id ?? 0,
   name: rawFighter?.name ?? '',
   surname: rawFighter?.surname ?? '',
-  patronymic: rawFighter?.patronymic,
+  patronymic: rawFighter?.patronymic ?? undefined,
   birthday: rawFighter?.birthday ? new Date(rawFighter.birthday) : null,
   country: '',
   city: rawFighter?.city_id ? String(rawFighter.city_id) : '',
@@ -89,7 +170,7 @@ const createFallbackFighter = (rawFighter: any): Fighter => ({
   pic: rawFighter?.pic
 })
 
-const groupFighterFromCompetitor = (competitor: any): GroupFighter => {
+const groupFighterFromCompetitor = (competitor: RawCompetitor): GroupFighter => {
   const fightersStore = useFightersListStore()
   const fighter =
     fightersStore.getFighterById(competitor.fighter_id) ?? createFallbackFighter(competitor.fighter)
@@ -102,7 +183,7 @@ const groupFighterFromCompetitor = (competitor: any): GroupFighter => {
   }
 }
 
-const mapFight = (fight: any): FightData => ({
+const mapFight = (fight: RawFight): FightData => ({
   id: fight.id,
   number: fight.fight_number,
   groupId: fight.group_id,
@@ -125,16 +206,17 @@ const buildGroupFightBlocks = (groups: Group[], fights: FightData[]): BlockData[
     const group1 = groups[i]
     const group2 = groups[i + 1]
     const letters = group2 ? [group1.letter, group2.letter] : [group1.letter]
-    const groupIds = new Set([group1.id, group2?.id].filter(Boolean))
+    const groupIds = new Set(
+      [group1.id, group2?.id].filter((groupId): groupId is number => groupId !== undefined)
+    )
+    const pairedGroups = group2 ? [group1, group2] : [group1]
     const groupFighterIds = new Set(
-      [group1, group2]
-        .filter(Boolean)
-        .flatMap((group) => group!.fighters.map((fighter) => fighter.id))
+      pairedGroups.flatMap((group) => group.fighters.map((fighter) => fighter.id))
     )
 
     blocks.push({
       letters,
-      fights: fights.filter((fight: any) => {
+      fights: fights.filter((fight) => {
         if (fight.groupId && groupIds.has(fight.groupId)) return true
         return groupFighterIds.has(fight.fighter1.id) && groupFighterIds.has(fight.fighter2.id)
       })
@@ -144,18 +226,21 @@ const buildGroupFightBlocks = (groups: Group[], fights: FightData[]): BlockData[
   return blocks
 }
 
-const mapCompetitionState = (payload: any, drafts: Record<string, FightResultDraft> = {}) => {
-  const blocks: CompetitionBlock[] = (payload.blocks ?? []).map((block: any) => {
-    const groups: Group[] = (block.groups ?? []).map((group: any) => ({
+const mapCompetitionState = (
+  payload: RawCompetitionState,
+  drafts: Record<string, FightResultDraft> = {}
+) => {
+  const blocks: CompetitionBlock[] = (payload.blocks ?? []).map((block) => {
+    const groups: Group[] = (block.groups ?? []).map((group) => ({
       id: group.id,
       letter: group.name,
-      fighters: (group.fighters ?? []).map((gf: any) => groupFighterFromCompetitor(gf.competitor)),
-      placements: (group.placements ?? []).map((placement: any) => ({
+      fighters: (group.fighters ?? []).map((gf) => groupFighterFromCompetitor(gf.competitor)),
+      placements: (group.placements ?? []).map((placement) => ({
         place: placement.place,
         competitorId: placement.competitor_id
       }))
     }))
-    const fights = (block.fights ?? []).map((rawFight: any) => {
+    const fights = (block.fights ?? []).map((rawFight) => {
       const fight = mapFight(rawFight)
       const draft = drafts[String(fight.id)]
 
@@ -166,7 +251,7 @@ const mapCompetitionState = (payload: any, drafts: Record<string, FightResultDra
 
       return fight
     })
-    const bracketSlots: BracketSlot[] = (block.bracket_slots ?? []).map((slot: any) => ({
+    const bracketSlots: BracketSlot[] = (block.bracket_slots ?? []).map((slot) => ({
       id: slot.id,
       competitorId: slot.competitor_id,
       seedPosition: slot.seed_position,
@@ -190,7 +275,7 @@ const mapCompetitionState = (payload: any, drafts: Record<string, FightResultDra
     }
   })
 
-  const placements: CompetitionPlacement[] = (payload.placements ?? []).map((placement: any) => ({
+  const placements: CompetitionPlacement[] = (payload.placements ?? []).map((placement) => ({
     place: placement.place,
     competitorId: placement.competitor_id,
     fighter: groupFighterFromCompetitor(placement.competitor)
@@ -233,7 +318,7 @@ export const useCompetitionStore = defineStore({
       this.isFinished = false
     },
 
-    applyCompetitionState(payload: any) {
+    applyCompetitionState(payload: RawCompetitionState) {
       const drafts = readFightResultDrafts(this.tournamentId, this.nominationId)
       const mapped = mapCompetitionState(payload, drafts)
       const unfinishedFightIds = new Set(
@@ -316,10 +401,11 @@ export const useCompetitionStore = defineStore({
       this.applyCompetitionState(data)
     },
 
-    async createOlympicBlock() {
+    async createOlympicBlock(includeThirdPlaces = false) {
       const { data } = await http.post(API_ROUTES.COMPETITION.OLYMPIC_BLOCK, {
         tournament_id: this.tournamentId,
-        nomination_id: this.nominationId
+        nomination_id: this.nominationId,
+        include_third_places: includeThirdPlaces
       })
       this.applyCompetitionState(data)
     },
@@ -391,11 +477,13 @@ export const useCompetitionStore = defineStore({
       this.applyCompetitionState(data)
     },
 
-    async resolveTie(groupId: number, orderedCompetitorIds: number[]) {
+    async resolveTie(pendingTie: PendingTie, orderedCompetitorIds: number[]) {
       const { data } = await http.post(API_ROUTES.COMPETITION.RESOLVE_TIES, {
         tournament_id: this.tournamentId,
         nomination_id: this.nominationId,
-        group_id: groupId,
+        group_id: pendingTie.groupId ?? undefined,
+        block_id: pendingTie.blockId,
+        tie_scope: pendingTie.scope ?? 'GROUP',
         ordered_competitor_ids: orderedCompetitorIds
       })
       this.applyCompetitionState(data)

@@ -21,17 +21,34 @@ const emit = defineEmits<{
 }>()
 
 const competitionStore = useCompetitionStore()
-const blocks = computed(() => props.blocksData ?? competitionStore.getFightsBlocks)
+const blocks = computed(() =>
+  (props.blocksData ?? competitionStore.getFightsBlocks).filter((block) => block.fights.length > 0)
+)
 
 const getGroupLabel = (letters: string[]) => {
   return letters.join(', ')
 }
 
+const getGroupTitle = (letters: string[]) => {
+  const key = letters.length === 1 ? 'tournamentPageGroupName' : 'tournamentPageGroups'
+
+  return `${i18next.t(key)} ${getGroupLabel(letters)}`
+}
+
 const { i18next } = useTranslation()
 const languageKey = computed(() => i18next.language)
 
-const handleScoreUpdate = (fightId: number, fightNumber: number, scores: { f1: number; f2: number }) => {
-  competitionStore.updateGlobalScore({ fightId, fightNumber, f1Score: scores.f1, f2Score: scores.f2 })
+const handleScoreUpdate = (
+  fightId: number,
+  fightNumber: number,
+  scores: { f1: number; f2: number }
+) => {
+  competitionStore.updateGlobalScore({
+    fightId,
+    fightNumber,
+    f1Score: scores.f1,
+    f2Score: scores.f2
+  })
 }
 
 const hasUnsavedFights = (block: BlockData) => block.fights.some((fight) => !fight.isFinished)
@@ -45,7 +62,8 @@ const isFightReady = (fight: FightData) => {
   )
 }
 
-const canSaveBlock = (block: BlockData) => block.fights.length > 0 && block.fights.every(isFightReady)
+const canSaveBlock = (block: BlockData) =>
+  block.fights.length > 0 && block.fights.every(isFightReady)
 
 const saveBlockResults = (block: BlockData) => {
   const unsavedFights = block.fights.filter((fight) => !fight.isFinished)
@@ -64,7 +82,7 @@ const saveBlockResults = (block: BlockData) => {
   <div v-if="blocks.length" class="space-y-6 px-10">
     <div v-for="(block, blockIndex) in blocks" :key="blockIndex" class="space-y-3">
       <h3 class="text-lg font-semibold">
-        {{ $t('tournamentPageGroups') }} {{ getGroupLabel(block.letters) }}
+        {{ getGroupTitle(block.letters) }}
       </h3>
 
       <div class="space-y-2">

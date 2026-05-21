@@ -214,10 +214,13 @@ export interface GroupPlacement {
   competitorId: number
 }
 
+export type PendingTieScope = 'GROUP' | 'OLYMPIC_THIRD'
+
 export interface PendingTie {
   blockId: number
-  groupId: number
+  groupId: number | null
   competitorIds: number[]
+  scope?: PendingTieScope
 }
 
 export type DisciplinaryCardType = 'YELLOW' | 'RED'
@@ -250,6 +253,7 @@ export interface DisciplinaryCard {
   opponent_name: string
   opponent_surname: string
   opponent_patronymic: string | null
+  can_delete: boolean
 }
 
 export interface CreateDisciplinaryCardPayload {
@@ -261,4 +265,7 @@ export interface CreateDisciplinaryCardPayload {
   reason: string
 }
 
-export type UpdateDisciplinaryCardPayload = Partial<CreateDisciplinaryCardPayload>
+export interface UpdateDisciplinaryCardPayload {
+  reason?: string
+  expires_at?: string
+}
