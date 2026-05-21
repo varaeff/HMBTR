@@ -83,6 +83,11 @@ export const API_ROUTES = {
       `/disciplinary-cards/tournament/${tournamentId}`,
     BY_ID: (id: string | number) => `/disciplinary-cards/${id}`,
   },
+  RATINGS: {
+    ROOT: "ratings",
+    BY_NOMINATION: (nominationId: string | number) =>
+      `/ratings/nomination/${nominationId}`,
+  },
   COMPETITION: {
     ROOT: "competition",
     STATE: (tournamentId: string | number, nominationId: string | number) =>

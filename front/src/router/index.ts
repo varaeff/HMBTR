@@ -33,6 +33,11 @@ const router = createRouter({
       component: () => import('@/pages/TournamentsListPage.vue')
     },
     {
+      path: '/ratings',
+      name: 'ratings',
+      component: () => import('@/pages/RatingPage.vue')
+    },
+    {
       path: '/tournament/:id',
       name: 'tournament',
       component: () => import('@/pages/TournamentPage.vue'),

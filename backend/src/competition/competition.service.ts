@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { RatingsService } from '../ratings/ratings.service';
 import {
   findTieForPlaces,
   generateCompetitionGroups,
@@ -41,7 +42,10 @@ type PrismaTx = Omit<
 
 @Injectable()
 export class CompetitionService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private ratingsService: RatingsService,
+  ) {}
 
   async getState(tournamentId: number, nominationId: number) {
     const tournamentNomination = await this.getTournamentNomination(
@@ -572,6 +576,8 @@ export class CompetitionService {
   }
 
   async finish(dto: FinishCompetitionDto) {
+    let completedTournamentNominationId: number | null = null;
+
     await this.prisma.$transaction(async (tx) => {
       const tournamentNomination = await this.getTournamentNominationTx(
         tx,
@@ -620,9 +626,18 @@ export class CompetitionService {
       });
       await tx.tournament_nominations.update({
         where: { id: tournamentNomination.id },
-        data: { is_finished: true, is_open: false },
+        data: {
+          is_finished: true,
+          is_open: false,
+          rating_status: 'PENDING',
+          rating_calculated_at: null,
+          rating_error: null,
+        },
       });
+      completedTournamentNominationId = tournamentNomination.id;
     });
+
+    this.scheduleRatingCalculation(completedTournamentNominationId);
 
     return this.getState(dto.tournament_id, dto.nomination_id);
   }
@@ -967,6 +982,8 @@ export class CompetitionService {
   }
 
   async progressOlympicBlock(blockId: number) {
+    let completedTournamentNominationId: number | null = null;
+
     await this.prisma.$transaction(async (tx) => {
       const block = await tx.competition_blocks.findUnique({
         where: { id: blockId },
@@ -1093,10 +1110,27 @@ export class CompetitionService {
         });
         await tx.tournament_nominations.update({
           where: { id: block.tournament_nomination_id },
-          data: { is_finished: true, is_open: false },
+          data: {
+            is_finished: true,
+            is_open: false,
+            rating_status: 'PENDING',
+            rating_calculated_at: null,
+            rating_error: null,
+          },
         });
+        completedTournamentNominationId = block.tournament_nomination_id;
       }
     });
+
+    this.scheduleRatingCalculation(completedTournamentNominationId);
+  }
+
+  private scheduleRatingCalculation(tournamentNominationId: number | null) {
+    if (!tournamentNominationId) return;
+
+    void this.ratingsService.calculateForTournamentNomination(
+      tournamentNominationId,
+    );
   }
 
   private async saveFinalPlacementsTx(

@@ -33,6 +33,10 @@ const links = [
     url: '/tournaments'
   },
   {
+    title: 'menuRatingLink',
+    url: '/ratings'
+  },
+  {
     title: 'menuUsersLink',
     url: '/users',
     adminOnly: true

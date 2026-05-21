@@ -2,6 +2,7 @@
   "menuMainPageLink": "Главная",
   "menuFightersLink": "Список бойцов",
   "menuTournamentsLink": "Турниры",
+  "menuRatingLink": "Рейтинг",
   "menuUsersLink": "Пользователи",
   "menuLoginLink": "Вход для организаторов",
 
@@ -22,6 +23,17 @@
   "addFighterButton": "Добавить бойца",
   "fightersSearchPlaceholder": "Введите имя, город или клуб",
   "searchClear": "Очистить поиск",
+
+  "ratingPageTitle": "Рейтинг",
+  "ratingPageNomination": "Номинация",
+  "ratingPageRank": "Место",
+  "ratingPageFighter": "Боец",
+  "ratingPageLocation": "Локация",
+  "ratingPageFights": "Бои",
+  "ratingPageRating": "Рейтинг",
+  "ratingPageLoading": "Загрузка рейтинга",
+  "ratingPageEmpty": "Данных рейтинга пока нет",
+  "ratingPageLoadError": "Не удалось загрузить рейтинг",
 
   "addFighterNamePage": "Добавление нового бойца",
   "addFighterHint": "Обязательны к заполнению следующие поля: фамилия, имя, страна, город",

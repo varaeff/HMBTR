@@ -124,6 +124,30 @@ export interface Nomination {
   is_male: boolean
 }
 
+export interface FighterRatingLocation {
+  id: number
+  name: string
+}
+
+export interface FighterRatingFighter {
+  id: number
+  name: string
+  surname: string
+  patronymic?: string | null
+  country: FighterRatingLocation
+  city: FighterRatingLocation
+  club?: FighterRatingLocation | null
+}
+
+export interface FighterNominationRating {
+  id: number
+  nomination_id: number
+  fighter_id: number
+  rating: number
+  fights_count: number
+  fighter: FighterRatingFighter
+}
+
 export interface User {
   id: number
   username: string

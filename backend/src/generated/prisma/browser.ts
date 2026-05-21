@@ -78,6 +78,16 @@ export type fights = Prisma.fightsModel
  */
 export type disciplinary_cards = Prisma.disciplinary_cardsModel
 /**
+ * Model fighter_nomination_ratings
+ * 
+ */
+export type fighter_nomination_ratings = Prisma.fighter_nomination_ratingsModel
+/**
+ * Model fighter_nomination_rating_history
+ * 
+ */
+export type fighter_nomination_rating_history = Prisma.fighter_nomination_rating_historyModel
+/**
  * Model competition_blocks
  * 
  */

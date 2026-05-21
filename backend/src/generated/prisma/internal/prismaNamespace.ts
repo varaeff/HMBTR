@@ -396,6 +396,8 @@ export const ModelName = {
   group_competitors: 'group_competitors',
   fights: 'fights',
   disciplinary_cards: 'disciplinary_cards',
+  fighter_nomination_ratings: 'fighter_nomination_ratings',
+  fighter_nomination_rating_history: 'fighter_nomination_rating_history',
   competition_blocks: 'competition_blocks',
   bracket_slots: 'bracket_slots',
   competition_placements: 'competition_placements',
@@ -416,7 +418,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "countries" | "cities" | "clubs" | "fighters" | "tournaments" | "nominations" | "tournament_nominations" | "competitors" | "groups" | "group_competitors" | "fights" | "disciplinary_cards" | "competition_blocks" | "bracket_slots" | "competition_placements" | "tournament_reports" | "users"
+    modelProps: "countries" | "cities" | "clubs" | "fighters" | "tournaments" | "nominations" | "tournament_nominations" | "competitors" | "groups" | "group_competitors" | "fights" | "disciplinary_cards" | "fighter_nomination_ratings" | "fighter_nomination_rating_history" | "competition_blocks" | "bracket_slots" | "competition_placements" | "tournament_reports" | "users"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1308,6 +1310,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    fighter_nomination_ratings: {
+      payload: Prisma.$fighter_nomination_ratingsPayload<ExtArgs>
+      fields: Prisma.fighter_nomination_ratingsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.fighter_nomination_ratingsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_nomination_ratingsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.fighter_nomination_ratingsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_nomination_ratingsPayload>
+        }
+        findFirst: {
+          args: Prisma.fighter_nomination_ratingsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_nomination_ratingsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.fighter_nomination_ratingsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_nomination_ratingsPayload>
+        }
+        findMany: {
+          args: Prisma.fighter_nomination_ratingsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_nomination_ratingsPayload>[]
+        }
+        create: {
+          args: Prisma.fighter_nomination_ratingsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_nomination_ratingsPayload>
+        }
+        createMany: {
+          args: Prisma.fighter_nomination_ratingsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.fighter_nomination_ratingsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_nomination_ratingsPayload>[]
+        }
+        delete: {
+          args: Prisma.fighter_nomination_ratingsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_nomination_ratingsPayload>
+        }
+        update: {
+          args: Prisma.fighter_nomination_ratingsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_nomination_ratingsPayload>
+        }
+        deleteMany: {
+          args: Prisma.fighter_nomination_ratingsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.fighter_nomination_ratingsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.fighter_nomination_ratingsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_nomination_ratingsPayload>[]
+        }
+        upsert: {
+          args: Prisma.fighter_nomination_ratingsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_nomination_ratingsPayload>
+        }
+        aggregate: {
+          args: Prisma.Fighter_nomination_ratingsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFighter_nomination_ratings>
+        }
+        groupBy: {
+          args: Prisma.fighter_nomination_ratingsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Fighter_nomination_ratingsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.fighter_nomination_ratingsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Fighter_nomination_ratingsCountAggregateOutputType> | number
+        }
+      }
+    }
+    fighter_nomination_rating_history: {
+      payload: Prisma.$fighter_nomination_rating_historyPayload<ExtArgs>
+      fields: Prisma.fighter_nomination_rating_historyFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.fighter_nomination_rating_historyFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_nomination_rating_historyPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.fighter_nomination_rating_historyFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_nomination_rating_historyPayload>
+        }
+        findFirst: {
+          args: Prisma.fighter_nomination_rating_historyFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_nomination_rating_historyPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.fighter_nomination_rating_historyFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_nomination_rating_historyPayload>
+        }
+        findMany: {
+          args: Prisma.fighter_nomination_rating_historyFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_nomination_rating_historyPayload>[]
+        }
+        create: {
+          args: Prisma.fighter_nomination_rating_historyCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_nomination_rating_historyPayload>
+        }
+        createMany: {
+          args: Prisma.fighter_nomination_rating_historyCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.fighter_nomination_rating_historyCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_nomination_rating_historyPayload>[]
+        }
+        delete: {
+          args: Prisma.fighter_nomination_rating_historyDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_nomination_rating_historyPayload>
+        }
+        update: {
+          args: Prisma.fighter_nomination_rating_historyUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_nomination_rating_historyPayload>
+        }
+        deleteMany: {
+          args: Prisma.fighter_nomination_rating_historyDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.fighter_nomination_rating_historyUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.fighter_nomination_rating_historyUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_nomination_rating_historyPayload>[]
+        }
+        upsert: {
+          args: Prisma.fighter_nomination_rating_historyUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_nomination_rating_historyPayload>
+        }
+        aggregate: {
+          args: Prisma.Fighter_nomination_rating_historyAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFighter_nomination_rating_history>
+        }
+        groupBy: {
+          args: Prisma.fighter_nomination_rating_historyGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Fighter_nomination_rating_historyGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.fighter_nomination_rating_historyCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Fighter_nomination_rating_historyCountAggregateOutputType> | number
+        }
+      }
+    }
     competition_blocks: {
       payload: Prisma.$competition_blocksPayload<ExtArgs>
       fields: Prisma.competition_blocksFieldRefs
@@ -1786,7 +1936,10 @@ export const Tournament_nominationsScalarFieldEnum = {
   nomination_id: 'nomination_id',
   is_open: 'is_open',
   is_finished: 'is_finished',
-  stage: 'stage'
+  stage: 'stage',
+  rating_status: 'rating_status',
+  rating_calculated_at: 'rating_calculated_at',
+  rating_error: 'rating_error'
 } as const
 
 export type Tournament_nominationsScalarFieldEnum = (typeof Tournament_nominationsScalarFieldEnum)[keyof typeof Tournament_nominationsScalarFieldEnum]
@@ -1862,6 +2015,33 @@ export const Disciplinary_cardsScalarFieldEnum = {
 } as const
 
 export type Disciplinary_cardsScalarFieldEnum = (typeof Disciplinary_cardsScalarFieldEnum)[keyof typeof Disciplinary_cardsScalarFieldEnum]
+
+
+export const Fighter_nomination_ratingsScalarFieldEnum = {
+  id: 'id',
+  nomination_id: 'nomination_id',
+  fighter_id: 'fighter_id',
+  rating: 'rating',
+  fights_count: 'fights_count',
+  updated_at: 'updated_at'
+} as const
+
+export type Fighter_nomination_ratingsScalarFieldEnum = (typeof Fighter_nomination_ratingsScalarFieldEnum)[keyof typeof Fighter_nomination_ratingsScalarFieldEnum]
+
+
+export const Fighter_nomination_rating_historyScalarFieldEnum = {
+  id: 'id',
+  nomination_id: 'nomination_id',
+  fighter_id: 'fighter_id',
+  tournament_id: 'tournament_id',
+  tournament_nomination_id: 'tournament_nomination_id',
+  rating_before: 'rating_before',
+  rating_after: 'rating_after',
+  fights_count_delta: 'fights_count_delta',
+  created_at: 'created_at'
+} as const
+
+export type Fighter_nomination_rating_historyScalarFieldEnum = (typeof Fighter_nomination_rating_historyScalarFieldEnum)[keyof typeof Fighter_nomination_rating_historyScalarFieldEnum]
 
 
 export const Competition_blocksScalarFieldEnum = {
@@ -2144,6 +2324,8 @@ export type GlobalOmitConfig = {
   group_competitors?: Prisma.group_competitorsOmit
   fights?: Prisma.fightsOmit
   disciplinary_cards?: Prisma.disciplinary_cardsOmit
+  fighter_nomination_ratings?: Prisma.fighter_nomination_ratingsOmit
+  fighter_nomination_rating_history?: Prisma.fighter_nomination_rating_historyOmit
   competition_blocks?: Prisma.competition_blocksOmit
   bracket_slots?: Prisma.bracket_slotsOmit
   competition_placements?: Prisma.competition_placementsOmit

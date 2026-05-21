@@ -63,6 +63,8 @@ export const ModelName = {
   group_competitors: 'group_competitors',
   fights: 'fights',
   disciplinary_cards: 'disciplinary_cards',
+  fighter_nomination_ratings: 'fighter_nomination_ratings',
+  fighter_nomination_rating_history: 'fighter_nomination_rating_history',
   competition_blocks: 'competition_blocks',
   bracket_slots: 'bracket_slots',
   competition_placements: 'competition_placements',
@@ -155,7 +157,10 @@ export const Tournament_nominationsScalarFieldEnum = {
   nomination_id: 'nomination_id',
   is_open: 'is_open',
   is_finished: 'is_finished',
-  stage: 'stage'
+  stage: 'stage',
+  rating_status: 'rating_status',
+  rating_calculated_at: 'rating_calculated_at',
+  rating_error: 'rating_error'
 } as const
 
 export type Tournament_nominationsScalarFieldEnum = (typeof Tournament_nominationsScalarFieldEnum)[keyof typeof Tournament_nominationsScalarFieldEnum]
@@ -231,6 +236,33 @@ export const Disciplinary_cardsScalarFieldEnum = {
 } as const
 
 export type Disciplinary_cardsScalarFieldEnum = (typeof Disciplinary_cardsScalarFieldEnum)[keyof typeof Disciplinary_cardsScalarFieldEnum]
+
+
+export const Fighter_nomination_ratingsScalarFieldEnum = {
+  id: 'id',
+  nomination_id: 'nomination_id',
+  fighter_id: 'fighter_id',
+  rating: 'rating',
+  fights_count: 'fights_count',
+  updated_at: 'updated_at'
+} as const
+
+export type Fighter_nomination_ratingsScalarFieldEnum = (typeof Fighter_nomination_ratingsScalarFieldEnum)[keyof typeof Fighter_nomination_ratingsScalarFieldEnum]
+
+
+export const Fighter_nomination_rating_historyScalarFieldEnum = {
+  id: 'id',
+  nomination_id: 'nomination_id',
+  fighter_id: 'fighter_id',
+  tournament_id: 'tournament_id',
+  tournament_nomination_id: 'tournament_nomination_id',
+  rating_before: 'rating_before',
+  rating_after: 'rating_after',
+  fights_count_delta: 'fights_count_delta',
+  created_at: 'created_at'
+} as const
+
+export type Fighter_nomination_rating_historyScalarFieldEnum = (typeof Fighter_nomination_rating_historyScalarFieldEnum)[keyof typeof Fighter_nomination_rating_historyScalarFieldEnum]
 
 
 export const Competition_blocksScalarFieldEnum = {

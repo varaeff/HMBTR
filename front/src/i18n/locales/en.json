@@ -2,6 +2,7 @@
   "menuMainPageLink": "Main page",
   "menuFightersLink": "Fighters list",
   "menuTournamentsLink": "Tournaments",
+  "menuRatingLink": "Rating",
   "menuUsersLink": "Users",
   "menuLoginLink": "Login for organizers",
 
@@ -22,6 +23,17 @@
   "addFighterButton": "Add fighter",
   "fightersSearchPlaceholder": "Input name, city or club",
   "searchClear": "Clear search",
+
+  "ratingPageTitle": "Rating",
+  "ratingPageNomination": "Nomination",
+  "ratingPageRank": "Rank",
+  "ratingPageFighter": "Fighter",
+  "ratingPageLocation": "Location",
+  "ratingPageFights": "Fights",
+  "ratingPageRating": "Rating",
+  "ratingPageLoading": "Loading rating",
+  "ratingPageEmpty": "No rating data yet",
+  "ratingPageLoadError": "Could not load rating",
 
   "addFighterNamePage": "Adding new fighter",
   "addFighterHint": "The following fields are required: last name, first name, country, city",
