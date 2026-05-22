@@ -38,10 +38,25 @@ export type clubs = Prisma.clubsModel
  */
 export type fighters = Prisma.fightersModel
 /**
+ * Model marshals
+ * 
+ */
+export type marshals = Prisma.marshalsModel
+/**
+ * Model marshals_categories
+ * 
+ */
+export type marshals_categories = Prisma.marshals_categoriesModel
+/**
  * Model tournaments
  * 
  */
 export type tournaments = Prisma.tournamentsModel
+/**
+ * Model tournament_marshals
+ * 
+ */
+export type tournament_marshals = Prisma.tournament_marshalsModel
 /**
  * Model nominations
  * 

@@ -14,6 +14,7 @@ interface ActiveUser {
   surname: string;
   is_admin: boolean;
   is_organizer: boolean;
+  is_secretary: boolean;
 }
 
 interface RequestWithUser extends ExpressRequest {
@@ -60,6 +61,7 @@ export class AuthController {
       surname: req.user.surname,
       is_admin: req.user.is_admin,
       is_organizer: req.user.is_organizer,
+      is_secretary: req.user.is_secretary,
     };
   }
 }

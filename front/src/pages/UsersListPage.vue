@@ -19,19 +19,18 @@ const getUsers = async () => {
 
 const filteredUsers = computed(() => {
   if (activeTab.value === USERS_TYPES.ADMINS) {
-    return usersList.value
-      .map((user) => (user.is_admin ? user : null))
-      .filter((user) => user !== null) as User[]
+    return usersList.value.filter((user) => user.is_admin)
   }
   if (activeTab.value === USERS_TYPES.ORGANIZERS) {
-    return usersList.value
-      .map((user) => (user.is_organizer ? user : null))
-      .filter((user) => user !== null) as User[]
+    return usersList.value.filter((user) => user.is_organizer)
+  }
+  if (activeTab.value === USERS_TYPES.SECRETARIES) {
+    return usersList.value.filter((user) => user.is_secretary)
   }
   if (activeTab.value === USERS_TYPES.OTHERS) {
-    return usersList.value
-      .map((user) => (!user.is_admin && !user.is_organizer ? user : null))
-      .filter((user) => user !== null) as User[]
+    return usersList.value.filter(
+      (user) => !user.is_admin && !user.is_organizer && !user.is_secretary
+    )
   }
 
   return usersList.value

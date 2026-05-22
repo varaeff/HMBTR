@@ -3,7 +3,25 @@ import { useCommonDataStore } from '@/stores/commonData'
 import { useTranslation } from 'i18next-vue'
 import type { LocationProps } from '@/model'
 
-export function useLocationSelect(props: LocationProps, emit: any) {
+type LocationEmit = (
+  event:
+    | 'update:country'
+    | 'update:city'
+    | 'update:club'
+    | 'update:country_id'
+    | 'update:city_id'
+    | 'update:club_id',
+  value: string | number
+) => void
+
+interface AddEntityPayload {
+  title: string
+  performAdd: (name: string) => Promise<void>
+}
+
+type RequestAddEmitter = (payload: AddEntityPayload) => void
+
+export function useLocationSelect(props: LocationProps, emit: LocationEmit) {
   const store = useCommonDataStore()
 
   const { t } = useTranslation()
@@ -138,21 +156,21 @@ export function useLocationSelect(props: LocationProps, emit: any) {
     }
   }
 
-  const onAddCountry = (emitRequestAdd: (payload: any) => void) => {
+  const onAddCountry = (emitRequestAdd: RequestAddEmitter) => {
     emitRequestAdd({
       title: t('LocationBlockAddingCountry'),
       performAdd: (name: string) => safeAddEntity('country', name)
     })
   }
 
-  const onAddCity = (emitRequestAdd: (payload: any) => void) => {
+  const onAddCity = (emitRequestAdd: RequestAddEmitter) => {
     emitRequestAdd({
       title: t('LocationBlockAddingCity'),
       performAdd: (name: string) => safeAddEntity('city', name)
     })
   }
 
-  const onAddClub = (emitRequestAdd: (payload: any) => void) => {
+  const onAddClub = (emitRequestAdd: RequestAddEmitter) => {
     emitRequestAdd({
       title: t('LocationBlockAddingClub'),
       performAdd: (name: string) => safeAddEntity('club', name)

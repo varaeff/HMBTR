@@ -638,10 +638,6 @@ export type disciplinary_cardsUncheckedUpdateManyWithoutFightNestedInput = {
   deleteMany?: Prisma.disciplinary_cardsScalarWhereInput | Prisma.disciplinary_cardsScalarWhereInput[]
 }
 
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
-}
-
 export type disciplinary_cardsCreateWithoutFighterInput = {
   type: string
   source?: string

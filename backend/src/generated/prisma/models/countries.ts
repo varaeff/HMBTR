@@ -194,6 +194,7 @@ export type countriesWhereInput = {
   name?: Prisma.StringFilter<"countries"> | string
   cities?: Prisma.CitiesListRelationFilter
   fighters?: Prisma.FightersListRelationFilter
+  marshals?: Prisma.MarshalsListRelationFilter
   tournaments?: Prisma.TournamentsListRelationFilter
 }
 
@@ -202,6 +203,7 @@ export type countriesOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   cities?: Prisma.citiesOrderByRelationAggregateInput
   fighters?: Prisma.fightersOrderByRelationAggregateInput
+  marshals?: Prisma.marshalsOrderByRelationAggregateInput
   tournaments?: Prisma.tournamentsOrderByRelationAggregateInput
 }
 
@@ -213,6 +215,7 @@ export type countriesWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"countries"> | string
   cities?: Prisma.CitiesListRelationFilter
   fighters?: Prisma.FightersListRelationFilter
+  marshals?: Prisma.MarshalsListRelationFilter
   tournaments?: Prisma.TournamentsListRelationFilter
 }, "id">
 
@@ -238,6 +241,7 @@ export type countriesCreateInput = {
   name: string
   cities?: Prisma.citiesCreateNestedManyWithoutCountryInput
   fighters?: Prisma.fightersCreateNestedManyWithoutCountryInput
+  marshals?: Prisma.marshalsCreateNestedManyWithoutCountryInput
   tournaments?: Prisma.tournamentsCreateNestedManyWithoutCountryInput
 }
 
@@ -246,6 +250,7 @@ export type countriesUncheckedCreateInput = {
   name: string
   cities?: Prisma.citiesUncheckedCreateNestedManyWithoutCountryInput
   fighters?: Prisma.fightersUncheckedCreateNestedManyWithoutCountryInput
+  marshals?: Prisma.marshalsUncheckedCreateNestedManyWithoutCountryInput
   tournaments?: Prisma.tournamentsUncheckedCreateNestedManyWithoutCountryInput
 }
 
@@ -253,6 +258,7 @@ export type countriesUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   cities?: Prisma.citiesUpdateManyWithoutCountryNestedInput
   fighters?: Prisma.fightersUpdateManyWithoutCountryNestedInput
+  marshals?: Prisma.marshalsUpdateManyWithoutCountryNestedInput
   tournaments?: Prisma.tournamentsUpdateManyWithoutCountryNestedInput
 }
 
@@ -261,6 +267,7 @@ export type countriesUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   cities?: Prisma.citiesUncheckedUpdateManyWithoutCountryNestedInput
   fighters?: Prisma.fightersUncheckedUpdateManyWithoutCountryNestedInput
+  marshals?: Prisma.marshalsUncheckedUpdateManyWithoutCountryNestedInput
   tournaments?: Prisma.tournamentsUncheckedUpdateManyWithoutCountryNestedInput
 }
 
@@ -346,6 +353,20 @@ export type countriesUpdateOneRequiredWithoutFightersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.countriesUpdateToOneWithWhereWithoutFightersInput, Prisma.countriesUpdateWithoutFightersInput>, Prisma.countriesUncheckedUpdateWithoutFightersInput>
 }
 
+export type countriesCreateNestedOneWithoutMarshalsInput = {
+  create?: Prisma.XOR<Prisma.countriesCreateWithoutMarshalsInput, Prisma.countriesUncheckedCreateWithoutMarshalsInput>
+  connectOrCreate?: Prisma.countriesCreateOrConnectWithoutMarshalsInput
+  connect?: Prisma.countriesWhereUniqueInput
+}
+
+export type countriesUpdateOneRequiredWithoutMarshalsNestedInput = {
+  create?: Prisma.XOR<Prisma.countriesCreateWithoutMarshalsInput, Prisma.countriesUncheckedCreateWithoutMarshalsInput>
+  connectOrCreate?: Prisma.countriesCreateOrConnectWithoutMarshalsInput
+  upsert?: Prisma.countriesUpsertWithoutMarshalsInput
+  connect?: Prisma.countriesWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.countriesUpdateToOneWithWhereWithoutMarshalsInput, Prisma.countriesUpdateWithoutMarshalsInput>, Prisma.countriesUncheckedUpdateWithoutMarshalsInput>
+}
+
 export type countriesCreateNestedOneWithoutTournamentsInput = {
   create?: Prisma.XOR<Prisma.countriesCreateWithoutTournamentsInput, Prisma.countriesUncheckedCreateWithoutTournamentsInput>
   connectOrCreate?: Prisma.countriesCreateOrConnectWithoutTournamentsInput
@@ -363,6 +384,7 @@ export type countriesUpdateOneRequiredWithoutTournamentsNestedInput = {
 export type countriesCreateWithoutCitiesInput = {
   name: string
   fighters?: Prisma.fightersCreateNestedManyWithoutCountryInput
+  marshals?: Prisma.marshalsCreateNestedManyWithoutCountryInput
   tournaments?: Prisma.tournamentsCreateNestedManyWithoutCountryInput
 }
 
@@ -370,6 +392,7 @@ export type countriesUncheckedCreateWithoutCitiesInput = {
   id?: number
   name: string
   fighters?: Prisma.fightersUncheckedCreateNestedManyWithoutCountryInput
+  marshals?: Prisma.marshalsUncheckedCreateNestedManyWithoutCountryInput
   tournaments?: Prisma.tournamentsUncheckedCreateNestedManyWithoutCountryInput
 }
 
@@ -392,6 +415,7 @@ export type countriesUpdateToOneWithWhereWithoutCitiesInput = {
 export type countriesUpdateWithoutCitiesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   fighters?: Prisma.fightersUpdateManyWithoutCountryNestedInput
+  marshals?: Prisma.marshalsUpdateManyWithoutCountryNestedInput
   tournaments?: Prisma.tournamentsUpdateManyWithoutCountryNestedInput
 }
 
@@ -399,12 +423,14 @@ export type countriesUncheckedUpdateWithoutCitiesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   fighters?: Prisma.fightersUncheckedUpdateManyWithoutCountryNestedInput
+  marshals?: Prisma.marshalsUncheckedUpdateManyWithoutCountryNestedInput
   tournaments?: Prisma.tournamentsUncheckedUpdateManyWithoutCountryNestedInput
 }
 
 export type countriesCreateWithoutFightersInput = {
   name: string
   cities?: Prisma.citiesCreateNestedManyWithoutCountryInput
+  marshals?: Prisma.marshalsCreateNestedManyWithoutCountryInput
   tournaments?: Prisma.tournamentsCreateNestedManyWithoutCountryInput
 }
 
@@ -412,6 +438,7 @@ export type countriesUncheckedCreateWithoutFightersInput = {
   id?: number
   name: string
   cities?: Prisma.citiesUncheckedCreateNestedManyWithoutCountryInput
+  marshals?: Prisma.marshalsUncheckedCreateNestedManyWithoutCountryInput
   tournaments?: Prisma.tournamentsUncheckedCreateNestedManyWithoutCountryInput
 }
 
@@ -434,6 +461,7 @@ export type countriesUpdateToOneWithWhereWithoutFightersInput = {
 export type countriesUpdateWithoutFightersInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   cities?: Prisma.citiesUpdateManyWithoutCountryNestedInput
+  marshals?: Prisma.marshalsUpdateManyWithoutCountryNestedInput
   tournaments?: Prisma.tournamentsUpdateManyWithoutCountryNestedInput
 }
 
@@ -441,6 +469,53 @@ export type countriesUncheckedUpdateWithoutFightersInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   cities?: Prisma.citiesUncheckedUpdateManyWithoutCountryNestedInput
+  marshals?: Prisma.marshalsUncheckedUpdateManyWithoutCountryNestedInput
+  tournaments?: Prisma.tournamentsUncheckedUpdateManyWithoutCountryNestedInput
+}
+
+export type countriesCreateWithoutMarshalsInput = {
+  name: string
+  cities?: Prisma.citiesCreateNestedManyWithoutCountryInput
+  fighters?: Prisma.fightersCreateNestedManyWithoutCountryInput
+  tournaments?: Prisma.tournamentsCreateNestedManyWithoutCountryInput
+}
+
+export type countriesUncheckedCreateWithoutMarshalsInput = {
+  id?: number
+  name: string
+  cities?: Prisma.citiesUncheckedCreateNestedManyWithoutCountryInput
+  fighters?: Prisma.fightersUncheckedCreateNestedManyWithoutCountryInput
+  tournaments?: Prisma.tournamentsUncheckedCreateNestedManyWithoutCountryInput
+}
+
+export type countriesCreateOrConnectWithoutMarshalsInput = {
+  where: Prisma.countriesWhereUniqueInput
+  create: Prisma.XOR<Prisma.countriesCreateWithoutMarshalsInput, Prisma.countriesUncheckedCreateWithoutMarshalsInput>
+}
+
+export type countriesUpsertWithoutMarshalsInput = {
+  update: Prisma.XOR<Prisma.countriesUpdateWithoutMarshalsInput, Prisma.countriesUncheckedUpdateWithoutMarshalsInput>
+  create: Prisma.XOR<Prisma.countriesCreateWithoutMarshalsInput, Prisma.countriesUncheckedCreateWithoutMarshalsInput>
+  where?: Prisma.countriesWhereInput
+}
+
+export type countriesUpdateToOneWithWhereWithoutMarshalsInput = {
+  where?: Prisma.countriesWhereInput
+  data: Prisma.XOR<Prisma.countriesUpdateWithoutMarshalsInput, Prisma.countriesUncheckedUpdateWithoutMarshalsInput>
+}
+
+export type countriesUpdateWithoutMarshalsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  cities?: Prisma.citiesUpdateManyWithoutCountryNestedInput
+  fighters?: Prisma.fightersUpdateManyWithoutCountryNestedInput
+  tournaments?: Prisma.tournamentsUpdateManyWithoutCountryNestedInput
+}
+
+export type countriesUncheckedUpdateWithoutMarshalsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  cities?: Prisma.citiesUncheckedUpdateManyWithoutCountryNestedInput
+  fighters?: Prisma.fightersUncheckedUpdateManyWithoutCountryNestedInput
   tournaments?: Prisma.tournamentsUncheckedUpdateManyWithoutCountryNestedInput
 }
 
@@ -448,6 +523,7 @@ export type countriesCreateWithoutTournamentsInput = {
   name: string
   cities?: Prisma.citiesCreateNestedManyWithoutCountryInput
   fighters?: Prisma.fightersCreateNestedManyWithoutCountryInput
+  marshals?: Prisma.marshalsCreateNestedManyWithoutCountryInput
 }
 
 export type countriesUncheckedCreateWithoutTournamentsInput = {
@@ -455,6 +531,7 @@ export type countriesUncheckedCreateWithoutTournamentsInput = {
   name: string
   cities?: Prisma.citiesUncheckedCreateNestedManyWithoutCountryInput
   fighters?: Prisma.fightersUncheckedCreateNestedManyWithoutCountryInput
+  marshals?: Prisma.marshalsUncheckedCreateNestedManyWithoutCountryInput
 }
 
 export type countriesCreateOrConnectWithoutTournamentsInput = {
@@ -477,6 +554,7 @@ export type countriesUpdateWithoutTournamentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   cities?: Prisma.citiesUpdateManyWithoutCountryNestedInput
   fighters?: Prisma.fightersUpdateManyWithoutCountryNestedInput
+  marshals?: Prisma.marshalsUpdateManyWithoutCountryNestedInput
 }
 
 export type countriesUncheckedUpdateWithoutTournamentsInput = {
@@ -484,6 +562,7 @@ export type countriesUncheckedUpdateWithoutTournamentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   cities?: Prisma.citiesUncheckedUpdateManyWithoutCountryNestedInput
   fighters?: Prisma.fightersUncheckedUpdateManyWithoutCountryNestedInput
+  marshals?: Prisma.marshalsUncheckedUpdateManyWithoutCountryNestedInput
 }
 
 
@@ -494,12 +573,14 @@ export type countriesUncheckedUpdateWithoutTournamentsInput = {
 export type CountriesCountOutputType = {
   cities: number
   fighters: number
+  marshals: number
   tournaments: number
 }
 
 export type CountriesCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   cities?: boolean | CountriesCountOutputTypeCountCitiesArgs
   fighters?: boolean | CountriesCountOutputTypeCountFightersArgs
+  marshals?: boolean | CountriesCountOutputTypeCountMarshalsArgs
   tournaments?: boolean | CountriesCountOutputTypeCountTournamentsArgs
 }
 
@@ -530,6 +611,13 @@ export type CountriesCountOutputTypeCountFightersArgs<ExtArgs extends runtime.Ty
 /**
  * CountriesCountOutputType without action
  */
+export type CountriesCountOutputTypeCountMarshalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.marshalsWhereInput
+}
+
+/**
+ * CountriesCountOutputType without action
+ */
 export type CountriesCountOutputTypeCountTournamentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.tournamentsWhereInput
 }
@@ -540,6 +628,7 @@ export type countriesSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   name?: boolean
   cities?: boolean | Prisma.countries$citiesArgs<ExtArgs>
   fighters?: boolean | Prisma.countries$fightersArgs<ExtArgs>
+  marshals?: boolean | Prisma.countries$marshalsArgs<ExtArgs>
   tournaments?: boolean | Prisma.countries$tournamentsArgs<ExtArgs>
   _count?: boolean | Prisma.CountriesCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["countries"]>
@@ -563,6 +652,7 @@ export type countriesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type countriesInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   cities?: boolean | Prisma.countries$citiesArgs<ExtArgs>
   fighters?: boolean | Prisma.countries$fightersArgs<ExtArgs>
+  marshals?: boolean | Prisma.countries$marshalsArgs<ExtArgs>
   tournaments?: boolean | Prisma.countries$tournamentsArgs<ExtArgs>
   _count?: boolean | Prisma.CountriesCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -574,6 +664,7 @@ export type $countriesPayload<ExtArgs extends runtime.Types.Extensions.InternalA
   objects: {
     cities: Prisma.$citiesPayload<ExtArgs>[]
     fighters: Prisma.$fightersPayload<ExtArgs>[]
+    marshals: Prisma.$marshalsPayload<ExtArgs>[]
     tournaments: Prisma.$tournamentsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -975,6 +1066,7 @@ export interface Prisma__countriesClient<T, Null = never, ExtArgs extends runtim
   readonly [Symbol.toStringTag]: "PrismaPromise"
   cities<T extends Prisma.countries$citiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.countries$citiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$citiesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   fighters<T extends Prisma.countries$fightersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.countries$fightersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fightersPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  marshals<T extends Prisma.countries$marshalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.countries$marshalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$marshalsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   tournaments<T extends Prisma.countries$tournamentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.countries$tournamentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$tournamentsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1440,6 +1532,30 @@ export type countries$fightersArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.FightersScalarFieldEnum | Prisma.FightersScalarFieldEnum[]
+}
+
+/**
+ * countries.marshals
+ */
+export type countries$marshalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the marshals
+   */
+  select?: Prisma.marshalsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the marshals
+   */
+  omit?: Prisma.marshalsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.marshalsInclude<ExtArgs> | null
+  where?: Prisma.marshalsWhereInput
+  orderBy?: Prisma.marshalsOrderByWithRelationInput | Prisma.marshalsOrderByWithRelationInput[]
+  cursor?: Prisma.marshalsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MarshalsScalarFieldEnum | Prisma.MarshalsScalarFieldEnum[]
 }
 
 /**

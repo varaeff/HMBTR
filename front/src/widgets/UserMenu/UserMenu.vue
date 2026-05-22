@@ -55,6 +55,7 @@ const handleLogout = async () => {
             <p class="text-xs text-muted-foreground mt-1">
               <span v-if="user.is_admin">{{ $t('userMenuAdmin') }}</span>
               <span v-else-if="user.is_organizer">{{ $t('userMenuOrganizer') }}</span>
+              <span v-else-if="user.is_secretary">{{ $t('userMenuSecretary') }}</span>
               <span v-else>{{ $t('userMenuUser') }}</span>
             </p>
           </div>

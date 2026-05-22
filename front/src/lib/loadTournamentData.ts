@@ -3,7 +3,37 @@ import { API_ROUTES } from '@shared/routes'
 
 import { useCompetitionStore } from '@/stores/competition'
 
-import type { Group, BlockData, GroupFighter } from '@/model'
+import type { Competitor, Fighter, Group, BlockData, GroupFighter } from '@/model'
+
+interface GroupResponse {
+  id: number
+  name: string
+  stage: number
+}
+
+interface FightResponse {
+  id: number
+  group_id: number | null
+  nomination_id: number
+  stage: number
+  fight_number: number
+  competitor1_id: number
+  competitor2_id: number
+  competitor1_score: number
+  competitor2_score: number
+}
+
+interface GroupCompetitorResponse {
+  competitor_id: number
+}
+
+interface CompetitorWithFighter extends Competitor {
+  fighter?: Fighter
+}
+
+const hasFighter = (
+  value: CompetitorWithFighter['fighter'] | undefined
+): value is Fighter => Boolean(value)
 
 // Fetch groups and group members from database
 export const loadTournamentData = async (
@@ -16,12 +46,14 @@ export const loadTournamentData = async (
   try {
     // Параллельно загружаем группы и бои.
     const [groupsRes, fightsRes] = await Promise.all([
-      http.get(API_ROUTES.GROUPS.BY_TOURNAMENT_AND_NOMINATION(tournamentId, nominationId)),
-      http.get(API_ROUTES.FIGHTS.BY_TOURNAMENT(tournamentId))
+      http.get<GroupResponse[]>(
+        API_ROUTES.GROUPS.BY_TOURNAMENT_AND_NOMINATION(tournamentId, nominationId)
+      ),
+      http.get<FightResponse[]>(API_ROUTES.FIGHTS.BY_TOURNAMENT(tournamentId))
     ])
 
     // Используем карту из стора для быстрого доступа к данным бойца по competitor_id
-    const competitorMap = new Map<number, any>(
+    const competitorMap = new Map<number, CompetitorWithFighter>(
       competitionStore.tournamentCompetitors.map((c) => [
         c.id,
         { ...c, fighter: competitionStore.getNominationFighters.find((f) => f.id === c.fighter_id) }
@@ -29,20 +61,22 @@ export const loadTournamentData = async (
     )
 
     const stageGroups = groupsRes.data
-      .filter((g: any) => g.stage === stage)
-      .sort((a: any, b: any) => a.name.localeCompare(b.name))
+      .filter((g) => g.stage === stage)
+      .sort((a, b) => a.name.localeCompare(b.name))
     const stageFights = fightsRes.data.filter(
-      (f: any) => f.nomination_id === nominationId && f.stage === stage
+      (f) => f.nomination_id === nominationId && f.stage === stage
     )
 
     // Загрузка участников групп (параллельно)
     const groupsData = await Promise.all(
-      stageGroups.map(async (gData: any) => {
-        const { data: gComps } = await http.get(API_ROUTES.GROUP_COMPETITORS.BY_GROUP(gData.id))
+      stageGroups.map(async (gData) => {
+        const { data: gComps } = await http.get<GroupCompetitorResponse[]>(
+          API_ROUTES.GROUP_COMPETITORS.BY_GROUP(gData.id)
+        )
         const fighters: GroupFighter[] = gComps
-          .map((gc: any) => competitorMap.get(gc.competitor_id)?.fighter)
-          .filter(Boolean)
-          .map((f: any) => ({ ...f, wins: 0, diff: 0 }))
+          .map((gc) => competitorMap.get(gc.competitor_id)?.fighter)
+          .filter(hasFighter)
+          .map((f) => ({ ...f, wins: 0, diff: 0 }))
 
         return { letter: gData.name, fighters, id: gData.id }
       })
@@ -59,9 +93,9 @@ export const loadTournamentData = async (
       const targetIds = g2 ? [g1.id, g2.id] : [g1.id]
 
       const blockFights = stageFights
-        .filter((f: any) => targetIds.includes(f.group_id))
-        .sort((a: any, b: any) => a.fight_number - b.fight_number)
-        .map((f: any) => ({
+        .filter((f) => f.group_id !== null && targetIds.includes(f.group_id))
+        .sort((a, b) => a.fight_number - b.fight_number)
+        .map((f) => ({
           id: f.id,
           number: f.fight_number,
           fighter1: competitorMap.get(f.competitor1_id)?.fighter,
@@ -69,6 +103,18 @@ export const loadTournamentData = async (
           fighter1Score: f.competitor1_score,
           fighter2Score: f.competitor2_score
         }))
+        .filter(
+          (
+            fight
+          ): fight is {
+            id: number
+            number: number
+            fighter1: Fighter
+            fighter2: Fighter
+            fighter1Score: number
+            fighter2Score: number
+          } => Boolean(fight.fighter1 && fight.fighter2)
+        )
 
       if (blockFights.length > 0) {
         fightsBlocks.push({ letters: blockLetters, fights: blockFights })

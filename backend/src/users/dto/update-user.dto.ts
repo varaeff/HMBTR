@@ -24,4 +24,8 @@ export class UpdateUserDto {
   @IsOptional()
   @IsBoolean()
   is_organizer?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  is_secretary?: boolean;
 }

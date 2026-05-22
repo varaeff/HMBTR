@@ -27,6 +27,76 @@ export interface Fighter {
   is_male?: boolean
 }
 
+export interface MarshalCategory {
+  id: number
+  name_ru: string
+  name_en: string
+}
+
+export interface MarshalDB {
+  id?: number
+  name: string
+  surname: string
+  patronymic?: string
+  country_id: number
+  city_id: number
+  category_id: number
+  pic?: string
+  category?: MarshalCategory
+}
+
+export interface Marshal {
+  id: number
+  name: string
+  surname: string
+  patronymic?: string
+  country_id?: number
+  city_id?: number
+  category_id: number
+  country: string
+  city: string
+  pic?: string
+  category?: MarshalCategory
+}
+
+export interface TournamentMarshalDB {
+  id: number
+  tournament_id: number
+  marshal_id: number
+  created_at: string
+  marshal: MarshalDB
+}
+
+export interface TournamentMarshal {
+  id: number
+  tournament_id: number
+  marshal_id: number
+  marshal: Marshal
+}
+
+export interface MarshalProfileTournament {
+  id: number
+  name: string
+  event_date: string | null
+  country: {
+    id: number
+    name: string
+  }
+  city: {
+    id: number
+    name: string
+  }
+}
+
+export interface MarshalProfileDB extends MarshalDB {
+  tournaments: Array<{
+    id: number
+    tournament_id: number
+    marshal_id: number
+    tournament: MarshalProfileTournament
+  }>
+}
+
 export interface GroupFighter extends Fighter {
   competitorId?: number
   wins: number
@@ -79,6 +149,7 @@ export interface Tournament {
   country: string
   city: string
   nominations: TournamentNomination[]
+  is_marshals_registration_closed?: boolean
 }
 
 export interface TournamentDB {
@@ -88,6 +159,7 @@ export interface TournamentDB {
   country_id: number
   city_id: number
   nominations_ids: number[]
+  is_marshals_registration_closed?: boolean
 }
 
 export interface Country {
@@ -207,12 +279,14 @@ export interface User {
   email?: string
   is_admin: boolean
   is_organizer: boolean
+  is_secretary: boolean
 }
 
 export const USERS_TYPES = {
   ALL: 'usersTabsAll',
   ADMINS: 'usersTabsAdmins',
   ORGANIZERS: 'usersTabsOrganizers',
+  SECRETARIES: 'usersTabsSecretaries',
   OTHERS: 'usersTabsOthers'
 } as const
 
@@ -221,6 +295,7 @@ export type UserType = (typeof USERS_TYPES)[keyof typeof USERS_TYPES]
 export interface UsersResponse {
   [USERS_TYPES.ADMINS]: User[]
   [USERS_TYPES.ORGANIZERS]: User[]
+  [USERS_TYPES.SECRETARIES]: User[]
   [USERS_TYPES.OTHERS]: User[]
 }
 

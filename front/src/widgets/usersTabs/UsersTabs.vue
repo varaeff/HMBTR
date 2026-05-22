@@ -30,13 +30,14 @@ const tableHeaders: string[] = [
   'usersTablePatronymic',
   'usersTableEmail',
   'usersTableIsAdmin',
-  'usersTableIsOrganizer'
+  'usersTableIsOrganizer',
+  'usersTableIsSecretary'
 ]
 </script>
 
 <template>
   <Tabs v-model="activeTab" class="w-full">
-    <TabsList class="grid w-full grid-cols-4 mb-4 h-9">
+    <TabsList class="grid w-full grid-cols-5 mb-4 h-9">
       <TabsTrigger
         v-for="value in USERS_TYPES"
         :key="value"
@@ -82,6 +83,16 @@ const tableHeaders: string[] = [
                   @update:model-value="
                     (checked: boolean | 'indeterminate') => {
                       user.is_organizer = checked === true
+                      usersListStore.updateUser(user)
+                    }
+                  "
+              /></TableCell>
+              <TableCell
+                ><Checkbox
+                  :model-value="user.is_secretary"
+                  @update:model-value="
+                    (checked: boolean | 'indeterminate') => {
+                      user.is_secretary = checked === true
                       usersListStore.updateUser(user)
                     }
                   "

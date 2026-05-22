@@ -58,6 +58,10 @@ export class UsersService {
       data.is_organizer = updateUserDto.is_organizer;
     }
 
+    if (updateUserDto.is_secretary !== undefined) {
+      data.is_secretary = updateUserDto.is_secretary;
+    }
+
     return this.prisma.users.update({
       where: { id },
       data,
@@ -70,6 +74,7 @@ export class UsersService {
         email: true,
         is_admin: true,
         is_organizer: true,
+        is_secretary: true,
         createdAt: true,
       },
     });

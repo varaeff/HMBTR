@@ -44,6 +44,7 @@ export type UsersMinAggregateOutputType = {
   email: string | null
   is_admin: boolean | null
   is_organizer: boolean | null
+  is_secretary: boolean | null
   refreshToken: string | null
   createdAt: Date | null
 }
@@ -58,6 +59,7 @@ export type UsersMaxAggregateOutputType = {
   email: string | null
   is_admin: boolean | null
   is_organizer: boolean | null
+  is_secretary: boolean | null
   refreshToken: string | null
   createdAt: Date | null
 }
@@ -72,6 +74,7 @@ export type UsersCountAggregateOutputType = {
   email: number
   is_admin: number
   is_organizer: number
+  is_secretary: number
   refreshToken: number
   createdAt: number
   _all: number
@@ -96,6 +99,7 @@ export type UsersMinAggregateInputType = {
   email?: true
   is_admin?: true
   is_organizer?: true
+  is_secretary?: true
   refreshToken?: true
   createdAt?: true
 }
@@ -110,6 +114,7 @@ export type UsersMaxAggregateInputType = {
   email?: true
   is_admin?: true
   is_organizer?: true
+  is_secretary?: true
   refreshToken?: true
   createdAt?: true
 }
@@ -124,6 +129,7 @@ export type UsersCountAggregateInputType = {
   email?: true
   is_admin?: true
   is_organizer?: true
+  is_secretary?: true
   refreshToken?: true
   createdAt?: true
   _all?: true
@@ -225,6 +231,7 @@ export type UsersGroupByOutputType = {
   email: string | null
   is_admin: boolean
   is_organizer: boolean
+  is_secretary: boolean
   refreshToken: string | null
   createdAt: Date
   _count: UsersCountAggregateOutputType | null
@@ -262,6 +269,7 @@ export type usersWhereInput = {
   email?: Prisma.StringNullableFilter<"users"> | string | null
   is_admin?: Prisma.BoolFilter<"users"> | boolean
   is_organizer?: Prisma.BoolFilter<"users"> | boolean
+  is_secretary?: Prisma.BoolFilter<"users"> | boolean
   refreshToken?: Prisma.StringNullableFilter<"users"> | string | null
   createdAt?: Prisma.DateTimeFilter<"users"> | Date | string
 }
@@ -276,6 +284,7 @@ export type usersOrderByWithRelationInput = {
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   is_admin?: Prisma.SortOrder
   is_organizer?: Prisma.SortOrder
+  is_secretary?: Prisma.SortOrder
   refreshToken?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -293,6 +302,7 @@ export type usersWhereUniqueInput = Prisma.AtLeast<{
   patronymic?: Prisma.StringNullableFilter<"users"> | string | null
   is_admin?: Prisma.BoolFilter<"users"> | boolean
   is_organizer?: Prisma.BoolFilter<"users"> | boolean
+  is_secretary?: Prisma.BoolFilter<"users"> | boolean
   refreshToken?: Prisma.StringNullableFilter<"users"> | string | null
   createdAt?: Prisma.DateTimeFilter<"users"> | Date | string
 }, "id" | "username" | "email">
@@ -307,6 +317,7 @@ export type usersOrderByWithAggregationInput = {
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   is_admin?: Prisma.SortOrder
   is_organizer?: Prisma.SortOrder
+  is_secretary?: Prisma.SortOrder
   refreshToken?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.usersCountOrderByAggregateInput
@@ -329,6 +340,7 @@ export type usersScalarWhereWithAggregatesInput = {
   email?: Prisma.StringNullableWithAggregatesFilter<"users"> | string | null
   is_admin?: Prisma.BoolWithAggregatesFilter<"users"> | boolean
   is_organizer?: Prisma.BoolWithAggregatesFilter<"users"> | boolean
+  is_secretary?: Prisma.BoolWithAggregatesFilter<"users"> | boolean
   refreshToken?: Prisma.StringNullableWithAggregatesFilter<"users"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"users"> | Date | string
 }
@@ -342,6 +354,7 @@ export type usersCreateInput = {
   email?: string | null
   is_admin?: boolean
   is_organizer?: boolean
+  is_secretary?: boolean
   refreshToken?: string | null
   createdAt?: Date | string
 }
@@ -356,6 +369,7 @@ export type usersUncheckedCreateInput = {
   email?: string | null
   is_admin?: boolean
   is_organizer?: boolean
+  is_secretary?: boolean
   refreshToken?: string | null
   createdAt?: Date | string
 }
@@ -369,6 +383,7 @@ export type usersUpdateInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_admin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_organizer?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_secretary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -383,6 +398,7 @@ export type usersUncheckedUpdateInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_admin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_organizer?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_secretary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -397,6 +413,7 @@ export type usersCreateManyInput = {
   email?: string | null
   is_admin?: boolean
   is_organizer?: boolean
+  is_secretary?: boolean
   refreshToken?: string | null
   createdAt?: Date | string
 }
@@ -410,6 +427,7 @@ export type usersUpdateManyMutationInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_admin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_organizer?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_secretary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -424,6 +442,7 @@ export type usersUncheckedUpdateManyInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_admin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_organizer?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_secretary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -438,6 +457,7 @@ export type usersCountOrderByAggregateInput = {
   email?: Prisma.SortOrder
   is_admin?: Prisma.SortOrder
   is_organizer?: Prisma.SortOrder
+  is_secretary?: Prisma.SortOrder
   refreshToken?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -456,6 +476,7 @@ export type usersMaxOrderByAggregateInput = {
   email?: Prisma.SortOrder
   is_admin?: Prisma.SortOrder
   is_organizer?: Prisma.SortOrder
+  is_secretary?: Prisma.SortOrder
   refreshToken?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -470,6 +491,7 @@ export type usersMinOrderByAggregateInput = {
   email?: Prisma.SortOrder
   is_admin?: Prisma.SortOrder
   is_organizer?: Prisma.SortOrder
+  is_secretary?: Prisma.SortOrder
   refreshToken?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -490,6 +512,7 @@ export type usersSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   email?: boolean
   is_admin?: boolean
   is_organizer?: boolean
+  is_secretary?: boolean
   refreshToken?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["users"]>
@@ -504,6 +527,7 @@ export type usersSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   email?: boolean
   is_admin?: boolean
   is_organizer?: boolean
+  is_secretary?: boolean
   refreshToken?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["users"]>
@@ -518,6 +542,7 @@ export type usersSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   email?: boolean
   is_admin?: boolean
   is_organizer?: boolean
+  is_secretary?: boolean
   refreshToken?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["users"]>
@@ -532,11 +557,12 @@ export type usersSelectScalar = {
   email?: boolean
   is_admin?: boolean
   is_organizer?: boolean
+  is_secretary?: boolean
   refreshToken?: boolean
   createdAt?: boolean
 }
 
-export type usersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "password" | "surname" | "name" | "patronymic" | "email" | "is_admin" | "is_organizer" | "refreshToken" | "createdAt", ExtArgs["result"]["users"]>
+export type usersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "password" | "surname" | "name" | "patronymic" | "email" | "is_admin" | "is_organizer" | "is_secretary" | "refreshToken" | "createdAt", ExtArgs["result"]["users"]>
 
 export type $usersPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "users"
@@ -551,6 +577,7 @@ export type $usersPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     email: string | null
     is_admin: boolean
     is_organizer: boolean
+    is_secretary: boolean
     refreshToken: string | null
     createdAt: Date
   }, ExtArgs["result"]["users"]>
@@ -985,6 +1012,7 @@ export interface usersFieldRefs {
   readonly email: Prisma.FieldRef<"users", 'String'>
   readonly is_admin: Prisma.FieldRef<"users", 'Boolean'>
   readonly is_organizer: Prisma.FieldRef<"users", 'Boolean'>
+  readonly is_secretary: Prisma.FieldRef<"users", 'Boolean'>
   readonly refreshToken: Prisma.FieldRef<"users", 'String'>
   readonly createdAt: Prisma.FieldRef<"users", 'DateTime'>
 }

@@ -16,6 +16,23 @@ const router = createRouter({
       component: () => import('@/pages/FightersListPage.vue')
     },
     {
+      path: '/marshals',
+      name: 'marshals',
+      component: () => import('@/pages/MarshalsListPage.vue')
+    },
+    {
+      path: '/marshal/:id',
+      name: 'marshal',
+      component: () => import('@/pages/MarshalPage.vue'),
+      props: true
+    },
+    {
+      path: '/addMarshal',
+      name: 'addMarshal',
+      component: () => import('@/pages/AddMarshalPage.vue'),
+      meta: { requiresAuth: true, requiresMarshalManager: true }
+    },
+    {
       path: '/fighter/:id',
       name: 'fighter',
       component: () => import('@/pages/FighterPage.vue'),
@@ -83,10 +100,12 @@ router.beforeEach(async (to, from, next) => {
   const isAuth = authStore.isAuthenticated
   const isAdmin = authStore.isAdmin
   const isOrganizer = authStore.isOrganizer
+  const isSecretary = authStore.isSecretary
 
   const requiresAuth = to.meta.requiresAuth === true
   const requiresAdmin = to.meta.requiresAdmin === true
   const requiresOrganizer = to.meta.requiresOrganizer === true
+  const requiresMarshalManager = to.meta.requiresMarshalManager === true
 
   if (isAdmin) {
     return next()
@@ -95,6 +114,8 @@ router.beforeEach(async (to, from, next) => {
   } else if (requiresAdmin && !isAdmin) {
     next({ name: 'forbidden' })
   } else if (requiresOrganizer && !isOrganizer) {
+    next({ name: 'forbidden' })
+  } else if (requiresMarshalManager && !isSecretary) {
     next({ name: 'forbidden' })
   } else {
     next()

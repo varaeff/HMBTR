@@ -24,11 +24,12 @@ import { OlympicBracket } from '@/widgets/OlympicBracket'
 import { TieResolver } from '@/widgets/TieResolver'
 import { CompetitionPodium } from '@/widgets/CompetitionPodium'
 import { TournamentCardsTable } from '@/widgets/DisciplinaryCards'
+import { TournamentMarshals } from '@/widgets/TournamentMarshals'
 
 import { useCollapsiblePersist } from '@/composables/useCollapsiblePersist'
 import { tData } from '@/lib/utils'
 import { dateToString } from '@/lib/dateUtils'
-import { hasAccess, hasAdminAccess } from '@/lib/checkAccess'
+import { hasAccess, hasAdminAccess, hasTournamentMarshalAccess } from '@/lib/checkAccess'
 import { API_ROUTES } from '@shared/routes'
 
 import type { CompetitionBlock, DisciplinaryCardType, Tournament } from '@/model'
@@ -55,6 +56,7 @@ const canDeleteCards = Boolean(hasAdminAccess())
 const isNominationLoading = ref(false)
 const isReportDownloading = ref(false)
 const isCardsOpen = ref(true)
+const isMarshalRegistrationOpen = ref(false)
 const blockOpenStates = reactive<Record<string, boolean>>({})
 let nominationLoadRequestId = 0
 const REPORT_DOWNLOAD_TIMEOUT_MS = 120000
@@ -149,6 +151,15 @@ const allTournamentNominationsFinished = computed(
 
 const canEditCompetition = computed(() => canEdit && !nominationFinished.value)
 const canManageCards = computed(() => canEdit)
+const canManageTournamentMarshals = computed(() => hasTournamentMarshalAccess())
+const hasOpenFighterRegistration = computed(() => tournamentNominations.value.open.length > 0)
+const canShowAddJudgesButton = computed(
+  () =>
+    canManageTournamentMarshals.value &&
+    hasOpenFighterRegistration.value &&
+    !tournament.value?.is_marshals_registration_closed &&
+    !isMarshalRegistrationOpen.value
+)
 
 const toDateInputValue = (date: Date) => {
   const parsed = new Date(date)
@@ -282,6 +293,17 @@ const finishCompetition = async () => {
     targetNom.is_finished = true
     targetNom.is_open = false
   }
+}
+
+const startMarshalRegistration = () => {
+  isMarshalRegistrationOpen.value = true
+}
+
+const finishMarshalRegistration = () => {
+  if (tournament.value) {
+    tournament.value.is_marshals_registration_closed = true
+  }
+  isMarshalRegistrationOpen.value = false
 }
 
 const getFileNameFromContentDisposition = (contentDisposition?: string) => {
@@ -437,6 +459,12 @@ watch(tournamentNominations, (noms) => {
   }
 })
 
+watch(hasOpenFighterRegistration, (hasOpen) => {
+  if (!hasOpen) {
+    isMarshalRegistrationOpen.value = false
+  }
+})
+
 watch(
   () => route.query.nomination,
   () => {
@@ -459,6 +487,9 @@ watch(
     <div v-if="tournament.id !== 0">
       {{ tournamentDetails }}
     </div>
+    <div v-if="canShowAddJudgesButton" class="mt-4">
+      <Button @click="startMarshalRegistration">{{ $t('tournamentPageAddJudgesButton') }}</Button>
+    </div>
     <div v-if="canEdit && allTournamentNominationsFinished" class="mt-4 flex flex-wrap gap-3">
       <Button :disabled="isReportDownloading" @click="downloadTournamentReport('en')">
         <Download class="size-4" />
@@ -470,6 +501,19 @@ watch(
       </Button>
     </div>
   </div>
+
+  <TournamentMarshals
+    v-if="tournament"
+    :tournamentId="tournament.id"
+    :showSelector="
+      isMarshalRegistrationOpen &&
+      canManageTournamentMarshals &&
+      hasOpenFighterRegistration &&
+      !tournament.is_marshals_registration_closed
+    "
+    :canManage="canManageTournamentMarshals"
+    @finished="finishMarshalRegistration"
+  />
 
   <div
     class="flex flex-col justify-center items-center mb-5"

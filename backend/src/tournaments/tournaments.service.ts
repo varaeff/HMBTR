@@ -8,6 +8,7 @@ import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { AddNominationDto } from './dto/add-nomination.dto';
 import { UpdateNominationDto } from './dto/update-nomination.dto';
 import { UpdateNominationStageDto } from './dto/update-nomination-stage.dto';
+import { AddTournamentMarshalDto } from './dto/add-tournament-marshal.dto';
 import {
   createMarkdownTable,
   createReportFileName,
@@ -227,6 +228,87 @@ export class TournamentsService {
     });
   }
 
+  async getTournamentMarshals(tournamentId: number) {
+    await this.assertTournamentExists(tournamentId);
+
+    return this.prisma.tournament_marshals.findMany({
+      where: { tournament_id: tournamentId },
+      orderBy: { created_at: 'asc' },
+      include: {
+        marshal: {
+          include: {
+            category: true,
+            country: true,
+            city: true,
+          },
+        },
+      },
+    });
+  }
+
+  async addTournamentMarshal(dto: AddTournamentMarshalDto) {
+    await this.assertCanChangeTournamentMarshals(dto.tournament_id);
+
+    const marshal = await this.prisma.marshals.findUnique({
+      where: { id: dto.marshal_id },
+      select: { id: true },
+    });
+
+    if (!marshal) throw new NotFoundException('Marshal not found');
+
+    const exists = await this.prisma.tournament_marshals.findFirst({
+      where: {
+        tournament_id: dto.tournament_id,
+        marshal_id: dto.marshal_id,
+      },
+      select: { id: true },
+    });
+
+    if (exists) {
+      throw new BadRequestException('Marshal already registered');
+    }
+
+    return this.prisma.tournament_marshals.create({
+      data: dto,
+      include: {
+        marshal: {
+          include: {
+            category: true,
+            country: true,
+            city: true,
+          },
+        },
+      },
+    });
+  }
+
+  async deleteTournamentMarshal(id: number) {
+    const tournamentMarshal = await this.prisma.tournament_marshals.findUnique({
+      where: { id },
+    });
+
+    if (!tournamentMarshal) {
+      throw new NotFoundException('Tournament marshal not found');
+    }
+
+    await this.assertCanChangeTournamentMarshals(
+      tournamentMarshal.tournament_id,
+    );
+
+    return this.prisma.tournament_marshals.delete({
+      where: { id },
+    });
+  }
+
+  async finishTournamentMarshalRegistration(tournamentId: number) {
+    await this.assertTournamentExists(tournamentId);
+
+    return this.prisma.tournaments.update({
+      where: { id: tournamentId },
+      data: { is_marshals_registration_closed: true },
+    });
+  }
+
   async getTournamentReport(tournamentId: number, language = 'en') {
     const reportLanguage = language === 'ru' ? 'ru' : 'en';
 
@@ -413,6 +495,38 @@ export class TournamentsService {
       throw new BadRequestException(
         'Tournament report storage is not ready. Run the 2_tournament_reports Prisma migration.',
       );
+    }
+  }
+
+  private async assertTournamentExists(tournamentId: number) {
+    const tournament = await this.prisma.tournaments.findUnique({
+      where: { id: tournamentId },
+      select: { id: true },
+    });
+
+    if (!tournament) throw new NotFoundException('Tournament not found');
+  }
+
+  private async assertCanChangeTournamentMarshals(tournamentId: number) {
+    const tournament = await this.prisma.tournaments.findUnique({
+      where: { id: tournamentId },
+      select: {
+        id: true,
+        is_marshals_registration_closed: true,
+        nominations: {
+          select: { is_open: true },
+        },
+      },
+    });
+
+    if (!tournament) throw new NotFoundException('Tournament not found');
+
+    if (tournament.is_marshals_registration_closed) {
+      throw new BadRequestException('Marshal registration is finished');
+    }
+
+    if (!tournament.nominations.some((nomination) => nomination.is_open)) {
+      throw new BadRequestException('Fighter registration is closed');
     }
   }
 

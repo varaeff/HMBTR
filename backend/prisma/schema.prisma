@@ -16,6 +16,7 @@ model countries {
 
   cities      cities[]
   fighters    fighters[]
+  marshals    marshals[]
   tournaments tournaments[]
 }
 
@@ -27,6 +28,7 @@ model cities {
   country     countries     @relation(fields: [country_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   clubs       clubs[]
   fighters    fighters[]
+  marshals    marshals[]
   tournaments tournaments[]
 }
 
@@ -62,12 +64,37 @@ model fighters {
   nomination_rating_history fighter_nomination_rating_history[]
 }
 
+model marshals {
+  id          Int     @id @default(autoincrement())
+  name        String  @db.VarChar(255)
+  surname     String  @db.VarChar(255)
+  patronymic  String? @db.VarChar(255)
+  country_id  Int
+  city_id     Int
+  category_id Int
+  pic         String?
+
+  country     countries             @relation(fields: [country_id], references: [id])
+  city        cities                @relation(fields: [city_id], references: [id])
+  category    marshals_categories   @relation(fields: [category_id], references: [id])
+  tournaments tournament_marshals[]
+}
+
+model marshals_categories {
+  id      Int    @id @default(autoincrement())
+  name_ru String @db.VarChar(255)
+  name_en String @db.VarChar(255)
+
+  marshals marshals[]
+}
+
 model tournaments {
-  id         Int       @id @default(autoincrement())
-  name       String    @db.VarChar(255)
-  event_date DateTime? @db.Date
-  country_id Int
-  city_id    Int
+  id                              Int       @id @default(autoincrement())
+  name                            String    @db.VarChar(255)
+  event_date                      DateTime? @db.Date
+  country_id                      Int
+  city_id                         Int
+  is_marshals_registration_closed Boolean   @default(false)
 
   country                countries                           @relation(fields: [country_id], references: [id])
   city                   cities                              @relation(fields: [city_id], references: [id])
@@ -78,6 +105,20 @@ model tournaments {
   reports                tournament_reports[]
   disciplinary_cards     disciplinary_cards[]
   fighter_rating_history fighter_nomination_rating_history[]
+  marshals               tournament_marshals[]
+}
+
+model tournament_marshals {
+  id            Int      @id @default(autoincrement())
+  tournament_id Int
+  marshal_id    Int
+  created_at    DateTime @default(now())
+
+  tournament tournaments @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
+  marshal    marshals    @relation(fields: [marshal_id], references: [id], onDelete: Cascade)
+
+  @@unique([tournament_id, marshal_id])
+  @@index([marshal_id])
 }
 
 model nominations {
@@ -323,6 +364,7 @@ model users {
   email        String?  @unique @db.VarChar(255)
   is_admin     Boolean  @default(false)
   is_organizer Boolean  @default(false)
+  is_secretary Boolean  @default(false)
   refreshToken String?  @db.Text
   createdAt    DateTime @default(now())
 }

@@ -55,7 +55,10 @@ export const ModelName = {
   cities: 'cities',
   clubs: 'clubs',
   fighters: 'fighters',
+  marshals: 'marshals',
+  marshals_categories: 'marshals_categories',
   tournaments: 'tournaments',
+  tournament_marshals: 'tournament_marshals',
   nominations: 'nominations',
   tournament_nominations: 'tournament_nominations',
   competitors: 'competitors',
@@ -130,15 +133,49 @@ export const FightersScalarFieldEnum = {
 export type FightersScalarFieldEnum = (typeof FightersScalarFieldEnum)[keyof typeof FightersScalarFieldEnum]
 
 
+export const MarshalsScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  surname: 'surname',
+  patronymic: 'patronymic',
+  country_id: 'country_id',
+  city_id: 'city_id',
+  category_id: 'category_id',
+  pic: 'pic'
+} as const
+
+export type MarshalsScalarFieldEnum = (typeof MarshalsScalarFieldEnum)[keyof typeof MarshalsScalarFieldEnum]
+
+
+export const Marshals_categoriesScalarFieldEnum = {
+  id: 'id',
+  name_ru: 'name_ru',
+  name_en: 'name_en'
+} as const
+
+export type Marshals_categoriesScalarFieldEnum = (typeof Marshals_categoriesScalarFieldEnum)[keyof typeof Marshals_categoriesScalarFieldEnum]
+
+
 export const TournamentsScalarFieldEnum = {
   id: 'id',
   name: 'name',
   event_date: 'event_date',
   country_id: 'country_id',
-  city_id: 'city_id'
+  city_id: 'city_id',
+  is_marshals_registration_closed: 'is_marshals_registration_closed'
 } as const
 
 export type TournamentsScalarFieldEnum = (typeof TournamentsScalarFieldEnum)[keyof typeof TournamentsScalarFieldEnum]
+
+
+export const Tournament_marshalsScalarFieldEnum = {
+  id: 'id',
+  tournament_id: 'tournament_id',
+  marshal_id: 'marshal_id',
+  created_at: 'created_at'
+} as const
+
+export type Tournament_marshalsScalarFieldEnum = (typeof Tournament_marshalsScalarFieldEnum)[keyof typeof Tournament_marshalsScalarFieldEnum]
 
 
 export const NominationsScalarFieldEnum = {
@@ -325,6 +362,7 @@ export const UsersScalarFieldEnum = {
   email: 'email',
   is_admin: 'is_admin',
   is_organizer: 'is_organizer',
+  is_secretary: 'is_secretary',
   refreshToken: 'refreshToken',
   createdAt: 'createdAt'
 } as const

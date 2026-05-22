@@ -6,11 +6,11 @@ import type { Pinia } from 'pinia'
 
 let isRefreshing = false
 let failedQueue: Array<{
-  resolve: (value?: any) => void
-  reject: (reason?: any) => void
+  resolve: (value?: unknown) => void
+  reject: (reason?: unknown) => void
 }> = []
 
-const processQueue = (error?: any) => {
+const processQueue = (error?: unknown) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error)

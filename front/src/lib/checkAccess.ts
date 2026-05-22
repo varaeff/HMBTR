@@ -12,3 +12,18 @@ export const hasAccess = () => {
 export const hasAdminAccess = () => {
   return authStore.isAuthenticated && authStore.user?.is_admin
 }
+
+export const hasMarshalManageAccess = () => {
+  return (
+    (authStore.isAuthenticated && (authStore.user?.is_admin || authStore.user?.is_secretary)) ||
+    false
+  )
+}
+
+export const hasTournamentMarshalAccess = () => {
+  return (
+    (authStore.isAuthenticated &&
+      (authStore.user?.is_admin || authStore.user?.is_organizer || authStore.user?.is_secretary)) ||
+    false
+  )
+}

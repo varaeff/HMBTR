@@ -388,7 +388,10 @@ export const ModelName = {
   cities: 'cities',
   clubs: 'clubs',
   fighters: 'fighters',
+  marshals: 'marshals',
+  marshals_categories: 'marshals_categories',
   tournaments: 'tournaments',
+  tournament_marshals: 'tournament_marshals',
   nominations: 'nominations',
   tournament_nominations: 'tournament_nominations',
   competitors: 'competitors',
@@ -418,7 +421,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "countries" | "cities" | "clubs" | "fighters" | "tournaments" | "nominations" | "tournament_nominations" | "competitors" | "groups" | "group_competitors" | "fights" | "disciplinary_cards" | "fighter_nomination_ratings" | "fighter_nomination_rating_history" | "competition_blocks" | "bracket_slots" | "competition_placements" | "tournament_reports" | "users"
+    modelProps: "countries" | "cities" | "clubs" | "fighters" | "marshals" | "marshals_categories" | "tournaments" | "tournament_marshals" | "nominations" | "tournament_nominations" | "competitors" | "groups" | "group_competitors" | "fights" | "disciplinary_cards" | "fighter_nomination_ratings" | "fighter_nomination_rating_history" | "competition_blocks" | "bracket_slots" | "competition_placements" | "tournament_reports" | "users"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -718,6 +721,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    marshals: {
+      payload: Prisma.$marshalsPayload<ExtArgs>
+      fields: Prisma.marshalsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.marshalsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$marshalsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.marshalsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$marshalsPayload>
+        }
+        findFirst: {
+          args: Prisma.marshalsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$marshalsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.marshalsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$marshalsPayload>
+        }
+        findMany: {
+          args: Prisma.marshalsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$marshalsPayload>[]
+        }
+        create: {
+          args: Prisma.marshalsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$marshalsPayload>
+        }
+        createMany: {
+          args: Prisma.marshalsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.marshalsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$marshalsPayload>[]
+        }
+        delete: {
+          args: Prisma.marshalsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$marshalsPayload>
+        }
+        update: {
+          args: Prisma.marshalsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$marshalsPayload>
+        }
+        deleteMany: {
+          args: Prisma.marshalsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.marshalsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.marshalsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$marshalsPayload>[]
+        }
+        upsert: {
+          args: Prisma.marshalsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$marshalsPayload>
+        }
+        aggregate: {
+          args: Prisma.MarshalsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMarshals>
+        }
+        groupBy: {
+          args: Prisma.marshalsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MarshalsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.marshalsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MarshalsCountAggregateOutputType> | number
+        }
+      }
+    }
+    marshals_categories: {
+      payload: Prisma.$marshals_categoriesPayload<ExtArgs>
+      fields: Prisma.marshals_categoriesFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.marshals_categoriesFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$marshals_categoriesPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.marshals_categoriesFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$marshals_categoriesPayload>
+        }
+        findFirst: {
+          args: Prisma.marshals_categoriesFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$marshals_categoriesPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.marshals_categoriesFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$marshals_categoriesPayload>
+        }
+        findMany: {
+          args: Prisma.marshals_categoriesFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$marshals_categoriesPayload>[]
+        }
+        create: {
+          args: Prisma.marshals_categoriesCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$marshals_categoriesPayload>
+        }
+        createMany: {
+          args: Prisma.marshals_categoriesCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.marshals_categoriesCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$marshals_categoriesPayload>[]
+        }
+        delete: {
+          args: Prisma.marshals_categoriesDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$marshals_categoriesPayload>
+        }
+        update: {
+          args: Prisma.marshals_categoriesUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$marshals_categoriesPayload>
+        }
+        deleteMany: {
+          args: Prisma.marshals_categoriesDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.marshals_categoriesUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.marshals_categoriesUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$marshals_categoriesPayload>[]
+        }
+        upsert: {
+          args: Prisma.marshals_categoriesUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$marshals_categoriesPayload>
+        }
+        aggregate: {
+          args: Prisma.Marshals_categoriesAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMarshals_categories>
+        }
+        groupBy: {
+          args: Prisma.marshals_categoriesGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Marshals_categoriesGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.marshals_categoriesCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Marshals_categoriesCountAggregateOutputType> | number
+        }
+      }
+    }
     tournaments: {
       payload: Prisma.$tournamentsPayload<ExtArgs>
       fields: Prisma.tournamentsFieldRefs
@@ -789,6 +940,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.tournamentsCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.TournamentsCountAggregateOutputType> | number
+        }
+      }
+    }
+    tournament_marshals: {
+      payload: Prisma.$tournament_marshalsPayload<ExtArgs>
+      fields: Prisma.tournament_marshalsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.tournament_marshalsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_marshalsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.tournament_marshalsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_marshalsPayload>
+        }
+        findFirst: {
+          args: Prisma.tournament_marshalsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_marshalsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.tournament_marshalsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_marshalsPayload>
+        }
+        findMany: {
+          args: Prisma.tournament_marshalsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_marshalsPayload>[]
+        }
+        create: {
+          args: Prisma.tournament_marshalsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_marshalsPayload>
+        }
+        createMany: {
+          args: Prisma.tournament_marshalsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.tournament_marshalsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_marshalsPayload>[]
+        }
+        delete: {
+          args: Prisma.tournament_marshalsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_marshalsPayload>
+        }
+        update: {
+          args: Prisma.tournament_marshalsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_marshalsPayload>
+        }
+        deleteMany: {
+          args: Prisma.tournament_marshalsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.tournament_marshalsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.tournament_marshalsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_marshalsPayload>[]
+        }
+        upsert: {
+          args: Prisma.tournament_marshalsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$tournament_marshalsPayload>
+        }
+        aggregate: {
+          args: Prisma.Tournament_marshalsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTournament_marshals>
+        }
+        groupBy: {
+          args: Prisma.tournament_marshalsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Tournament_marshalsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.tournament_marshalsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Tournament_marshalsCountAggregateOutputType> | number
         }
       }
     }
@@ -1909,15 +2134,49 @@ export const FightersScalarFieldEnum = {
 export type FightersScalarFieldEnum = (typeof FightersScalarFieldEnum)[keyof typeof FightersScalarFieldEnum]
 
 
+export const MarshalsScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  surname: 'surname',
+  patronymic: 'patronymic',
+  country_id: 'country_id',
+  city_id: 'city_id',
+  category_id: 'category_id',
+  pic: 'pic'
+} as const
+
+export type MarshalsScalarFieldEnum = (typeof MarshalsScalarFieldEnum)[keyof typeof MarshalsScalarFieldEnum]
+
+
+export const Marshals_categoriesScalarFieldEnum = {
+  id: 'id',
+  name_ru: 'name_ru',
+  name_en: 'name_en'
+} as const
+
+export type Marshals_categoriesScalarFieldEnum = (typeof Marshals_categoriesScalarFieldEnum)[keyof typeof Marshals_categoriesScalarFieldEnum]
+
+
 export const TournamentsScalarFieldEnum = {
   id: 'id',
   name: 'name',
   event_date: 'event_date',
   country_id: 'country_id',
-  city_id: 'city_id'
+  city_id: 'city_id',
+  is_marshals_registration_closed: 'is_marshals_registration_closed'
 } as const
 
 export type TournamentsScalarFieldEnum = (typeof TournamentsScalarFieldEnum)[keyof typeof TournamentsScalarFieldEnum]
+
+
+export const Tournament_marshalsScalarFieldEnum = {
+  id: 'id',
+  tournament_id: 'tournament_id',
+  marshal_id: 'marshal_id',
+  created_at: 'created_at'
+} as const
+
+export type Tournament_marshalsScalarFieldEnum = (typeof Tournament_marshalsScalarFieldEnum)[keyof typeof Tournament_marshalsScalarFieldEnum]
 
 
 export const NominationsScalarFieldEnum = {
@@ -2104,6 +2363,7 @@ export const UsersScalarFieldEnum = {
   email: 'email',
   is_admin: 'is_admin',
   is_organizer: 'is_organizer',
+  is_secretary: 'is_secretary',
   refreshToken: 'refreshToken',
   createdAt: 'createdAt'
 } as const
@@ -2316,7 +2576,10 @@ export type GlobalOmitConfig = {
   cities?: Prisma.citiesOmit
   clubs?: Prisma.clubsOmit
   fighters?: Prisma.fightersOmit
+  marshals?: Prisma.marshalsOmit
+  marshals_categories?: Prisma.marshals_categoriesOmit
   tournaments?: Prisma.tournamentsOmit
+  tournament_marshals?: Prisma.tournament_marshalsOmit
   nominations?: Prisma.nominationsOmit
   tournament_nominations?: Prisma.tournament_nominationsOmit
   competitors?: Prisma.competitorsOmit

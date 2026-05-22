@@ -17,7 +17,8 @@ const parseUser = async (user: User): Promise<User> => {
     patronymic: user.patronymic,
     email: user.email,
     is_admin: user.is_admin,
-    is_organizer: user.is_organizer
+    is_organizer: user.is_organizer,
+    is_secretary: user.is_secretary ?? false
   }
 }
 
@@ -33,7 +34,8 @@ export const useUsersListStore = defineStore({
         patronymic: '',
         email: '',
         is_admin: false,
-        is_organizer: false
+        is_organizer: false,
+        is_secretary: false
       }
     ],
     searchString: ''
@@ -84,9 +86,9 @@ export const useUsersListStore = defineStore({
       const filtered = state.users
         .filter((user) => user.id !== 0)
         .filter(
-          (user) =>
-            user.username.toLowerCase().includes(state.searchString.toLowerCase()) ||
-            user.name.toLowerCase().includes(state.searchString.toLowerCase()) ||
+        (user) =>
+          user.username.toLowerCase().includes(state.searchString.toLowerCase()) ||
+          user.name.toLowerCase().includes(state.searchString.toLowerCase()) ||
             user.surname.toLowerCase().includes(state.searchString.toLowerCase())
         )
 

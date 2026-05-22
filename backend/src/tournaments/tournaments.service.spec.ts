@@ -1,10 +1,11 @@
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 jest.mock('../prisma/prisma.service', () => ({
   PrismaService: class PrismaService {},
 }));
 
 import { TournamentsService } from './tournaments.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 describe('TournamentsService', () => {
   const createService = () => {
@@ -13,11 +14,24 @@ describe('TournamentsService', () => {
         findFirst: jest.fn(),
         update: jest.fn(),
       },
+      tournaments: {
+        findUnique: jest.fn(),
+        update: jest.fn(),
+      },
+      marshals: {
+        findUnique: jest.fn(),
+      },
+      tournament_marshals: {
+        findFirst: jest.fn(),
+        create: jest.fn(),
+        findUnique: jest.fn(),
+        delete: jest.fn(),
+      },
     };
 
     return {
       prisma,
-      service: new TournamentsService(prisma as any),
+      service: new TournamentsService(prisma as unknown as PrismaService),
     };
   };
 
@@ -64,5 +78,69 @@ describe('TournamentsService', () => {
         is_open: false,
       }),
     ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('registers a marshal while tournament marshal and fighter registration are open', async () => {
+    const { prisma, service } = createService();
+    prisma.tournaments.findUnique.mockResolvedValue({
+      id: 31,
+      is_marshals_registration_closed: false,
+      nominations: [{ is_open: true }],
+    });
+    prisma.marshals.findUnique.mockResolvedValue({ id: 9 });
+    prisma.tournament_marshals.findFirst.mockResolvedValue(null);
+    prisma.tournament_marshals.create.mockResolvedValue({
+      id: 4,
+      tournament_id: 31,
+      marshal_id: 9,
+    });
+
+    await expect(
+      service.addTournamentMarshal({ tournament_id: 31, marshal_id: 9 }),
+    ).resolves.toMatchObject({ id: 4, marshal_id: 9 });
+  });
+
+  it('rejects marshal registration after marshal registration is finished', async () => {
+    const { prisma, service } = createService();
+    prisma.tournaments.findUnique.mockResolvedValue({
+      id: 31,
+      is_marshals_registration_closed: true,
+      nominations: [{ is_open: true }],
+    });
+
+    await expect(
+      service.addTournamentMarshal({ tournament_id: 31, marshal_id: 9 }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('rejects marshal registration when no fighter nominations are open', async () => {
+    const { prisma, service } = createService();
+    prisma.tournaments.findUnique.mockResolvedValue({
+      id: 31,
+      is_marshals_registration_closed: false,
+      nominations: [{ is_open: false }],
+    });
+
+    await expect(
+      service.addTournamentMarshal({ tournament_id: 31, marshal_id: 9 }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('finishes marshal registration permanently', async () => {
+    const { prisma, service } = createService();
+    prisma.tournaments.findUnique.mockResolvedValue({ id: 31 });
+    prisma.tournaments.update.mockResolvedValue({
+      id: 31,
+      is_marshals_registration_closed: true,
+    });
+
+    await expect(
+      service.finishTournamentMarshalRegistration(31),
+    ).resolves.toMatchObject({ is_marshals_registration_closed: true });
+
+    expect(prisma.tournaments.update).toHaveBeenCalledWith({
+      where: { id: 31 },
+      data: { is_marshals_registration_closed: true },
+    });
   });
 });

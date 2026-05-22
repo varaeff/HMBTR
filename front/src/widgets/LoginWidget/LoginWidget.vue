@@ -19,6 +19,15 @@ import { FullNameWidget } from '@/widgets/FullNameWidget'
 import { useAuthService } from '@/composables/useAuthService'
 import { useApiUiStore } from '@/stores/apiUi'
 
+interface ApiErrorResponse {
+  response?: {
+    data?: {
+      details?: string
+      error?: string
+    }
+  }
+}
+
 const authService = useAuthService()
 const apiUi = useApiUiStore()
 const router = useRouter()
@@ -66,9 +75,10 @@ const handleLogin = async () => {
     isSheetOpen.value = false
     await new Promise((resolve) => setTimeout(resolve, 100))
     router.push('/')
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const apiError = error as ApiErrorResponse
     const serverError =
-      error.response?.data?.details || error.response?.data?.error || 'Ошибка входа'
+      apiError.response?.data?.details || apiError.response?.data?.error || 'Ошибка входа'
     apiUi.setError(serverError)
     console.error('Login failed:', error)
   } finally {

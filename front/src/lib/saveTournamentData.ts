@@ -5,6 +5,11 @@ import { useCompetitionStore } from '@/stores/competition'
 
 import type { Group, BlockData } from '@/model'
 
+interface TournamentNominationResponse {
+  id: number
+  nomination_id: number
+}
+
 interface SaveTournamentDataParams {
   tournamentId: number
   nominationId: number
@@ -32,11 +37,11 @@ export const saveTournamentData = async ({
 
   try {
     // 1. Подготовка данных
-    const { data: tournamentsNominations } = await http.get(
+    const { data: tournamentsNominations } = await http.get<TournamentNominationResponse[]>(
       `${API_ROUTES.TOURNAMENTS.ROOT}/${API_ROUTES.TOURNAMENTS.NOMINATION}/${tournamentId}`
     )
     const targetNomination = tournamentsNominations.find(
-      (tn: any) => tn.nomination_id === nominationId
+      (tn) => tn.nomination_id === nominationId
     )
     if (!targetNomination) throw new Error('Tournament nomination not found')
 
@@ -68,7 +73,7 @@ export const saveTournamentData = async ({
     )
 
     // 4. Сохранение участников групп (всех сразу)
-    const participantRequests: any[] = []
+    const participantRequests: Array<Promise<unknown>> = []
     for (const g of groupCreationResults) {
       groupsMap.set(g.letter, g.id)
       g.fighters.forEach((fighter) => {

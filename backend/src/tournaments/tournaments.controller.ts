@@ -1,5 +1,6 @@
 import {
   Controller,
+  Delete,
   Get,
   Post,
   Body,
@@ -17,6 +18,7 @@ import { API_ROUTES } from '@shared/routes';
 import { AddNominationDto } from './dto/add-nomination.dto';
 import { UpdateNominationDto } from './dto/update-nomination.dto';
 import { UpdateNominationStageDto } from './dto/update-nomination-stage.dto';
+import { AddTournamentMarshalDto } from './dto/add-tournament-marshal.dto';
 import { Public } from '../auth/decorators/public.decorator';
 import type { Request, Response } from 'express';
 
@@ -24,6 +26,7 @@ interface RequestWithUser extends Request {
   user: {
     is_admin: boolean;
     is_organizer: boolean;
+    is_secretary?: boolean;
   };
 }
 
@@ -38,6 +41,14 @@ const createContentDisposition = (fileName: string) => {
       .trim() || 'tournament-results.pdf';
 
   return `attachment; filename="${safeAsciiFileName}"; filename*=UTF-8''${encodeURIComponent(fileName)}`;
+};
+
+const assertCanManageTournamentMarshals = (req: RequestWithUser) => {
+  if (!req.user.is_admin && !req.user.is_organizer && !req.user.is_secretary) {
+    throw new ForbiddenException(
+      'Secretary, organizer or administrator access required',
+    );
+  }
 };
 
 @Controller(API_ROUTES.TOURNAMENTS.ROOT)
@@ -81,6 +92,39 @@ export class TournamentsController {
       createContentDisposition(report.fileName),
     );
     res.send(report.pdf);
+  }
+
+  @Public()
+  @Get(':id/' + API_ROUTES.TOURNAMENTS.MARSHALS)
+  getTournamentMarshals(@Param('id', ParseIntPipe) id: number) {
+    return this.tournamentsService.getTournamentMarshals(id);
+  }
+
+  @Post(API_ROUTES.TOURNAMENTS.MARSHALS)
+  addTournamentMarshal(
+    @Body() dto: AddTournamentMarshalDto,
+    @Req() req: RequestWithUser,
+  ) {
+    assertCanManageTournamentMarshals(req);
+    return this.tournamentsService.addTournamentMarshal(dto);
+  }
+
+  @Delete(API_ROUTES.TOURNAMENTS.MARSHALS + '/:id')
+  deleteTournamentMarshal(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: RequestWithUser,
+  ) {
+    assertCanManageTournamentMarshals(req);
+    return this.tournamentsService.deleteTournamentMarshal(id);
+  }
+
+  @Post(':id/' + API_ROUTES.TOURNAMENTS.MARSHALS + '/finish')
+  finishTournamentMarshalRegistration(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: RequestWithUser,
+  ) {
+    assertCanManageTournamentMarshals(req);
+    return this.tournamentsService.finishTournamentMarshalRegistration(id);
   }
 
   @Public()

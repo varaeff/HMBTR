@@ -9,5 +9,6 @@ export class AuthResponseDto {
     email?: string;
     is_admin: boolean;
     is_organizer: boolean;
+    is_secretary: boolean;
   };
 }

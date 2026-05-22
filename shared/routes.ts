@@ -5,6 +5,13 @@ export const API_ROUTES = {
     BY_ID_PATH: ":id",
     BY_ID: (id: string | number) => `/fighters/${id}`,
   },
+  MARSHALS: {
+    ROOT: "marshals",
+    COUNT: "count",
+    CATEGORIES: "categories",
+    BY_ID_PATH: ":id",
+    BY_ID: (id: string | number) => `/marshals/${id}`,
+  },
   NOMINATIONS: {
     ROOT: "nominations",
   },
@@ -12,8 +19,15 @@ export const API_ROUTES = {
     ROOT: "tournaments",
     COUNT: "count",
     NOMINATION: "nominations",
+    MARSHALS: "marshals",
     REPORT: (id: string | number) => `/tournaments/${id}/report`,
     BY_ID: (id: string | number) => `/tournaments/${id}`,
+    MARSHALS_BY_TOURNAMENT: (id: string | number) =>
+      `/tournaments/${id}/marshals`,
+    FINISH_MARSHALS: (id: string | number) =>
+      `/tournaments/${id}/marshals/finish`,
+    TOURNAMENT_MARSHAL_BY_ID: (id: string | number) =>
+      `/tournaments/marshals/${id}`,
   },
   COUNTRIES: {
     ROOT: "countries",

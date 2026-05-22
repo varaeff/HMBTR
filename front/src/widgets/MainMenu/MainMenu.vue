@@ -29,6 +29,10 @@ const links = [
     url: '/fighters'
   },
   {
+    title: 'menuMarshalsLink',
+    url: '/marshals'
+  },
+  {
     title: 'menuTournamentsLink',
     url: '/tournaments'
   },

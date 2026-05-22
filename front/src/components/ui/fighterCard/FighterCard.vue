@@ -1,16 +1,25 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useTranslation } from 'i18next-vue'
 import { tData } from '@/lib/utils'
 import NoPhoto from '@/entities/NoPhoto.jpg'
 
-const props = defineProps({
-  name: String,
-  description: String,
-  pic: String
-})
+const props = defineProps<{
+  name?: string
+  description?: string
+  pic?: string
+}>()
 
 const cardContentRef = ref<HTMLElement | null>(null)
 const glossRef = ref<HTMLElement | null>(null)
+const { i18next } = useTranslation()
+const currentLanguage = ref(i18next.language || 'ru')
+const displayName = computed(() => tData(props.name ?? '', currentLanguage.value))
+const displayDescription = computed(() => tData(props.description ?? '', currentLanguage.value))
+
+const updateLanguage = (language: string) => {
+  currentLanguage.value = language
+}
 
 const mapNumberRange = (n: number, a: number, b: number, c: number, d: number): number => {
   return ((n - a) * (d - c)) / (b - a) + c
@@ -55,11 +64,17 @@ const handleMouseLeave = () => {
 }
 
 onMounted(() => {
+  i18next.on('languageChanged', updateLanguage)
+
   if (glossRef.value) {
     requestAnimationFrame(() => {
       glossRef.value!.classList.add('transition-opacity', 'duration-[250ms]', 'ease-out')
     })
   }
+})
+
+onUnmounted(() => {
+  i18next.off('languageChanged', updateLanguage)
 })
 </script>
 
@@ -80,15 +95,15 @@ onMounted(() => {
       <img
         class="box-border aspect-video w-full object-cover"
         :src="props.pic ? props.pic : NoPhoto"
-        :alt="props.name"
+        :alt="displayName"
       />
       <h2 class="box-border text-black text-[20px] pt-2.5 pr-3.5 pb-1.25 pl-3.5 m-0">
-        {{ tData(props.name as string) }}
+        {{ displayName }}
       </h2>
       <p
         class="box-border text-[hsl(201,14%,40%)] text-[14px] pt-0 pr-3.5 pb-2.5 pl-3.5 m-0 text-left"
       >
-        {{ tData(props.description as string) }}
+        {{ displayDescription }}
       </p>
     </div>
   </div>

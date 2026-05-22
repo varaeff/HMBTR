@@ -159,6 +159,7 @@ export class AuthService {
         email: user.email ?? undefined,
         is_admin: user.is_admin,
         is_organizer: user.is_organizer,
+        is_secretary: user.is_secretary,
       },
     };
   }
@@ -206,6 +207,7 @@ export class AuthService {
         email: user.email ?? undefined,
         is_admin: user.is_admin,
         is_organizer: user.is_organizer,
+        is_secretary: user.is_secretary,
       },
     };
   }
@@ -259,6 +261,7 @@ export class AuthService {
         email: user.email ?? undefined,
         is_admin: user.is_admin,
         is_organizer: user.is_organizer,
+        is_secretary: user.is_secretary,
       },
     };
   }

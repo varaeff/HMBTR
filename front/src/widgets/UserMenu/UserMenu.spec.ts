@@ -24,7 +24,8 @@ describe('UserMenu', () => {
       name: 'Иван',
       surname: 'Иванов',
       is_admin: false,
-      is_organizer: false
+      is_organizer: false,
+      is_secretary: false
     }
 
     const instance = i18next.createInstance()
