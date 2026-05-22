@@ -367,6 +367,8 @@ export interface DisciplinaryCard {
   fight_stage: number
   tournament_name: string
   nomination_id: number
+  nomination_name_ru: string
+  nomination_name_en: string
   bracket_round: number | null
   bracket_position: number | null
   is_bronze: boolean

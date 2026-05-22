@@ -15,13 +15,13 @@ import {
   createTournamentReportPdf,
 } from './tournament-report.pdf';
 
+type ReportStorageRow = {
+  table_name: string | null;
+};
+
 type CachedReportRow = {
   file_name: string;
   pdf_data_base64: string;
-};
-
-type ReportStorageRow = {
-  table_name: string | null;
 };
 
 type FighterName = {
@@ -30,7 +30,16 @@ type FighterName = {
   patronymic?: string | null;
 };
 
+type FighterIdentity = FighterName & {
+  id: number;
+};
+
 type NominationDefinition = {
+  name_en: string;
+  name_ru: string;
+};
+
+type MarshalCategory = {
   name_en: string;
   name_ru: string;
 };
@@ -57,6 +66,28 @@ type Fight = {
   competitor1: { fighter: FighterName };
   competitor2: { fighter: FighterName };
   winner: { fighter: FighterName } | null;
+};
+
+type CardFight = {
+  fight_number: number;
+  nomination: NominationDefinition;
+};
+
+type TournamentMarshal = {
+  marshal: FighterName & {
+    category: MarshalCategory;
+    country: { name: string };
+    city: { name: string };
+  };
+};
+
+type DisciplinaryCard = {
+  id: number;
+  fighter_id: number;
+  type: string;
+  reason: string;
+  fighter: FighterIdentity;
+  fight: CardFight;
 };
 
 type Group = {
@@ -97,6 +128,8 @@ type Tournament = {
   competitors: {
     nomination_id: number;
   }[];
+  marshals: TournamentMarshal[];
+  disciplinary_cards: DisciplinaryCard[];
   nominations: Nomination[];
 };
 
@@ -111,6 +144,18 @@ const REPORT_COPY = {
     date: 'Date',
     nominations: 'Nominations',
     totalFighters: 'Total fighters',
+    marshals: 'Marshals',
+    noMarshals: 'No marshals were registered.',
+    marshal: 'Marshal',
+    category: 'Category',
+    country: 'Country',
+    city: 'City',
+    disciplinaryCards: 'Disciplinary cards',
+    noDisciplinaryCards: 'No disciplinary cards were issued.',
+    cardType: 'Card',
+    yellowCard: 'Yellow',
+    redCard: 'Red',
+    reason: 'Reason',
     nomination: 'Nomination',
     registeredFighters: 'Registered fighters',
     finalResults: 'Final results',
@@ -126,6 +171,8 @@ const REPORT_COPY = {
     group: 'Group',
     results: 'Results',
     fights: 'Fights',
+    fight: 'Fight',
+    fightNumber: 'Fight #',
     place: 'Place',
     fighter: 'Fighter',
     wins: 'Wins',
@@ -147,6 +194,18 @@ const REPORT_COPY = {
     date: 'Дата',
     nominations: 'Номинации',
     totalFighters: 'Всего бойцов',
+    marshals: 'Судьи',
+    noMarshals: 'Судьи не зарегистрированы.',
+    marshal: 'Судья',
+    category: 'Категория',
+    country: 'Страна',
+    city: 'Город',
+    disciplinaryCards: 'Дисциплинарные карточки',
+    noDisciplinaryCards: 'Дисциплинарные карточки не выдавались.',
+    cardType: 'Карточка',
+    yellowCard: 'Желтая',
+    redCard: 'Красная',
+    reason: 'Причина',
     nomination: 'Номинация',
     registeredFighters: 'Зарегистрировано бойцов',
     finalResults: 'Итоговые результаты',
@@ -162,6 +221,8 @@ const REPORT_COPY = {
     group: 'Группа',
     results: 'Результаты',
     fights: 'Бои',
+    fight: 'Бой',
+    fightNumber: '№ боя',
     place: 'Место',
     fighter: 'Боец',
     wins: 'Победы',
@@ -318,12 +379,37 @@ export class TournamentsService {
 
     if (cached) return cached;
 
+    await this.normalizeTournamentBronzeFinalFightNumbers(tournamentId);
+
     const tournament = await this.prisma.tournaments.findUnique({
       where: { id: tournamentId },
       include: {
         country: true,
         city: true,
         competitors: true,
+        marshals: {
+          orderBy: { created_at: 'asc' },
+          include: {
+            marshal: {
+              include: {
+                category: true,
+                country: true,
+                city: true,
+              },
+            },
+          },
+        },
+        disciplinary_cards: {
+          orderBy: [{ received_at: 'asc' }, { id: 'asc' }],
+          include: {
+            fighter: true,
+            fight: {
+              include: {
+                nomination: true,
+              },
+            },
+          },
+        },
         nominations: {
           orderBy: { nomination_id: 'asc' },
           include: {
@@ -466,6 +552,18 @@ export class TournamentsService {
     });
   }
 
+  private async assertReportStorageReady() {
+    const [reportStorage] = await this.prisma.$queryRawUnsafe<
+      ReportStorageRow[]
+    >(`SELECT to_regclass('public.tournament_reports')::text AS "table_name"`);
+
+    if (!reportStorage?.table_name) {
+      throw new BadRequestException(
+        'Tournament report storage is not ready. Run the 2_tournament_reports Prisma migration.',
+      );
+    }
+  }
+
   private async getCachedReport(tournamentId: number, language: string) {
     const [cached] = await this.prisma.$queryRawUnsafe<CachedReportRow[]>(
       `
@@ -486,15 +584,46 @@ export class TournamentsService {
     };
   }
 
-  private async assertReportStorageReady() {
-    const [reportStorage] = await this.prisma.$queryRawUnsafe<
-      ReportStorageRow[]
-    >(`SELECT to_regclass('public.tournament_reports')::text AS "table_name"`);
+  private async normalizeTournamentBronzeFinalFightNumbers(
+    tournamentId: number,
+  ) {
+    const blocks = await this.prisma.competition_blocks.findMany({
+      where: {
+        tournament_id: tournamentId,
+        type: 'OLYMPIC',
+      },
+      select: { id: true },
+    });
 
-    if (!reportStorage?.table_name) {
-      throw new BadRequestException(
-        'Tournament report storage is not ready. Run the 2_tournament_reports Prisma migration.',
-      );
+    for (const block of blocks) {
+      const [finalFight, bronzeFight] = await Promise.all([
+        this.prisma.fights.findFirst({
+          where: { block_id: block.id, is_bronze: false },
+          orderBy: { bracket_round: 'desc' },
+        }),
+        this.prisma.fights.findFirst({
+          where: { block_id: block.id, is_bronze: true },
+        }),
+      ]);
+
+      if (
+        !finalFight ||
+        !bronzeFight ||
+        bronzeFight.fight_number < finalFight.fight_number
+      ) {
+        continue;
+      }
+
+      await this.prisma.$transaction([
+        this.prisma.fights.update({
+          where: { id: bronzeFight.id },
+          data: { fight_number: finalFight.fight_number },
+        }),
+        this.prisma.fights.update({
+          where: { id: finalFight.id },
+          data: { fight_number: bronzeFight.fight_number },
+        }),
+      ]);
     }
   }
 
@@ -562,6 +691,14 @@ export class TournamentsService {
       `**${copy.totalFighters}:** ${totalFighters}`,
     ];
 
+    this.appendMarshalsMarkdown(sections, tournament, copy, language);
+    this.appendDisciplinaryCardsMarkdown(
+      sections,
+      tournament.disciplinary_cards,
+      copy,
+      language,
+    );
+
     for (const tournamentNomination of tournament.nominations) {
       const nominationName: string = this.getNominationName(
         tournamentNomination.nomination,
@@ -607,6 +744,62 @@ export class TournamentsService {
     }
 
     return sections.join('\n');
+  }
+
+  private appendMarshalsMarkdown(
+    sections: string[],
+    tournament: Tournament,
+    copy: ReportCopy,
+    language: string,
+  ) {
+    sections.push('', `## ${copy.marshals}`, '');
+
+    if (!tournament.marshals.length) {
+      sections.push(copy.noMarshals);
+      return;
+    }
+
+    sections.push(
+      createMarkdownTable(
+        [copy.marshal, copy.category, copy.country, copy.city],
+        tournament.marshals.map((tournamentMarshal) => [
+          this.formatFighterName(tournamentMarshal.marshal),
+          this.getMarshalCategoryName(
+            tournamentMarshal.marshal.category,
+            language,
+          ),
+          tournamentMarshal.marshal.country.name,
+          tournamentMarshal.marshal.city.name,
+        ]),
+      ),
+    );
+  }
+
+  private appendDisciplinaryCardsMarkdown(
+    sections: string[],
+    cards: DisciplinaryCard[],
+    copy: ReportCopy,
+    language: string,
+  ) {
+    sections.push('', `## ${copy.disciplinaryCards}`, '');
+
+    if (!cards.length) {
+      sections.push(copy.noDisciplinaryCards);
+      return;
+    }
+
+    sections.push(
+      createMarkdownTable(
+        [copy.cardType, copy.fighter, copy.nomination, copy.fight, copy.reason],
+        cards.map((card) => [
+          this.getCardTypeLabel(card.type, copy),
+          this.formatFighterName(card.fighter),
+          this.getNominationName(card.fight.nomination, language),
+          this.getCardFightLabel(card.fight),
+          card.reason,
+        ]),
+      ),
+    );
   }
 
   private appendGroupBlockMarkdown(
@@ -706,8 +899,16 @@ export class TournamentsService {
 
   private createFightsTable(fights: Fight[], copy: ReportCopy) {
     return createMarkdownTable(
-      [copy.fighter1, copy.vs, copy.fighter2, copy.score, copy.winner],
+      [
+        copy.fightNumber,
+        copy.fighter1,
+        copy.vs,
+        copy.fighter2,
+        copy.score,
+        copy.winner,
+      ],
       fights.map((fight) => [
+        fight.fight_number,
         this.formatFighterName(fight.competitor1.fighter),
         copy.blank,
         this.formatFighterName(fight.competitor2.fighter),
@@ -817,6 +1018,18 @@ export class TournamentsService {
     if (language !== 'ru') return copy.fighter.toLowerCase();
 
     return count === 3 || count === 4 ? 'бойца' : 'бойцов';
+  }
+
+  private getMarshalCategoryName(category: MarshalCategory, language: string) {
+    return language === 'ru' ? category.name_ru : category.name_en;
+  }
+
+  private getCardTypeLabel(type: string, copy: ReportCopy) {
+    return type === 'RED' ? copy.redCard : copy.yellowCard;
+  }
+
+  private getCardFightLabel(fight: CardFight) {
+    return `#${fight.fight_number}`;
   }
 
   private getNominationName(

@@ -44,20 +44,12 @@ const dateInputValue = (date: string) => date.slice(0, 10)
 
 const formatDate = (date: string) => new Date(date).toLocaleDateString()
 
-const fightLabel = (card: DisciplinaryCard) => {
-  const base = `#${card.fight_number}`
-  if (card.group_name) return `${base}, ${i18next.t('disciplinaryCardsGroup')} ${card.group_name}`
-  if (card.is_bronze) return `${base}, ${i18next.t('tournamentPageBronzeFight')}`
-  if (card.bracket_round)
-    return `${base}, ${i18next.t('tournamentPageRound')} ${card.bracket_round}`
-  return base
-}
+const fightLabel = (card: DisciplinaryCard) => `#${card.fight_number}`
 
-const opponentName = (card: DisciplinaryCard) =>
-  [card.opponent_surname, card.opponent_name, card.opponent_patronymic]
-    .filter((part): part is string => Boolean(part))
-    .map((part) => tData(part, currentLanguage.value))
-    .join(' ')
+const nominationName = (card: DisciplinaryCard) =>
+  currentLanguage.value === 'ru'
+    ? card.nomination_name_ru
+    : tData(card.nomination_name_en, currentLanguage.value)
 
 const fighterName = (card: DisciplinaryCard) =>
   [card.fighter_surname, card.fighter_name, card.fighter_patronymic]
@@ -83,10 +75,15 @@ const cancelEdit = () => {
 }
 
 const saveEdit = async (card: DisciplinaryCard) => {
-  await cardsStore.updateCard(card.id, {
-    reason: draft.reason,
-    expires_at: draft.expires_at
-  })
+  await cardsStore.updateCard(
+    card.id,
+    isFighterMode.value
+      ? {
+          reason: draft.reason,
+          expires_at: draft.expires_at
+        }
+      : { reason: draft.reason }
+  )
   editingId.value = null
   emit('changed')
 }
@@ -106,15 +103,17 @@ const deleteCard = async (card: DisciplinaryCard) => {
           $t('disciplinaryCardsTournament')
         }}</TableCell>
         <TableCell v-else class="font-bold">{{ $t('disciplinaryCardsFighter') }}</TableCell>
-        <TableCell class="font-bold">{{ $t('disciplinaryCardsDate') }}</TableCell>
+        <TableCell v-if="isFighterMode" class="font-bold">{{
+          $t('disciplinaryCardsDate')
+        }}</TableCell>
+        <TableCell v-else class="font-bold">{{ $t('disciplinaryCardsNomination') }}</TableCell>
         <TableCell v-if="!isFighterMode" class="font-bold">{{
           $t('disciplinaryCardsFight')
         }}</TableCell>
-        <TableCell v-if="!isFighterMode" class="font-bold">{{
-          $t('disciplinaryCardsOpponent')
-        }}</TableCell>
         <TableCell class="font-bold">{{ $t('disciplinaryCardsReason') }}</TableCell>
-        <TableCell class="font-bold">{{ $t('disciplinaryCardsExpires') }}</TableCell>
+        <TableCell v-if="isFighterMode" class="font-bold">{{
+          $t('disciplinaryCardsExpires')
+        }}</TableCell>
         <TableCell v-if="canShowActions" class="font-bold text-right">{{
           $t('disciplinaryCardsActions')
         }}</TableCell>
@@ -142,7 +141,7 @@ const deleteCard = async (card: DisciplinaryCard) => {
             </RouterLink>
           </TableCell>
           <TableCell v-else>{{ fighterName(card) }}</TableCell>
-          <TableCell>
+          <TableCell v-if="isFighterMode">
             <input
               :value="dateInputValue(card.received_at)"
               type="date"
@@ -150,12 +149,12 @@ const deleteCard = async (card: DisciplinaryCard) => {
               class="h-8 rounded border bg-muted px-2"
             />
           </TableCell>
+          <TableCell v-else>{{ nominationName(card) }}</TableCell>
           <TableCell v-if="!isFighterMode">{{ fightLabel(card) }}</TableCell>
-          <TableCell v-if="!isFighterMode">{{ opponentName(card) }}</TableCell>
           <TableCell>
             <input v-model="draft.reason" class="h-8 w-full rounded border bg-background px-2" />
           </TableCell>
-          <TableCell>
+          <TableCell v-if="isFighterMode">
             <input
               v-model="draft.expires_at"
               type="date"
@@ -195,11 +194,11 @@ const deleteCard = async (card: DisciplinaryCard) => {
             </RouterLink>
           </TableCell>
           <TableCell v-else>{{ fighterName(card) }}</TableCell>
-          <TableCell>{{ formatDate(card.received_at) }}</TableCell>
+          <TableCell v-if="isFighterMode">{{ formatDate(card.received_at) }}</TableCell>
+          <TableCell v-else>{{ nominationName(card) }}</TableCell>
           <TableCell v-if="!isFighterMode">{{ fightLabel(card) }}</TableCell>
-          <TableCell v-if="!isFighterMode">{{ opponentName(card) }}</TableCell>
           <TableCell>{{ card.reason }}</TableCell>
-          <TableCell>{{ formatDate(card.expires_at) }}</TableCell>
+          <TableCell v-if="isFighterMode">{{ formatDate(card.expires_at) }}</TableCell>
           <TableCell v-if="canShowActions" class="text-right">
             <div class="flex justify-end gap-2">
               <Button v-if="canManage" size="sm" variant="outline" @click="startEdit(card)">

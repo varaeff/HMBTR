@@ -27,6 +27,8 @@ export interface DisciplinaryCard {
   fight_stage: number;
   tournament_name: string;
   nomination_id: number;
+  nomination_name_ru: string;
+  nomination_name_en: string;
   bracket_round: number | null;
   bracket_position: number | null;
   is_bronze: boolean;
@@ -221,6 +223,8 @@ export class DisciplinaryCardsService {
         f."stage" AS "fight_stage",
         t."name" AS "tournament_name",
         f."nomination_id",
+        n."name_ru" AS "nomination_name_ru",
+        n."name_en" AS "nomination_name_en",
         f."bracket_round",
         f."bracket_position",
         f."is_bronze",
@@ -240,6 +244,7 @@ export class DisciplinaryCardsService {
       JOIN "fighters" card_fighter ON card_fighter."id" = dc."fighter_id"
       JOIN "tournaments" t ON t."id" = dc."tournament_id"
       JOIN "fights" f ON f."id" = dc."fight_id"
+      JOIN "nominations" n ON n."id" = f."nomination_id"
       LEFT JOIN "competition_blocks" cb ON cb."id" = f."block_id"
       LEFT JOIN "tournament_nominations" tn ON tn."id" = cb."tournament_nomination_id"
       LEFT JOIN "groups" g ON g."id" = f."group_id"

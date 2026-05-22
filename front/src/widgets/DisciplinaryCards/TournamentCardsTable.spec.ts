@@ -19,6 +19,7 @@ const createI18n = async () => {
           disciplinaryCardsType: 'Type',
           disciplinaryCardsFighter: 'Fighter',
           disciplinaryCardsDate: 'Date',
+          disciplinaryCardsNomination: 'Nomination',
           disciplinaryCardsFight: 'Fight',
           disciplinaryCardsOpponent: 'Opponent',
           disciplinaryCardsReason: 'Reason',
@@ -40,6 +41,7 @@ const createI18n = async () => {
           disciplinaryCardsType: 'Type',
           disciplinaryCardsFighter: 'Fighter',
           disciplinaryCardsDate: 'Date',
+          disciplinaryCardsNomination: 'Nomination',
           disciplinaryCardsFight: 'Fight',
           disciplinaryCardsOpponent: 'Opponent',
           disciplinaryCardsReason: 'Reason',
@@ -78,6 +80,8 @@ const card: DisciplinaryCard = {
   fight_stage: 1,
   tournament_name: '\u041a\u0443\u0431\u043e\u043a',
   nomination_id: 1,
+  nomination_name_ru: '\u0412\u0437\u0440\u043e\u0441\u043b\u044b\u0435',
+  nomination_name_en: 'Adults',
   bracket_round: null,
   bracket_position: null,
   is_bronze: false,
@@ -93,7 +97,7 @@ const card: DisciplinaryCard = {
 }
 
 describe('TournamentCardsTable', () => {
-  it('transliterates disciplinary card fighter names when the language changes to English', async () => {
+  it('shows tournament card columns matching the PDF card summary', async () => {
     const pinia = createPinia()
     setActivePinia(pinia)
     const instance = await createI18n()
@@ -115,7 +119,13 @@ describe('TournamentCardsTable', () => {
     expect(wrapper.text()).toContain(
       '\u0418\u0432\u0430\u043d\u043e\u0432 \u0418\u0432\u0430\u043d'
     )
-    expect(wrapper.text()).toContain(
+    expect(wrapper.text()).toContain('\u0412\u0437\u0440\u043e\u0441\u043b\u044b\u0435')
+    expect(wrapper.text()).toContain('#1')
+    expect(wrapper.text()).toContain('test')
+    expect(wrapper.text()).not.toContain('Date')
+    expect(wrapper.text()).not.toContain('Expires')
+    expect(wrapper.text()).not.toContain('Opponent')
+    expect(wrapper.text()).not.toContain(
       '\u041f\u0435\u0442\u0440\u043e\u0432 \u041f\u0435\u0442\u0440'
     )
 
@@ -124,12 +134,9 @@ describe('TournamentCardsTable', () => {
     await nextTick()
 
     expect(wrapper.text()).toContain('Ivanov Ivan')
-    expect(wrapper.text()).toContain('Petrov Petr')
+    expect(wrapper.text()).toContain('Adults')
     expect(wrapper.text()).not.toContain(
       '\u0418\u0432\u0430\u043d\u043e\u0432 \u0418\u0432\u0430\u043d'
-    )
-    expect(wrapper.text()).not.toContain(
-      '\u041f\u0435\u0442\u0440\u043e\u0432 \u041f\u0435\u0442\u0440'
     )
 
     wrapper.unmount()
@@ -169,12 +176,14 @@ describe('TournamentCardsTable', () => {
       props: {
         cards: [card],
         canManage: true,
-        canDelete: false
+        canDelete: false,
+        mode: 'fighter'
       },
       global: {
         plugins: [[I18NextVue, { i18next: instance }], pinia],
         stubs: {
-          Button: { template: '<button v-bind="$attrs"><slot /></button>' }
+          Button: { template: '<button v-bind="$attrs"><slot /></button>' },
+          RouterLink: { template: '<a><slot /></a>' }
         }
       }
     })

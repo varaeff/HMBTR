@@ -79,6 +79,7 @@ export class CompetitionService {
       tournamentId,
       nominationId,
     );
+    await this.normalizeBronzeFinalFightNumbers(tournamentNomination.id);
     const blocks = await this.prisma.competition_blocks.findMany({
       where: { tournament_nomination_id: tournamentNomination.id },
       orderBy: { stage: 'asc' },
@@ -856,6 +857,49 @@ export class CompetitionService {
     return (lastBlock?.stage ?? 0) + 1;
   }
 
+  private async normalizeBronzeFinalFightNumbers(
+    tournamentNominationId: number,
+  ) {
+    const blocks = await this.prisma.competition_blocks.findMany({
+      where: {
+        tournament_nomination_id: tournamentNominationId,
+        type: BLOCK_OLYMPIC,
+      },
+      select: { id: true },
+    });
+
+    for (const block of blocks) {
+      const [finalFight, bronzeFight] = await Promise.all([
+        this.prisma.fights.findFirst({
+          where: { block_id: block.id, is_bronze: false },
+          orderBy: { bracket_round: 'desc' },
+        }),
+        this.prisma.fights.findFirst({
+          where: { block_id: block.id, is_bronze: true },
+        }),
+      ]);
+
+      if (
+        !finalFight ||
+        !bronzeFight ||
+        bronzeFight.fight_number < finalFight.fight_number
+      ) {
+        continue;
+      }
+
+      await this.prisma.$transaction([
+        this.prisma.fights.update({
+          where: { id: bronzeFight.id },
+          data: { fight_number: finalFight.fight_number },
+        }),
+        this.prisma.fights.update({
+          where: { id: finalFight.id },
+          data: { fight_number: bronzeFight.fight_number },
+        }),
+      ]);
+    }
+  }
+
   private async getGroupStartIndexTx(
     tx: PrismaTx,
     tournamentNominationId: number,
@@ -1026,8 +1070,10 @@ export class CompetitionService {
       const ranked = rankCompetitors(rankings.stats, rankings.manualOrder);
       rankedGroups.push({ name: group.name, ranked });
     }
-    const thirdPlaceManualOrder =
-      await this.getOlympicThirdPlaceManualOrderTx(tx, blockId);
+    const thirdPlaceManualOrder = await this.getOlympicThirdPlaceManualOrderTx(
+      tx,
+      blockId,
+    );
     if (includeThirdPlaces) {
       const olympicThirdPlaceTie =
         await this.getPendingOlympicThirdPlaceTieFromRankedTx(
@@ -1110,8 +1156,10 @@ export class CompetitionService {
       }
     }
 
-    const thirdPlaceManualOrder =
-      await this.getOlympicThirdPlaceManualOrderTx(tx, blockId);
+    const thirdPlaceManualOrder = await this.getOlympicThirdPlaceManualOrderTx(
+      tx,
+      blockId,
+    );
 
     return this.getPendingOlympicThirdPlaceTieFromRankedTx(
       tx,
@@ -1429,7 +1477,9 @@ export class CompetitionService {
         block.nomination_id,
       );
 
-      for (let round = 1; round < mainRounds; round++) {
+      const semifinalRound = mainRounds - 1;
+
+      for (let round = 1; round < semifinalRound; round++) {
         const fights = await tx.fights.findMany({
           where: { block_id: blockId, bracket_round: round, is_bronze: false },
           orderBy: { bracket_position: 'asc' },
@@ -1466,7 +1516,6 @@ export class CompetitionService {
         }
       }
 
-      const semifinalRound = mainRounds - 1;
       const semifinals = await tx.fights.findMany({
         where: {
           block_id: blockId,
@@ -1475,12 +1524,18 @@ export class CompetitionService {
         },
         orderBy: { bracket_position: 'asc' },
       });
+      const finalExists = await tx.fights.findFirst({
+        where: {
+          block_id: blockId,
+          bracket_round: mainRounds,
+          is_bronze: false,
+        },
+      });
       const bronzeExists = await tx.fights.findFirst({
         where: { block_id: blockId, is_bronze: true },
       });
       if (
         semifinals.length === 2 &&
-        !bronzeExists &&
         semifinals.every((fight) => fight.is_finished && fight.winner_id)
       ) {
         const losers = semifinals.map((fight) =>
@@ -1488,20 +1543,40 @@ export class CompetitionService {
             ? fight.competitor2_id
             : fight.competitor1_id,
         );
-        await tx.fights.create({
-          data: {
-            tournament_id: block.tournament_id,
-            nomination_id: block.nomination_id,
-            block_id: blockId,
-            competitor1_id: losers[0],
-            competitor2_id: losers[1],
-            stage: block.stage,
-            fight_number: fightNumber++,
-            bracket_round: mainRounds + 1,
-            bracket_position: 1,
-            is_bronze: true,
-          },
-        });
+        const winners = semifinals.map((fight) => fight.winner_id!);
+
+        if (!bronzeExists) {
+          await tx.fights.create({
+            data: {
+              tournament_id: block.tournament_id,
+              nomination_id: block.nomination_id,
+              block_id: blockId,
+              competitor1_id: losers[0],
+              competitor2_id: losers[1],
+              stage: block.stage,
+              fight_number: fightNumber++,
+              bracket_round: mainRounds + 1,
+              bracket_position: 1,
+              is_bronze: true,
+            },
+          });
+        }
+
+        if (!finalExists) {
+          await tx.fights.create({
+            data: {
+              tournament_id: block.tournament_id,
+              nomination_id: block.nomination_id,
+              block_id: blockId,
+              competitor1_id: winners[0],
+              competitor2_id: winners[1],
+              stage: block.stage,
+              fight_number: fightNumber++,
+              bracket_round: mainRounds,
+              bracket_position: 1,
+            },
+          });
+        }
       }
 
       const finalFight = await tx.fights.findFirst({
@@ -1514,6 +1589,21 @@ export class CompetitionService {
       const bronzeFight = await tx.fights.findFirst({
         where: { block_id: blockId, is_bronze: true },
       });
+      if (
+        finalFight &&
+        bronzeFight &&
+        bronzeFight.fight_number > finalFight.fight_number
+      ) {
+        await tx.fights.update({
+          where: { id: bronzeFight.id },
+          data: { fight_number: finalFight.fight_number },
+        });
+        await tx.fights.update({
+          where: { id: finalFight.id },
+          data: { fight_number: bronzeFight.fight_number },
+        });
+        finalFight.fight_number = bronzeFight.fight_number;
+      }
       if (
         finalFight?.is_finished &&
         finalFight.winner_id &&

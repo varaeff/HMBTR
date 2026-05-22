@@ -59,37 +59,29 @@ const updatePlaceholderYear = (...args: unknown[]) => {
 <template>
   <DefineMonthTemplate v-slot="{ date }">
     <div class="**:data-[slot=native-select-icon]:right-1">
-      <div class="relative">
-        <div class="absolute inset-0 flex h-full items-center text-sm pl-2 pointer-events-none">
-          {{ formatter.custom(toDate(date), { month: 'short' }) }}
-        </div>
-        <NativeSelect
-          class="text-xs h-8 pr-6 pl-2 text-transparent relative"
-          @change="updatePlaceholderMonth"
-        >
-          <NativeSelectOption v-for="(month) in createYear({ dateObj: date })" :key="month.toString()" :value="month.month" :selected="date.month === month.month">
-            {{ formatter.custom(toDate(month), { month: 'short' }) }}
-          </NativeSelectOption>
-        </NativeSelect>
-      </div>
+      <NativeSelect
+        :model-value="date.month"
+        class="h-8 w-[5.5rem] pr-6 pl-2 text-xs text-foreground"
+        @change="updatePlaceholderMonth"
+      >
+        <NativeSelectOption v-for="(month) in createYear({ dateObj: date })" :key="month.toString()" :value="month.month">
+          {{ formatter.custom(toDate(month), { month: 'short' }) }}
+        </NativeSelectOption>
+      </NativeSelect>
     </div>
   </DefineMonthTemplate>
 
   <DefineYearTemplate v-slot="{ date }">
     <div class="**:data-[slot=native-select-icon]:right-1">
-      <div class="relative">
-        <div class="absolute inset-0 flex h-full items-center text-sm pl-2 pointer-events-none">
-          {{ formatter.custom(toDate(date), { year: 'numeric' }) }}
-        </div>
-        <NativeSelect
-          class="text-xs h-8 pr-6 pl-2 text-transparent relative"
-          @change="updatePlaceholderYear"
-        >
-          <NativeSelectOption v-for="(year) in yearRange" :key="year.toString()" :value="year.year" :selected="date.year === year.year">
-            {{ formatter.custom(toDate(year), { year: 'numeric' }) }}
-          </NativeSelectOption>
-        </NativeSelect>
-      </div>
+      <NativeSelect
+        :model-value="date.year"
+        class="h-8 w-[5rem] pr-6 pl-2 text-xs text-foreground"
+        @change="updatePlaceholderYear"
+      >
+        <NativeSelectOption v-for="(year) in yearRange" :key="year.toString()" :value="year.year">
+          {{ formatter.custom(toDate(year), { year: 'numeric' }) }}
+        </NativeSelectOption>
+      </NativeSelect>
     </div>
   </DefineYearTemplate>
 
