@@ -17,7 +17,7 @@ import {
 } from './cropMath'
 import type { CropArea, CropHandle, Dimensions, Point } from './cropMath'
 
-const OUTPUT_SIZE = 700
+const OUTPUT_SIZE = 400
 
 interface CropInteraction {
   kind: 'move' | 'resize'

@@ -87,6 +87,8 @@ export const API_ROUTES = {
     ROOT: "ratings",
     BY_NOMINATION: (nominationId: string | number) =>
       `/ratings/nomination/${nominationId}`,
+    BY_FIGHTER_PROFILE: (fighterId: string | number) =>
+      `/ratings/fighter/${fighterId}/profile`,
   },
   COMPETITION: {
     ROOT: "competition",

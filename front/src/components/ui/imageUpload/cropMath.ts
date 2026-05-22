@@ -1,4 +1,4 @@
-export const MIN_CROP_SIZE = 700
+export const MIN_CROP_SIZE = 400
 
 export type CropHandle = 'nw' | 'ne' | 'sw' | 'se'
 

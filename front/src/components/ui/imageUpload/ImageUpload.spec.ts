@@ -49,7 +49,7 @@ const createI18n = async () => {
           imageUploadCropCancel: 'Cancel',
           imageUploadCropApply: 'Apply crop',
           imageUploadResizeCrop: 'Resize crop area',
-          imageUploadMinResolution: 'Image resolution must be at least 700 by 700 pixels.',
+          imageUploadMinResolution: 'Image resolution must be at least 400 by 400 pixels.',
           imageUploadProcessingError: 'Could not process image.'
         }
       }

@@ -60,10 +60,10 @@ describe('image upload crop math', () => {
   it('does not resize below the minimum source size', () => {
     const crop: CropArea = { x: 200, y: 100, size: 800 }
 
-    expect(resizeCropAreaByDisplayDelta(crop, 'se', { x: -100, y: -100 }, image, display)).toEqual({
+    expect(resizeCropAreaByDisplayDelta(crop, 'se', { x: -300, y: -300 }, image, display)).toEqual({
       x: 200,
       y: 100,
-      size: 700
+      size: 400
     })
   })
 })

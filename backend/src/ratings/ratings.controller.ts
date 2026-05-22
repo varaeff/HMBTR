@@ -20,4 +20,10 @@ export class RatingsController {
   ) {
     return this.ratingsService.findByNomination(nominationId);
   }
+
+  @Public()
+  @Get('fighter/:fighterId/profile')
+  findFighterProfile(@Param('fighterId', ParseIntPipe) fighterId: number) {
+    return this.ratingsService.findFighterProfile(fighterId);
+  }
 }
