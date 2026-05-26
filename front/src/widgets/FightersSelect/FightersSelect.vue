@@ -95,7 +95,12 @@ onMounted(async () => {
 <template>
   <Popover v-model:open="open">
     <PopoverTrigger as-child>
-      <Button variant="outline" role="combobox" :aria-expanded="open" class="w-120 justify-between">
+      <Button
+        variant="outline"
+        role="combobox"
+        :aria-expanded="open"
+        class="w-120 justify-between bg-popover text-popover-foreground shadow-sm hover:bg-popover hover:text-popover-foreground"
+      >
         {{
           selectedFighter
             ? tData(

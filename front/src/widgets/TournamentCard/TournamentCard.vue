@@ -4,7 +4,7 @@ import { useTranslation } from 'i18next-vue'
 import { useCommonDataStore } from '@/stores/commonData'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { tData } from '@/lib/utils'
+import { cn, tData } from '@/lib/utils'
 import { dateToString } from '@/lib/dateUtils'
 import type { Tournament, Nomination } from '@/model'
 
@@ -36,7 +36,14 @@ const isTournamentCompleted = computed(
 </script>
 
 <template>
-  <Card class="flex h-full w-full flex-col">
+  <Card
+    :class="
+      cn(
+        'relative flex h-full w-full flex-col overflow-hidden',
+        isTournamentCompleted && 'pb-8'
+      )
+    "
+  >
     <CardHeader>
       <CardTitle>{{ tData(props.tournament.name) }}</CardTitle>
       <CardDescription>
@@ -50,9 +57,12 @@ const isTournamentCompleted = computed(
           {{ nom[`name_${i18next.language as 'ru' | 'en'}`] }}
         </Badge>
       </div>
-      <div v-if="isTournamentCompleted" class="mt-2 text-center font-bold">
-        {{ $t('tournamentCardCompleted') }}
-      </div>
     </CardContent>
+    <div
+      v-if="isTournamentCompleted"
+      class="absolute inset-x-0 bottom-0 border-t bg-card py-1 text-center text-xs font-bold tracking-wide text-card-foreground"
+    >
+      {{ $t('tournamentCardCompleted') }}
+    </div>
   </Card>
 </template>
