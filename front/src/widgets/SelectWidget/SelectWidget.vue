@@ -32,7 +32,7 @@ const selectedValue = computed({
 
 <template>
   <Select v-model="selectedValue">
-    <SelectTrigger class="w-[50%] mb-2 mr-2">
+    <SelectTrigger class="mb-2 w-full">
       <SelectValue :placeholder="props.placeholder" />
     </SelectTrigger>
     <SelectContent>

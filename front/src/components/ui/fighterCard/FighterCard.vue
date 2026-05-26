@@ -80,31 +80,31 @@ onUnmounted(() => {
 
 <template>
   <div
-    class="box-border p-2.5 cursor-pointer w-[20%] min-w-62.5"
+    class="box-border h-full cursor-pointer"
     @mousemove="handleMouseMove"
     @mouseleave="handleMouseLeave"
   >
     <div
       ref="cardContentRef"
-      class="box-border relative overflow-hidden flex flex-col items-start shadow-xl bg-[whitesmoke] rounded-[10px] w-full max-w-75 will-change-transform transition-transform duration-250 ease-out"
+      class="relative box-border flex h-full w-full flex-col items-start overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-transform duration-[250ms] ease-out will-change-transform"
     >
       <div
         ref="glossRef"
         class="box-border absolute left-0 top-0 z-10 w-full h-full opacity-0 rounded-full will-change-opacity bg-[radial-gradient(circle,rgba(255,255,255,1)_0%,rgba(255,255,255,0)_50%,rgba(255,255,255,0)_100%)]"
       ></div>
       <img
-        class="box-border aspect-video w-full object-cover"
+        class="box-border aspect-video w-full shrink-0 object-cover"
         :src="props.pic ? props.pic : NoPhoto"
         :alt="displayName"
       />
-      <h2 class="box-border text-black text-[20px] pt-2.5 pr-3.5 pb-1.25 pl-3.5 m-0">
-        {{ displayName }}
-      </h2>
-      <p
-        class="box-border text-[hsl(201,14%,40%)] text-[14px] pt-0 pr-3.5 pb-2.5 pl-3.5 m-0 text-left"
-      >
-        {{ displayDescription }}
-      </p>
+      <div class="flex flex-1 flex-col p-3">
+        <h2 class="m-0 break-words text-base font-semibold leading-tight sm:text-lg">
+          {{ displayName }}
+        </h2>
+        <p class="m-0 mt-1 break-words text-left text-sm leading-snug text-muted-foreground">
+          {{ displayDescription }}
+        </p>
+      </div>
     </div>
   </div>
 </template>

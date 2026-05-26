@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import http from '@/api/http'
 import { API_ROUTES } from '@shared/routes'
 import type { FighterNominationRating, Nomination } from '@/model'
+import { tData } from '@/lib/utils'
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select'
 import {
   Table,
@@ -13,7 +14,6 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { ScrollArea } from '@/components/ui/scroll-area'
 
 type Language = 'ru' | 'en'
 
@@ -23,20 +23,32 @@ const selectedNominationId = ref('')
 const ratings = ref<FighterNominationRating[]>([])
 const isLoading = ref(false)
 const errorMessage = ref('')
+const currentLanguage = ref<Language>(i18next.language === 'en' ? 'en' : 'ru')
 
-const currentLanguage = computed<Language>(() => (i18next.language === 'en' ? 'en' : 'ru'))
 const hasNominations = computed(() => nominations.value.length > 0)
+
+const isPresentString = (value: string | null | undefined): value is string => Boolean(value)
 
 const nominationName = (nomination: Nomination) => nomination[`name_${currentLanguage.value}`]
 
 const fighterName = (rating: FighterNominationRating) => {
   const { fighter } = rating
-  return [fighter.surname, fighter.name, fighter.patronymic].filter(Boolean).join(' ')
+  return [fighter.surname, fighter.name, fighter.patronymic]
+    .filter(isPresentString)
+    .map((part) => tData(part, currentLanguage.value))
+    .join(' ')
 }
 
 const fighterLocation = (rating: FighterNominationRating) => {
   const { fighter } = rating
-  return [fighter.country.name, fighter.city.name, fighter.club?.name].filter(Boolean).join(', ')
+  return [fighter.country.name, fighter.city.name, fighter.club?.name]
+    .filter(isPresentString)
+    .map((part) => tData(part, currentLanguage.value))
+    .join(', ')
+}
+
+const updateLanguage = (language: string) => {
+  currentLanguage.value = language === 'en' ? 'en' : 'ru'
 }
 
 const fetchNominations = async () => {
@@ -66,11 +78,17 @@ const fetchRatings = async () => {
 }
 
 onMounted(async () => {
+  i18next.on('languageChanged', updateLanguage)
+
   try {
     await fetchNominations()
   } catch (error: unknown) {
     errorMessage.value = error instanceof Error ? error.message : i18next.t('ratingPageLoadError')
   }
+})
+
+onUnmounted(() => {
+  i18next.off('languageChanged', updateLanguage)
 })
 
 watch(selectedNominationId, () => {
@@ -105,15 +123,18 @@ watch(selectedNominationId, () => {
         {{ $t('ratingPageEmpty') }}
       </div>
 
-      <ScrollArea v-else class="h-[calc(100vh-180px)] rounded-md border">
-        <Table>
-          <TableHeader>
+      <div
+        v-else
+        class="h-[calc(100vh-180px)] overflow-hidden rounded-md border [&_[data-slot=table-container]]:h-full"
+      >
+        <Table class="md:min-w-2xl">
+          <TableHeader class="sticky top-0 z-10 bg-background">
             <TableRow>
-              <TableHead class="w-20">{{ $t('ratingPageRank') }}</TableHead>
+              <TableHead class="w-px md:w-20">{{ $t('ratingPageRank') }}</TableHead>
               <TableHead>{{ $t('ratingPageFighter') }}</TableHead>
-              <TableHead>{{ $t('ratingPageLocation') }}</TableHead>
-              <TableHead class="w-28 text-right">{{ $t('ratingPageFights') }}</TableHead>
-              <TableHead class="w-28 text-right">{{ $t('ratingPageRating') }}</TableHead>
+              <TableHead class="hidden md:table-cell">{{ $t('ratingPageLocation') }}</TableHead>
+              <TableHead class="w-px text-right md:w-28">{{ $t('ratingPageFights') }}</TableHead>
+              <TableHead class="w-px text-right md:w-28">{{ $t('ratingPageRating') }}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -129,16 +150,20 @@ watch(selectedNominationId, () => {
             </TableRow>
             <template v-else>
               <TableRow v-for="(rating, index) in ratings" :key="rating.id">
-                <TableCell class="font-medium">{{ index + 1 }}</TableCell>
-                <TableCell>{{ fighterName(rating) }}</TableCell>
-                <TableCell>{{ fighterLocation(rating) }}</TableCell>
-                <TableCell class="text-right">{{ rating.fights_count }}</TableCell>
-                <TableCell class="text-right font-semibold">{{ rating.rating }}</TableCell>
+                <TableCell class="w-px font-medium md:w-20">{{ index + 1 }}</TableCell>
+                <TableCell class="whitespace-normal md:whitespace-nowrap">
+                  {{ fighterName(rating) }}
+                </TableCell>
+                <TableCell class="hidden md:table-cell">{{ fighterLocation(rating) }}</TableCell>
+                <TableCell class="w-px text-right md:w-28">{{ rating.fights_count }}</TableCell>
+                <TableCell class="w-px text-right font-semibold md:w-28">
+                  {{ rating.rating }}
+                </TableCell>
               </TableRow>
             </template>
           </TableBody>
         </Table>
-      </ScrollArea>
+      </div>
     </div>
   </main>
 </template>

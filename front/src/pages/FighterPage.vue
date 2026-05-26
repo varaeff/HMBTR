@@ -325,8 +325,8 @@ const saveFighter = async () => {
           {{ $t('fighterPageStatsLoading') }}
         </div>
 
-        <div v-else class="grid gap-8">
-          <section>
+        <div v-else class="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-8">
+          <section class="min-w-0">
             <h2 class="mb-4 text-center text-xl font-semibold">
               {{ $t('fighterPageTournamentsTitle') }}
             </h2>
@@ -336,24 +336,33 @@ const saveFighter = async () => {
             >
               {{ $t('fighterPageNoCompletedTournaments') }}
             </div>
-            <div v-else class="overflow-hidden rounded-md border">
-              <Table>
+            <div v-else class="w-full min-w-0 overflow-hidden rounded-md border">
+              <Table class="min-w-[50rem] md:min-w-0 md:table-fixed">
                 <TableHeader>
                   <TableRow>
-                    <TableHead>{{ $t('fighterPageTournamentName') }}</TableHead>
+                    <TableHead class="md:w-[38%]">{{ $t('fighterPageTournamentName') }}</TableHead>
                     <TableHead class="w-40">{{ $t('fighterPageTournamentDate') }}</TableHead>
-                    <TableHead>{{ $t('fighterPageTournamentNominations') }}</TableHead>
+                    <TableHead class="md:w-[42%]">
+                      {{ $t('fighterPageTournamentNominations') }}
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   <TableRow v-for="row in completedTournamentRows" :key="row.tournament_id">
-                    <TableCell class="font-medium">
+                    <TableCell class="font-medium md:whitespace-normal">
                       {{ tData(row.tournament_name, currentLanguage) }}
                     </TableCell>
                     <TableCell class="text-muted-foreground">
                       {{ formatProfileDate(row.event_date) }}
                     </TableCell>
-                    <TableCell>{{ tournamentNominationsText(row) }}</TableCell>
+                    <TableCell class="md:whitespace-normal">
+                      <span class="md:hidden">{{ tournamentNominationsText(row) }}</span>
+                      <span class="hidden md:grid md:gap-1">
+                        <span v-for="nomination in row.nominations" :key="nomination.id">
+                          {{ nominationName(nomination) }}
+                        </span>
+                      </span>
+                    </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>

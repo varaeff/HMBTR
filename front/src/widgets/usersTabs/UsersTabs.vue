@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { onMounted, onUnmounted, ref } from 'vue'
+import { useTranslation } from 'i18next-vue'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Table,
@@ -14,14 +15,33 @@ import {
 import { useUsersListStore } from '@/stores/usersList'
 import { USERS_TYPES } from '@/model'
 import type { User, UserType } from '@/model'
+import { tData } from '@/lib/utils'
+
+type Language = 'ru' | 'en'
 
 defineProps<{ users: User[] }>()
 
+const { i18next } = useTranslation()
 const activeTab = defineModel<UserType>('activeTab', {
   required: true,
   default: USERS_TYPES.ALL
 })
 const usersListStore = useUsersListStore()
+const currentLanguage = ref<Language>(i18next.language === 'en' ? 'en' : 'ru')
+
+const updateLanguage = (language: string) => {
+  currentLanguage.value = language === 'en' ? 'en' : 'ru'
+}
+
+const localizedText = (text?: string) => tData(text ?? '', currentLanguage.value)
+
+onMounted(() => {
+  i18next.on('languageChanged', updateLanguage)
+})
+
+onUnmounted(() => {
+  i18next.off('languageChanged', updateLanguage)
+})
 
 const tableHeaders: string[] = [
   'usersTableUsername',
@@ -37,20 +57,23 @@ const tableHeaders: string[] = [
 
 <template>
   <Tabs v-model="activeTab" class="w-full">
-    <TabsList class="grid w-full grid-cols-5 mb-4 h-9">
-      <TabsTrigger
-        v-for="value in USERS_TYPES"
-        :key="value"
-        :value="value"
-        class="tracking-tight cursor-pointer"
-      >
-        {{ $t(value) }}
-      </TabsTrigger>
-    </TabsList>
+    <div class="mb-4 overflow-x-auto pb-1">
+      <TabsList class="inline-flex h-auto min-h-9 min-w-max md:grid md:w-full md:min-w-0 md:grid-cols-5">
+        <TabsTrigger
+          v-for="value in USERS_TYPES"
+          :key="value"
+          :value="value"
+          class="min-w-28 flex-none cursor-pointer px-3 tracking-tight md:min-w-0 md:flex-1"
+        >
+          {{ $t(value) }}
+        </TabsTrigger>
+      </TabsList>
+    </div>
 
-    <TabsContent :value="activeTab" class="mt-0">
-      <ScrollArea class="h-full w-full rounded-md border bg-muted/10 p-2">
-        <Table>
+    <TabsContent :value="activeTab" class="mt-0 min-w-0">
+      <div class="w-full overflow-hidden rounded-md border bg-muted/10">
+        <div class="overflow-x-auto">
+          <Table class="min-w-[46rem]">
           <TableHeader>
             <TableRow>
               <TableHead v-for="header in tableHeaders" :key="header">
@@ -61,11 +84,11 @@ const tableHeaders: string[] = [
           <TableBody>
             <TableRow v-for="user in users" :key="user.id">
               <TableCell>
-                {{ user.username }}
+                {{ localizedText(user.username) }}
               </TableCell>
-              <TableCell>{{ user.name }}</TableCell>
-              <TableCell>{{ user.surname }}</TableCell>
-              <TableCell>{{ user.patronymic }}</TableCell>
+              <TableCell>{{ localizedText(user.name) }}</TableCell>
+              <TableCell>{{ localizedText(user.surname) }}</TableCell>
+              <TableCell>{{ localizedText(user.patronymic) }}</TableCell>
               <TableCell>{{ user.email }}</TableCell>
               <TableCell
                 ><Checkbox
@@ -107,8 +130,9 @@ const tableHeaders: string[] = [
               <TableCell class="text-right">{{ users.length }}</TableCell>
             </TableRow>
           </TableFooter>
-        </Table>
-      </ScrollArea>
+          </Table>
+        </div>
+      </div>
     </TabsContent>
   </Tabs>
 </template>

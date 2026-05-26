@@ -32,14 +32,19 @@ watch(inputValue, (newValue) => {
 </script>
 
 <template>
-  <div class="flex justify-center">
+  <div class="flex w-full flex-col gap-2 sm:flex-row sm:items-start sm:justify-center">
     <DynamicLabeledInput
-      class="mr-4"
+      class="min-w-0"
       :placeholder="$t(props.placeholder)"
       v-model:value="inputValue"
     />
-    <Button variant="default" size="default" @click="inputValue = ''">{{
-      $t('searchClear')
-    }}</Button>
+    <Button
+      class="w-full sm:w-auto sm:shrink-0"
+      variant="default"
+      size="default"
+      @click="inputValue = ''"
+    >
+      {{ $t('searchClear') }}
+    </Button>
   </div>
 </template>

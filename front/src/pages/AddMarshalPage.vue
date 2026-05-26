@@ -73,63 +73,73 @@ onMounted(async () => {
 </script>
 
 <template>
-  <h1 class="flex justify-center mb-4">{{ $t('addMarshalNamePage') }}</h1>
-  <p class="flex justify-center">{{ $t('addMarshalHint') }}</p>
-  <AlertWidget
-    v-if="showAlert"
-    :isError="alertData.isError.value"
-    :title="alertData.title.value"
-    :mainText="alertData.mainText.value"
-    :showInput="alertData.showInput.value"
-    :buttonAction="alertData.buttonAction"
-    :closeAction="alertData.closeAction"
-  />
-  <form @submit.prevent="saveNewMarshal">
-    <div class="flex justify-center max-w-244 pt-8 mx-auto gap-10 mb-10">
-      <div class="min-w-100 flex justify-end">
-        <ImageUpload v-model:imageSrc="newMarshal.pic" />
-      </div>
-      <div class="min-w-100">
-        <h5 class="mb-2">{{ $t('addMarshalFormLabel') }}</h5>
-        <div class="flex flex-col gap-4">
-          <FullNameWidget
-            v-model:surname="newMarshal.surname"
-            v-model:name="newMarshal.name"
-            v-model:patronymic="newMarshal.patronymic"
-          />
-          <SelectLocationBlock
-            v-model:country="newMarshal.country"
-            v-model:city="newMarshal.city"
-            v-model:country_id="newMarshal.country_id"
-            v-model:city_id="newMarshal.city_id"
-            :needClub="false"
-            @request-add="handleRequestAdd"
-          />
-          <div class="space-y-2">
-            <Label for="marshal-category">{{ $t('marshalCategoryLabel') }}</Label>
-            <NativeSelect
-              id="marshal-category"
-              v-model="newMarshal.category_id"
-              class="w-full"
-              :aria-label="$t('marshalCategoryLabel')"
-            >
-              <NativeSelectOption :value="0">{{ $t('marshalCategoryPlaceholder') }}</NativeSelectOption>
-              <NativeSelectOption
-                v-for="category in marshalsListStore.categories"
-                :key="category.id"
-                :value="category.id"
-              >
-                {{ categoryName(category.id) }}
-              </NativeSelectOption>
-            </NativeSelect>
-          </div>
+  <main class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 pb-8 pt-4 sm:px-6 lg:px-8">
+    <header class="flex flex-col items-center gap-2 text-center">
+      <h1 class="text-2xl font-semibold sm:text-3xl">{{ $t('addMarshalNamePage') }}</h1>
+      <p class="max-w-2xl text-sm text-muted-foreground sm:text-base">{{ $t('addMarshalHint') }}</p>
+    </header>
+
+    <AlertWidget
+      v-if="showAlert"
+      :isError="alertData.isError.value"
+      :title="alertData.title.value"
+      :mainText="alertData.mainText.value"
+      :showInput="alertData.showInput.value"
+      :buttonAction="alertData.buttonAction"
+      :closeAction="alertData.closeAction"
+    />
+
+    <form class="flex flex-col gap-6" @submit.prevent="saveNewMarshal">
+      <div class="grid gap-6 lg:grid-cols-[minmax(16rem,24rem)_minmax(0,1fr)]">
+        <div class="min-h-72 overflow-hidden rounded-lg border bg-card">
+          <ImageUpload v-model:imageSrc="newMarshal.pic" />
         </div>
+
+        <section class="min-w-0 rounded-lg border bg-card p-4 sm:p-6">
+          <h2 class="mb-4 text-lg font-semibold">{{ $t('addMarshalFormLabel') }}</h2>
+          <div class="flex flex-col gap-4">
+            <FullNameWidget
+              v-model:surname="newMarshal.surname"
+              v-model:name="newMarshal.name"
+              v-model:patronymic="newMarshal.patronymic"
+            />
+            <SelectLocationBlock
+              v-model:country="newMarshal.country"
+              v-model:city="newMarshal.city"
+              v-model:country_id="newMarshal.country_id"
+              v-model:city_id="newMarshal.city_id"
+              :needClub="false"
+              @request-add="handleRequestAdd"
+            />
+            <div class="flex flex-col gap-2">
+              <Label for="marshal-category">{{ $t('marshalCategoryLabel') }}</Label>
+              <NativeSelect
+                id="marshal-category"
+                v-model="newMarshal.category_id"
+                class="w-full"
+                :aria-label="$t('marshalCategoryLabel')"
+              >
+                <NativeSelectOption :value="0">{{
+                  $t('marshalCategoryPlaceholder')
+                }}</NativeSelectOption>
+                <NativeSelectOption
+                  v-for="category in marshalsListStore.categories"
+                  :key="category.id"
+                  :value="category.id"
+                >
+                  {{ categoryName(category.id) }}
+                </NativeSelectOption>
+              </NativeSelect>
+            </div>
+          </div>
+        </section>
       </div>
-    </div>
-    <div class="flex justify-center">
-      <Button type="submit" variant="default" size="default" :disabled="buttonDisabled">
-        {{ $t('addMarshalSaveData') }}
-      </Button>
-    </div>
-  </form>
+
+      <div class="flex justify-center">
+        <Button type="submit" variant="default" size="default" :disabled="buttonDisabled">
+          {{ $t('addMarshalSaveData') }}
+        </Button>
+      </div>
+    </form>
+  </main>
 </template>

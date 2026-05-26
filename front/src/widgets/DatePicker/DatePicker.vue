@@ -17,13 +17,13 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="flex flex-row gap-3">
+  <div class="flex w-full flex-row gap-3">
     <Popover v-slot="{ close }">
       <PopoverTrigger as-child>
         <Button
           id="date"
           variant="outline"
-          class="w-[50%] justify-between font-normal text-left bg-card"
+          class="w-full justify-between bg-card text-left font-normal sm:max-w-80"
           :class="{
             'text-muted-foreground': !date
           }"

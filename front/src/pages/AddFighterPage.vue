@@ -69,71 +69,79 @@ const saveNewFighter = async () => {
 </script>
 
 <template>
-  <h1 class="flex justify-center mb-4">{{ $t('addFighterNamePage') }}</h1>
-  <p class="flex justify-center">{{ $t('addFighterHint') }}</p>
-  <AlertWidget
-    v-if="showAlert"
-    :isError="alertData.isError.value"
-    :title="alertData.title.value"
-    :mainText="alertData.mainText.value"
-    :showInput="alertData.showInput.value"
-    :buttonAction="alertData.buttonAction"
-    :closeAction="alertData.closeAction"
-  />
-  <form @submit.prevent="saveNewFighter">
-    <div class="flex justify-center max-w-244 pt-8 mx-auto gap-10 mb-10">
-      <div class="min-w-100 flex justify-end">
-        <ImageUpload v-model:imageSrc="newFighter.pic" />
-      </div>
-      <div class="min-w-100">
-        <h5 class="mb-2">{{ $t('addFighterFormLabel') }}</h5>
-        <div class="flex flex-col gap-4">
-          <FullNameWidget
-            v-model:surname="newFighter.surname"
-            v-model:name="newFighter.name"
-            v-model:patronymic="newFighter.patronymic"
-          />
-          <SelectLocationBlock
-            v-model:country="newFighter.country"
-            v-model:city="newFighter.city"
-            v-model:club="newFighter.club"
-            v-model:country_id="newFighter.country_id"
-            v-model:city_id="newFighter.city_id"
-            v-model:club_id="newFighter.club_id"
-            :needClub="true"
-            @request-add="handleRequestAdd"
-          />
-          <div class="space-y-2">
-            <Label>{{ $t('addFighterGenderLabel') }}</Label>
-            <div class="flex gap-3">
-              <Label class="flex cursor-pointer items-center gap-2">
-                <input
-                  v-model="newFighter.is_male"
-                  type="radio"
-                  name="fighter-gender"
-                  :value="true"
-                />
-                {{ $t('addFighterGenderMale') }}
-              </Label>
-              <Label class="flex cursor-pointer items-center gap-2">
-                <input
-                  v-model="newFighter.is_male"
-                  type="radio"
-                  name="fighter-gender"
-                  :value="false"
-                />
-                {{ $t('addFighterGenderFemale') }}
-              </Label>
-            </div>
-          </div>
-          <DatePicker :placeholder="$t('addFighterDateOfBirth')" v-model:date="fighterBirthday" />
+  <main class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 pb-8 pt-4 sm:px-6 lg:px-8">
+    <header class="flex flex-col items-center gap-2 text-center">
+      <h1 class="text-2xl font-semibold sm:text-3xl">{{ $t('addFighterNamePage') }}</h1>
+      <p class="max-w-2xl text-sm text-muted-foreground sm:text-base">{{ $t('addFighterHint') }}</p>
+    </header>
+
+    <AlertWidget
+      v-if="showAlert"
+      :isError="alertData.isError.value"
+      :title="alertData.title.value"
+      :mainText="alertData.mainText.value"
+      :showInput="alertData.showInput.value"
+      :buttonAction="alertData.buttonAction"
+      :closeAction="alertData.closeAction"
+    />
+
+    <form class="flex flex-col gap-6" @submit.prevent="saveNewFighter">
+      <div class="grid gap-6 lg:grid-cols-[minmax(16rem,24rem)_minmax(0,1fr)]">
+        <div class="min-h-72 overflow-hidden rounded-lg border bg-card">
+          <ImageUpload v-model:imageSrc="newFighter.pic" />
         </div>
+
+        <section class="min-w-0 rounded-lg border bg-card p-4 sm:p-6">
+          <h2 class="mb-4 text-lg font-semibold">{{ $t('addFighterFormLabel') }}</h2>
+          <div class="flex flex-col gap-4">
+            <FullNameWidget
+              v-model:surname="newFighter.surname"
+              v-model:name="newFighter.name"
+              v-model:patronymic="newFighter.patronymic"
+            />
+            <SelectLocationBlock
+              v-model:country="newFighter.country"
+              v-model:city="newFighter.city"
+              v-model:club="newFighter.club"
+              v-model:country_id="newFighter.country_id"
+              v-model:city_id="newFighter.city_id"
+              v-model:club_id="newFighter.club_id"
+              :needClub="true"
+              @request-add="handleRequestAdd"
+            />
+            <div class="flex flex-col gap-2">
+              <Label>{{ $t('addFighterGenderLabel') }}</Label>
+              <div class="flex flex-wrap gap-3">
+                <Label class="flex cursor-pointer items-center gap-2">
+                  <input
+                    v-model="newFighter.is_male"
+                    type="radio"
+                    name="fighter-gender"
+                    :value="true"
+                  />
+                  {{ $t('addFighterGenderMale') }}
+                </Label>
+                <Label class="flex cursor-pointer items-center gap-2">
+                  <input
+                    v-model="newFighter.is_male"
+                    type="radio"
+                    name="fighter-gender"
+                    :value="false"
+                  />
+                  {{ $t('addFighterGenderFemale') }}
+                </Label>
+              </div>
+            </div>
+            <DatePicker :placeholder="$t('addFighterDateOfBirth')" v-model:date="fighterBirthday" />
+          </div>
+        </section>
       </div>
-    </div>
-    <div class="flex justify-center">
-      <Button type="submit" variant="default" size="default" :disabled="buttonDisabled">
-        {{ $t('addFighterSaveData') }}
-      </Button>
-    </div>
-  </form>
+
+      <div class="flex justify-center">
+        <Button type="submit" variant="default" size="default" :disabled="buttonDisabled">
+          {{ $t('addFighterSaveData') }}
+        </Button>
+      </div>
+    </form>
+  </main>
 </template>

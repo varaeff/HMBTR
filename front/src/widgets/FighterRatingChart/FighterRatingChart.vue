@@ -170,7 +170,10 @@ const pointAriaLabel = (point: RatingChartPoint) => {
 </script>
 
 <template>
-  <ChartContainer :config="ratingChartConfig" class="relative h-80 rounded-md border p-4">
+  <ChartContainer
+    :config="ratingChartConfig"
+    class="relative h-80 min-w-0 overflow-hidden rounded-md border p-4 aspect-auto"
+  >
     <div class="relative h-full w-full">
       <svg
         class="h-full w-full overflow-visible"

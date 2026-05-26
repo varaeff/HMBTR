@@ -40,28 +40,34 @@ watch(searchString, () => {
 </script>
 
 <template>
-  <h1 class="flex justify-center mb-4">{{ $t('tournamentsPageNamePage') }}</h1>
-  <div>
-    <div class="w-full flex justify-center">
+  <main class="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 pb-8 pt-4 sm:px-6 lg:px-8">
+    <header class="flex flex-col items-center gap-4">
+      <h1 class="text-center text-2xl font-semibold sm:text-3xl">
+        {{ $t('tournamentsPageNamePage') }}
+      </h1>
       <SearchWidget
-        class="w-11/12 lg:w-5/12 pt-2 pb-2"
+        class="w-full max-w-2xl"
         :placeholder="$t('tournamentsPagePlaceholder')"
         :store="useTournamentsListStore"
       />
-    </div>
-    <div class="flex flex-wrap gap-5 justify-center w-full p-5">
+    </header>
+
+    <div
+      class="grid w-full grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] items-stretch gap-4 sm:gap-5"
+    >
       <TournamentCard
-        class="cursor-pointer hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
         v-for="tournament in tournamentsList"
         :key="i18next.language + tournament.id"
+        class="h-full cursor-pointer hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
         @click="router.push(`/tournament/${tournament.id}`)"
         :tournament="tournament"
       />
     </div>
-  </div>
-  <div class="flex justify-center">
-    <Button v-show="showAddButton" @click="addTournament"
-      >{{ $t('tournamentsPageAddButton') }}
-    </Button>
-  </div>
+
+    <div class="flex justify-center">
+      <Button v-show="showAddButton" @click="addTournament">
+        {{ $t('tournamentsPageAddButton') }}
+      </Button>
+    </div>
+  </main>
 </template>

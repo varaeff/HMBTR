@@ -537,23 +537,25 @@ watch(
   </CollapsibleSection>
 
   <Tabs v-if="tournament && tournamentNominations.all.length" v-model="activeTab" class="m-4">
-    <TabsList
-      class="grid w-full mb-4 h-9"
-      :style="{
-        gridTemplateColumns: `repeat(${tournamentNominations.all.length}, minmax(0, 1fr))`
-      }"
-    >
-      <TabsTrigger
-        v-for="nom in tournamentNominations.all"
-        :key="nom.id"
-        :value="nom.id"
-        class="tracking-tight cursor-pointer"
+    <div class="mb-4 overflow-x-auto pb-1">
+      <TabsList
+        class="inline-flex h-auto min-h-9 min-w-max md:grid md:w-full md:min-w-0"
+        :style="{
+          gridTemplateColumns: `repeat(${tournamentNominations.all.length}, minmax(0, 1fr))`
+        }"
       >
-        {{ nom[`name_${i18next.language as 'ru' | 'en'}`] }}
-      </TabsTrigger>
-    </TabsList>
+        <TabsTrigger
+          v-for="nom in tournamentNominations.all"
+          :key="nom.id"
+          :value="nom.id"
+          class="min-w-36 flex-none cursor-pointer px-3 tracking-tight md:min-w-0 md:flex-1"
+        >
+          {{ nom[`name_${i18next.language as 'ru' | 'en'}`] }}
+        </TabsTrigger>
+      </TabsList>
+    </div>
 
-    <TabsContent :key="activeTab" :value="activeTab" class="mt-0">
+    <TabsContent :key="activeTab" :value="activeTab" class="mt-0 min-w-0">
       <template v-if="!isNominationLoading">
         <CompetitionPodium :placements="placements" />
 

@@ -113,7 +113,9 @@ const isHighlightedAdvancer = (fighter: GroupFighter, fighterIndex: number) => {
           <TableRow v-if="props.isFixed">
             <TableCell class="font-bold"> № </TableCell>
             <TableCell class="font-bold"> {{ $t('groupsTableFighter') }} </TableCell>
-            <TableCell class="font-bold"> {{ $t('groupsTableClub') }} </TableCell>
+            <TableCell class="hidden font-bold sm:table-cell">
+              {{ $t('groupsTableClub') }}
+            </TableCell>
             <TableCell class="font-bold text-center"> {{ $t('groupsTableWins') }} </TableCell>
             <TableCell class="font-bold text-center"> {{ $t('groupsTableDifference') }} </TableCell>
           </TableRow>
@@ -143,7 +145,7 @@ const isHighlightedAdvancer = (fighter: GroupFighter, fighterIndex: number) => {
                 {{ tData(fighter.surname) }} {{ tData(fighter.name) }}
                 <CardStatusIcon :type="activeCardTypes?.[fighter.id]" /> </span
             ></TableCell>
-            <TableCell class="flex text-muted-foreground">
+            <TableCell class="hidden text-muted-foreground sm:table-cell">
               {{ tData(fighter.city) }}
               <p v-if="fighter.club">, {{ tData(fighter.club) }}</p>
             </TableCell>

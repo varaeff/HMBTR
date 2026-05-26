@@ -49,13 +49,16 @@ watch(searchString, () => {
 </script>
 
 <template>
-  <h1 class="flex justify-center mb-4">{{ $t('usersPageName') }}</h1>
-  <div class="w-full flex justify-center">
-    <SearchWidget
-      class="w-11/12 lg:w-5/12"
-      :placeholder="$t('usersSearchPlaceholder')"
-      :store="useUsersListStore"
-    />
-  </div>
-  <UsersTabs class="p-10" v-model:active-tab="activeTab" :users="filteredUsers" />
+  <main class="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 pb-8 pt-4 sm:px-6 lg:px-8">
+    <header class="flex flex-col items-center gap-4">
+      <h1 class="text-center text-2xl font-semibold sm:text-3xl">{{ $t('usersPageName') }}</h1>
+      <SearchWidget
+        class="w-full max-w-2xl"
+        :placeholder="$t('usersSearchPlaceholder')"
+        :store="useUsersListStore"
+      />
+    </header>
+
+    <UsersTabs v-model:active-tab="activeTab" :users="filteredUsers" />
+  </main>
 </template>

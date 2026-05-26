@@ -16,7 +16,7 @@ initTheme()
 
 <template>
   <MainMenu />
-  <div class="w-full min-h-screen pt-12 box-border">
+  <div class="box-border min-h-screen w-full pt-14 md:pt-12">
     <Loader v-if="isLoading" />
     <Teleport to="body">
       <AlertWidget

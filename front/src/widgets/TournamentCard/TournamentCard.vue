@@ -36,14 +36,14 @@ const isTournamentCompleted = computed(
 </script>
 
 <template>
-  <Card class="w-full max-w-sm">
+  <Card class="flex h-full w-full flex-col">
     <CardHeader>
       <CardTitle>{{ tData(props.tournament.name) }}</CardTitle>
       <CardDescription>
         {{ tData(tournamentPlace) }}
       </CardDescription>
     </CardHeader>
-    <CardContent class="flex flex-col gap-2">
+    <CardContent class="flex flex-1 flex-col gap-2">
       {{ dateToString(props.tournament.event_date) }}
       <div v-if="props.tournament.nominations.length" class="flex flex-wrap items-center gap-2">
         <Badge v-for="nom in nominations" :key="nom.id" variant="default">

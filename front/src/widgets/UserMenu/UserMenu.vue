@@ -46,7 +46,7 @@ const handleLogout = async () => {
   <div v-if="user" class="flex items-center space-x-4">
     <Popover>
       <PopoverTrigger as-child>
-        <Button variant="ghost" class="-mb-2">{{ displayName }}</Button>
+        <Button variant="ghost">{{ displayName }}</Button>
       </PopoverTrigger>
       <PopoverContent class="w-64">
         <div class="space-y-4">

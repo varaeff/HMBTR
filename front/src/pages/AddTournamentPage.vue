@@ -60,64 +60,74 @@ const saveNewTournament = async () => {
 </script>
 
 <template>
-  <h1 class="flex justify-center mb-4">{{ $t('addTournamentNamePage') }}</h1>
-  <p class="flex justify-center">{{ $t('addTournamentHint') }}</p>
-  <AlertWidget
-    v-if="showAlert"
-    :isError="alertData.isError.value"
-    :title="alertData.title.value"
-    :mainText="alertData.mainText.value"
-    :showInput="alertData.showInput.value"
-    :buttonAction="alertData.buttonAction"
-    :closeAction="alertData.closeAction"
-  />
-  <form @submit.prevent="saveNewTournament">
-    <div class="max-w-120 min-w-100 pt-8 mx-auto gap-10 mb-10">
-      <h5 class="mb-2">{{ $t('addTournamentNameCard') }}</h5>
-      <div class="flex flex-col">
-        <DynamicLabeledInput
-          :placeholder="$t('addTournamentNameTournament')"
-          v-model:value="newTournament.name"
-        />
-        <SelectLocationBlock
-          v-model:country="newTournament.country"
-          v-model:city="newTournament.city"
-          v-model:country_id="newTournament.country_id"
-          v-model:city_id="newTournament.city_id"
-          :needClub="false"
-          @request-add="handleRequestAdd"
-        />
-        <DatePicker :placeholder="$t('addTournamentDate')" v-model:date="eventDate" />
-        <h6 class="mt-4 mb-4">{{ $t('addTournamentNominations') }}</h6>
-        <div class="flex flex-col gap-6">
-          <div v-for="nom in nominations" :key="nom.id" class="flex items-center gap-3">
-            <Checkbox
-              :id="`nom-${nom.id}`"
-              :model-value="newTournament.nominations_ids.includes(nom.id)"
-              @update:model-value="
-                (checked: boolean | 'indeterminate') => {
-                  if (checked === true) {
-                    newTournament.nominations_ids.push(nom.id)
-                  } else {
-                    newTournament.nominations_ids = newTournament.nominations_ids.filter(
-                      (id) => id !== nom.id
-                    )
-                  }
-                }
-              "
-            />
-            <Label :for="`nom-${nom.id}`">{{
-              nom[`name_${i18next.language as 'ru' | 'en'}`]
-            }}</Label>
+  <main class="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 pb-8 pt-4 sm:px-6 lg:px-8">
+    <header class="flex flex-col items-center gap-2 text-center">
+      <h1 class="text-2xl font-semibold sm:text-3xl">{{ $t('addTournamentNamePage') }}</h1>
+      <p class="max-w-2xl text-sm text-muted-foreground sm:text-base">
+        {{ $t('addTournamentHint') }}
+      </p>
+    </header>
+
+    <AlertWidget
+      v-if="showAlert"
+      :isError="alertData.isError.value"
+      :title="alertData.title.value"
+      :mainText="alertData.mainText.value"
+      :showInput="alertData.showInput.value"
+      :buttonAction="alertData.buttonAction"
+      :closeAction="alertData.closeAction"
+    />
+
+    <form class="flex flex-col gap-6" @submit.prevent="saveNewTournament">
+      <section class="min-w-0 rounded-lg border bg-card p-4 sm:p-6">
+        <h2 class="mb-4 text-lg font-semibold">{{ $t('addTournamentNameCard') }}</h2>
+        <div class="flex flex-col gap-4">
+          <DynamicLabeledInput
+            :placeholder="$t('addTournamentNameTournament')"
+            v-model:value="newTournament.name"
+          />
+          <SelectLocationBlock
+            v-model:country="newTournament.country"
+            v-model:city="newTournament.city"
+            v-model:country_id="newTournament.country_id"
+            v-model:city_id="newTournament.city_id"
+            :needClub="false"
+            @request-add="handleRequestAdd"
+          />
+          <DatePicker :placeholder="$t('addTournamentDate')" v-model:date="eventDate" />
+          <div class="flex flex-col gap-4">
+            <h2 class="text-base font-semibold">{{ $t('addTournamentNominations') }}</h2>
+            <div class="flex flex-col gap-4">
+              <div v-for="nom in nominations" :key="nom.id" class="flex items-center gap-3">
+                <Checkbox
+                  :id="`nom-${nom.id}`"
+                  :model-value="newTournament.nominations_ids.includes(nom.id)"
+                  @update:model-value="
+                    (checked: boolean | 'indeterminate') => {
+                      if (checked === true) {
+                        newTournament.nominations_ids.push(nom.id)
+                      } else {
+                        newTournament.nominations_ids = newTournament.nominations_ids.filter(
+                          (id) => id !== nom.id
+                        )
+                      }
+                   }
+                  "
+                />
+                <Label :for="`nom-${nom.id}`">{{
+                  nom[`name_${i18next.language as 'ru' | 'en'}`]
+                }}</Label>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
 
-    <div class="flex justify-center">
-      <Button type="submit" variant="default" size="default" :disabled="buttonDisabled">
-        {{ $t('addTournamentSave') }}
-      </Button>
-    </div>
-  </form>
+      <div class="flex justify-center">
+        <Button type="submit" variant="default" size="default" :disabled="buttonDisabled">
+          {{ $t('addTournamentSave') }}
+        </Button>
+      </div>
+    </form>
+  </main>
 </template>

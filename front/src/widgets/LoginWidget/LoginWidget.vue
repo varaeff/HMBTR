@@ -120,7 +120,7 @@ const handleRegister = async () => {
 <template>
   <Sheet aria-describedby="undefined" v-model:open="isSheetOpen">
     <SheetTrigger as-child>
-      <Button variant="ghost" class="-mb-2"> {{ $t('menuLoginLink') }} </Button>
+      <Button variant="ghost"> {{ $t('menuLoginLink') }} </Button>
     </SheetTrigger>
     <SheetContent :disable-outside-pointer-events="false" @interact-outside.prevent>
       <SheetHeader>

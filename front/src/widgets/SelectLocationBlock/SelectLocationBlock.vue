@@ -52,36 +52,51 @@ const handleAddClub = () => onAddClub((payload) => emit('request-add', payload))
 </script>
 
 <template>
-  <div class="flex flex-col">
-    <div class="flex">
+  <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-start">
       <SelectWidget
+        class="min-w-0 flex-1"
         :placeholder="$t('LocationBlockCountry')"
         :values="countryNames"
         v-model:value="countryModel"
       />
-      <Button type="button" variant="ghost" @click="handleAddCountry">{{
+      <Button class="w-full sm:w-auto sm:shrink-0" type="button" variant="ghost" @click="handleAddCountry">{{
         $t('LocationBlockAddCountry')
       }}</Button>
     </div>
 
-    <div class="flex">
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-start">
       <SelectWidget
+        class="min-w-0 flex-1"
         :placeholder="$t('LocationBlockCity')"
         :values="cityNames"
         v-model:value="cityModel"
       />
-      <Button v-show="countryModel" type="button" variant="ghost" @click="handleAddCity">
+      <Button
+        v-show="countryModel"
+        class="w-full sm:w-auto sm:shrink-0"
+        type="button"
+        variant="ghost"
+        @click="handleAddCity"
+      >
         {{ $t('LocationBlockAddCity') }}
       </Button>
     </div>
 
-    <div class="flex" v-if="needClub">
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-start" v-if="needClub">
       <SelectWidget
+        class="min-w-0 flex-1"
         :placeholder="$t('LocationBlockClub')"
         :values="clubNames"
         v-model:value="clubModel"
       />
-      <Button v-show="cityModel" type="button" variant="ghost" @click="handleAddClub">
+      <Button
+        v-show="cityModel"
+        class="w-full sm:w-auto sm:shrink-0"
+        type="button"
+        variant="ghost"
+        @click="handleAddClub"
+      >
         {{ $t('LocationBlockAddClub') }}
       </Button>
     </div>

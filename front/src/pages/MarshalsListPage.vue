@@ -3,7 +3,6 @@ import { ref, watch, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMarshalsListStore } from '@/stores/marshalsList'
 import { hasMarshalManageAccess } from '@/lib/checkAccess'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { FighterCard } from '@/components/ui/fighterCard'
 import { Button } from '@/components/ui/button'
 import { SearchWidget } from '@/widgets/SearchWidget'
@@ -37,30 +36,34 @@ watch(searchString, () => {
 </script>
 
 <template>
-  <h1 class="flex justify-center mb-4">{{ $t('marshalsPageName') }}</h1>
-  <div class="w-full flex justify-center mb-5">
-    <SearchWidget
-      class="w-11/12 lg:w-5/12"
-      :placeholder="$t('marshalsSearchPlaceholder')"
-      :store="useMarshalsListStore"
-    />
-  </div>
-  <ScrollArea class="w-full h-[calc(100vh-250px)] px-5 mb-5">
-    <div class="flex flex-wrap gap-5 justify-center">
+  <main class="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 pb-8 pt-4 sm:px-6 lg:px-8">
+    <header class="flex flex-col items-center gap-4">
+      <h1 class="text-center text-2xl font-semibold sm:text-3xl">{{ $t('marshalsPageName') }}</h1>
+      <SearchWidget
+        class="w-full max-w-2xl"
+        :placeholder="$t('marshalsSearchPlaceholder')"
+        :store="useMarshalsListStore"
+      />
+    </header>
+
+    <div
+      class="grid w-full grid-cols-[repeat(auto-fit,minmax(min(100%,15rem),1fr))] items-stretch gap-4 sm:gap-5"
+    >
       <FighterCard
         v-for="marshal in marshalsList"
         :key="marshal.id"
-        class="grow basis-50 max-w-full lg:max-w-[calc((100%-80px)/5)] min-w-50 p-4"
+        class="h-full"
         :name="`${marshal.surname} ${marshal.name}`"
         :description="marshal.city"
         :pic="marshal.pic"
         @click="router.push(`/marshal/${marshal.id}`)"
       />
     </div>
-  </ScrollArea>
-  <div class="flex justify-center">
-    <Button v-show="showAddButton" variant="default" size="default" @click="addMarshal">{{
-      $t('addMarshalButton')
-    }}</Button>
-  </div>
+
+    <div class="flex justify-center">
+      <Button v-show="showAddButton" variant="default" size="default" @click="addMarshal">{{
+        $t('addMarshalButton')
+      }}</Button>
+    </div>
+  </main>
 </template>

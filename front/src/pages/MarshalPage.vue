@@ -261,7 +261,7 @@ onUnmounted(() => {
             </Button>
           </div>
 
-          <section>
+          <section class="min-w-0">
             <h2 class="mb-4 text-center text-xl font-semibold">
               {{ $t('marshalPageTournamentsTitle') }}
             </h2>
@@ -271,8 +271,8 @@ onUnmounted(() => {
             >
               {{ $t('marshalPageNoTournaments') }}
             </div>
-            <div v-else class="overflow-hidden rounded-md border">
-              <Table>
+            <div v-else class="w-full min-w-0 overflow-hidden rounded-md border">
+              <Table class="min-w-[32rem]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>{{ $t('fighterPageTournamentName') }}</TableHead>
