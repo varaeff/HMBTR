@@ -6,13 +6,16 @@ import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { PrismaModule } from '../prisma/prisma.module';
 import { EmailService } from '../common/services/email.service';
+import type { StringValue } from 'ms';
+
+const jwtExpiresIn = (process.env.JWT_EXPIRES_IN || '15m') as StringValue;
 
 @Module({
   imports: [
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'jwt-secret',
-      signOptions: { expiresIn: '15m' },
+      signOptions: { expiresIn: jwtExpiresIn },
     }),
     PrismaModule,
   ],

@@ -14,6 +14,7 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { JwtPayload } from './dto/jwt-payload.dto';
+import type { StringValue } from 'ms';
 
 @Injectable()
 export class AuthService {
@@ -279,12 +280,12 @@ export class AuthService {
 
     const access_token = await this.jwtService.signAsync(payload, {
       secret: process.env.JWT_SECRET || 'jwt-secret',
-      expiresIn: '15m',
+      expiresIn: (process.env.JWT_EXPIRES_IN || '15m') as StringValue,
     });
 
     const refresh_token = await this.jwtService.signAsync(payload, {
       secret: process.env.JWT_REFRESH_SECRET || 'refresh-secret',
-      expiresIn: '7d',
+      expiresIn: (process.env.JWT_REFRESH_EXPIRES_IN || '7d') as StringValue,
     });
 
     return { access_token, refresh_token };

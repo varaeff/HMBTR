@@ -9,7 +9,7 @@
     "dev:front": "cd front && npm run dev",
     "dev": "concurrently \"npm run docker\" \"npm run dev:front\" \"npm run dev:backnest\""
   },
-  "author": "",
+  "author": "Sergei Varaev",
   "license": "ISC",
   "dependencies": {
     "concurrently": "^9.1.2"
