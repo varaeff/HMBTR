@@ -12,7 +12,8 @@ services:
     volumes:
       - hmbtr_prod_postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
+      test:
+        ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -45,8 +46,8 @@ services:
       EMAIL_FROM: ${EMAIL_FROM:-}
     volumes:
       - hmbtr_prod_backend_logs:/app/logs
-    expose:
-      - "${BACKEND_PORT:-3000}"
+    ports:
+      - "${BACKEND_PORT:-3000}:${BACKEND_PORT:-3000}"
     networks:
       - hmbtr_prod
 
