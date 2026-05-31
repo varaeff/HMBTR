@@ -47,7 +47,7 @@ services:
     volumes:
       - hmbtr_prod_backend_logs:/app/logs
     ports:
-      - "${BACKEND_PORT:-3000}:${BACKEND_PORT:-3000}"
+      - "${BACKEND_PUBLIC_PORT:-3001}:${BACKEND_PORT:-3000}"
     networks:
       - hmbtr_prod
 
