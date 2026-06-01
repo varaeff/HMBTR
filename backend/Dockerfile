@@ -13,10 +13,13 @@ RUN npm run build
 
 FROM node:22-alpine AS runner
 WORKDIR /app
-ENV NODE_ENV=production
+ENV NODE_ENV=production \
+    PUPPETEER_SKIP_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 COPY backend/package*.json ./backend/
 WORKDIR /app/backend
+RUN apk add --no-cache chromium font-noto ca-certificates
 RUN npm ci --omit=dev --no-audit --no-fund
 
 WORKDIR /app
