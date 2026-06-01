@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import type { HTMLAttributes, PropType } from 'vue'
 import { parseInput } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import { Input } from '@/components/ui/input'
 
 const props = defineProps({
@@ -16,6 +18,11 @@ const props = defineProps({
   inputType: {
     type: String,
     default: 'text',
+    required: false
+  },
+  wrapperClass: {
+    type: [String, Array, Object] as PropType<HTMLAttributes['class']>,
+    default: '',
     required: false
   }
 })
@@ -88,7 +95,7 @@ const handlePaste = (e: ClipboardEvent) => {
 </script>
 
 <template>
-  <div class="w-full relative mr-1 mb-2">
+  <div :class="cn('w-full relative mr-1 mb-2', props.wrapperClass)">
     <label
       :for="inputId"
       class="absolute left-3 bottom-4 origin-left pointer-events-none transition-all duration-200 text-gray-500"

@@ -39,7 +39,7 @@ const isTournamentCompleted = computed(
   <Card
     :class="
       cn(
-        'relative flex h-full w-full flex-col overflow-hidden',
+        'relative flex h-full w-full max-w-[300px] flex-col overflow-hidden',
         isTournamentCompleted && 'pb-8'
       )
     "

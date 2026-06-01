@@ -3,7 +3,6 @@ import { ref, watch, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useTournamentsListStore } from '@/stores/tournamentsList'
 import { hasAccess } from '@/lib/checkAccess'
-import { Button } from '@/components/ui/button'
 import { SearchWidget } from '@/widgets/SearchWidget'
 import { TournamentCard } from '@/widgets/TournamentCard'
 import { useTranslation } from 'i18next-vue'
@@ -28,7 +27,7 @@ onMounted(async () => {
 })
 
 const searchString = computed(() => tournamentsListStore.getSearchString)
-const showAddButton = computed(() => tournamentsListStore.getSearchString.length > 0 && hasAccess())
+const showAddButton = computed(() => hasAccess())
 
 const addTournament = () => {
   router.push('/addTournament')
@@ -49,11 +48,14 @@ watch(searchString, () => {
         class="w-full max-w-2xl"
         :placeholder="$t('tournamentsPagePlaceholder')"
         :store="useTournamentsListStore"
+        :showAddButton="showAddButton"
+        :addLabel="$t('tournamentsPageAddButton')"
+        :addAction="addTournament"
       />
     </header>
 
     <div
-      class="grid w-full grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] items-stretch gap-4 sm:gap-5"
+      class="grid w-full grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] items-stretch justify-items-center gap-4 sm:gap-5"
     >
       <TournamentCard
         v-for="tournament in tournamentsList"
@@ -62,12 +64,6 @@ watch(searchString, () => {
         @click="router.push(`/tournament/${tournament.id}`)"
         :tournament="tournament"
       />
-    </div>
-
-    <div class="flex justify-center">
-      <Button v-show="showAddButton" @click="addTournament">
-        {{ $t('tournamentsPageAddButton') }}
-      </Button>
     </div>
   </main>
 </template>

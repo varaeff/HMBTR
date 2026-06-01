@@ -145,14 +145,17 @@ export function useLocationSelect(props: LocationProps, emit: LocationEmit) {
     if (type === 'country') {
       await store.addCountry(name)
       countries.value = await store.fetchCountries()
+      countryModel.value = name
     } else if (type === 'city') {
       const country_id = findIdByName(countries.value, countryModel.value)
       await store.addCity(country_id, name)
       cities.value = await store.fetchCitiesByCountry(country_id)
+      cityModel.value = name
     } else if (type === 'club') {
       const city_id = findIdByName(cities.value, cityModel.value)
       await store.addClub(city_id, name)
       clubs.value = await store.fetchClubsByCity(city_id)
+      clubModel.value = name
     }
   }
 

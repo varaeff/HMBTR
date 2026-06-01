@@ -4,7 +4,6 @@ import { useRouter } from 'vue-router'
 import { useMarshalsListStore } from '@/stores/marshalsList'
 import { hasMarshalManageAccess } from '@/lib/checkAccess'
 import { FighterCard } from '@/components/ui/fighterCard'
-import { Button } from '@/components/ui/button'
 import { SearchWidget } from '@/widgets/SearchWidget'
 import type { Marshal } from '@/model'
 
@@ -24,7 +23,7 @@ onMounted(async () => {
 })
 
 const searchString = computed(() => marshalsListStore.getSearchString)
-const showAddButton = computed(() => marshalsListStore.getSearchString.length > 0 && hasMarshalManageAccess())
+const showAddButton = computed(() => hasMarshalManageAccess())
 
 const addMarshal = () => {
   router.push('/addMarshal')
@@ -43,11 +42,14 @@ watch(searchString, () => {
         class="w-full max-w-2xl"
         :placeholder="$t('marshalsSearchPlaceholder')"
         :store="useMarshalsListStore"
+        :showAddButton="showAddButton"
+        :addLabel="$t('addMarshalButton')"
+        :addAction="addMarshal"
       />
     </header>
 
     <div
-      class="grid w-full grid-cols-[repeat(auto-fit,minmax(min(100%,15rem),1fr))] items-stretch gap-4 sm:gap-5"
+      class="grid w-full grid-cols-[repeat(auto-fit,minmax(min(100%,15rem),1fr))] items-stretch justify-items-center gap-4 sm:gap-5"
     >
       <FighterCard
         v-for="marshal in marshalsList"
@@ -58,12 +60,6 @@ watch(searchString, () => {
         :pic="marshal.pic"
         @click="router.push(`/marshal/${marshal.id}`)"
       />
-    </div>
-
-    <div class="flex justify-center">
-      <Button v-show="showAddButton" variant="default" size="default" @click="addMarshal">{{
-        $t('addMarshalButton')
-      }}</Button>
     </div>
   </main>
 </template>

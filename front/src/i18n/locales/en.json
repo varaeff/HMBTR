@@ -21,13 +21,13 @@
   "mainPageName": "Fucking start page",
 
   "fightersPageName": "Fighters list",
-  "addFighterButton": "Add fighter",
+  "addFighterButton": "+",
   "fightersSearchPlaceholder": "Input name, city or club",
   "marshalsSearchPlaceholder": "Input name, city or category",
   "searchClear": "Clear search",
 
   "marshalsPageName": "Marshals list",
-  "addMarshalButton": "Add marshal",
+  "addMarshalButton": "+",
 
   "ratingPageTitle": "Rating",
   "ratingPageNomination": "Nomination",
@@ -129,7 +129,7 @@
 
   "tournamentsPageNamePage": "Registered tournaments",
   "tournamentsPagePlaceholder": "Enter name or city",
-  "tournamentsPageAddButton": "Add tournament",
+  "tournamentsPageAddButton": "+",
 
   "tournamentCardCompleted": "COMPLETED",
 

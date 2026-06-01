@@ -4,7 +4,6 @@ import { useRouter } from 'vue-router'
 import { useFightersListStore } from '@/stores/fightersList'
 import { hasAccess } from '@/lib/checkAccess'
 import { FighterCard } from '@/components/ui/fighterCard'
-import { Button } from '@/components/ui/button'
 import { SearchWidget } from '@/widgets/SearchWidget'
 import type { Fighter } from '@/model'
 
@@ -24,7 +23,7 @@ onMounted(async () => {
 })
 
 const searchString = computed(() => fightersListStore.getSearchString)
-const showAddButton = computed(() => fightersListStore.getSearchString.length > 0 && hasAccess())
+const showAddButton = computed(() => hasAccess())
 
 const addFighter = () => {
   router.push('/addFighter')
@@ -43,11 +42,14 @@ watch(searchString, () => {
         class="w-full max-w-2xl"
         :placeholder="$t('fightersSearchPlaceholder')"
         :store="useFightersListStore"
+        :showAddButton="showAddButton"
+        :addLabel="$t('addFighterButton')"
+        :addAction="addFighter"
       />
     </header>
 
     <div
-      class="grid w-full grid-cols-[repeat(auto-fit,minmax(min(100%,15rem),1fr))] items-stretch gap-4 sm:gap-5"
+      class="grid w-full grid-cols-[repeat(auto-fit,minmax(min(100%,15rem),1fr))] items-stretch justify-items-center gap-4 sm:gap-5"
     >
       <FighterCard
         v-for="fighter in fightersList"
@@ -58,12 +60,6 @@ watch(searchString, () => {
         :pic="fighter.pic"
         @click="router.push(`/fighter/${fighter.id}`)"
       />
-    </div>
-
-    <div class="flex justify-center">
-      <Button v-show="showAddButton" variant="default" size="default" @click="addFighter">{{
-        $t('addFighterButton')
-      }}</Button>
     </div>
   </main>
 </template>

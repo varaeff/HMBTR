@@ -21,7 +21,7 @@
   "mainPageName": "Охуительная стартовая страница",
 
   "fightersPageName": "Список бойцов",
-  "addFighterButton": "Добавить бойца",
+  "addFighterButton": "+",
   "fightersSearchPlaceholder": "Введите имя, город или клуб",
   "searchClear": "Очистить поиск",
 
@@ -111,7 +111,7 @@
 
   "tournamentsPageNamePage": "Учтённые турниры",
   "tournamentsPagePlaceholder": "Введите название или город",
-  "tournamentsPageAddButton": "Добавить турнир",
+  "tournamentsPageAddButton": "+",
 
   "tournamentCardCompleted": "ЗАВЕРШЁН",
 
@@ -202,7 +202,7 @@
   "disciplinaryCardsActiveRed": "Активная красная карточка",
 
   "marshalsPageName": "Список судей",
-  "addMarshalButton": "Добавить судью",
+  "addMarshalButton": "+",
   "marshalsSearchPlaceholder": "Введите имя, город или категорию",
   "marshalCategoryLabel": "Категория",
   "marshalCategoryPlaceholder": "Выберите категорию",

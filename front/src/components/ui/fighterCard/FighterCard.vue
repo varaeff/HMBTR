@@ -80,7 +80,7 @@ onUnmounted(() => {
 
 <template>
   <div
-    class="box-border h-full cursor-pointer"
+    class="box-border h-full max-h-[291px] w-full max-w-[392px] cursor-pointer"
     @mousemove="handleMouseMove"
     @mouseleave="handleMouseLeave"
   >
