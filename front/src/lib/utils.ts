@@ -12,7 +12,7 @@ export const parseInput = (checkString: string, inputType: string): string => {
   if (inputType === 'email') {
     return checkString.replace(/[^a-zA-Z0-9@._+-]/g, '')
   } else if (inputType === 'text') {
-    return checkString.replace(/[^a-zA-Zа-яА-ЯёЁ ]/g, '')
+    return checkString.replace(/[^a-zA-Zа-яА-ЯёЁ -]/g, '')
   }
   return checkString
 }
