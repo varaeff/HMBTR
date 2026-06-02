@@ -27,11 +27,8 @@ const emit = defineEmits<{
 
 const competitionStore = useCompetitionStore()
 const draggedSlot = ref<number | null>(null)
+const isFixingPairs = ref(false)
 const { i18next } = useTranslation()
-
-const isLocked = computed(
-  () => props.block.status !== 'ACTIVE' || props.block.fights.some((fight) => fight.isFinished)
-)
 
 const rounds = computed(() => {
   const roundMap = new Map<number, typeof props.block.fights>()
@@ -50,8 +47,46 @@ const rounds = computed(() => {
     }))
 })
 
+const mainRoundsCount = computed(() => Math.log2(props.block.bracketSlots.length))
+const semifinalRound = computed(() => mainRoundsCount.value - 1)
+const mainFights = computed(() => props.block.fights.filter((fight) => !fight.isBronze))
+
+const getFightWinnerCompetitorId = (fight: FightData) => {
+  if (!fight.isFinished || !fight.competitor1Id || !fight.competitor2Id) return null
+  if (fight.fighter1Score === fight.fighter2Score) return null
+
+  return fight.fighter1Score > fight.fighter2Score ? fight.competitor1Id : fight.competitor2Id
+}
+
+const pendingPairSlots = computed(() => {
+  const sortedSlots = [...props.block.bracketSlots].sort((a, b) => a.slotPosition - b.slotPosition)
+
+  if (!mainFights.value.length) return sortedSlots
+  if (!Number.isInteger(mainRoundsCount.value)) return []
+
+  const latestRound = Math.max(...mainFights.value.map((fight) => fight.bracketRound ?? 1))
+  if (latestRound >= semifinalRound.value) return []
+
+  const nextRound = latestRound + 1
+  if (mainFights.value.some((fight) => (fight.bracketRound ?? 1) === nextRound)) return []
+
+  const latestRoundFights = mainFights.value.filter(
+    (fight) => (fight.bracketRound ?? 1) === latestRound
+  )
+  const winnerIds = latestRoundFights.map(getFightWinnerCompetitorId)
+
+  if (winnerIds.some((winnerId) => winnerId === null)) return []
+
+  const winnerSet = new Set(winnerIds.filter((winnerId): winnerId is number => winnerId !== null))
+
+  return sortedSlots.filter((slot) => winnerSet.has(slot.competitorId))
+})
+
+const hasPendingPairs = computed(() => pendingPairSlots.value.length > 0)
+const isLocked = computed(() => props.block.status !== 'ACTIVE' || !hasPendingPairs.value)
+
 const slotPairs = computed(() => {
-  const slots = [...props.block.bracketSlots].sort((a, b) => a.slotPosition - b.slotPosition)
+  const slots = pendingPairSlots.value
   const pairs: BracketSlot[][] = []
 
   for (let i = 0; i < slots.length; i += 2) {
@@ -132,11 +167,22 @@ const dropOnSlot = (targetPosition: number) => {
   competitionStore.swapBracketSlots(props.block.id, draggedSlot.value, targetPosition)
   draggedSlot.value = null
 }
+
+const fixPairs = async () => {
+  if (isFixingPairs.value || !hasPendingPairs.value) return
+
+  isFixingPairs.value = true
+  try {
+    await competitionStore.generateOlympicFights(props.block.id)
+  } finally {
+    isFixingPairs.value = false
+  }
+}
 </script>
 
 <template>
   <div class="w-full space-y-6 px-4">
-    <div class="mx-auto flex max-w-5xl flex-wrap justify-center gap-3">
+    <div v-if="hasPendingPairs" class="mx-auto flex max-w-5xl flex-wrap justify-center gap-3">
       <div
         v-for="pair in slotPairs"
         :key="pair.map((slot) => slot.id).join('-')"
@@ -171,7 +217,13 @@ const dropOnSlot = (targetPosition: number) => {
       </div>
     </div>
 
-    <div class="space-y-6 px-6 md:px-10">
+    <div v-if="hasAccess && hasPendingPairs" class="flex justify-center">
+      <Button :disabled="isFixingPairs" @click="fixPairs">
+        {{ $t('tournamentPageFixPairs') }}
+      </Button>
+    </div>
+
+    <div v-if="!hasPendingPairs" class="space-y-6 px-6 md:px-10">
       <section v-for="round in preliminaryRounds" :key="round.round" class="space-y-3">
         <h3 class="text-lg font-semibold">{{ roundLabel(round.fights) }}</h3>
         <div class="space-y-2">

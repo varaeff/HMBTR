@@ -410,6 +410,13 @@ export const useCompetitionStore = defineStore({
       this.applyCompetitionState(data)
     },
 
+    async generateOlympicFights(blockId: number) {
+      const { data } = await http.post(API_ROUTES.COMPETITION.OLYMPIC_FIGHTS, {
+        block_id: blockId
+      })
+      this.applyCompetitionState(data)
+    },
+
     updateGlobalScore({ fightId, fightNumber, f1Score, f2Score }: UpdateGlobalScoreParams) {
       let targetBlock: CompetitionBlock | undefined
 

@@ -137,6 +137,7 @@
   "tournamentPageFinal": "Финал",
   "tournamentPageRound": "Раунд",
   "tournamentPageBronzeFight": "Бой за 3-е место",
+  "tournamentPageFixPairs": "Зафиксировать пары",
 
   "groupsTableFighter": "Боец",
   "groupsTableClub": "Клуб",
@@ -180,6 +181,7 @@
 
   "disciplinaryCardsTitle": "Дисциплинарные карточки",
   "disciplinaryCardsIssueTitle": "Выдать карточку",
+  "disciplinaryCardsIssueAction": "Выдать карточку",
   "disciplinaryCardsIssueDescription": "Выберите тип карточки и укажите причину для этого боя.",
   "disciplinaryCardsType": "Тип",
   "disciplinaryCardsYellow": "Желтая",

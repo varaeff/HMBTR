@@ -155,6 +155,7 @@
   "tournamentPageFinal": "Final",
   "tournamentPageRound": "Round",
   "tournamentPageBronzeFight": "Bronze fight",
+  "tournamentPageFixPairs": "Fix pairs",
   "tournamentPageAddJudgesButton": "Add judges",
   "tournamentPageMarshalsTitle": "Tournament Marshals",
   "tournamentPageFinishMarshalsButton": "Finish adding marshals",
@@ -207,6 +208,7 @@
 
   "disciplinaryCardsTitle": "Disciplinary cards",
   "disciplinaryCardsIssueTitle": "Issue card",
+  "disciplinaryCardsIssueAction": "Issue a card",
   "disciplinaryCardsIssueDescription": "Choose the card type and enter the reason for this fight.",
   "disciplinaryCardsType": "Type",
   "disciplinaryCardsYellow": "Yellow",

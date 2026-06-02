@@ -19,6 +19,109 @@ type CreatedFight = {
 };
 
 describe('CompetitionService', () => {
+  it('reorders Olympic winners after a non-semifinal round without creating next fights', async () => {
+    const slots = Array.from({ length: 8 }, (_, index) => ({
+      id: index + 1,
+      competitor_id: index + 1,
+      slot_position: index + 1,
+    }));
+    const firstRound = [
+      {
+        id: 1,
+        bracket_round: 1,
+        is_bronze: false,
+        is_finished: true,
+        winner_id: 1,
+      },
+      {
+        id: 2,
+        bracket_round: 1,
+        is_bronze: false,
+        is_finished: true,
+        winner_id: 3,
+      },
+      {
+        id: 3,
+        bracket_round: 1,
+        is_bronze: false,
+        is_finished: true,
+        winner_id: 5,
+      },
+      {
+        id: 4,
+        bracket_round: 1,
+        is_bronze: false,
+        is_finished: true,
+        winner_id: 7,
+      },
+    ];
+    const slotUpdates: Array<{ id: number; slot_position: number }> = [];
+    const tx = {
+      competition_blocks: {
+        findUnique: jest.fn().mockResolvedValue({
+          id: 9,
+          tournament_id: 31,
+          nomination_id: 5,
+          tournament_nomination_id: 15,
+          stage: 2,
+          bracket_slots: slots,
+        }),
+        update: jest.fn(),
+      },
+      bracket_slots: {
+        findMany: jest.fn().mockResolvedValue(slots),
+        update: jest.fn(
+          async (params: {
+            where: { id: number };
+            data: { slot_position: number };
+          }) => {
+            slotUpdates.push({
+              id: params.where.id,
+              slot_position: params.data.slot_position,
+            });
+          },
+        ),
+      },
+      fights: {
+        aggregate: jest.fn().mockResolvedValue({
+          _max: { fight_number: 10 },
+        }),
+        findMany: jest.fn(
+          async (params: { where: { bracket_round: number } }) =>
+            params.where.bracket_round === 1 ? firstRound : [],
+        ),
+        count: jest.fn().mockResolvedValue(0),
+        findFirst: jest.fn().mockResolvedValue(null),
+        create: jest.fn(),
+        update: jest.fn(),
+      },
+    };
+    const prisma = {
+      $transaction: jest.fn(
+        async (callback: (transaction: typeof tx) => Promise<void>) =>
+          callback(tx),
+      ),
+    };
+    const service = new CompetitionService(
+      prisma as unknown as PrismaService,
+      {} as RatingsService,
+    );
+
+    await service.progressOlympicBlock(9);
+
+    expect(tx.fights.create).not.toHaveBeenCalled();
+    expect(slotUpdates.slice(-8)).toEqual([
+      { id: 1, slot_position: 1 },
+      { id: 3, slot_position: 2 },
+      { id: 5, slot_position: 3 },
+      { id: 7, slot_position: 4 },
+      { id: 2, slot_position: 5 },
+      { id: 4, slot_position: 6 },
+      { id: 6, slot_position: 7 },
+      { id: 8, slot_position: 8 },
+    ]);
+  });
+
   it('creates the bronze fight before the final so fight numbers match display order', async () => {
     const createdFights: CreatedFight[] = [];
     const semifinals = [

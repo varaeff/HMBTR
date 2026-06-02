@@ -5,6 +5,7 @@ import { CompetitionService } from './competition.service';
 import { CreateCompetitionBlockDto } from './dto/create-competition-block.dto';
 import { FinishCompetitionDto } from './dto/finish-competition.dto';
 import { GenerateGroupFightsDto } from './dto/generate-group-fights.dto';
+import { GenerateOlympicFightsDto } from './dto/generate-olympic-fights.dto';
 import { ResolveTiesDto } from './dto/resolve-ties.dto';
 import { SaveCompetitionResultsDto } from './dto/save-competition-results.dto';
 import { SwapBracketSlotsDto } from './dto/swap-bracket-slots.dto';
@@ -36,6 +37,11 @@ export class CompetitionController {
   @Post('olympic')
   createOlympicBlock(@Body() dto: CreateCompetitionBlockDto) {
     return this.competitionService.createOlympicBlock(dto);
+  }
+
+  @Post('olympic/fights')
+  generateOlympicFights(@Body() dto: GenerateOlympicFightsDto) {
+    return this.competitionService.generateOlympicFights(dto);
   }
 
   @Patch('scores')

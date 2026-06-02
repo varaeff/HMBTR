@@ -111,6 +111,7 @@ export const API_ROUTES = {
     GROUP_BLOCK: "/competition/groups",
     GROUP_FIGHTS: "/competition/groups/fights",
     OLYMPIC_BLOCK: "/competition/olympic",
+    OLYMPIC_FIGHTS: "/competition/olympic/fights",
     SCORES: "/competition/scores",
     SAVE_RESULTS: "/competition/results",
     SWAP_BRACKET_SLOTS: "/competition/bracket-slots/swap",

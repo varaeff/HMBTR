@@ -100,22 +100,19 @@ const isHighlightedAdvancer = (fighter: GroupFighter, fighterIndex: number) => {
   >
     <div v-for="(group, gIdx) in displayGroups" :key="group.letter + languageKey">
       <Table
-        class="border rounded-lg p-4 bg-card w-64 shadow-sm"
+        class="border rounded-lg p-4 bg-card w-auto min-w-64 shadow-sm"
         @dragover.prevent
         @drop.stop="handleDrop($event, gIdx)"
       >
         <TableHeader>
           <TableRow>
-            <TableCell class="font-bold text-center">
+            <TableCell :colspan="props.isFixed ? 4 : 1" class="font-bold text-center">
               {{ $t('tournamentPageGroupName') }} {{ group.letter }}
             </TableCell>
           </TableRow>
           <TableRow v-if="props.isFixed">
-            <TableCell class="font-bold"> № </TableCell>
+            <TableCell class="w-px font-bold"> № </TableCell>
             <TableCell class="font-bold"> {{ $t('groupsTableFighter') }} </TableCell>
-            <TableCell class="hidden font-bold sm:table-cell">
-              {{ $t('groupsTableClub') }}
-            </TableCell>
             <TableCell class="font-bold text-center"> {{ $t('groupsTableWins') }} </TableCell>
             <TableCell class="font-bold text-center"> {{ $t('groupsTableDifference') }} </TableCell>
           </TableRow>
@@ -139,16 +136,12 @@ const isHighlightedAdvancer = (fighter: GroupFighter, fighterIndex: number) => {
               }
             ]"
           >
-            <TableCell class="text-muted-foreground">{{ fIdx + 1 }}.</TableCell>
+            <TableCell class="w-px text-muted-foreground">{{ fIdx + 1 }}.</TableCell>
             <TableCell class="font-medium"
               ><span class="inline-flex items-center gap-1">
                 {{ tData(fighter.surname) }} {{ tData(fighter.name) }}
                 <CardStatusIcon :type="activeCardTypes?.[fighter.id]" /> </span
             ></TableCell>
-            <TableCell class="hidden text-muted-foreground sm:table-cell">
-              {{ tData(fighter.city) }}
-              <p v-if="fighter.club">, {{ tData(fighter.club) }}</p>
-            </TableCell>
             <TableCell v-if="props.isFixed" class="font-bold text-center">
               {{ fighter.wins }}
             </TableCell>

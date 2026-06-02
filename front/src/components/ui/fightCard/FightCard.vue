@@ -4,6 +4,12 @@ import { useTranslation } from 'i18next-vue'
 import { useDisciplinaryCardsStore } from '@/stores/disciplinaryCards'
 import { Button } from '@/components/ui/button'
 import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger
+} from '@/components/ui/context-menu'
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -151,23 +157,41 @@ watch(
 
 <template>
   <div class="flex items-center gap-4 py-1 px-3 border rounded-lg bg-card">
-    <div class="w-8 text-sm text-slate-400 font-semibold">{{ fight.number }}.</div>
+    <div class="w-auto shrink-0 text-sm text-slate-400 font-semibold">{{ fight.number }}.</div>
 
     <div class="flex-1 text-sm font-medium">
-      <span
-        class="inline-flex items-center gap-1"
-        :class="canIssueCards ? 'cursor-context-menu' : ''"
-        @contextmenu.prevent="openIssueDialog(fight.fighter1)"
-      >
+      <ContextMenu v-if="canIssueCards">
+        <ContextMenuTrigger as-child>
+          <span class="inline-flex cursor-context-menu items-center gap-1">
+            {{ fighter1Surname }}
+            <CardStatusIcon :type="fighter1CardType" />
+          </span>
+        </ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuItem @select="openIssueDialog(fight.fighter1)">
+            {{ $t('disciplinaryCardsIssueAction') }}
+          </ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+      <span v-else class="inline-flex items-center gap-1">
         {{ fighter1Surname }}
         <CardStatusIcon :type="fighter1CardType" />
       </span>
       <span class="px-2">-</span>
-      <span
-        class="inline-flex items-center gap-1"
-        :class="canIssueCards ? 'cursor-context-menu' : ''"
-        @contextmenu.prevent="openIssueDialog(fight.fighter2)"
-      >
+      <ContextMenu v-if="canIssueCards">
+        <ContextMenuTrigger as-child>
+          <span class="inline-flex cursor-context-menu items-center gap-1">
+            {{ fighter2Surname }}
+            <CardStatusIcon :type="fighter2CardType" />
+          </span>
+        </ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuItem @select="openIssueDialog(fight.fighter2)">
+            {{ $t('disciplinaryCardsIssueAction') }}
+          </ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+      <span v-else class="inline-flex items-center gap-1">
         {{ fighter2Surname }}
         <CardStatusIcon :type="fighter2CardType" />
       </span>
@@ -260,6 +284,7 @@ watch(
           <input
             id="card-reason"
             v-model="issueReason"
+            autocomplete="off"
             class="h-9 rounded border bg-background px-2"
           />
         </div>

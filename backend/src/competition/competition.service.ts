@@ -21,6 +21,7 @@ import type { RankedCompetitor, RankedGroup } from './competition.logic';
 import { CreateCompetitionBlockDto } from './dto/create-competition-block.dto';
 import { FinishCompetitionDto } from './dto/finish-competition.dto';
 import { GenerateGroupFightsDto } from './dto/generate-group-fights.dto';
+import { GenerateOlympicFightsDto } from './dto/generate-olympic-fights.dto';
 import { ResolveTiesDto } from './dto/resolve-ties.dto';
 import { SaveCompetitionResultsDto } from './dto/save-competition-results.dto';
 import { SwapBracketSlotsDto } from './dto/swap-bracket-slots.dto';
@@ -409,13 +410,6 @@ export class CompetitionService {
           }),
         ),
       );
-      await this.recreateInitialBracketFightsTx(
-        tx,
-        block.id,
-        dto.tournament_id,
-        dto.nomination_id,
-        nextStage,
-      );
       await tx.tournament_nominations.update({
         where: { id: tournamentNomination.id },
         data: { stage: nextStage },
@@ -423,6 +417,59 @@ export class CompetitionService {
     });
 
     return this.getState(dto.tournament_id, dto.nomination_id);
+  }
+
+  async generateOlympicFights(dto: GenerateOlympicFightsDto) {
+    const block = await this.prisma.competition_blocks.findUnique({
+      where: { id: dto.block_id },
+      include: {
+        tournament_nomination: true,
+        fights: true,
+        bracket_slots: true,
+      },
+    });
+    if (!block) throw new NotFoundException('Block not found');
+    if (block.type !== BLOCK_OLYMPIC) {
+      throw new BadRequestException(
+        'Only Olympic blocks can generate Olympic fights',
+      );
+    }
+    if (
+      block.status !== STATUS_ACTIVE ||
+      block.tournament_nomination.is_finished
+    ) {
+      throw new BadRequestException('Block is locked');
+    }
+    if (
+      !OLYMPIC_BRACKET_SIZES.some((size) => size === block.bracket_slots.length)
+    ) {
+      throw new BadRequestException(
+        'Olympic bracket requires 4, 8 or 16 fighters',
+      );
+    }
+    const pendingPairs = this.getPendingOlympicPairs(
+      block.bracket_slots,
+      block.fights,
+    );
+
+    if (!pendingPairs) {
+      throw new BadRequestException('No Olympic pairs to fix');
+    }
+
+    await this.prisma.$transaction(async (tx) => {
+      await this.createBracketFightsFromSlotsTx(tx, {
+        blockId: block.id,
+        tournamentId: block.tournament_id,
+        nominationId: block.nomination_id,
+        stage: block.stage,
+        round: pendingPairs.round,
+        slots: pendingPairs.slots,
+      });
+    });
+
+    await this.applyRedCardForfeits(block.tournament_id);
+
+    return this.getState(block.tournament_id, block.nomination_id);
   }
 
   async updateScore(dto: UpdateCompetitionScoreDto) {
@@ -543,16 +590,27 @@ export class CompetitionService {
   async swapBracketSlots(dto: SwapBracketSlotsDto) {
     const block = await this.prisma.competition_blocks.findUnique({
       where: { id: dto.block_id },
-      include: { fights: true },
+      include: { fights: true, bracket_slots: true },
     });
     if (!block) throw new NotFoundException('Block not found');
     if (block.type !== BLOCK_OLYMPIC || block.status !== STATUS_ACTIVE) {
       throw new BadRequestException('Bracket is locked');
     }
-    if (block.fights.some((fight) => fight.is_finished)) {
-      throw new BadRequestException(
-        'Bracket slots are locked after the first score',
-      );
+    const pendingPairs = this.getPendingOlympicPairs(
+      block.bracket_slots,
+      block.fights,
+    );
+    if (!pendingPairs) {
+      throw new BadRequestException('Bracket slots are locked');
+    }
+    const pendingPositions = new Set(
+      pendingPairs.slots.map((slot) => slot.slot_position),
+    );
+    if (
+      !pendingPositions.has(dto.source_position) ||
+      !pendingPositions.has(dto.target_position)
+    ) {
+      throw new BadRequestException('Only pending pairs can be changed');
     }
 
     await this.prisma.$transaction(async (tx) => {
@@ -577,14 +635,6 @@ export class CompetitionService {
         where: { id: source.id },
         data: { slot_position: dto.target_position },
       });
-      await tx.fights.deleteMany({ where: { block_id: dto.block_id } });
-      await this.recreateInitialBracketFightsTx(
-        tx,
-        block.id,
-        block.tournament_id,
-        block.nomination_id,
-        block.stage,
-      );
     });
 
     return this.getState(block.tournament_id, block.nomination_id);
@@ -1425,36 +1475,130 @@ export class CompetitionService {
     return null;
   }
 
-  private async recreateInitialBracketFightsTx(
+  private async createBracketFightsFromSlotsTx(
+    tx: PrismaTx,
+    params: {
+      blockId: number;
+      tournamentId: number;
+      nominationId: number;
+      stage: number;
+      round: number;
+      slots: Array<{ competitor_id: number }>;
+    },
+  ) {
+    let fightNumber = await this.getNextFightNumberTx(
+      tx,
+      params.tournamentId,
+      params.nominationId,
+    );
+
+    for (let i = 0; i < params.slots.length; i += 2) {
+      await tx.fights.create({
+        data: {
+          tournament_id: params.tournamentId,
+          nomination_id: params.nominationId,
+          block_id: params.blockId,
+          competitor1_id: params.slots[i].competitor_id,
+          competitor2_id: params.slots[i + 1].competitor_id,
+          stage: params.stage,
+          fight_number: fightNumber++,
+          bracket_round: params.round,
+          bracket_position: i / 2 + 1,
+        },
+      });
+    }
+  }
+
+  private getPendingOlympicPairs(
+    bracketSlots: Array<{
+      id: number;
+      competitor_id: number;
+      slot_position: number;
+    }>,
+    fights: Array<{
+      bracket_round: number | null;
+      is_bronze: boolean | null;
+      is_finished: boolean | null;
+      winner_id: number | null;
+    }>,
+  ): {
+    round: number;
+    slots: Array<{ competitor_id: number; slot_position: number }>;
+  } | null {
+    const sortedSlots = [...bracketSlots].sort(
+      (a, b) => a.slot_position - b.slot_position,
+    );
+    const slotCount = sortedSlots.length;
+    if (!OLYMPIC_BRACKET_SIZES.some((size) => size === slotCount)) return null;
+
+    const mainFights = fights.filter((fight) => !fight.is_bronze);
+    if (!mainFights.length) {
+      return { round: 1, slots: sortedSlots };
+    }
+
+    const mainRounds = Math.log2(slotCount);
+    const semifinalRound = mainRounds - 1;
+    const latestRound = Math.max(
+      ...mainFights.map((fight) => fight.bracket_round ?? 1),
+    );
+
+    if (latestRound >= semifinalRound) return null;
+
+    const nextRound = latestRound + 1;
+    if (
+      mainFights.some((fight) => (fight.bracket_round ?? 1) === nextRound)
+    ) {
+      return null;
+    }
+
+    const latestRoundFights = mainFights.filter(
+      (fight) => (fight.bracket_round ?? 1) === latestRound,
+    );
+    if (
+      !latestRoundFights.length ||
+      latestRoundFights.some((fight) => !fight.is_finished || !fight.winner_id)
+    ) {
+      return null;
+    }
+
+    const winnerIds = new Set(
+      latestRoundFights.map((fight) => fight.winner_id!),
+    );
+    const winnerSlots = sortedSlots.filter((slot) =>
+      winnerIds.has(slot.competitor_id),
+    );
+
+    return winnerSlots.length === latestRoundFights.length
+      ? { round: nextRound, slots: winnerSlots }
+      : null;
+  }
+
+  private async reorderOlympicWinnerSlotsTx(
     tx: PrismaTx,
     blockId: number,
-    tournamentId: number,
-    nominationId: number,
-    stage: number,
+    winnerIds: number[],
   ) {
+    const winnerSet = new Set(winnerIds);
     const slots = await tx.bracket_slots.findMany({
       where: { block_id: blockId },
       orderBy: { slot_position: 'asc' },
     });
-    let fightNumber = await this.getNextFightNumberTx(
-      tx,
-      tournamentId,
-      nominationId,
-    );
+    const orderedSlots = [
+      ...slots.filter((slot) => winnerSet.has(slot.competitor_id)),
+      ...slots.filter((slot) => !winnerSet.has(slot.competitor_id)),
+    ];
 
-    for (let i = 0; i < slots.length; i += 2) {
-      await tx.fights.create({
-        data: {
-          tournament_id: tournamentId,
-          nomination_id: nominationId,
-          block_id: blockId,
-          competitor1_id: slots[i].competitor_id,
-          competitor2_id: slots[i + 1].competitor_id,
-          stage,
-          fight_number: fightNumber++,
-          bracket_round: 1,
-          bracket_position: i / 2 + 1,
-        },
+    for (const [index, slot] of orderedSlots.entries()) {
+      await tx.bracket_slots.update({
+        where: { id: slot.id },
+        data: { slot_position: -(index + 1) },
+      });
+    }
+
+    for (const [index, slot] of orderedSlots.entries()) {
+      await tx.bracket_slots.update({
+        where: { id: slot.id },
+        data: { slot_position: index + 1 },
       });
     }
   }
@@ -1498,21 +1642,12 @@ export class CompetitionService {
           },
         });
         if (!nextRoundExists) {
-          for (let index = 0; index < fights.length; index += 2) {
-            await tx.fights.create({
-              data: {
-                tournament_id: block.tournament_id,
-                nomination_id: block.nomination_id,
-                block_id: blockId,
-                competitor1_id: fights[index].winner_id!,
-                competitor2_id: fights[index + 1].winner_id!,
-                stage: block.stage,
-                fight_number: fightNumber++,
-                bracket_round: round + 1,
-                bracket_position: index / 2 + 1,
-              },
-            });
-          }
+          await this.reorderOlympicWinnerSlotsTx(
+            tx,
+            blockId,
+            fights.map((fight) => fight.winner_id!),
+          );
+          break;
         }
       }
 
