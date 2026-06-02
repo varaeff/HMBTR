@@ -182,48 +182,7 @@ const fixPairs = async () => {
 
 <template>
   <div class="w-full space-y-6 px-4">
-    <div v-if="hasPendingPairs" class="mx-auto flex max-w-5xl flex-wrap justify-center gap-3">
-      <div
-        v-for="pair in slotPairs"
-        :key="pair.map((slot) => slot.id).join('-')"
-        class="w-full max-w-64 rounded-md border border-border bg-muted/70 p-2 shadow-md sm:w-64 dark:bg-muted/50"
-        @dragover.prevent
-      >
-        <div class="space-y-2 fighters-pair">
-          <div
-            v-for="slot in pair"
-            :key="slot.id"
-            class="rounded-md border bg-background px-3 py-2 text-center text-xs transition-colors"
-            :class="[
-              hasAccess && !isLocked ? 'cursor-move hover:bg-accent/50' : 'cursor-default',
-              draggedSlot === slot.slotPosition ? 'opacity-40' : ''
-            ]"
-            :draggable="hasAccess && !isLocked"
-            @dragstart="draggedSlot = slot.slotPosition"
-            @dragend="draggedSlot = null"
-            @dragover.prevent
-            @drop="dropOnSlot(slot.slotPosition)"
-          >
-            <div class="font-semibold leading-tight">
-              {{ tData(slot.fighter.surname) }} {{ tData(slot.fighter.name) }}
-              <CardStatusIcon :type="activeCardTypes?.[slot.fighter.id]" />
-            </div>
-            <div class="mt-1 text-muted-foreground">
-              {{ tData(slot.fighter.city)
-              }}<span v-if="slot.fighter.club">, {{ tData(slot.fighter.club) }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div v-if="hasAccess && hasPendingPairs" class="flex justify-center">
-      <Button :disabled="isFixingPairs" @click="fixPairs">
-        {{ $t('tournamentPageFixPairs') }}
-      </Button>
-    </div>
-
-    <div v-if="!hasPendingPairs" class="space-y-6 px-6 md:px-10">
+    <div class="space-y-6 px-6 md:px-10">
       <section v-for="round in preliminaryRounds" :key="round.round" class="space-y-3">
         <h3 class="text-lg font-semibold">{{ roundLabel(round.fights) }}</h3>
         <div class="space-y-2">
@@ -298,6 +257,47 @@ const fixPairs = async () => {
           </Button>
         </div>
       </section>
+    </div>
+
+    <div v-if="hasPendingPairs" class="mx-auto flex max-w-5xl flex-wrap justify-center gap-3">
+      <div
+        v-for="pair in slotPairs"
+        :key="pair.map((slot) => slot.id).join('-')"
+        class="w-full max-w-64 rounded-md border border-border bg-muted/70 p-2 shadow-md sm:w-64 dark:bg-muted/50"
+        @dragover.prevent
+      >
+        <div class="space-y-2 fighters-pair">
+          <div
+            v-for="slot in pair"
+            :key="slot.id"
+            class="rounded-md border bg-background px-3 py-2 text-center text-xs transition-colors"
+            :class="[
+              hasAccess && !isLocked ? 'cursor-move hover:bg-accent/50' : 'cursor-default',
+              draggedSlot === slot.slotPosition ? 'opacity-40' : ''
+            ]"
+            :draggable="hasAccess && !isLocked"
+            @dragstart="draggedSlot = slot.slotPosition"
+            @dragend="draggedSlot = null"
+            @dragover.prevent
+            @drop="dropOnSlot(slot.slotPosition)"
+          >
+            <div class="font-semibold leading-tight">
+              {{ tData(slot.fighter.surname) }} {{ tData(slot.fighter.name) }}
+              <CardStatusIcon :type="activeCardTypes?.[slot.fighter.id]" />
+            </div>
+            <div class="mt-1 text-muted-foreground">
+              {{ tData(slot.fighter.city)
+              }}<span v-if="slot.fighter.club">, {{ tData(slot.fighter.club) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="hasAccess && hasPendingPairs" class="flex justify-center">
+      <Button :disabled="isFixingPairs" @click="fixPairs">
+        {{ $t('tournamentPageFixPairs') }}
+      </Button>
     </div>
   </div>
 </template>
