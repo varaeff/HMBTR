@@ -26,7 +26,6 @@ const props = withDefaults(defineProps<SearchWidgetProps>(), {
 
 const inputValue = ref('')
 const store = props.store()
-const isInputEmpty = computed(() => inputValue.value.trim().length === 0)
 const hasAddButton = computed(() => props.showAddButton && Boolean(props.addAction))
 
 watch(inputValue, (newValue) => {
@@ -51,18 +50,12 @@ watch(inputValue, (newValue) => {
         class="h-9 min-w-12 rounded-l-none"
         variant="default"
         size="default"
-        :disabled="isInputEmpty"
         @click="props.addAction"
       >
         {{ props.addLabel }}
       </Button>
     </div>
-    <Button
-      class="h-9 min-w-20"
-      variant="default"
-      size="default"
-      @click="inputValue = ''"
-    >
+    <Button class="h-9 min-w-20" variant="default" size="default" @click="inputValue = ''">
       {{ $t('searchClear') }}
     </Button>
   </div>

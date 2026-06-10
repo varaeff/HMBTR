@@ -17,15 +17,17 @@
   "LoginWidgetLoginButton": "Login",
   "LoginWidgetRegisterButton": "Register",
   "LoginWidgetCloseButton": "Close",
+  "LoginWidgetShowPassword": "Show password",
 
   "mainPageName": "Fucking start page",
 
   "fightersPageName": "Fighters list",
   "addFighterButton": "+",
   "fightersSearchPlaceholder": "Input name, city or club",
-  "marshalsSearchPlaceholder": "Input name, city or category",
   "searchClear": "Clear search",
+  "fightersPageShowGenderFilter": "Gender filter",
 
+  "marshalsSearchPlaceholder": "Input name, city or category",
   "marshalsPageName": "Marshals list",
   "addMarshalButton": "+",
 
@@ -111,6 +113,7 @@
   "fighterPageRatingFrom": "from",
   "fighterPageRatingStart": "Start",
   "fighterPageRatingBefore": "Before",
+
   "marshalPageNamePage": "Marshal card",
   "marshalPageBackButton": "To marshals list",
   "marshalPageEditFormLabel": "Edit marshal data",

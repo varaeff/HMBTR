@@ -46,10 +46,12 @@ export class FightersController {
   updateFighter(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateFighterDto,
-    @Req() req: { user?: { is_admin?: boolean } },
+    @Req() req: { user?: { is_admin?: boolean; is_organizer?: boolean } },
   ) {
-    if (!req.user?.is_admin) {
-      throw new ForbiddenException('Administrator access required');
+    if (!req.user?.is_admin && !req.user?.is_organizer) {
+      throw new ForbiddenException(
+        'Administrator or Organizer access required',
+      );
     }
 
     return this.fightersService.update(id, dto);

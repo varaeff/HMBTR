@@ -75,7 +75,7 @@ const editFighter = reactive({
 })
 
 const buttonDisabled = useRequiredFields(editFighter, ['surname', 'name', 'country', 'city'])
-const canEdit = computed(() => authStore.isAdmin)
+const canEdit = computed(() => authStore.isAdmin || authStore.isOrganizer)
 const canManageCards = computed(() => hasAccess())
 const canDeleteCards = computed(() => Boolean(hasAdminAccess()))
 const currentLanguage = computed<Language>(() => (i18next.language === 'en' ? 'en' : 'ru'))
@@ -337,7 +337,7 @@ const saveFighter = async () => {
               {{ $t('fighterPageNoCompletedTournaments') }}
             </div>
             <div v-else class="w-full min-w-0 overflow-hidden rounded-md border">
-              <Table class="min-w-[50rem] md:min-w-0 md:table-fixed">
+              <Table class="min-w-200 md:min-w-0 md:table-fixed">
                 <TableHeader>
                   <TableRow>
                     <TableHead class="md:w-[38%]">{{ $t('fighterPageTournamentName') }}</TableHead>

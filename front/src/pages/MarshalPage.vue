@@ -95,8 +95,7 @@ const loadMarshal = async () => {
     marshal.value = profile.marshal
     judgedTournaments.value = profile.tournaments
   } catch (error: unknown) {
-    loadError.value =
-      error instanceof Error ? error.message : i18next.t('marshalPageLoadError')
+    loadError.value = error instanceof Error ? error.message : i18next.t('marshalPageLoadError')
     marshal.value = null
     judgedTournaments.value = []
   } finally {
@@ -196,9 +195,7 @@ onUnmounted(() => {
         </header>
 
         <form v-if="isEditing" @submit.prevent="saveMarshal">
-          <div
-            class="mx-auto mb-10 flex max-w-5xl flex-col justify-center gap-10 pt-4 md:flex-row"
-          >
+          <div class="mx-auto mb-10 flex max-w-5xl flex-col justify-center gap-10 pt-4 md:flex-row">
             <div class="flex justify-center md:min-w-80 md:justify-end">
               <ImageUpload v-model:imageSrc="editMarshal.pic" />
             </div>
@@ -272,7 +269,7 @@ onUnmounted(() => {
               {{ $t('marshalPageNoTournaments') }}
             </div>
             <div v-else class="w-full min-w-0 overflow-hidden rounded-md border">
-              <Table class="min-w-[32rem]">
+              <Table class="min-w-lg">
                 <TableHeader>
                   <TableRow>
                     <TableHead>{{ $t('fighterPageTournamentName') }}</TableHead>

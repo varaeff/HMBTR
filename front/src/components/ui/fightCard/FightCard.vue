@@ -85,6 +85,23 @@ const updateScore = (fighter: 1 | 2, value: string) => {
 const handleKeydown = (event: KeyboardEvent) => {
   const allowedKeys = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End']
 
+  if (event.key === 'Enter') {
+    event.preventDefault()
+
+    const currentElement = event.target as HTMLInputElement
+    const form = currentElement.form || document
+
+    if (form) {
+      const inputs = Array.from(form.querySelectorAll<HTMLInputElement>('input:not([disabled])'))
+
+      const currentIndex = inputs.indexOf(currentElement)
+      if (currentIndex > -1 && currentIndex < inputs.length - 1) {
+        inputs[currentIndex + 1].focus()
+      }
+    }
+    return
+  }
+
   if (allowedKeys.includes(event.key) || event.ctrlKey || event.metaKey) {
     return
   }

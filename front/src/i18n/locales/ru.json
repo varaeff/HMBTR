@@ -17,6 +17,7 @@
   "LoginWidgetLoginButton": "Войти",
   "LoginWidgetRegisterButton": "Зарегистрироваться",
   "LoginWidgetCloseButton": "Закрыть",
+  "LoginWidgetShowPassword": "Показать пароль",
 
   "mainPageName": "Охуительная стартовая страница",
 
@@ -24,6 +25,7 @@
   "addFighterButton": "+",
   "fightersSearchPlaceholder": "Введите имя, город или клуб",
   "searchClear": "Очистить поиск",
+  "fightersPageShowGenderFilter": "Фильтр по полу",
 
   "ratingPageTitle": "Рейтинг",
   "ratingPageNomination": "Номинация",

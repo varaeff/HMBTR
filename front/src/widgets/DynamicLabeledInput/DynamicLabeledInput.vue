@@ -73,7 +73,7 @@ const handleBeforeInput = (e: InputEvent) => {
 }
 
 const handlePaste = (e: ClipboardEvent) => {
-  if (props.inputType !== 'email') {
+  if (props.inputType === 'text') {
     e.preventDefault()
     return
   }
