@@ -11,6 +11,7 @@ import { tData } from '@/lib/utils'
 
 import type { BracketSlot, CompetitionBlock, DisciplinaryCardType, FightData } from '@/model'
 import { CardStatusIcon } from '@/widgets/DisciplinaryCards'
+import { AlertWidget } from '@/widgets/AlertWidget'
 
 const props = defineProps<{
   block: CompetitionBlock
@@ -19,16 +20,36 @@ const props = defineProps<{
   tournamentId?: number
   cardDate?: string
   activeCardTypes?: Partial<Record<number, DisciplinaryCardType>>
+  attachedCardCountByFightId?: Record<number, number>
 }>()
 
 const emit = defineEmits<{
   (e: 'card-issued'): void
+  (e: 'lifecycle-changed'): void
 }>()
 
 const competitionStore = useCompetitionStore()
 const draggedSlot = ref<number | null>(null)
 const isFixingPairs = ref(false)
 const { i18next } = useTranslation()
+const backwardConfirmation = ref<{
+  mainText: string
+  action: () => Promise<void>
+} | null>(null)
+
+const closeBackwardConfirmation = () => {
+  backwardConfirmation.value = null
+}
+
+const requestBackwardConfirmation = (mainText: string, action: () => Promise<void>) => {
+  backwardConfirmation.value = { mainText, action }
+}
+
+const runConfirmedBackwardAction = async () => {
+  const action = backwardConfirmation.value?.action
+  closeBackwardConfirmation()
+  await action?.()
+}
 
 const rounds = computed(() => {
   const roundMap = new Map<number, typeof props.block.fights>()
@@ -50,6 +71,13 @@ const rounds = computed(() => {
 const mainRoundsCount = computed(() => Math.log2(props.block.bracketSlots.length))
 const semifinalRound = computed(() => mainRoundsCount.value - 1)
 const mainFights = computed(() => props.block.fights.filter((fight) => !fight.isBronze))
+const latestRoundState = computed(() =>
+  [...props.block.roundStates].sort((a, b) => b.round - a.round)[0]
+)
+const getRoundState = (round: number) =>
+  props.block.roundStates.find((state) => state.round === round)
+const isRoundResultsFixed = (round: number) => Boolean(getRoundState(round)?.resultsFixed)
+const hasLaterRound = (round: number) => props.block.roundStates.some((state) => state.round > round)
 
 const getFightWinnerCompetitorId = (fight: FightData) => {
   if (!fight.isFinished || !fight.competitor1Id || !fight.competitor2Id) return null
@@ -60,6 +88,7 @@ const getFightWinnerCompetitorId = (fight: FightData) => {
 
 const pendingPairSlots = computed(() => {
   const sortedSlots = [...props.block.bracketSlots].sort((a, b) => a.slotPosition - b.slotPosition)
+  if (!latestRoundState.value || latestRoundState.value.pairsFixed) return []
 
   if (!mainFights.value.length) return sortedSlots
   if (!Number.isInteger(mainRoundsCount.value)) return []
@@ -138,25 +167,14 @@ const handleScoreUpdate = (
   })
 }
 
-const hasUnsavedFights = (fights: FightData[]) => fights.some((fight) => !fight.isFinished)
-
 const isFightReady = (fight: FightData) => {
-  if (fight.isFinished) return true
-
   return (
     !(fight.fighter1Score === 0 && fight.fighter2Score === 0) &&
     fight.fighter1Score !== fight.fighter2Score
   )
 }
 
-const canSaveFights = (fights: FightData[]) => fights.length > 0 && fights.every(isFightReady)
-
-const saveResults = (fights: FightData[]) => {
-  competitionStore.saveFightResults({
-    blockId: props.block.id,
-    fights: fights.filter((fight) => !fight.isFinished)
-  })
-}
+const canRecordFights = (fights: FightData[]) => fights.length > 0 && fights.every(isFightReady)
 
 const dropOnSlot = (targetPosition: number) => {
   if (!draggedSlot.value || isLocked.value || draggedSlot.value === targetPosition) {
@@ -176,22 +194,143 @@ const fixPairs = async () => {
     await competitionStore.generateOlympicFights(props.block.id)
   } finally {
     isFixingPairs.value = false
+    emit('lifecycle-changed')
   }
 }
+
+const fixRoundResults = async (round: number, fights: FightData[]) => {
+  try {
+    await competitionStore.fixResults(props.block.id, fights, round)
+  } finally {
+    emit('lifecycle-changed')
+  }
+}
+
+const cancelRoundResultsFixation = async (round: number) => {
+  requestBackwardConfirmation(i18next.t('tournamentPageConfirmCancelResultsFixation'), async () => {
+    try {
+      await competitionStore.cancelResultsFixation(props.block.id, round)
+    } finally {
+      emit('lifecycle-changed')
+    }
+  })
+}
+
+const cancelPairFixation = async (round: number) => {
+  requestBackwardConfirmation(
+    i18next.t('tournamentPageConfirmCancelPairFixation', getDeletionCounts(round)),
+    async () => {
+      try {
+        await competitionStore.cancelFightsFixation(props.block.id, round)
+      } finally {
+        emit('lifecycle-changed')
+      }
+    }
+  )
+}
+
+const rollbackRound = async (round: number) => {
+  requestBackwardConfirmation(
+    i18next.t('tournamentPageConfirmReturnPreviousRound', getDeletionCounts(round)),
+    async () => {
+      try {
+        await competitionStore.rollback(props.block.id, round)
+      } finally {
+        emit('lifecycle-changed')
+      }
+    }
+  )
+}
+
+const rollbackPendingPairs = async () => {
+  const round = latestRoundState.value?.round ?? 1
+  const confirmationKey =
+    latestRoundState.value?.round && latestRoundState.value.round > 1
+      ? 'tournamentPageConfirmReturnPreviousRound'
+      : 'tournamentPageConfirmReturnPreviousStage'
+  requestBackwardConfirmation(
+    i18next.t(confirmationKey, getDeletionCounts(round)),
+    async () => {
+      if (latestRoundState.value?.round && latestRoundState.value.round > 1) {
+        try {
+          await competitionStore.rollback(props.block.id, latestRoundState.value.round)
+        } finally {
+          emit('lifecycle-changed')
+        }
+        return
+      }
+      try {
+        await competitionStore.rollback(props.block.id)
+      } finally {
+        emit('lifecycle-changed')
+      }
+    }
+  )
+}
+
+const getDeletionCounts = (round: number) => {
+  const fights = props.block.fights.filter(
+    (fight) =>
+      fight.bracketRound === round ||
+      (round === mainRoundsCount.value && fight.isBronze)
+  )
+  return {
+    fights: fights.length,
+    cards: fights.reduce(
+      (total, fight) => total + (props.attachedCardCountByFightId?.[fight.id] ?? 0),
+      0
+    )
+  }
+}
+
+const finalBoundaryFights = computed(() => [
+  ...(finalRound.value?.fights ?? []),
+  ...bronzeFights.value
+])
 </script>
 
 <template>
+  <Teleport to="body">
+    <AlertWidget
+      v-if="backwardConfirmation"
+      class="fixed inset-0 z-99999 flex items-center justify-center"
+      :isError="false"
+      :title="$t('tournamentPageBackwardConfirmationTitle')"
+      :mainText="backwardConfirmation.mainText"
+      :showInput="false"
+      :buttonAction="runConfirmedBackwardAction"
+      :closeAction="closeBackwardConfirmation"
+      :cancelAction="closeBackwardConfirmation"
+      :buttonText="$t('tournamentPageConfirmBackwardAction')"
+      :cancelText="$t('fighterPageCancelButton')"
+      buttonVariant="destructive"
+    />
+  </Teleport>
+
   <div class="w-full space-y-6 px-4">
     <div class="space-y-6 px-6 md:px-10">
       <section v-for="round in preliminaryRounds" :key="round.round" class="space-y-3">
         <h3 class="text-lg font-semibold">{{ roundLabel(round.fights) }}</h3>
+        <div class="text-sm text-muted-foreground">
+          {{
+            $t(
+              isRoundResultsFixed(round.round)
+                ? 'tournamentPageLifecycleRESULTS_FIXED'
+                : 'tournamentPageLifecycleFIGHTS_EDITABLE'
+            )
+          }}
+        </div>
         <div class="space-y-2">
           <FightCard
             v-for="fight in round.fights"
             :key="fight.id"
             :fight="fight"
-            :hasAccess="hasAccess && block.status === 'ACTIVE' && !fight.isFinished"
-            :canIssueCards="canIssueCards && !fight.isFinished"
+            :hasAccess="
+              hasAccess &&
+              block.status === 'ACTIVE' &&
+              !isRoundResultsFixed(round.round)
+            "
+            :canIssueCards="canIssueCards && !isRoundResultsFixed(round.round)"
             :tournamentId="tournamentId"
             :cardDate="cardDate"
             :activeCardTypes="activeCardTypes"
@@ -199,9 +338,41 @@ const fixPairs = async () => {
             @card-issued="emit('card-issued')"
           />
         </div>
-        <div v-if="hasAccess && hasUnsavedFights(round.fights)" class="flex justify-center pt-2">
-          <Button :disabled="!canSaveFights(round.fights)" @click="saveResults(round.fights)">
-            {{ $t('tournamentPageSaveResults') }}
+        <div
+          v-if="hasAccess && latestRoundState?.round === round.round"
+          class="flex flex-wrap justify-center gap-3 pt-2"
+        >
+          <Button
+            v-if="!isRoundResultsFixed(round.round)"
+            :disabled="!canRecordFights(round.fights)"
+            @click="fixRoundResults(round.round, round.fights)"
+          >
+            {{ $t('tournamentPageFixResults') }}
+          </Button>
+          <Button
+            v-if="isRoundResultsFixed(round.round) && !hasLaterRound(round.round)"
+            variant="destructive"
+            @click="cancelRoundResultsFixation(round.round)"
+          >
+            {{ $t('tournamentPageCancelResultsFixation') }}
+          </Button>
+          <Button
+            v-if="getRoundState(round.round)?.pairsFixed && !isRoundResultsFixed(round.round)"
+            variant="destructive"
+            @click="cancelPairFixation(round.round)"
+          >
+            {{ $t('tournamentPageCancelPairFixation') }}
+          </Button>
+          <Button
+            v-if="
+              round.round > 1 &&
+              !getRoundState(round.round)?.pairsFixed &&
+              !isRoundResultsFixed(round.round)
+            "
+            variant="destructive"
+            @click="rollbackRound(round.round)"
+          >
+            {{ $t('tournamentPageReturnPreviousRound') }}
           </Button>
         </div>
       </section>
@@ -213,31 +384,43 @@ const fixPairs = async () => {
             v-for="fight in bronzeFights"
             :key="fight.id"
             :fight="fight"
-            :hasAccess="hasAccess && block.status === 'ACTIVE' && !fight.isFinished"
-            :canIssueCards="canIssueCards && !fight.isFinished"
+            :hasAccess="
+              hasAccess &&
+              block.status === 'ACTIVE' &&
+              !isRoundResultsFixed(mainRoundsCount)
+            "
+            :canIssueCards="canIssueCards && !isRoundResultsFixed(mainRoundsCount)"
             :tournamentId="tournamentId"
             :cardDate="cardDate"
             :activeCardTypes="activeCardTypes"
             @update:score="(scores) => handleScoreUpdate(fight.id, fight.number, scores)"
             @card-issued="emit('card-issued')"
           />
-        </div>
-        <div v-if="hasAccess && hasUnsavedFights(bronzeFights)" class="flex justify-center pt-2">
-          <Button :disabled="!canSaveFights(bronzeFights)" @click="saveResults(bronzeFights)">
-            {{ $t('tournamentPageSaveResults') }}
-          </Button>
         </div>
       </section>
 
       <section v-if="finalRound" class="space-y-3">
         <h3 class="text-lg font-semibold">{{ roundLabel(finalRound.fights) }}</h3>
+        <div class="text-sm text-muted-foreground">
+          {{
+            $t(
+              isRoundResultsFixed(finalRound.round)
+                ? 'tournamentPageLifecycleRESULTS_FIXED'
+                : 'tournamentPageLifecycleFIGHTS_EDITABLE'
+            )
+          }}
+        </div>
         <div class="space-y-2">
           <FightCard
             v-for="fight in finalRound.fights"
             :key="fight.id"
             :fight="fight"
-            :hasAccess="hasAccess && block.status === 'ACTIVE' && !fight.isFinished"
-            :canIssueCards="canIssueCards && !fight.isFinished"
+            :hasAccess="
+              hasAccess &&
+              block.status === 'ACTIVE' &&
+              !isRoundResultsFixed(finalRound.round)
+            "
+            :canIssueCards="canIssueCards && !isRoundResultsFixed(finalRound.round)"
             :tournamentId="tournamentId"
             :cardDate="cardDate"
             :activeCardTypes="activeCardTypes"
@@ -245,18 +428,37 @@ const fixPairs = async () => {
             @card-issued="emit('card-issued')"
           />
         </div>
-        <div
-          v-if="hasAccess && hasUnsavedFights(finalRound.fights)"
-          class="flex justify-center pt-2"
-        >
-          <Button
-            :disabled="!canSaveFights(finalRound.fights)"
-            @click="saveResults(finalRound.fights)"
-          >
-            {{ $t('tournamentPageSaveResults') }}
-          </Button>
-        </div>
       </section>
+      <div
+        v-if="hasAccess && finalRound && latestRoundState?.round === finalRound.round"
+        class="flex flex-wrap justify-center gap-3"
+      >
+        <Button
+          v-if="!isRoundResultsFixed(finalRound.round)"
+          :disabled="!canRecordFights(finalBoundaryFights)"
+          @click="fixRoundResults(finalRound.round, finalBoundaryFights)"
+        >
+          {{ $t('tournamentPageFixFinalResults') }}
+        </Button>
+        <Button
+          v-if="isRoundResultsFixed(finalRound.round)"
+          variant="destructive"
+          @click="cancelRoundResultsFixation(finalRound.round)"
+        >
+          {{ $t('tournamentPageCancelResultsFixation') }}
+        </Button>
+        <Button
+          v-if="!isRoundResultsFixed(finalRound.round)"
+          variant="destructive"
+          @click="rollbackRound(finalRound.round)"
+        >
+          {{ $t('tournamentPageReturnPreviousRound') }}
+        </Button>
+      </div>
+    </div>
+
+    <div v-if="hasPendingPairs" class="text-center text-sm text-muted-foreground">
+      {{ $t('tournamentPageLifecycleFORMATION_EDITABLE') }}
     </div>
 
     <div v-if="hasPendingPairs" class="mx-auto flex max-w-5xl flex-wrap justify-center gap-3">
@@ -297,6 +499,23 @@ const fixPairs = async () => {
     <div v-if="hasAccess && hasPendingPairs" class="flex justify-center">
       <Button :disabled="isFixingPairs" @click="fixPairs">
         {{ $t('tournamentPageFixPairs') }}
+      </Button>
+    </div>
+    <div
+      v-if="hasAccess && hasPendingPairs"
+      class="flex justify-center"
+    >
+      <Button
+        variant="destructive"
+        @click="rollbackPendingPairs"
+      >
+        {{
+          $t(
+            latestRoundState?.round && latestRoundState.round > 1
+              ? 'tournamentPageReturnPreviousRound'
+              : 'tournamentPageReturnPreviousStage'
+          )
+        }}
       </Button>
     </div>
   </div>

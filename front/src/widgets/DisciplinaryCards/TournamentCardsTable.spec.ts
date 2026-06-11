@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { nextTick } from 'vue'
@@ -6,6 +6,7 @@ import i18next from 'i18next'
 import I18NextVue from 'i18next-vue'
 import TournamentCardsTable from './TournamentCardsTable.vue'
 import type { DisciplinaryCard } from '@/model'
+import { useDisciplinaryCardsStore } from '@/stores/disciplinaryCards'
 
 const createI18n = async () => {
   const instance = i18next.createInstance()
@@ -93,6 +94,7 @@ const card: DisciplinaryCard = {
   opponent_name: '\u041f\u0435\u0442\u0440',
   opponent_surname: '\u041f\u0435\u0442\u0440\u043e\u0432',
   opponent_patronymic: null,
+  can_manage: true,
   can_delete: true
 }
 
@@ -142,15 +144,15 @@ describe('TournamentCardsTable', () => {
     wrapper.unmount()
   })
 
-  it('hides delete for cards that the backend marks as not deletable', async () => {
+  it('hides actions for cards that the backend marks as not manageable', async () => {
     const pinia = createPinia()
     setActivePinia(pinia)
     const instance = await createI18n()
 
     const wrapper = mount(TournamentCardsTable, {
       props: {
-        cards: [{ ...card, can_delete: false }],
-        canManage: false,
+        cards: [{ ...card, can_manage: false, can_delete: false }],
+        canManage: true,
         canDelete: true
       },
       global: {
@@ -162,12 +164,13 @@ describe('TournamentCardsTable', () => {
     })
 
     expect(wrapper.text()).not.toContain('Delete')
+    expect(wrapper.text()).not.toContain('Edit')
     expect(wrapper.text()).not.toContain('Actions')
 
     wrapper.unmount()
   })
 
-  it('edits expiration while keeping card type and issue date disabled', async () => {
+  it('allows editing card type and expiration while keeping issue date disabled', async () => {
     const pinia = createPinia()
     setActivePinia(pinia)
     const instance = await createI18n()
@@ -195,11 +198,23 @@ describe('TournamentCardsTable', () => {
     const receivedAtInput = dateInputs[0].element as HTMLInputElement
     const expiresAtInput = dateInputs[1].element as HTMLInputElement
 
-    expect(typeSelect.attributes('disabled')).toBeDefined()
+    expect(typeSelect.attributes('disabled')).toBeUndefined()
+    expect((typeSelect.element as HTMLSelectElement).value).toBe('YELLOW')
     expect(dateInputs[0].attributes('disabled')).toBeDefined()
     expect(receivedAtInput.value).toBe('2026-05-19')
     expect(dateInputs[1].attributes('disabled')).toBeUndefined()
     expect(expiresAtInput.value).toBe('2026-06-19')
+
+    const cardsStore = useDisciplinaryCardsStore()
+    const updateCard = vi.spyOn(cardsStore, 'updateCard').mockResolvedValue(card)
+
+    await typeSelect.setValue('RED')
+    await wrapper.findAll('button')[0].trigger('click')
+
+    expect(updateCard).toHaveBeenCalledWith(1, {
+      type: 'RED',
+      reason: 'test'
+    })
 
     wrapper.unmount()
   })

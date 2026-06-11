@@ -2,9 +2,8 @@
 import { computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { useCompetitionStore } from '@/stores/competition'
-import { Button } from '@/components/ui/button'
 import { FightCard } from '@/components/ui/fightCard'
-import type { BlockData, DisciplinaryCardType, FightData } from '@/model'
+import type { BlockData, DisciplinaryCardType } from '@/model'
 
 const props = defineProps<{
   hasAccess: boolean
@@ -51,31 +50,6 @@ const handleScoreUpdate = (
   })
 }
 
-const hasUnsavedFights = (block: BlockData) => block.fights.some((fight) => !fight.isFinished)
-
-const isFightReady = (fight: FightData) => {
-  if (fight.isFinished) return true
-
-  return (
-    !(fight.fighter1Score === 0 && fight.fighter2Score === 0) &&
-    fight.fighter1Score !== fight.fighter2Score
-  )
-}
-
-const canSaveBlock = (block: BlockData) =>
-  block.fights.length > 0 && block.fights.every(isFightReady)
-
-const saveBlockResults = (block: BlockData) => {
-  const unsavedFights = block.fights.filter((fight) => !fight.isFinished)
-  const blockId =
-    props.blockId ??
-    competitionStore.getBlocks.find((competitionBlock) =>
-      competitionBlock.fights.some((fight) => fight.id === unsavedFights[0]?.id)
-    )?.id
-
-  if (!blockId) return
-  competitionStore.saveFightResults({ blockId, fights: unsavedFights })
-}
 </script>
 
 <template>
@@ -90,20 +64,14 @@ const saveBlockResults = (block: BlockData) => {
           v-for="fight in block.fights"
           :key="`${blockIndex}-${fight.number}-${languageKey}`"
           :fight="fight"
-          :hasAccess="hasAccess && !fight.isFinished"
-          :canIssueCards="canIssueCards && !fight.isFinished"
+          :hasAccess="hasAccess"
+          :canIssueCards="canIssueCards"
           :tournamentId="tournamentId"
           :cardDate="cardDate"
           :activeCardTypes="activeCardTypes"
           @update:score="(scores) => handleScoreUpdate(fight.id, fight.number, scores)"
           @card-issued="emit('card-issued')"
         />
-      </div>
-
-      <div v-if="hasAccess && hasUnsavedFights(block)" class="flex justify-center pt-2">
-        <Button :disabled="!canSaveBlock(block)" @click="saveBlockResults(block)">
-          {{ $t('tournamentPageSaveResults') }}
-        </Button>
       </div>
     </div>
   </div>

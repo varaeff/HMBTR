@@ -7,9 +7,8 @@ import { FinishCompetitionDto } from './dto/finish-competition.dto';
 import { GenerateGroupFightsDto } from './dto/generate-group-fights.dto';
 import { GenerateOlympicFightsDto } from './dto/generate-olympic-fights.dto';
 import { ResolveTiesDto } from './dto/resolve-ties.dto';
-import { SaveCompetitionResultsDto } from './dto/save-competition-results.dto';
 import { SwapBracketSlotsDto } from './dto/swap-bracket-slots.dto';
-import { UpdateCompetitionScoreDto } from './dto/update-competition-score.dto';
+import { CompetitionLifecycleDto } from './dto/competition-lifecycle.dto';
 
 @Controller(API_ROUTES.COMPETITION.ROOT)
 export class CompetitionController {
@@ -44,16 +43,6 @@ export class CompetitionController {
     return this.competitionService.generateOlympicFights(dto);
   }
 
-  @Patch('scores')
-  updateScore(@Body() dto: UpdateCompetitionScoreDto) {
-    return this.competitionService.updateScore(dto);
-  }
-
-  @Patch('results')
-  saveResults(@Body() dto: SaveCompetitionResultsDto) {
-    return this.competitionService.saveResults(dto);
-  }
-
   @Patch('bracket-slots/swap')
   swapBracketSlots(@Body() dto: SwapBracketSlotsDto) {
     return this.competitionService.swapBracketSlots(dto);
@@ -67,5 +56,25 @@ export class CompetitionController {
   @Post('finish')
   finish(@Body() dto: FinishCompetitionDto) {
     return this.competitionService.finish(dto);
+  }
+
+  @Post('lifecycle/results/fix')
+  fixResults(@Body() dto: CompetitionLifecycleDto) {
+    return this.competitionService.fixResults(dto);
+  }
+
+  @Post('lifecycle/results/cancel')
+  cancelResultsFixation(@Body() dto: CompetitionLifecycleDto) {
+    return this.competitionService.cancelResultsFixation(dto);
+  }
+
+  @Post('lifecycle/fights/cancel')
+  cancelFightsFixation(@Body() dto: CompetitionLifecycleDto) {
+    return this.competitionService.cancelFightsFixation(dto);
+  }
+
+  @Post('lifecycle/rollback')
+  rollback(@Body() dto: CompetitionLifecycleDto) {
+    return this.competitionService.rollback(dto);
   }
 }

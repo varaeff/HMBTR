@@ -108,6 +108,11 @@ export type fighter_nomination_rating_history = Prisma.fighter_nomination_rating
  */
 export type competition_blocks = Prisma.competition_blocksModel
 /**
+ * Model competition_round_states
+ * 
+ */
+export type competition_round_states = Prisma.competition_round_statesModel
+/**
  * Model bracket_slots
  * 
  */

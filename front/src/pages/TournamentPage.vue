@@ -25,6 +25,7 @@ import { TieResolver } from '@/widgets/TieResolver'
 import { CompetitionPodium } from '@/widgets/CompetitionPodium'
 import { TournamentCardsTable } from '@/widgets/DisciplinaryCards'
 import { TournamentMarshals } from '@/widgets/TournamentMarshals'
+import { AlertWidget } from '@/widgets/AlertWidget'
 
 import { useCollapsiblePersist } from '@/composables/useCollapsiblePersist'
 import { tData } from '@/lib/utils'
@@ -61,6 +62,24 @@ const blockOpenStates = reactive<Record<string, boolean>>({})
 let nominationLoadRequestId = 0
 const REPORT_DOWNLOAD_TIMEOUT_MS = 120000
 const OLYMPIC_BRACKET_SIZES = [4, 8, 16] as const
+const backwardConfirmation = ref<{
+  mainText: string
+  action: () => Promise<void>
+} | null>(null)
+
+const closeBackwardConfirmation = () => {
+  backwardConfirmation.value = null
+}
+
+const requestBackwardConfirmation = (mainText: string, action: () => Promise<void>) => {
+  backwardConfirmation.value = { mainText, action }
+}
+
+const runConfirmedBackwardAction = async () => {
+  const action = backwardConfirmation.value?.action
+  closeBackwardConfirmation()
+  await action?.()
+}
 
 const getRouteNominationId = () => {
   const rawNomination = route.query.nomination
@@ -112,7 +131,9 @@ const currentTournamentNomination = computed(() =>
 )
 
 const isCurrentNominationOpen = computed(() =>
-  tournamentNominations.value.open.some((n) => n.id === activeTab.value)
+  competitionStore.getIsRegistrationOpen === null
+    ? tournamentNominations.value.open.some((n) => n.id === activeTab.value)
+    : competitionStore.getIsRegistrationOpen
 )
 
 const currentLanguage = computed(() => i18next.language)
@@ -206,12 +227,42 @@ const activeGroupBlockComplete = computed(() => {
   if (!activeBlock.value || activeBlock.value.type !== 'GROUP') return false
   return (
     activeBlock.value.fights.length > 0 &&
-    activeBlock.value.fights.every((fight) => fight.isFinished)
+    activeBlock.value.fights.every(
+      (fight) =>
+        !(fight.fighter1Score === 0 && fight.fighter2Score === 0) &&
+        fight.fighter1Score !== fight.fighter2Score
+    )
   )
 })
 
 const activeGroupFightsGenerated = computed(() => {
   return Boolean(activeBlock.value?.type === 'GROUP' && activeBlock.value.fights.length > 0)
+})
+const attachedCardCountByFightId = computed<Record<number, number>>(() => {
+  const counts: Record<number, number> = {}
+  for (const card of cardsStore.tournamentCards) {
+    counts[card.fight_id] = (counts[card.fight_id] ?? 0) + 1
+  }
+  return counts
+})
+
+const getBlockDeletionCounts = (blockId: number) => {
+  const fights = blocks.value.find((block) => block.id === blockId)?.fights ?? []
+  return {
+    fights: fights.length,
+    cards: fights.reduce(
+      (total, fight) => total + (attachedCardCountByFightId.value[fight.id] ?? 0),
+      0
+    )
+  }
+}
+
+const activeOlympicFinalResultsFixed = computed(() => {
+  if (!activeBlock.value || activeBlock.value.type !== 'OLYMPIC') return false
+  const finalRound = Math.log2(activeBlock.value.bracketSlots.length)
+  return Boolean(
+    activeBlock.value.roundStates.find((state) => state.round === finalRound)?.resultsFixed
+  )
 })
 
 const canGenerateGroupFights = computed(() => {
@@ -267,6 +318,7 @@ const canOfferOlympicWithThirdPlaces = computed(
 
 const closeRegistration = async () => {
   await TournamentsListStore.updateTournamentNomination(tournamentId.value, activeTab.value, false)
+  competitionStore.setRegistrationOpen(false)
   const targetNom = tournament.value?.nominations.find((n) => n.nomination_id === activeTab.value)
 
   if (targetNom) {
@@ -282,17 +334,77 @@ const createOlympicBlock = (includeThirdPlaces = false) => {
   competitionStore.createOlympicBlock(includeThirdPlaces)
 }
 
-const generateGroupFights = (blockId: number) => {
-  competitionStore.generateGroupFights(blockId)
+const generateGroupFights = async (blockId: number) => {
+  try {
+    await competitionStore.generateGroupFights(blockId)
+  } finally {
+    await refreshCardsAndCompetition()
+  }
 }
 
 const finishCompetition = async () => {
-  await competitionStore.finishCompetition()
-  const targetNom = tournament.value?.nominations.find((n) => n.nomination_id === activeTab.value)
-  if (targetNom) {
-    targetNom.is_finished = true
-    targetNom.is_open = false
+  try {
+    await competitionStore.finishCompetition()
+    const targetNom = tournament.value?.nominations.find((n) => n.nomination_id === activeTab.value)
+    if (targetNom) {
+      targetNom.is_finished = true
+      targetNom.is_open = false
+    }
+  } finally {
+    await refreshCardsAndCompetition()
   }
+}
+
+const fixGroupResults = async (blockId: number) => {
+  const block = blocks.value.find((item) => item.id === blockId)
+  if (!block) return
+  try {
+    await competitionStore.fixResults(blockId, block.fights)
+  } finally {
+    await refreshCardsAndCompetition()
+  }
+}
+
+const cancelGroupResultsFixation = async (blockId: number) => {
+  requestBackwardConfirmation(i18next.t('tournamentPageConfirmCancelResultsFixation'), async () => {
+    try {
+      await competitionStore.cancelResultsFixation(blockId)
+    } finally {
+      await refreshCardsAndCompetition()
+    }
+  })
+}
+
+const cancelGroupFightsFixation = async (blockId: number) => {
+  requestBackwardConfirmation(
+    i18next.t('tournamentPageConfirmCancelGroupFixation', getBlockDeletionCounts(blockId)),
+    async () => {
+      try {
+        await competitionStore.cancelFightsFixation(blockId)
+      } finally {
+        await refreshCardsAndCompetition()
+      }
+    }
+  )
+}
+
+const rollbackBlock = async (blockId: number) => {
+  requestBackwardConfirmation(
+    i18next.t('tournamentPageConfirmReturnPreviousStage', getBlockDeletionCounts(blockId)),
+    async () => {
+      try {
+        await competitionStore.rollback(blockId)
+        const targetNom = tournament.value?.nominations.find(
+          (n) => n.nomination_id === activeTab.value
+        )
+        if (targetNom && !competitionStore.getBlocks.length) {
+          targetNom.is_open = true
+        }
+      } finally {
+        await refreshCardsAndCompetition()
+      }
+    }
+  )
 }
 
 const startMarshalRegistration = () => {
@@ -449,6 +561,15 @@ watch(nominationFinished, (isFinished) => {
   }
 })
 
+watch(
+  () => competitionStore.getIsRegistrationOpen,
+  (isOpen) => {
+    if (isOpen === null) return
+    const targetNom = currentTournamentNomination.value
+    if (targetNom) targetNom.is_open = isOpen
+  }
+)
+
 watch(tournamentNominations, (noms) => {
   if (noms.all.length && !activeTab.value) {
     const routeNominationId = getRouteNominationId()
@@ -482,6 +603,23 @@ watch(
 </script>
 
 <template>
+  <Teleport to="body">
+    <AlertWidget
+      v-if="backwardConfirmation"
+      class="fixed inset-0 z-99999 flex items-center justify-center"
+      :isError="false"
+      :title="$t('tournamentPageBackwardConfirmationTitle')"
+      :mainText="backwardConfirmation.mainText"
+      :showInput="false"
+      :buttonAction="runConfirmedBackwardAction"
+      :closeAction="closeBackwardConfirmation"
+      :cancelAction="closeBackwardConfirmation"
+      :buttonText="$t('tournamentPageConfirmBackwardAction')"
+      :cancelText="$t('fighterPageCancelButton')"
+      buttonVariant="destructive"
+    />
+  </Teleport>
+
   <div class="flex flex-col justify-center items-center mb-5" v-if="tournament">
     <h1 class="mb-4">{{ tournamentName }}</h1>
     <div v-if="tournament.id !== 0">
@@ -618,25 +756,69 @@ watch(
                   !canEditCompetition || block.status !== 'ACTIVE' || block.fights.length > 0
                 "
               />
+              <div class="mb-3 text-center text-sm text-muted-foreground">
+                {{ $t(`tournamentPageLifecycle${block.lifecycleState}`) }}
+              </div>
               <div
-                class="flex flex-col items-center my-5"
+                class="flex flex-wrap justify-center gap-3 my-5"
                 v-if="canEditCompetition && block.status === 'ACTIVE' && block.fights.length === 0"
               >
                 <Button :disabled="!canGenerateGroupFights" @click="generateGroupFights(block.id)">
                   {{ $t('tournamentPageGenerateFights') }}
+                </Button>
+                <Button variant="destructive" @click="rollbackBlock(block.id)">
+                  {{ $t('tournamentPageReturnPreviousStage') }}
                 </Button>
               </div>
               <FightsDisplay
                 v-if="block.fightsBlocks.length"
                 :blockId="block.id"
                 :blocksData="block.fightsBlocks"
-                :hasAccess="canEditCompetition && block.status === 'ACTIVE'"
-                :canIssueCards="canManageCards"
+                :hasAccess="
+                  canEditCompetition &&
+                  block.status === 'ACTIVE' &&
+                  block.lifecycleState === 'FIGHTS_EDITABLE'
+                "
+                :canIssueCards="
+                  canManageCards &&
+                  block.status === 'ACTIVE' &&
+                  block.lifecycleState === 'FIGHTS_EDITABLE'
+                "
                 :tournamentId="tournamentId"
                 :cardDate="cardIssueDate"
                 :activeCardTypes="activeCardTypes"
                 @card-issued="refreshCardsAndCompetition"
               />
+              <div
+                v-if="
+                  canEditCompetition &&
+                  block.status === 'ACTIVE' &&
+                  block.lifecycleState === 'FIGHTS_EDITABLE'
+                "
+                class="flex flex-wrap justify-center gap-3 my-5"
+              >
+                <Button
+                  :disabled="!activeGroupBlockComplete || hasBlockingGroupAdvancementTie"
+                  @click="fixGroupResults(block.id)"
+                >
+                  {{ $t('tournamentPageFixResults') }}
+                </Button>
+                <Button variant="destructive" @click="cancelGroupFightsFixation(block.id)">
+                  {{ $t('tournamentPageCancelGroupFixation') }}
+                </Button>
+              </div>
+              <div
+                v-if="
+                  canEditCompetition &&
+                  block.status === 'ACTIVE' &&
+                  block.lifecycleState === 'RESULTS_FIXED'
+                "
+                class="flex justify-center my-5"
+              >
+                <Button variant="destructive" @click="cancelGroupResultsFixation(block.id)">
+                  {{ $t('tournamentPageCancelResultsFixation') }}
+                </Button>
+              </div>
             </template>
 
             <OlympicBracket
@@ -647,7 +829,9 @@ watch(
               :tournamentId="tournamentId"
               :cardDate="cardIssueDate"
               :activeCardTypes="activeCardTypes"
+              :attachedCardCountByFightId="attachedCardCountByFightId"
               @card-issued="refreshCardsAndCompetition"
+              @lifecycle-changed="refreshCardsAndCompetition"
             />
           </CollapsibleSection>
         </section>
@@ -655,17 +839,24 @@ watch(
         <TieResolver v-if="canEditCompetition" />
 
         <div
+          v-if="canEditCompetition && activeOlympicFinalResultsFixed"
+          class="flex justify-center my-5"
+        >
+          <Button @click="finishCompetition">{{ $t('tournamentPageFixTournamentResults') }}</Button>
+        </div>
+
+        <div
           class="flex flex-wrap justify-center gap-3 my-5"
           v-if="
             canEditCompetition &&
             activeBlock?.type === 'GROUP' &&
-            activeGroupBlockComplete &&
+            activeBlock.lifecycleState === 'RESULTS_FIXED' &&
             !hasBlockingGroupAdvancementTie &&
             !nominationFinished
           "
         >
           <Button v-if="activeBlock.groups.length === 1" @click="finishCompetition"
-            >Finish nomination</Button
+            >{{ $t('tournamentPageFixTournamentResults') }}</Button
           >
           <template v-else>
             <Button @click="createGroupBlock">{{ $t('tournamentPageNextSubgroups') }}</Button>

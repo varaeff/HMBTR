@@ -298,6 +298,7 @@ model competition_blocks {
   type                     String   @db.VarChar(32)
   stage                    Int
   status                   String   @default("ACTIVE") @db.VarChar(32)
+  lifecycle_state          String   @default("FORMATION_EDITABLE") @db.VarChar(32)
   created_at               DateTime @default(now())
 
   tournament_nomination tournament_nominations   @relation(fields: [tournament_nomination_id], references: [id], onDelete: Cascade)
@@ -305,6 +306,19 @@ model competition_blocks {
   fights                fights[]
   bracket_slots         bracket_slots[]
   placements            competition_placements[]
+  round_states          competition_round_states[]
+}
+
+model competition_round_states {
+  id            Int     @id @default(autoincrement())
+  block_id      Int
+  round         Int
+  pairs_fixed   Boolean @default(false)
+  results_fixed Boolean @default(false)
+
+  block competition_blocks @relation(fields: [block_id], references: [id], onDelete: Cascade)
+
+  @@unique([block_id, round])
 }
 
 model bracket_slots {

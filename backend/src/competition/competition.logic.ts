@@ -376,58 +376,152 @@ export const selectOlympicAdvancerIds = (
     (advancer) => advancer.competitorId,
   );
 
-const findFirstPlaceOpponentIndex = <T extends OlympicSeedCompetitor>(
-  competitors: T[],
-  thirdPlace: T,
+const compareOlympicSeeds = (
+  a: OlympicSeedCompetitor,
+  b: OlympicSeedCompetitor,
 ) => {
-  const differentGroupIndex = competitors.findIndex(
-    (competitor) =>
-      competitor.olympicGroupPlace === 1 &&
-      competitor.olympicGroupName !== thirdPlace.olympicGroupName,
+  const groupComparison = (a.olympicGroupName ?? '').localeCompare(
+    b.olympicGroupName ?? '',
   );
-
-  if (differentGroupIndex !== -1) return differentGroupIndex;
-
-  return competitors.findIndex(
-    (competitor) => competitor.olympicGroupPlace === 1,
-  );
+  if (groupComparison !== 0) return groupComparison;
+  const placeComparison =
+    (a.olympicGroupPlace ?? Number.POSITIVE_INFINITY) -
+    (b.olympicGroupPlace ?? Number.POSITIVE_INFINITY);
+  return placeComparison || a.id - b.id;
 };
 
-export const seedOlympicSlotsWithThirdPlacePairing = <
+const pairPenalty = (
+  a: OlympicSeedCompetitor,
+  b: OlympicSeedCompetitor,
+) => ({
+  sameGroup:
+    a.olympicGroupName === b.olympicGroupName &&
+    a.olympicGroupName !== undefined
+      ? 1
+      : 0,
+  firstVsFirst:
+    a.olympicGroupPlace === 1 && b.olympicGroupPlace === 1 ? 1 : 0,
+});
+
+const findBestRemainingPairs = <T extends OlympicSeedCompetitor>(
+  competitors: T[],
+): T[][] => {
+  let best:
+    | {
+        pairs: T[][];
+        sameGroup: number;
+        firstVsFirst: number;
+        key: string;
+      }
+    | undefined;
+
+  const visit = (
+    remaining: T[],
+    pairs: T[][],
+    sameGroup: number,
+    firstVsFirst: number,
+  ) => {
+    if (!remaining.length) {
+      const orderedPairs = pairs
+        .map((pair) => [...pair].sort(compareOlympicSeeds))
+        .sort((a, b) => compareOlympicSeeds(a[0], b[0]));
+      const key = orderedPairs
+        .flat()
+        .map(
+          (competitor) =>
+            `${competitor.olympicGroupName ?? ''}:${competitor.olympicGroupPlace ?? ''}:${competitor.id}`,
+        )
+        .join('|');
+      if (
+        !best ||
+        sameGroup < best.sameGroup ||
+        (sameGroup === best.sameGroup && firstVsFirst < best.firstVsFirst) ||
+        (sameGroup === best.sameGroup &&
+          firstVsFirst === best.firstVsFirst &&
+          key < best.key)
+      ) {
+        best = { pairs: orderedPairs, sameGroup, firstVsFirst, key };
+      }
+      return;
+    }
+
+    if (
+      best &&
+      (sameGroup > best.sameGroup ||
+        (sameGroup === best.sameGroup && firstVsFirst > best.firstVsFirst))
+    ) {
+      return;
+    }
+
+    const [first, ...rest] = remaining;
+    for (const [index, opponent] of rest.entries()) {
+      const penalty = pairPenalty(first, opponent);
+      visit(
+        rest.filter((_, restIndex) => restIndex !== index),
+        [...pairs, [first, opponent]],
+        sameGroup + penalty.sameGroup,
+        firstVsFirst + penalty.firstVsFirst,
+      );
+    }
+  };
+
+  visit([...competitors].sort(compareOlympicSeeds), [], 0, 0);
+  return best?.pairs ?? [];
+};
+
+export const seedGroupDerivedOlympicSlots = <
   T extends OlympicSeedCompetitor,
 >(
   competitors: T[],
 ): T[] => {
+  const ordered = [...competitors].sort(compareOlympicSeeds);
+  const groupNames = [
+    ...new Set(ordered.map((competitor) => competitor.olympicGroupName)),
+  ].filter((groupName): groupName is string => groupName !== undefined);
   const thirdPlaces = competitors.filter(
     (competitor) => competitor.olympicGroupPlace === 3,
   );
 
-  if (!thirdPlaces.length) return seedOlympicSlots(competitors);
-
-  const remaining = [...competitors];
-  const pairedSlots: T[] = [];
-
-  for (const thirdPlace of thirdPlaces) {
-    const thirdPlaceIndex = remaining.findIndex(
-      (competitor) => competitor.id === thirdPlace.id,
-    );
-    if (thirdPlaceIndex === -1) continue;
-
-    const opponentIndex = findFirstPlaceOpponentIndex(remaining, thirdPlace);
-    if (opponentIndex === -1) continue;
-
-    const [opponent] = remaining.splice(opponentIndex, 1);
-    const nextThirdPlaceIndex = remaining.findIndex(
-      (competitor) => competitor.id === thirdPlace.id,
-    );
-    if (nextThirdPlaceIndex === -1) {
-      remaining.push(opponent);
-      continue;
-    }
-
-    const [pairedThirdPlace] = remaining.splice(nextThirdPlaceIndex, 1);
-    pairedSlots.push(opponent, pairedThirdPlace);
+  if (!thirdPlaces.length) {
+    const cyclicPairs = groupNames.flatMap((groupName, index) => {
+      const nextGroupName = groupNames[(index + 1) % groupNames.length];
+      const first = ordered.find(
+        (competitor) =>
+          competitor.olympicGroupName === groupName &&
+          competitor.olympicGroupPlace === 1,
+      );
+      const second = ordered.find(
+        (competitor) =>
+          competitor.olympicGroupName === nextGroupName &&
+          competitor.olympicGroupPlace === 2,
+      );
+      return first && second ? [first, second] : [];
+    });
+    if (cyclicPairs.length === ordered.length) return cyclicPairs;
   }
 
-  return [...pairedSlots, ...seedOlympicSlots(remaining)];
+  const remaining = [...ordered];
+  const thirdPlacePairs: T[][] = [];
+  for (const thirdPlace of thirdPlaces) {
+    const availableFirstPlaces = remaining
+      .filter(
+        (competitor) =>
+          competitor.olympicGroupPlace === 1 &&
+          competitor.olympicGroupName !== thirdPlace.olympicGroupName,
+      )
+      .sort(compareOlympicSeeds);
+    const opponent = availableFirstPlaces[0];
+    if (!opponent) continue;
+
+    thirdPlacePairs.push([opponent, thirdPlace]);
+    for (const competitor of [opponent, thirdPlace]) {
+      const index = remaining.findIndex((item) => item.id === competitor.id);
+      if (index !== -1) remaining.splice(index, 1);
+    }
+  }
+
+  return [...thirdPlacePairs, ...findBestRemainingPairs(remaining)].flat();
 };
+
+export const seedOlympicSlotsWithThirdPlacePairing =
+  seedGroupDerivedOlympicSlots;

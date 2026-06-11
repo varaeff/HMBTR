@@ -308,6 +308,16 @@ export interface Competitor {
 
 export type CompetitionBlockType = 'GROUP' | 'OLYMPIC'
 export type CompetitionBlockStatus = 'ACTIVE' | 'LOCKED'
+export type CompetitionLifecycleState =
+  | 'FORMATION_EDITABLE'
+  | 'FIGHTS_EDITABLE'
+  | 'RESULTS_FIXED'
+
+export interface CompetitionRoundState {
+  round: number
+  pairsFixed: boolean
+  resultsFixed: boolean
+}
 
 export interface BracketSlot {
   id: number
@@ -322,10 +332,12 @@ export interface CompetitionBlock {
   type: CompetitionBlockType
   stage: number
   status: CompetitionBlockStatus
+  lifecycleState: CompetitionLifecycleState
   groups: Group[]
   fights: FightData[]
   fightsBlocks: BlockData[]
   bracketSlots: BracketSlot[]
+  roundStates: CompetitionRoundState[]
 }
 
 export interface CompetitionPlacement {
@@ -380,6 +392,7 @@ export interface DisciplinaryCard {
   opponent_name: string
   opponent_surname: string
   opponent_patronymic: string | null
+  can_manage: boolean
   can_delete: boolean
 }
 
@@ -393,6 +406,7 @@ export interface CreateDisciplinaryCardPayload {
 }
 
 export interface UpdateDisciplinaryCardPayload {
+  type?: DisciplinaryCardType
   reason?: string
   expires_at?: string
 }

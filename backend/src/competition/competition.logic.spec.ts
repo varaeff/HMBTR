@@ -7,6 +7,7 @@ import {
   selectOlympicAdvancers,
   selectOlympicAdvancerIds,
   seedOlympicSlotsWithThirdPlacePairing,
+  seedGroupDerivedOlympicSlots,
   seedOlympicSlots,
 } from './competition.logic';
 
@@ -276,5 +277,60 @@ describe('competition logic', () => {
     expect(secondPair[0].olympicGroupName).not.toBe(
       secondPair[1].olympicGroupName,
     );
+  });
+
+  it('creates cyclic first-versus-next-group-second pairs', () => {
+    const seeded = seedGroupDerivedOlympicSlots([
+      { ...competitor(1, 1), olympicGroupName: 'A', olympicGroupPlace: 1 },
+      { ...competitor(2, 1), olympicGroupName: 'A', olympicGroupPlace: 2 },
+      { ...competitor(3, 2), olympicGroupName: 'B', olympicGroupPlace: 1 },
+      { ...competitor(4, 2), olympicGroupName: 'B', olympicGroupPlace: 2 },
+      { ...competitor(5, 3), olympicGroupName: 'C', olympicGroupPlace: 1 },
+      { ...competitor(6, 3), olympicGroupName: 'C', olympicGroupPlace: 2 },
+      { ...competitor(7, 4), olympicGroupName: 'D', olympicGroupPlace: 1 },
+      { ...competitor(8, 4), olympicGroupName: 'D', olympicGroupPlace: 2 },
+    ]);
+
+    expect(
+      Array.from({ length: seeded.length / 2 }, (_, index) =>
+        seeded
+          .slice(index * 2, index * 2 + 2)
+          .map(
+            (item) => `${item.olympicGroupName}${item.olympicGroupPlace}`,
+          ),
+      ),
+    ).toEqual([
+      ['A1', 'B2'],
+      ['B1', 'C2'],
+      ['C1', 'D2'],
+      ['D1', 'A2'],
+    ]);
+  });
+
+  it('pairs ranked third places before globally matching remaining advancers', () => {
+    const seeded = seedGroupDerivedOlympicSlots([
+      { ...competitor(1, 1), olympicGroupName: 'A', olympicGroupPlace: 1 },
+      { ...competitor(2, 1), olympicGroupName: 'A', olympicGroupPlace: 2 },
+      { ...competitor(3, 1), olympicGroupName: 'A', olympicGroupPlace: 3 },
+      { ...competitor(4, 2), olympicGroupName: 'B', olympicGroupPlace: 1 },
+      { ...competitor(5, 2), olympicGroupName: 'B', olympicGroupPlace: 2 },
+      { ...competitor(6, 2), olympicGroupName: 'B', olympicGroupPlace: 3 },
+      { ...competitor(7, 3), olympicGroupName: 'C', olympicGroupPlace: 1 },
+      { ...competitor(8, 3), olympicGroupName: 'C', olympicGroupPlace: 2 },
+    ]);
+
+    const pairs = Array.from({ length: seeded.length / 2 }, (_, index) =>
+      seeded
+        .slice(index * 2, index * 2 + 2)
+        .map((item) => `${item.olympicGroupName}${item.olympicGroupPlace}`),
+    );
+    expect(
+      pairs.map((pair) => [...pair].sort()).sort((a, b) => a[0].localeCompare(b[0])),
+    ).toEqual([
+      ['A1', 'B3'],
+      ['A2', 'C1'],
+      ['A3', 'B1'],
+      ['B2', 'C2'],
+    ]);
   });
 });

@@ -6,7 +6,7 @@ import { useDisciplinaryCardsStore } from '@/stores/disciplinaryCards'
 import { Button } from '@/components/ui/button'
 import { Table, TableHeader, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import { tData } from '@/lib/utils'
-import type { DisciplinaryCard } from '@/model'
+import type { DisciplinaryCard, DisciplinaryCardType } from '@/model'
 
 const props = defineProps<{
   cards: DisciplinaryCard[]
@@ -20,16 +20,20 @@ const emit = defineEmits<{
 }>()
 
 interface CardDraft {
+  type: DisciplinaryCardType
   reason: string
   expires_at: string
+  initial_expires_at: string
 }
 
 const cardsStore = useDisciplinaryCardsStore()
 const { i18next } = useTranslation()
 const editingId = ref<number | null>(null)
 const draft = reactive<CardDraft>({
+  type: 'YELLOW',
   reason: '',
-  expires_at: ''
+  expires_at: '',
+  initial_expires_at: ''
 })
 const currentLanguage = computed(() => i18next.language)
 
@@ -59,15 +63,21 @@ const fighterName = (card: DisciplinaryCard) =>
 
 const isFighterMode = computed(() => props.mode === 'fighter')
 const canShowActions = computed(
-  () => props.canManage || (props.canDelete && props.cards.some((card) => card.can_delete))
+  () =>
+    props.cards.some(
+      (card) => (props.canManage && card.can_manage) || (props.canDelete && card.can_delete)
+    )
 )
 
 const canDeleteCard = (card: DisciplinaryCard) => props.canDelete && card.can_delete
+const canEditCard = (card: DisciplinaryCard) => props.canManage && card.can_manage
 
 const startEdit = (card: DisciplinaryCard) => {
   editingId.value = card.id
+  draft.type = card.type
   draft.reason = card.reason
   draft.expires_at = dateInputValue(card.expires_at)
+  draft.initial_expires_at = draft.expires_at
 }
 
 const cancelEdit = () => {
@@ -79,10 +89,13 @@ const saveEdit = async (card: DisciplinaryCard) => {
     card.id,
     isFighterMode.value
       ? {
+          type: draft.type,
           reason: draft.reason,
-          expires_at: draft.expires_at
+          ...(draft.expires_at !== draft.initial_expires_at
+            ? { expires_at: draft.expires_at }
+            : {})
         }
-      : { reason: draft.reason }
+      : { type: draft.type, reason: draft.reason }
   )
   editingId.value = null
   emit('changed')
@@ -123,7 +136,7 @@ const deleteCard = async (card: DisciplinaryCard) => {
       <TableRow v-for="card in sortedCards" :key="card.id">
         <template v-if="editingId === card.id">
           <TableCell>
-            <select :value="card.type" disabled class="h-8 rounded border bg-muted px-2">
+            <select v-model="draft.type" class="h-8 rounded border bg-background px-2">
               <option value="YELLOW">{{ $t('disciplinaryCardsYellow') }}</option>
               <option value="RED">{{ $t('disciplinaryCardsRed') }}</option>
             </select>
@@ -201,7 +214,7 @@ const deleteCard = async (card: DisciplinaryCard) => {
           <TableCell v-if="isFighterMode">{{ formatDate(card.expires_at) }}</TableCell>
           <TableCell v-if="canShowActions" class="text-right">
             <div class="flex justify-end gap-2">
-              <Button v-if="canManage" size="sm" variant="outline" @click="startEdit(card)">
+              <Button v-if="canEditCard(card)" size="sm" variant="outline" @click="startEdit(card)">
                 {{ $t('disciplinaryCardsEdit') }}
               </Button>
               <Button

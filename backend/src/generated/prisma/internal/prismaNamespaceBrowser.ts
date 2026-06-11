@@ -69,6 +69,7 @@ export const ModelName = {
   fighter_nomination_ratings: 'fighter_nomination_ratings',
   fighter_nomination_rating_history: 'fighter_nomination_rating_history',
   competition_blocks: 'competition_blocks',
+  competition_round_states: 'competition_round_states',
   bracket_slots: 'bracket_slots',
   competition_placements: 'competition_placements',
   tournament_reports: 'tournament_reports',
@@ -310,10 +311,22 @@ export const Competition_blocksScalarFieldEnum = {
   type: 'type',
   stage: 'stage',
   status: 'status',
+  lifecycle_state: 'lifecycle_state',
   created_at: 'created_at'
 } as const
 
 export type Competition_blocksScalarFieldEnum = (typeof Competition_blocksScalarFieldEnum)[keyof typeof Competition_blocksScalarFieldEnum]
+
+
+export const Competition_round_statesScalarFieldEnum = {
+  id: 'id',
+  block_id: 'block_id',
+  round: 'round',
+  pairs_fixed: 'pairs_fixed',
+  results_fixed: 'results_fixed'
+} as const
+
+export type Competition_round_statesScalarFieldEnum = (typeof Competition_round_statesScalarFieldEnum)[keyof typeof Competition_round_statesScalarFieldEnum]
 
 
 export const Bracket_slotsScalarFieldEnum = {

@@ -50,6 +50,7 @@ export type Competition_blocksMinAggregateOutputType = {
   type: string | null
   stage: number | null
   status: string | null
+  lifecycle_state: string | null
   created_at: Date | null
 }
 
@@ -61,6 +62,7 @@ export type Competition_blocksMaxAggregateOutputType = {
   type: string | null
   stage: number | null
   status: string | null
+  lifecycle_state: string | null
   created_at: Date | null
 }
 
@@ -72,6 +74,7 @@ export type Competition_blocksCountAggregateOutputType = {
   type: number
   stage: number
   status: number
+  lifecycle_state: number
   created_at: number
   _all: number
 }
@@ -101,6 +104,7 @@ export type Competition_blocksMinAggregateInputType = {
   type?: true
   stage?: true
   status?: true
+  lifecycle_state?: true
   created_at?: true
 }
 
@@ -112,6 +116,7 @@ export type Competition_blocksMaxAggregateInputType = {
   type?: true
   stage?: true
   status?: true
+  lifecycle_state?: true
   created_at?: true
 }
 
@@ -123,6 +128,7 @@ export type Competition_blocksCountAggregateInputType = {
   type?: true
   stage?: true
   status?: true
+  lifecycle_state?: true
   created_at?: true
   _all?: true
 }
@@ -221,6 +227,7 @@ export type Competition_blocksGroupByOutputType = {
   type: string
   stage: number
   status: string
+  lifecycle_state: string
   created_at: Date
   _count: Competition_blocksCountAggregateOutputType | null
   _avg: Competition_blocksAvgAggregateOutputType | null
@@ -255,12 +262,14 @@ export type competition_blocksWhereInput = {
   type?: Prisma.StringFilter<"competition_blocks"> | string
   stage?: Prisma.IntFilter<"competition_blocks"> | number
   status?: Prisma.StringFilter<"competition_blocks"> | string
+  lifecycle_state?: Prisma.StringFilter<"competition_blocks"> | string
   created_at?: Prisma.DateTimeFilter<"competition_blocks"> | Date | string
   tournament_nomination?: Prisma.XOR<Prisma.Tournament_nominationsScalarRelationFilter, Prisma.tournament_nominationsWhereInput>
   groups?: Prisma.GroupsListRelationFilter
   fights?: Prisma.FightsListRelationFilter
   bracket_slots?: Prisma.Bracket_slotsListRelationFilter
   placements?: Prisma.Competition_placementsListRelationFilter
+  round_states?: Prisma.Competition_round_statesListRelationFilter
 }
 
 export type competition_blocksOrderByWithRelationInput = {
@@ -271,12 +280,14 @@ export type competition_blocksOrderByWithRelationInput = {
   type?: Prisma.SortOrder
   stage?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  lifecycle_state?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   tournament_nomination?: Prisma.tournament_nominationsOrderByWithRelationInput
   groups?: Prisma.groupsOrderByRelationAggregateInput
   fights?: Prisma.fightsOrderByRelationAggregateInput
   bracket_slots?: Prisma.bracket_slotsOrderByRelationAggregateInput
   placements?: Prisma.competition_placementsOrderByRelationAggregateInput
+  round_states?: Prisma.competition_round_statesOrderByRelationAggregateInput
 }
 
 export type competition_blocksWhereUniqueInput = Prisma.AtLeast<{
@@ -290,12 +301,14 @@ export type competition_blocksWhereUniqueInput = Prisma.AtLeast<{
   type?: Prisma.StringFilter<"competition_blocks"> | string
   stage?: Prisma.IntFilter<"competition_blocks"> | number
   status?: Prisma.StringFilter<"competition_blocks"> | string
+  lifecycle_state?: Prisma.StringFilter<"competition_blocks"> | string
   created_at?: Prisma.DateTimeFilter<"competition_blocks"> | Date | string
   tournament_nomination?: Prisma.XOR<Prisma.Tournament_nominationsScalarRelationFilter, Prisma.tournament_nominationsWhereInput>
   groups?: Prisma.GroupsListRelationFilter
   fights?: Prisma.FightsListRelationFilter
   bracket_slots?: Prisma.Bracket_slotsListRelationFilter
   placements?: Prisma.Competition_placementsListRelationFilter
+  round_states?: Prisma.Competition_round_statesListRelationFilter
 }, "id">
 
 export type competition_blocksOrderByWithAggregationInput = {
@@ -306,6 +319,7 @@ export type competition_blocksOrderByWithAggregationInput = {
   type?: Prisma.SortOrder
   stage?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  lifecycle_state?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   _count?: Prisma.competition_blocksCountOrderByAggregateInput
   _avg?: Prisma.competition_blocksAvgOrderByAggregateInput
@@ -325,6 +339,7 @@ export type competition_blocksScalarWhereWithAggregatesInput = {
   type?: Prisma.StringWithAggregatesFilter<"competition_blocks"> | string
   stage?: Prisma.IntWithAggregatesFilter<"competition_blocks"> | number
   status?: Prisma.StringWithAggregatesFilter<"competition_blocks"> | string
+  lifecycle_state?: Prisma.StringWithAggregatesFilter<"competition_blocks"> | string
   created_at?: Prisma.DateTimeWithAggregatesFilter<"competition_blocks"> | Date | string
 }
 
@@ -334,12 +349,14 @@ export type competition_blocksCreateInput = {
   type: string
   stage: number
   status?: string
+  lifecycle_state?: string
   created_at?: Date | string
   tournament_nomination: Prisma.tournament_nominationsCreateNestedOneWithoutBlocksInput
   groups?: Prisma.groupsCreateNestedManyWithoutBlockInput
   fights?: Prisma.fightsCreateNestedManyWithoutBlockInput
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutBlockInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutBlockInput
+  round_states?: Prisma.competition_round_statesCreateNestedManyWithoutBlockInput
 }
 
 export type competition_blocksUncheckedCreateInput = {
@@ -350,11 +367,13 @@ export type competition_blocksUncheckedCreateInput = {
   type: string
   stage: number
   status?: string
+  lifecycle_state?: string
   created_at?: Date | string
   groups?: Prisma.groupsUncheckedCreateNestedManyWithoutBlockInput
   fights?: Prisma.fightsUncheckedCreateNestedManyWithoutBlockInput
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutBlockInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutBlockInput
+  round_states?: Prisma.competition_round_statesUncheckedCreateNestedManyWithoutBlockInput
 }
 
 export type competition_blocksUpdateInput = {
@@ -363,12 +382,14 @@ export type competition_blocksUpdateInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycle_state?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tournament_nomination?: Prisma.tournament_nominationsUpdateOneRequiredWithoutBlocksNestedInput
   groups?: Prisma.groupsUpdateManyWithoutBlockNestedInput
   fights?: Prisma.fightsUpdateManyWithoutBlockNestedInput
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutBlockNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutBlockNestedInput
+  round_states?: Prisma.competition_round_statesUpdateManyWithoutBlockNestedInput
 }
 
 export type competition_blocksUncheckedUpdateInput = {
@@ -379,11 +400,13 @@ export type competition_blocksUncheckedUpdateInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycle_state?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   groups?: Prisma.groupsUncheckedUpdateManyWithoutBlockNestedInput
   fights?: Prisma.fightsUncheckedUpdateManyWithoutBlockNestedInput
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutBlockNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutBlockNestedInput
+  round_states?: Prisma.competition_round_statesUncheckedUpdateManyWithoutBlockNestedInput
 }
 
 export type competition_blocksCreateManyInput = {
@@ -394,6 +417,7 @@ export type competition_blocksCreateManyInput = {
   type: string
   stage: number
   status?: string
+  lifecycle_state?: string
   created_at?: Date | string
 }
 
@@ -403,6 +427,7 @@ export type competition_blocksUpdateManyMutationInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycle_state?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -414,6 +439,7 @@ export type competition_blocksUncheckedUpdateManyInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycle_state?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -440,6 +466,7 @@ export type competition_blocksCountOrderByAggregateInput = {
   type?: Prisma.SortOrder
   stage?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  lifecycle_state?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
 }
 
@@ -459,6 +486,7 @@ export type competition_blocksMaxOrderByAggregateInput = {
   type?: Prisma.SortOrder
   stage?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  lifecycle_state?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
 }
 
@@ -470,6 +498,7 @@ export type competition_blocksMinOrderByAggregateInput = {
   type?: Prisma.SortOrder
   stage?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  lifecycle_state?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
 }
 
@@ -560,6 +589,20 @@ export type competition_blocksUpdateOneWithoutFightsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.competition_blocksUpdateToOneWithWhereWithoutFightsInput, Prisma.competition_blocksUpdateWithoutFightsInput>, Prisma.competition_blocksUncheckedUpdateWithoutFightsInput>
 }
 
+export type competition_blocksCreateNestedOneWithoutRound_statesInput = {
+  create?: Prisma.XOR<Prisma.competition_blocksCreateWithoutRound_statesInput, Prisma.competition_blocksUncheckedCreateWithoutRound_statesInput>
+  connectOrCreate?: Prisma.competition_blocksCreateOrConnectWithoutRound_statesInput
+  connect?: Prisma.competition_blocksWhereUniqueInput
+}
+
+export type competition_blocksUpdateOneRequiredWithoutRound_statesNestedInput = {
+  create?: Prisma.XOR<Prisma.competition_blocksCreateWithoutRound_statesInput, Prisma.competition_blocksUncheckedCreateWithoutRound_statesInput>
+  connectOrCreate?: Prisma.competition_blocksCreateOrConnectWithoutRound_statesInput
+  upsert?: Prisma.competition_blocksUpsertWithoutRound_statesInput
+  connect?: Prisma.competition_blocksWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.competition_blocksUpdateToOneWithWhereWithoutRound_statesInput, Prisma.competition_blocksUpdateWithoutRound_statesInput>, Prisma.competition_blocksUncheckedUpdateWithoutRound_statesInput>
+}
+
 export type competition_blocksCreateNestedOneWithoutBracket_slotsInput = {
   create?: Prisma.XOR<Prisma.competition_blocksCreateWithoutBracket_slotsInput, Prisma.competition_blocksUncheckedCreateWithoutBracket_slotsInput>
   connectOrCreate?: Prisma.competition_blocksCreateOrConnectWithoutBracket_slotsInput
@@ -596,11 +639,13 @@ export type competition_blocksCreateWithoutTournament_nominationInput = {
   type: string
   stage: number
   status?: string
+  lifecycle_state?: string
   created_at?: Date | string
   groups?: Prisma.groupsCreateNestedManyWithoutBlockInput
   fights?: Prisma.fightsCreateNestedManyWithoutBlockInput
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutBlockInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutBlockInput
+  round_states?: Prisma.competition_round_statesCreateNestedManyWithoutBlockInput
 }
 
 export type competition_blocksUncheckedCreateWithoutTournament_nominationInput = {
@@ -610,11 +655,13 @@ export type competition_blocksUncheckedCreateWithoutTournament_nominationInput =
   type: string
   stage: number
   status?: string
+  lifecycle_state?: string
   created_at?: Date | string
   groups?: Prisma.groupsUncheckedCreateNestedManyWithoutBlockInput
   fights?: Prisma.fightsUncheckedCreateNestedManyWithoutBlockInput
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutBlockInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutBlockInput
+  round_states?: Prisma.competition_round_statesUncheckedCreateNestedManyWithoutBlockInput
 }
 
 export type competition_blocksCreateOrConnectWithoutTournament_nominationInput = {
@@ -654,6 +701,7 @@ export type competition_blocksScalarWhereInput = {
   type?: Prisma.StringFilter<"competition_blocks"> | string
   stage?: Prisma.IntFilter<"competition_blocks"> | number
   status?: Prisma.StringFilter<"competition_blocks"> | string
+  lifecycle_state?: Prisma.StringFilter<"competition_blocks"> | string
   created_at?: Prisma.DateTimeFilter<"competition_blocks"> | Date | string
 }
 
@@ -663,11 +711,13 @@ export type competition_blocksCreateWithoutGroupsInput = {
   type: string
   stage: number
   status?: string
+  lifecycle_state?: string
   created_at?: Date | string
   tournament_nomination: Prisma.tournament_nominationsCreateNestedOneWithoutBlocksInput
   fights?: Prisma.fightsCreateNestedManyWithoutBlockInput
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutBlockInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutBlockInput
+  round_states?: Prisma.competition_round_statesCreateNestedManyWithoutBlockInput
 }
 
 export type competition_blocksUncheckedCreateWithoutGroupsInput = {
@@ -678,10 +728,12 @@ export type competition_blocksUncheckedCreateWithoutGroupsInput = {
   type: string
   stage: number
   status?: string
+  lifecycle_state?: string
   created_at?: Date | string
   fights?: Prisma.fightsUncheckedCreateNestedManyWithoutBlockInput
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutBlockInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutBlockInput
+  round_states?: Prisma.competition_round_statesUncheckedCreateNestedManyWithoutBlockInput
 }
 
 export type competition_blocksCreateOrConnectWithoutGroupsInput = {
@@ -706,11 +758,13 @@ export type competition_blocksUpdateWithoutGroupsInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycle_state?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tournament_nomination?: Prisma.tournament_nominationsUpdateOneRequiredWithoutBlocksNestedInput
   fights?: Prisma.fightsUpdateManyWithoutBlockNestedInput
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutBlockNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutBlockNestedInput
+  round_states?: Prisma.competition_round_statesUpdateManyWithoutBlockNestedInput
 }
 
 export type competition_blocksUncheckedUpdateWithoutGroupsInput = {
@@ -721,10 +775,12 @@ export type competition_blocksUncheckedUpdateWithoutGroupsInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycle_state?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fights?: Prisma.fightsUncheckedUpdateManyWithoutBlockNestedInput
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutBlockNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutBlockNestedInput
+  round_states?: Prisma.competition_round_statesUncheckedUpdateManyWithoutBlockNestedInput
 }
 
 export type competition_blocksCreateWithoutFightsInput = {
@@ -733,11 +789,13 @@ export type competition_blocksCreateWithoutFightsInput = {
   type: string
   stage: number
   status?: string
+  lifecycle_state?: string
   created_at?: Date | string
   tournament_nomination: Prisma.tournament_nominationsCreateNestedOneWithoutBlocksInput
   groups?: Prisma.groupsCreateNestedManyWithoutBlockInput
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutBlockInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutBlockInput
+  round_states?: Prisma.competition_round_statesCreateNestedManyWithoutBlockInput
 }
 
 export type competition_blocksUncheckedCreateWithoutFightsInput = {
@@ -748,10 +806,12 @@ export type competition_blocksUncheckedCreateWithoutFightsInput = {
   type: string
   stage: number
   status?: string
+  lifecycle_state?: string
   created_at?: Date | string
   groups?: Prisma.groupsUncheckedCreateNestedManyWithoutBlockInput
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutBlockInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutBlockInput
+  round_states?: Prisma.competition_round_statesUncheckedCreateNestedManyWithoutBlockInput
 }
 
 export type competition_blocksCreateOrConnectWithoutFightsInput = {
@@ -776,11 +836,13 @@ export type competition_blocksUpdateWithoutFightsInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycle_state?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tournament_nomination?: Prisma.tournament_nominationsUpdateOneRequiredWithoutBlocksNestedInput
   groups?: Prisma.groupsUpdateManyWithoutBlockNestedInput
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutBlockNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutBlockNestedInput
+  round_states?: Prisma.competition_round_statesUpdateManyWithoutBlockNestedInput
 }
 
 export type competition_blocksUncheckedUpdateWithoutFightsInput = {
@@ -791,8 +853,88 @@ export type competition_blocksUncheckedUpdateWithoutFightsInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycle_state?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   groups?: Prisma.groupsUncheckedUpdateManyWithoutBlockNestedInput
+  bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutBlockNestedInput
+  placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutBlockNestedInput
+  round_states?: Prisma.competition_round_statesUncheckedUpdateManyWithoutBlockNestedInput
+}
+
+export type competition_blocksCreateWithoutRound_statesInput = {
+  tournament_id: number
+  nomination_id: number
+  type: string
+  stage: number
+  status?: string
+  lifecycle_state?: string
+  created_at?: Date | string
+  tournament_nomination: Prisma.tournament_nominationsCreateNestedOneWithoutBlocksInput
+  groups?: Prisma.groupsCreateNestedManyWithoutBlockInput
+  fights?: Prisma.fightsCreateNestedManyWithoutBlockInput
+  bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutBlockInput
+  placements?: Prisma.competition_placementsCreateNestedManyWithoutBlockInput
+}
+
+export type competition_blocksUncheckedCreateWithoutRound_statesInput = {
+  id?: number
+  tournament_nomination_id: number
+  tournament_id: number
+  nomination_id: number
+  type: string
+  stage: number
+  status?: string
+  lifecycle_state?: string
+  created_at?: Date | string
+  groups?: Prisma.groupsUncheckedCreateNestedManyWithoutBlockInput
+  fights?: Prisma.fightsUncheckedCreateNestedManyWithoutBlockInput
+  bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutBlockInput
+  placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutBlockInput
+}
+
+export type competition_blocksCreateOrConnectWithoutRound_statesInput = {
+  where: Prisma.competition_blocksWhereUniqueInput
+  create: Prisma.XOR<Prisma.competition_blocksCreateWithoutRound_statesInput, Prisma.competition_blocksUncheckedCreateWithoutRound_statesInput>
+}
+
+export type competition_blocksUpsertWithoutRound_statesInput = {
+  update: Prisma.XOR<Prisma.competition_blocksUpdateWithoutRound_statesInput, Prisma.competition_blocksUncheckedUpdateWithoutRound_statesInput>
+  create: Prisma.XOR<Prisma.competition_blocksCreateWithoutRound_statesInput, Prisma.competition_blocksUncheckedCreateWithoutRound_statesInput>
+  where?: Prisma.competition_blocksWhereInput
+}
+
+export type competition_blocksUpdateToOneWithWhereWithoutRound_statesInput = {
+  where?: Prisma.competition_blocksWhereInput
+  data: Prisma.XOR<Prisma.competition_blocksUpdateWithoutRound_statesInput, Prisma.competition_blocksUncheckedUpdateWithoutRound_statesInput>
+}
+
+export type competition_blocksUpdateWithoutRound_statesInput = {
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycle_state?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tournament_nomination?: Prisma.tournament_nominationsUpdateOneRequiredWithoutBlocksNestedInput
+  groups?: Prisma.groupsUpdateManyWithoutBlockNestedInput
+  fights?: Prisma.fightsUpdateManyWithoutBlockNestedInput
+  bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutBlockNestedInput
+  placements?: Prisma.competition_placementsUpdateManyWithoutBlockNestedInput
+}
+
+export type competition_blocksUncheckedUpdateWithoutRound_statesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycle_state?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  groups?: Prisma.groupsUncheckedUpdateManyWithoutBlockNestedInput
+  fights?: Prisma.fightsUncheckedUpdateManyWithoutBlockNestedInput
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutBlockNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutBlockNestedInput
 }
@@ -803,11 +945,13 @@ export type competition_blocksCreateWithoutBracket_slotsInput = {
   type: string
   stage: number
   status?: string
+  lifecycle_state?: string
   created_at?: Date | string
   tournament_nomination: Prisma.tournament_nominationsCreateNestedOneWithoutBlocksInput
   groups?: Prisma.groupsCreateNestedManyWithoutBlockInput
   fights?: Prisma.fightsCreateNestedManyWithoutBlockInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutBlockInput
+  round_states?: Prisma.competition_round_statesCreateNestedManyWithoutBlockInput
 }
 
 export type competition_blocksUncheckedCreateWithoutBracket_slotsInput = {
@@ -818,10 +962,12 @@ export type competition_blocksUncheckedCreateWithoutBracket_slotsInput = {
   type: string
   stage: number
   status?: string
+  lifecycle_state?: string
   created_at?: Date | string
   groups?: Prisma.groupsUncheckedCreateNestedManyWithoutBlockInput
   fights?: Prisma.fightsUncheckedCreateNestedManyWithoutBlockInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutBlockInput
+  round_states?: Prisma.competition_round_statesUncheckedCreateNestedManyWithoutBlockInput
 }
 
 export type competition_blocksCreateOrConnectWithoutBracket_slotsInput = {
@@ -846,11 +992,13 @@ export type competition_blocksUpdateWithoutBracket_slotsInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycle_state?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tournament_nomination?: Prisma.tournament_nominationsUpdateOneRequiredWithoutBlocksNestedInput
   groups?: Prisma.groupsUpdateManyWithoutBlockNestedInput
   fights?: Prisma.fightsUpdateManyWithoutBlockNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutBlockNestedInput
+  round_states?: Prisma.competition_round_statesUpdateManyWithoutBlockNestedInput
 }
 
 export type competition_blocksUncheckedUpdateWithoutBracket_slotsInput = {
@@ -861,10 +1009,12 @@ export type competition_blocksUncheckedUpdateWithoutBracket_slotsInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycle_state?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   groups?: Prisma.groupsUncheckedUpdateManyWithoutBlockNestedInput
   fights?: Prisma.fightsUncheckedUpdateManyWithoutBlockNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutBlockNestedInput
+  round_states?: Prisma.competition_round_statesUncheckedUpdateManyWithoutBlockNestedInput
 }
 
 export type competition_blocksCreateWithoutPlacementsInput = {
@@ -873,11 +1023,13 @@ export type competition_blocksCreateWithoutPlacementsInput = {
   type: string
   stage: number
   status?: string
+  lifecycle_state?: string
   created_at?: Date | string
   tournament_nomination: Prisma.tournament_nominationsCreateNestedOneWithoutBlocksInput
   groups?: Prisma.groupsCreateNestedManyWithoutBlockInput
   fights?: Prisma.fightsCreateNestedManyWithoutBlockInput
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutBlockInput
+  round_states?: Prisma.competition_round_statesCreateNestedManyWithoutBlockInput
 }
 
 export type competition_blocksUncheckedCreateWithoutPlacementsInput = {
@@ -888,10 +1040,12 @@ export type competition_blocksUncheckedCreateWithoutPlacementsInput = {
   type: string
   stage: number
   status?: string
+  lifecycle_state?: string
   created_at?: Date | string
   groups?: Prisma.groupsUncheckedCreateNestedManyWithoutBlockInput
   fights?: Prisma.fightsUncheckedCreateNestedManyWithoutBlockInput
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutBlockInput
+  round_states?: Prisma.competition_round_statesUncheckedCreateNestedManyWithoutBlockInput
 }
 
 export type competition_blocksCreateOrConnectWithoutPlacementsInput = {
@@ -916,11 +1070,13 @@ export type competition_blocksUpdateWithoutPlacementsInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycle_state?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tournament_nomination?: Prisma.tournament_nominationsUpdateOneRequiredWithoutBlocksNestedInput
   groups?: Prisma.groupsUpdateManyWithoutBlockNestedInput
   fights?: Prisma.fightsUpdateManyWithoutBlockNestedInput
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutBlockNestedInput
+  round_states?: Prisma.competition_round_statesUpdateManyWithoutBlockNestedInput
 }
 
 export type competition_blocksUncheckedUpdateWithoutPlacementsInput = {
@@ -931,10 +1087,12 @@ export type competition_blocksUncheckedUpdateWithoutPlacementsInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycle_state?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   groups?: Prisma.groupsUncheckedUpdateManyWithoutBlockNestedInput
   fights?: Prisma.fightsUncheckedUpdateManyWithoutBlockNestedInput
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutBlockNestedInput
+  round_states?: Prisma.competition_round_statesUncheckedUpdateManyWithoutBlockNestedInput
 }
 
 export type competition_blocksCreateManyTournament_nominationInput = {
@@ -944,6 +1102,7 @@ export type competition_blocksCreateManyTournament_nominationInput = {
   type: string
   stage: number
   status?: string
+  lifecycle_state?: string
   created_at?: Date | string
 }
 
@@ -953,11 +1112,13 @@ export type competition_blocksUpdateWithoutTournament_nominationInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycle_state?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   groups?: Prisma.groupsUpdateManyWithoutBlockNestedInput
   fights?: Prisma.fightsUpdateManyWithoutBlockNestedInput
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutBlockNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutBlockNestedInput
+  round_states?: Prisma.competition_round_statesUpdateManyWithoutBlockNestedInput
 }
 
 export type competition_blocksUncheckedUpdateWithoutTournament_nominationInput = {
@@ -967,11 +1128,13 @@ export type competition_blocksUncheckedUpdateWithoutTournament_nominationInput =
   type?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycle_state?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   groups?: Prisma.groupsUncheckedUpdateManyWithoutBlockNestedInput
   fights?: Prisma.fightsUncheckedUpdateManyWithoutBlockNestedInput
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutBlockNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutBlockNestedInput
+  round_states?: Prisma.competition_round_statesUncheckedUpdateManyWithoutBlockNestedInput
 }
 
 export type competition_blocksUncheckedUpdateManyWithoutTournament_nominationInput = {
@@ -981,6 +1144,7 @@ export type competition_blocksUncheckedUpdateManyWithoutTournament_nominationInp
   type?: Prisma.StringFieldUpdateOperationsInput | string
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycle_state?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -994,6 +1158,7 @@ export type Competition_blocksCountOutputType = {
   fights: number
   bracket_slots: number
   placements: number
+  round_states: number
 }
 
 export type Competition_blocksCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1001,6 +1166,7 @@ export type Competition_blocksCountOutputTypeSelect<ExtArgs extends runtime.Type
   fights?: boolean | Competition_blocksCountOutputTypeCountFightsArgs
   bracket_slots?: boolean | Competition_blocksCountOutputTypeCountBracket_slotsArgs
   placements?: boolean | Competition_blocksCountOutputTypeCountPlacementsArgs
+  round_states?: boolean | Competition_blocksCountOutputTypeCountRound_statesArgs
 }
 
 /**
@@ -1041,6 +1207,13 @@ export type Competition_blocksCountOutputTypeCountPlacementsArgs<ExtArgs extends
   where?: Prisma.competition_placementsWhereInput
 }
 
+/**
+ * Competition_blocksCountOutputType without action
+ */
+export type Competition_blocksCountOutputTypeCountRound_statesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.competition_round_statesWhereInput
+}
+
 
 export type competition_blocksSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1050,12 +1223,14 @@ export type competition_blocksSelect<ExtArgs extends runtime.Types.Extensions.In
   type?: boolean
   stage?: boolean
   status?: boolean
+  lifecycle_state?: boolean
   created_at?: boolean
   tournament_nomination?: boolean | Prisma.tournament_nominationsDefaultArgs<ExtArgs>
   groups?: boolean | Prisma.competition_blocks$groupsArgs<ExtArgs>
   fights?: boolean | Prisma.competition_blocks$fightsArgs<ExtArgs>
   bracket_slots?: boolean | Prisma.competition_blocks$bracket_slotsArgs<ExtArgs>
   placements?: boolean | Prisma.competition_blocks$placementsArgs<ExtArgs>
+  round_states?: boolean | Prisma.competition_blocks$round_statesArgs<ExtArgs>
   _count?: boolean | Prisma.Competition_blocksCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["competition_blocks"]>
 
@@ -1067,6 +1242,7 @@ export type competition_blocksSelectCreateManyAndReturn<ExtArgs extends runtime.
   type?: boolean
   stage?: boolean
   status?: boolean
+  lifecycle_state?: boolean
   created_at?: boolean
   tournament_nomination?: boolean | Prisma.tournament_nominationsDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["competition_blocks"]>
@@ -1079,6 +1255,7 @@ export type competition_blocksSelectUpdateManyAndReturn<ExtArgs extends runtime.
   type?: boolean
   stage?: boolean
   status?: boolean
+  lifecycle_state?: boolean
   created_at?: boolean
   tournament_nomination?: boolean | Prisma.tournament_nominationsDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["competition_blocks"]>
@@ -1091,16 +1268,18 @@ export type competition_blocksSelectScalar = {
   type?: boolean
   stage?: boolean
   status?: boolean
+  lifecycle_state?: boolean
   created_at?: boolean
 }
 
-export type competition_blocksOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tournament_nomination_id" | "tournament_id" | "nomination_id" | "type" | "stage" | "status" | "created_at", ExtArgs["result"]["competition_blocks"]>
+export type competition_blocksOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tournament_nomination_id" | "tournament_id" | "nomination_id" | "type" | "stage" | "status" | "lifecycle_state" | "created_at", ExtArgs["result"]["competition_blocks"]>
 export type competition_blocksInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tournament_nomination?: boolean | Prisma.tournament_nominationsDefaultArgs<ExtArgs>
   groups?: boolean | Prisma.competition_blocks$groupsArgs<ExtArgs>
   fights?: boolean | Prisma.competition_blocks$fightsArgs<ExtArgs>
   bracket_slots?: boolean | Prisma.competition_blocks$bracket_slotsArgs<ExtArgs>
   placements?: boolean | Prisma.competition_blocks$placementsArgs<ExtArgs>
+  round_states?: boolean | Prisma.competition_blocks$round_statesArgs<ExtArgs>
   _count?: boolean | Prisma.Competition_blocksCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type competition_blocksIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1118,6 +1297,7 @@ export type $competition_blocksPayload<ExtArgs extends runtime.Types.Extensions.
     fights: Prisma.$fightsPayload<ExtArgs>[]
     bracket_slots: Prisma.$bracket_slotsPayload<ExtArgs>[]
     placements: Prisma.$competition_placementsPayload<ExtArgs>[]
+    round_states: Prisma.$competition_round_statesPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1127,6 +1307,7 @@ export type $competition_blocksPayload<ExtArgs extends runtime.Types.Extensions.
     type: string
     stage: number
     status: string
+    lifecycle_state: string
     created_at: Date
   }, ExtArgs["result"]["competition_blocks"]>
   composites: {}
@@ -1527,6 +1708,7 @@ export interface Prisma__competition_blocksClient<T, Null = never, ExtArgs exten
   fights<T extends Prisma.competition_blocks$fightsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competition_blocks$fightsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fightsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   bracket_slots<T extends Prisma.competition_blocks$bracket_slotsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competition_blocks$bracket_slotsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$bracket_slotsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   placements<T extends Prisma.competition_blocks$placementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competition_blocks$placementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$competition_placementsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  round_states<T extends Prisma.competition_blocks$round_statesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competition_blocks$round_statesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$competition_round_statesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1563,6 +1745,7 @@ export interface competition_blocksFieldRefs {
   readonly type: Prisma.FieldRef<"competition_blocks", 'String'>
   readonly stage: Prisma.FieldRef<"competition_blocks", 'Int'>
   readonly status: Prisma.FieldRef<"competition_blocks", 'String'>
+  readonly lifecycle_state: Prisma.FieldRef<"competition_blocks", 'String'>
   readonly created_at: Prisma.FieldRef<"competition_blocks", 'DateTime'>
 }
     
@@ -2053,6 +2236,30 @@ export type competition_blocks$placementsArgs<ExtArgs extends runtime.Types.Exte
   take?: number
   skip?: number
   distinct?: Prisma.Competition_placementsScalarFieldEnum | Prisma.Competition_placementsScalarFieldEnum[]
+}
+
+/**
+ * competition_blocks.round_states
+ */
+export type competition_blocks$round_statesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the competition_round_states
+   */
+  select?: Prisma.competition_round_statesSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the competition_round_states
+   */
+  omit?: Prisma.competition_round_statesOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.competition_round_statesInclude<ExtArgs> | null
+  where?: Prisma.competition_round_statesWhereInput
+  orderBy?: Prisma.competition_round_statesOrderByWithRelationInput | Prisma.competition_round_statesOrderByWithRelationInput[]
+  cursor?: Prisma.competition_round_statesWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Competition_round_statesScalarFieldEnum | Prisma.Competition_round_statesScalarFieldEnum[]
 }
 
 /**

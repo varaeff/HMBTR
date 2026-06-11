@@ -14,15 +14,25 @@ import {
 import { DynamicLabeledInput } from '@/widgets/DynamicLabeledInput'
 import { CircleX } from 'lucide-vue-next'
 import { CircleAlert } from 'lucide-vue-next'
+import type { ButtonVariants } from '@/components/ui/button'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   isError: boolean
   title: string
   mainText: string
   showInput: boolean
   buttonAction: (event: MouseEvent) => void
   closeAction: (event: MouseEvent) => void
-}>()
+  cancelAction?: (event: MouseEvent) => void
+  buttonText?: string
+  cancelText?: string
+  buttonVariant?: ButtonVariants['variant']
+}>(), {
+  cancelAction: undefined,
+  buttonText: undefined,
+  cancelText: undefined,
+  buttonVariant: 'default'
+})
 
 const commonDataStore = useCommonDataStore()
 const inputData = storeToRefs(commonDataStore).alertData
@@ -51,8 +61,8 @@ const buttonDisabled = computed(() => {
                 v-model:value="inputData"
                 @keyup.enter="props.buttonAction"
               />
-              <div v-if="isError" class="flex items-center gap-4">
-                <CircleAlert :size="48" class="shrink-0" />
+              <div class="flex items-center gap-4">
+                <CircleAlert v-if="isError" :size="48" class="shrink-0" />
                 <div
                   class="flex-1 min-w-0 wrap-break-word overflow-hidden whitespace-normal [&_pre]:whitespace-pre-wrap [&_pre]:wrap-break-word"
                   v-html="props.mainText"
@@ -64,10 +74,19 @@ const buttonDisabled = computed(() => {
         <CardFooter class="flex flex-col gap-2">
           <Button
             class="w-full cursor-pointer"
+            :variant="props.buttonVariant"
             :disabled="buttonDisabled"
             @click="props.buttonAction"
           >
-            {{ $t('LocationBlockAlertButton') }}
+            {{ props.buttonText ?? $t('LocationBlockAlertButton') }}
+          </Button>
+          <Button
+            v-if="props.cancelAction"
+            class="w-full cursor-pointer"
+            variant="outline"
+            @click="props.cancelAction"
+          >
+            {{ props.cancelText ?? $t('fighterPageCancelButton') }}
           </Button>
         </CardFooter>
       </Card>

@@ -40,6 +40,7 @@ export interface DisciplinaryCard {
   opponent_name: string;
   opponent_surname: string;
   opponent_patronymic: string | null;
+  can_manage: boolean;
   can_delete: boolean;
 }
 
@@ -83,13 +84,14 @@ export class DisciplinaryCardsService {
 
   async create(dto: CreateDisciplinaryCardDto) {
     await this.ensureStorageReady();
+    await this.competitionService.assertFightLifecycleEditable(dto.fight_id);
 
     const receivedAt = this.toDateOnly(dto.received_at);
     await this.validateCardTarget(
       dto.fighter_id,
       dto.tournament_id,
       dto.fight_id,
-      { requireUnfinishedFight: true },
+      { requireUnfinishedFight: false },
     );
     const card = await this.insertCard({
       fighterId: dto.fighter_id,
@@ -116,15 +118,28 @@ export class DisciplinaryCardsService {
     await this.ensureStorageReady();
 
     const existing = await this.getStoredCard(id);
+    await this.competitionService.assertFightLifecycleEditable(
+      existing.fight_id,
+    );
+    const type = dto.type ?? existing.type;
     const reason = dto.reason ?? existing.reason;
     const expiresAt = dto.expires_at
       ? this.toDateOnly(dto.expires_at)
-      : this.toDateOnly(existing.expires_at);
+      : type !== existing.type
+        ? await this.calculateExpiration(
+            type,
+            existing.fighter_id,
+            existing.received_at,
+            existing.source,
+            existing.id,
+          )
+        : this.toDateOnly(existing.expires_at);
 
     await this.prisma.$executeRaw`
       UPDATE "disciplinary_cards"
       SET
         "reason" = ${reason},
+        "type" = ${type},
         "expires_at" = ${expiresAt},
         "updated_at" = CURRENT_TIMESTAMP
       WHERE "id" = ${id}
@@ -132,6 +147,12 @@ export class DisciplinaryCardsService {
 
     if (existing.type === CARD_RED) {
       await this.competitionService.resetForfeitsForCard(existing.id);
+    }
+
+    const updated = await this.getStoredCard(id);
+    if (updated.type !== existing.type) {
+      await this.applyConsequences(updated);
+    } else if (updated.type === CARD_RED) {
       await this.competitionService.applyRedCardForfeits(
         existing.tournament_id,
       );
@@ -144,6 +165,7 @@ export class DisciplinaryCardsService {
     await this.ensureStorageReady();
 
     const card = await this.getStoredCard(id);
+    await this.competitionService.assertFightLifecycleEditable(card.fight_id);
     await this.ensureCardCanBeDeleted(card);
 
     await this.prisma.$executeRaw`
@@ -236,10 +258,68 @@ export class DisciplinaryCardsService {
         opponent."name" AS "opponent_name",
         opponent."surname" AS "opponent_surname",
         opponent."patronymic" AS "opponent_patronymic",
-        CASE
-          WHEN cb."status" = 'ACTIVE' AND tn."is_finished" = false THEN true
-          ELSE false
-        END AS "can_delete"
+        (
+          cb."status" = 'ACTIVE'
+          AND tn."is_finished" = false
+          AND (
+            (
+              cb."type" = 'GROUP'
+              AND cb."lifecycle_state" <> 'RESULTS_FIXED'
+            )
+            OR
+            (
+              cb."type" = 'OLYMPIC'
+              AND NOT EXISTS (
+                SELECT 1
+                FROM "competition_round_states" crs
+                WHERE crs."block_id" = cb."id"
+                  AND crs."results_fixed" = true
+                  AND (
+                    crs."round" = f."bracket_round"
+                    OR (
+                      f."is_bronze" = true
+                      AND crs."round" = (
+                        SELECT MAX(final_state."round")
+                        FROM "competition_round_states" final_state
+                        WHERE final_state."block_id" = cb."id"
+                      )
+                    )
+                  )
+              )
+            )
+          )
+        ) AS "can_manage",
+        (
+          cb."status" = 'ACTIVE'
+          AND tn."is_finished" = false
+          AND (
+            (
+              cb."type" = 'GROUP'
+              AND cb."lifecycle_state" <> 'RESULTS_FIXED'
+            )
+            OR
+            (
+              cb."type" = 'OLYMPIC'
+              AND NOT EXISTS (
+                SELECT 1
+                FROM "competition_round_states" crs
+                WHERE crs."block_id" = cb."id"
+                  AND crs."results_fixed" = true
+                  AND (
+                    crs."round" = f."bracket_round"
+                    OR (
+                      f."is_bronze" = true
+                      AND crs."round" = (
+                        SELECT MAX(final_state."round")
+                        FROM "competition_round_states" final_state
+                        WHERE final_state."block_id" = cb."id"
+                      )
+                    )
+                  )
+              )
+            )
+          )
+        ) AS "can_delete"
       FROM "disciplinary_cards" dc
       JOIN "fighters" card_fighter ON card_fighter."id" = dc."fighter_id"
       JOIN "tournaments" t ON t."id" = dc."tournament_id"
@@ -515,6 +595,7 @@ export class DisciplinaryCardsService {
     fighterId: number,
     receivedAt: Date,
     source: DisciplinaryCardSource,
+    excludeCardId: number | null = null,
   ) {
     if (type === CARD_YELLOW) {
       return new Date(Date.UTC(receivedAt.getUTCFullYear(), 11, 31));
@@ -529,6 +610,7 @@ export class DisciplinaryCardsService {
       FROM "disciplinary_cards"
       WHERE "fighter_id" = ${fighterId}
         AND "type" = 'YELLOW'
+        AND (${excludeCardId}::int IS NULL OR "id" <> ${excludeCardId}::int)
         AND "received_at" <= ${receivedAt}
         AND "expires_at" >= ${receivedAt}
       LIMIT 1

@@ -402,6 +402,7 @@ export const ModelName = {
   fighter_nomination_ratings: 'fighter_nomination_ratings',
   fighter_nomination_rating_history: 'fighter_nomination_rating_history',
   competition_blocks: 'competition_blocks',
+  competition_round_states: 'competition_round_states',
   bracket_slots: 'bracket_slots',
   competition_placements: 'competition_placements',
   tournament_reports: 'tournament_reports',
@@ -421,7 +422,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "countries" | "cities" | "clubs" | "fighters" | "marshals" | "marshals_categories" | "tournaments" | "tournament_marshals" | "nominations" | "tournament_nominations" | "competitors" | "groups" | "group_competitors" | "fights" | "disciplinary_cards" | "fighter_nomination_ratings" | "fighter_nomination_rating_history" | "competition_blocks" | "bracket_slots" | "competition_placements" | "tournament_reports" | "users"
+    modelProps: "countries" | "cities" | "clubs" | "fighters" | "marshals" | "marshals_categories" | "tournaments" | "tournament_marshals" | "nominations" | "tournament_nominations" | "competitors" | "groups" | "group_competitors" | "fights" | "disciplinary_cards" | "fighter_nomination_ratings" | "fighter_nomination_rating_history" | "competition_blocks" | "competition_round_states" | "bracket_slots" | "competition_placements" | "tournament_reports" | "users"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1757,6 +1758,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    competition_round_states: {
+      payload: Prisma.$competition_round_statesPayload<ExtArgs>
+      fields: Prisma.competition_round_statesFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.competition_round_statesFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_round_statesPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.competition_round_statesFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_round_statesPayload>
+        }
+        findFirst: {
+          args: Prisma.competition_round_statesFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_round_statesPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.competition_round_statesFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_round_statesPayload>
+        }
+        findMany: {
+          args: Prisma.competition_round_statesFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_round_statesPayload>[]
+        }
+        create: {
+          args: Prisma.competition_round_statesCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_round_statesPayload>
+        }
+        createMany: {
+          args: Prisma.competition_round_statesCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.competition_round_statesCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_round_statesPayload>[]
+        }
+        delete: {
+          args: Prisma.competition_round_statesDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_round_statesPayload>
+        }
+        update: {
+          args: Prisma.competition_round_statesUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_round_statesPayload>
+        }
+        deleteMany: {
+          args: Prisma.competition_round_statesDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.competition_round_statesUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.competition_round_statesUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_round_statesPayload>[]
+        }
+        upsert: {
+          args: Prisma.competition_round_statesUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$competition_round_statesPayload>
+        }
+        aggregate: {
+          args: Prisma.Competition_round_statesAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCompetition_round_states>
+        }
+        groupBy: {
+          args: Prisma.competition_round_statesGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Competition_round_statesGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.competition_round_statesCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Competition_round_statesCountAggregateOutputType> | number
+        }
+      }
+    }
     bracket_slots: {
       payload: Prisma.$bracket_slotsPayload<ExtArgs>
       fields: Prisma.bracket_slotsFieldRefs
@@ -2311,10 +2386,22 @@ export const Competition_blocksScalarFieldEnum = {
   type: 'type',
   stage: 'stage',
   status: 'status',
+  lifecycle_state: 'lifecycle_state',
   created_at: 'created_at'
 } as const
 
 export type Competition_blocksScalarFieldEnum = (typeof Competition_blocksScalarFieldEnum)[keyof typeof Competition_blocksScalarFieldEnum]
+
+
+export const Competition_round_statesScalarFieldEnum = {
+  id: 'id',
+  block_id: 'block_id',
+  round: 'round',
+  pairs_fixed: 'pairs_fixed',
+  results_fixed: 'results_fixed'
+} as const
+
+export type Competition_round_statesScalarFieldEnum = (typeof Competition_round_statesScalarFieldEnum)[keyof typeof Competition_round_statesScalarFieldEnum]
 
 
 export const Bracket_slotsScalarFieldEnum = {
@@ -2590,6 +2677,7 @@ export type GlobalOmitConfig = {
   fighter_nomination_ratings?: Prisma.fighter_nomination_ratingsOmit
   fighter_nomination_rating_history?: Prisma.fighter_nomination_rating_historyOmit
   competition_blocks?: Prisma.competition_blocksOmit
+  competition_round_states?: Prisma.competition_round_statesOmit
   bracket_slots?: Prisma.bracket_slotsOmit
   competition_placements?: Prisma.competition_placementsOmit
   tournament_reports?: Prisma.tournament_reportsOmit

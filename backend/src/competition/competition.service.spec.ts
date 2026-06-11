@@ -95,6 +95,9 @@ describe('CompetitionService', () => {
         create: jest.fn(),
         update: jest.fn(),
       },
+      competition_round_states: {
+        upsert: jest.fn(),
+      },
     };
     const prisma = {
       $transaction: jest.fn(
@@ -190,6 +193,9 @@ describe('CompetitionService', () => {
         ),
         update: jest.fn(),
       },
+      competition_round_states: {
+        upsert: jest.fn(),
+      },
     };
     const prisma = {
       $transaction: jest.fn(
@@ -214,5 +220,67 @@ describe('CompetitionService', () => {
         bracket_round: 2,
       }),
     ]);
+  });
+
+  it('unfixes previous Olympic results when rolling back a pending next round', async () => {
+    const tx = {
+      fights: {
+        findMany: jest.fn().mockResolvedValue([]),
+        deleteMany: jest.fn(),
+      },
+      disciplinary_cards: {
+        findMany: jest.fn(),
+      },
+      competition_round_states: {
+        delete: jest.fn(),
+        updateMany: jest.fn().mockResolvedValue({ count: 1 }),
+      },
+    };
+    const prisma = {
+      competition_blocks: {
+        findUnique: jest.fn().mockResolvedValue({
+          id: 9,
+          type: 'OLYMPIC',
+          status: 'ACTIVE',
+          tournament_id: 31,
+          nomination_id: 5,
+          tournament_nomination_id: 15,
+          tournament_nomination: { is_finished: false },
+          bracket_slots: Array.from({ length: 8 }, () => ({})),
+          round_states: [
+            { id: 101, round: 1, pairs_fixed: true, results_fixed: true },
+            { id: 102, round: 2, pairs_fixed: false, results_fixed: false },
+          ],
+        }),
+      },
+      $transaction: jest.fn(
+        async (callback: (transaction: typeof tx) => Promise<void>) =>
+          callback(tx),
+      ),
+    };
+    const service = new CompetitionService(
+      prisma as unknown as PrismaService,
+      {} as RatingsService,
+    );
+    const serviceInternals = service as unknown as {
+      renumberNominationFights: jest.Mock;
+      resetRatingState: jest.Mock;
+    };
+    serviceInternals.renumberNominationFights = jest.fn();
+    serviceInternals.resetRatingState = jest.fn();
+    jest.spyOn(service, 'applyRedCardForfeits').mockResolvedValue();
+    jest.spyOn(service, 'getState').mockResolvedValue({
+      blocks: [],
+    } as never);
+
+    await service.rollback({ block_id: 9, round: 2 });
+
+    expect(tx.competition_round_states.delete).toHaveBeenCalledWith({
+      where: { block_id_round: { block_id: 9, round: 2 } },
+    });
+    expect(tx.competition_round_states.updateMany).toHaveBeenCalledWith({
+      where: { id: 101, results_fixed: true },
+      data: { results_fixed: false },
+    });
   });
 });
