@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { CheckIcon, ChevronsUpDownIcon } from 'lucide-vue-next'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { useRouter } from 'vue-router'
 import { useFightersListStore } from '@/stores/fightersList'
@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Checkbox } from '@/components/ui/checkbox'
-import type { Fighter, Nomination } from '@/model'
+import type { Fighter, FighterRegistrationEligibility, Nomination } from '@/model'
 
 const props = defineProps<{
   tournamentId: number
@@ -32,6 +32,18 @@ const { i18next } = useTranslation()
 const open = ref(false)
 const selectedFighter = ref<string>('')
 const competitorNominationsIds = ref<number[]>([])
+const registrationEligibility = ref<FighterRegistrationEligibility[]>([])
+
+const eligibilityByFighterId = computed(
+  () =>
+    new Map(
+      registrationEligibility.value.map((eligibility) => [
+        eligibility.fighter_id,
+        new Set(eligibility.nomination_ids)
+      ])
+    )
+)
+const openNominationIds = computed(() => new Set(props.nominations.map((nomination) => nomination.id)))
 
 const selectedFighterData = computed(() =>
   fightersListStore.fightersList.find((fighter) => fighter.id.toString() === selectedFighter.value)
@@ -40,8 +52,10 @@ const selectedFighterData = computed(() =>
 const fightersList = computed(() => {
   const data: Fighter[] = fightersListStore.filteredFightersList
   return data
-    .filter(
-      (fighter) => !competitionStore.tournamentCompetitors.some((c) => c.fighter_id === fighter.id)
+    .filter((fighter) =>
+      [...(eligibilityByFighterId.value.get(fighter.id) ?? [])].some((nominationId) =>
+        openNominationIds.value.has(nominationId)
+      )
     )
     .map((fighter) => ({
       value: fighter.id.toString(),
@@ -52,14 +66,22 @@ const fightersList = computed(() => {
 const matchingNominations = computed(() => {
   if (!selectedFighterData.value) return []
 
-  return props.nominations.filter(
-    (nomination) => nomination.is_male === (selectedFighterData.value?.is_male ?? true)
-  )
+  const availableNominationIds = eligibilityByFighterId.value.get(selectedFighterData.value.id)
+  return props.nominations.filter((nomination) => availableNominationIds?.has(nomination.id))
 })
 
 const getFighters = async () => {
   await fightersListStore.getFightersList()
 }
+
+const getRegistrationEligibility = async () => {
+  registrationEligibility.value = await competitionStore.getRegistrationEligibility()
+}
+
+watch(
+  () => props.nominations.map((nomination) => nomination.id),
+  getRegistrationEligibility
+)
 
 const addFighter = () => {
   router.push(`/addFighter#${props.tournamentId.toString()}`)
@@ -79,6 +101,7 @@ const registerFighter = async () => {
   )
 
   await Promise.all(registrationPromises)
+  await getRegistrationEligibility()
 
   selectedFighter.value = ''
   competitorNominationsIds.value = []
@@ -88,7 +111,11 @@ onMounted(async () => {
   fightersListStore.clearSearchString()
   competitionStore.tournamentId = props.tournamentId
 
-  await Promise.all([getFighters(), competitionStore.setCompetitors()])
+  await Promise.all([
+    getFighters(),
+    competitionStore.setCompetitors(),
+    getRegistrationEligibility()
+  ])
 })
 </script>
 

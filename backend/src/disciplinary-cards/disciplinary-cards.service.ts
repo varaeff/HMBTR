@@ -180,20 +180,25 @@ export class DisciplinaryCardsService {
   }
 
   async hasActiveRedForTournament(fighterId: number, tournamentId: number) {
+    const fighterIds =
+      await this.getActiveRedFighterIdsForTournament(tournamentId);
+
+    return fighterIds.includes(fighterId);
+  }
+
+  async getActiveRedFighterIdsForTournament(tournamentId: number) {
     await this.ensureStorageReady();
 
     const checkDate = await this.getTournamentCheckDate(tournamentId);
-    const rows = await this.prisma.$queryRaw<Array<{ id: number }>>`
-      SELECT "id"
+    const rows = await this.prisma.$queryRaw<Array<{ fighter_id: number }>>`
+      SELECT DISTINCT "fighter_id"
       FROM "disciplinary_cards"
-      WHERE "fighter_id" = ${fighterId}
-        AND "type" = 'RED'
+      WHERE "type" = 'RED'
         AND "received_at" <= ${checkDate}
         AND "expires_at" >= ${checkDate}
-      LIMIT 1
     `;
 
-    return rows.length > 0;
+    return rows.map((row) => row.fighter_id);
   }
 
   private async ensureStorageReady() {

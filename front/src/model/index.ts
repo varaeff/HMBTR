@@ -306,6 +306,11 @@ export interface Competitor {
   nomination_id: number
 }
 
+export interface FighterRegistrationEligibility {
+  fighter_id: number
+  nomination_ids: number[]
+}
+
 export type CompetitionBlockType = 'GROUP' | 'OLYMPIC'
 export type CompetitionBlockStatus = 'ACTIVE' | 'LOCKED'
 export type CompetitionLifecycleState =

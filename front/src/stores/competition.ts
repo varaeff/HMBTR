@@ -8,6 +8,7 @@ import type {
   Competitor,
   FightData,
   Fighter,
+  FighterRegistrationEligibility,
   Group,
   GroupFighter,
   PendingTie
@@ -377,6 +378,13 @@ export const useCompetitionStore = defineStore({
       if (this.nominationId === currentNomId) {
         this.tournamentCompetitors = data
       }
+    },
+
+    async getRegistrationEligibility() {
+      const { data } = await http.get<FighterRegistrationEligibility[]>(
+        API_ROUTES.COMPETITORS.ELIGIBILITY(this.tournamentId)
+      )
+      return data
     },
 
     async registerFighter(fighterId: number, nominationId: number) {

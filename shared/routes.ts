@@ -58,6 +58,8 @@ export const API_ROUTES = {
   },
   COMPETITORS: {
     ROOT: "competitors",
+    ELIGIBILITY: (tournamentId: string | number) =>
+      `/competitors/eligibility/${tournamentId}`,
     BY_TOURNAMENT: (tournamentId: string | number) =>
       `/competitors/${tournamentId}`,
     BY_TOURNAMENT_AND_NOMINATION: (

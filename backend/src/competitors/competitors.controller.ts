@@ -26,6 +26,13 @@ export class CompetitorsController {
     return this.competitorsService.deleteCompetitor(id);
   }
 
+  @Get('eligibility/:tournamentId')
+  getRegistrationEligibility(
+    @Param('tournamentId', ParseIntPipe) tournamentId: number,
+  ) {
+    return this.competitorsService.getRegistrationEligibility(tournamentId);
+  }
+
   @Public()
   @Get(':tournamentId')
   getTournamentCompetitors(
