@@ -50,7 +50,11 @@ export const stageGroupFights = (groups: Group[]): BlockData[] => {
           fighter1: f1,
           fighter2: f2,
           fighter1Score: 0,
-          fighter2Score: 0
+          fighter2Score: 0,
+          roundScores: [],
+          rounds: 1,
+          roundWin: false,
+          isResultValid: false
         })
       }
       // Обработка боя из второй группы
@@ -62,7 +66,11 @@ export const stageGroupFights = (groups: Group[]): BlockData[] => {
           fighter1: f1,
           fighter2: f2,
           fighter1Score: 0,
-          fighter2Score: 0
+          fighter2Score: 0,
+          roundScores: [],
+          rounds: 1,
+          roundWin: false,
+          isResultValid: false
         })
       }
     }

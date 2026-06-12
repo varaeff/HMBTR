@@ -153,7 +153,7 @@ export class DisciplinaryCardsService {
     if (updated.type !== existing.type) {
       await this.applyConsequences(updated);
     } else if (updated.type === CARD_RED) {
-      await this.competitionService.applyRedCardForfeits(
+      await this.competitionService.applyRedCardConsequences(
         existing.tournament_id,
       );
     }
@@ -471,7 +471,7 @@ export class DisciplinaryCardsService {
     }
 
     await this.removeUnformedOtherNominationCompetitors(card);
-    await this.competitionService.applyRedCardForfeits(card.tournament_id);
+    await this.competitionService.applyRedCardConsequences(card.tournament_id);
   }
 
   private async createAutomaticRedIfNeeded(card: StoredDisciplinaryCard) {

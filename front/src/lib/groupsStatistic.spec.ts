@@ -28,6 +28,10 @@ const fight = (
   competitor2Id: fighter2.competitorId,
   fighter1Score,
   fighter2Score,
+  roundScores: [],
+  rounds: 1,
+  roundWin: false,
+  isResultValid: fighter1Score !== fighter2Score,
   isFinished: true
 })
 
@@ -63,5 +67,22 @@ describe('updateGroupsStatistics', () => {
     updateGroupsStatistics([group], blocks)
 
     expect(group.fighters.map((item) => item.competitorId)).toEqual([101, 103, 102, 104])
+  })
+
+  it('uses winner id for wins while keeping aggregate scores for difference', () => {
+    const f1 = fighter(1, 101)
+    const f2 = fighter(2, 102)
+    const group: Group = { id: 1, letter: 'A', fighters: [f1, f2] }
+    const roundWinFight = {
+      ...fight(f1, f2, 5, 10),
+      winnerId: 101
+    }
+
+    updateGroupsStatistics([group], [{ letters: ['A'], fights: [roundWinFight] }])
+
+    expect(f1.wins).toBe(1)
+    expect(f1.diff).toBe(-5)
+    expect(f2.wins).toBe(0)
+    expect(f2.diff).toBe(5)
   })
 })

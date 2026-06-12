@@ -20,6 +20,7 @@ import {
 import { CardStatusIcon } from '@/widgets/DisciplinaryCards'
 import { tData } from '@/lib/utils'
 import type { DisciplinaryCardType, FightData, Fighter } from '@/model'
+import { evaluateFightScore, formatFightResult, type RoundScore } from '@shared/fightScoring'
 
 const props = defineProps<{
   fight: FightData
@@ -31,12 +32,22 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:score', payload: { f1: number; f2: number }): void
+  (
+    e: 'update:score',
+    payload: {
+      f1?: number
+      f2?: number
+      roundScores?: RoundScore[]
+      tieBreakRoundRevealed?: boolean
+    }
+  ): void
   (e: 'card-issued'): void
 }>()
 
 const score1 = ref(props.fight.fighter1Score)
 const score2 = ref(props.fight.fighter2Score)
+const roundScores = ref<RoundScore[]>(props.fight.roundScores.map((score) => ({ ...score })))
+const tieBreakRoundRevealed = ref(Boolean(props.fight.tieBreakRoundRevealed))
 const { i18next } = useTranslation()
 const cardsStore = useDisciplinaryCardsStore()
 const issueDialogOpen = ref(false)
@@ -46,9 +57,51 @@ const issueDate = ref(new Date().toISOString().slice(0, 10))
 const issueReason = ref('')
 const isIssuing = ref(false)
 
+const canEdit = computed(() => props.hasAccess && !props.fight.isFinished)
+const evaluation = computed(() =>
+  evaluateFightScore(
+    { rounds: props.fight.rounds, roundWin: props.fight.roundWin },
+    props.fight.rounds === 1 ? [] : roundScores.value,
+    props.fight.rounds === 1
+      ? { competitor1Score: score1.value, competitor2Score: score2.value }
+      : undefined
+  )
+)
 const isTieScore = computed(
   () =>
-    props.hasAccess && score1.value === score2.value && !(score1.value === 0 && score2.value === 0)
+    canEdit.value &&
+    props.fight.rounds === 1 &&
+    score1.value === score2.value &&
+    !(score1.value === 0 && score2.value === 0)
+)
+const resultText = computed(() =>
+  formatFightResult(
+    { rounds: props.fight.rounds, roundWin: props.fight.roundWin },
+    props.fight.forfeitCardId
+      ? {
+          ...evaluation.value,
+          competitor1Total: props.fight.fighter1Score,
+          competitor2Total: props.fight.fighter2Score
+        }
+      : evaluation.value,
+    roundScores.value,
+    Boolean(props.fight.forfeitCardId)
+  )
+)
+const resultDisplay = computed(() => {
+  const detailsStart = resultText.value.indexOf(' (')
+
+  return detailsStart === -1
+    ? { score: resultText.value, details: '' }
+    : {
+        score: resultText.value.slice(0, detailsStart),
+        details: resultText.value.slice(detailsStart + 1)
+      }
+})
+const visibleRoundScores = computed(() =>
+  props.fight.roundWin && !tieBreakRoundRevealed.value
+    ? roundScores.value.slice(0, 3)
+    : roundScores.value
 )
 
 const currentLanguage = computed(() => i18next.language)
@@ -64,21 +117,53 @@ const sanitizeScore = (value: string) => {
   return digitsOnly === '' ? 0 : Number.parseInt(digitsOnly, 10)
 }
 
-const updateScore = (fighter: 1 | 2, value: string) => {
-  const normalizedValue = sanitizeScore(value)
-  const currentValue = fighter === 1 ? score1.value : score2.value
+const emitScoreUpdate = () => {
+  if (props.fight.rounds === 1) {
+    emit('update:score', { f1: score1.value, f2: score2.value })
+    return
+  }
 
-  if (fighter === 1) {
+  emit('update:score', {
+    roundScores: roundScores.value.map((score) => ({ ...score })),
+    tieBreakRoundRevealed: tieBreakRoundRevealed.value
+  })
+}
+
+const updateScore = (fighter: 1 | 2, value: string, roundIndex?: number) => {
+  const normalizedValue = sanitizeScore(value)
+  const currentValue =
+    roundIndex === undefined
+      ? fighter === 1
+        ? score1.value
+        : score2.value
+      : fighter === 1
+        ? roundScores.value[roundIndex].competitor1Score
+        : roundScores.value[roundIndex].competitor2Score
+
+  if (roundIndex !== undefined && fighter === 1) {
+    roundScores.value[roundIndex].competitor1Score = normalizedValue
+  } else if (roundIndex !== undefined) {
+    roundScores.value[roundIndex].competitor2Score = normalizedValue
+  } else if (fighter === 1) {
     score1.value = normalizedValue
   } else {
     score2.value = normalizedValue
   }
 
+  if (
+    props.fight.roundWin &&
+    tieBreakRoundRevealed.value &&
+    !evaluateFightScore(
+      { rounds: 3, roundWin: true },
+      roundScores.value.slice(0, 3)
+    ).requiresTieBreakRound
+  ) {
+    tieBreakRoundRevealed.value = false
+    roundScores.value = roundScores.value.slice(0, 3)
+  }
+
   if (currentValue !== normalizedValue) {
-    emit('update:score', {
-      f1: score1.value,
-      f2: score2.value
-    })
+    emitScoreUpdate()
   }
 }
 
@@ -111,23 +196,31 @@ const handleKeydown = (event: KeyboardEvent) => {
   }
 }
 
-const handlePaste = (event: ClipboardEvent, fighter: 1 | 2) => {
+const handlePaste = (event: ClipboardEvent, fighter: 1 | 2, roundIndex?: number) => {
   event.preventDefault()
 
   const pastedText = event.clipboardData?.getData('text') ?? ''
-  updateScore(fighter, pastedText)
+  updateScore(fighter, pastedText, roundIndex)
 }
 
 const selectInputContent = (event: Event) => {
   ;(event.target as HTMLInputElement).select()
 }
 
-const handleBlur = (event: Event, fighter: 1 | 2) => {
+const handleBlur = (event: Event, fighter: 1 | 2, roundIndex?: number) => {
   const input = event.target as HTMLInputElement
   const normalizedValue = sanitizeScore(input.value)
 
-  updateScore(fighter, input.value)
+  updateScore(fighter, input.value, roundIndex)
   input.value = normalizedValue.toString()
+
+  if (props.fight.roundWin && evaluation.value.requiresTieBreakRound) {
+    if (!tieBreakRoundRevealed.value) {
+      tieBreakRoundRevealed.value = true
+      roundScores.value.push({ competitor1Score: 0, competitor2Score: 0 })
+      emitScoreUpdate()
+    }
+  }
 }
 
 const openIssueDialog = (fighter: Fighter) => {
@@ -167,6 +260,8 @@ watch(
   (newVal) => {
     if (score1.value !== newVal.fighter1Score) score1.value = newVal.fighter1Score
     if (score2.value !== newVal.fighter2Score) score2.value = newVal.fighter2Score
+    roundScores.value = newVal.roundScores.map((score) => ({ ...score }))
+    tieBreakRoundRevealed.value = Boolean(newVal.tieBreakRoundRevealed)
   },
   { deep: true }
 )
@@ -215,7 +310,7 @@ watch(
     </div>
 
     <div class="flex items-center gap-2">
-      <template v-if="hasAccess">
+      <template v-if="canEdit && fight.rounds === 1">
         <input
           :value="score1"
           type="text"
@@ -235,9 +330,8 @@ watch(
           @paste="handlePaste($event, 1)"
         />
       </template>
-      <strong v-else class="w-14 text-center">{{ score1 }}</strong>
-      <span class="font-bold">:</span>
-      <template v-if="hasAccess">
+      <span v-if="canEdit && fight.rounds === 1" class="font-bold">:</span>
+      <template v-if="canEdit && fight.rounds === 1">
         <input
           :value="score2"
           type="text"
@@ -257,7 +351,51 @@ watch(
           @paste="handlePaste($event, 2)"
         />
       </template>
-      <strong v-else class="w-14 text-center">{{ score2 }}</strong>
+      <template v-else-if="canEdit">
+        <div class="grid gap-1">
+          <div
+            v-for="(round, roundIndex) in visibleRoundScores"
+            :key="roundIndex"
+            class="grid grid-cols-[1.75rem_3.5rem_auto_3.5rem] items-center gap-2"
+          >
+            <span class="text-xs font-semibold text-muted-foreground">R{{ roundIndex + 1 }}</span>
+            <input
+              :value="round.competitor1Score"
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              class="h-8 w-14 rounded border text-center outline-none focus:ring-2 focus:ring-blue-500"
+              @keydown="handleKeydown"
+              @focus="selectInputContent"
+              @click="selectInputContent"
+              @input="updateScore(1, ($event.target as HTMLInputElement).value, roundIndex)"
+              @blur="handleBlur($event, 1, roundIndex)"
+              @paste="handlePaste($event, 1, roundIndex)"
+            />
+            <span class="font-bold">:</span>
+            <input
+              :value="round.competitor2Score"
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              class="h-8 w-14 rounded border text-center outline-none focus:ring-2 focus:ring-blue-500"
+              @keydown="handleKeydown"
+              @focus="selectInputContent"
+              @click="selectInputContent"
+              @input="updateScore(2, ($event.target as HTMLInputElement).value, roundIndex)"
+              @blur="handleBlur($event, 2, roundIndex)"
+              @paste="handlePaste($event, 2, roundIndex)"
+            />
+          </div>
+        </div>
+      </template>
+      <div v-else class="text-center">
+        <strong>{{ resultDisplay.score }}</strong>
+        {{ ' ' }}
+        <span v-if="resultDisplay.details" class="fight-result-details font-normal">
+          {{ resultDisplay.details }}
+        </span>
+      </div>
     </div>
   </div>
 

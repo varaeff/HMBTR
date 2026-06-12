@@ -101,7 +101,11 @@ export const loadTournamentData = async (
           fighter1: competitorMap.get(f.competitor1_id)?.fighter,
           fighter2: competitorMap.get(f.competitor2_id)?.fighter,
           fighter1Score: f.competitor1_score,
-          fighter2Score: f.competitor2_score
+          fighter2Score: f.competitor2_score,
+          roundScores: [],
+          rounds: 1 as const,
+          roundWin: false,
+          isResultValid: f.competitor1_score !== f.competitor2_score
         }))
         .filter(
           (
@@ -113,6 +117,10 @@ export const loadTournamentData = async (
             fighter2: Fighter
             fighter1Score: number
             fighter2Score: number
+            roundScores: []
+            rounds: 1
+            roundWin: false
+            isResultValid: boolean
           } => Boolean(fight.fighter1 && fight.fighter2)
         )
 

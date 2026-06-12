@@ -120,6 +120,13 @@ export interface FightData {
   competitor2Id?: number
   fighter1Score: number
   fighter2Score: number
+  roundScores: Array<{ competitor1Score: number; competitor2Score: number }>
+  rounds: 1 | 2 | 3
+  roundWin: boolean
+  tieBreakRoundRevealed?: boolean
+  isResultValid: boolean
+  winnerId?: number | null
+  forfeitCardId?: number | null
   bracketRound?: number
   bracketPosition?: number
   isBronze?: boolean

@@ -31,12 +31,12 @@ export const updateGroupsStatistics = (groups: Group[], blocks: BlockData[]): vo
 
       if (f1) {
         f1.diff += s1 - s2
-        if (s1 > s2) f1.wins += 1
+        if (fight.winnerId === fight.competitor1Id || (!fight.winnerId && s1 > s2)) f1.wins += 1
       }
 
       if (f2) {
         f2.diff += s2 - s1
-        if (s2 > s1) f2.wins += 1
+        if (fight.winnerId === fight.competitor2Id || (!fight.winnerId && s2 > s1)) f2.wins += 1
       }
     }
   }

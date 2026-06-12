@@ -11,6 +11,7 @@ const props = defineProps<{
   isFixed: boolean
   groups?: Group[]
   activeCardTypes?: Partial<Record<number, DisciplinaryCardType>>
+  redCardGroupFighterKeys?: Set<string>
   highlightedAdvancerCompetitorIds?: Set<number>
 }>()
 const competitionStore = useCompetitionStore()
@@ -90,6 +91,9 @@ const isHighlightedAdvancer = (fighter: GroupFighter, fighterIndex: number) => {
     fighter.competitorId && props.highlightedAdvancerCompetitorIds?.has(fighter.competitorId)
   )
 }
+
+const hasGroupRedCard = (group: Group, fighter: GroupFighter) =>
+  props.redCardGroupFighterKeys?.has(`${group.letter}:${fighter.id}`) ?? false
 </script>
 
 <template>
@@ -131,8 +135,10 @@ const isHighlightedAdvancer = (fighter: GroupFighter, fighterIndex: number) => {
               props.isFixed ? 'cursor-default' : 'cursor-move hover:bg-accent/50',
               {
                 'opacity-30 grayscale': activeDrag?.fighter.id === fighter.id,
+                'bg-red-100/60 hover:bg-red-100/80 dark:bg-red-950/35 dark:hover:bg-red-950/50':
+                  hasGroupRedCard(group, fighter),
                 'bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:hover:bg-green-800/30':
-                  isHighlightedAdvancer(fighter, fIdx)
+                  !hasGroupRedCard(group, fighter) && isHighlightedAdvancer(fighter, fIdx)
               }
             ]"
           >

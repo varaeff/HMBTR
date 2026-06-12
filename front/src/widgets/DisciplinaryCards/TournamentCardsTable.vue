@@ -62,11 +62,10 @@ const fighterName = (card: DisciplinaryCard) =>
     .join(' ')
 
 const isFighterMode = computed(() => props.mode === 'fighter')
-const canShowActions = computed(
-  () =>
-    props.cards.some(
-      (card) => (props.canManage && card.can_manage) || (props.canDelete && card.can_delete)
-    )
+const canShowActions = computed(() =>
+  props.cards.some(
+    (card) => (props.canManage && card.can_manage) || (props.canDelete && card.can_delete)
+  )
 )
 
 const canDeleteCard = (card: DisciplinaryCard) => props.canDelete && card.can_delete
@@ -91,9 +90,7 @@ const saveEdit = async (card: DisciplinaryCard) => {
       ? {
           type: draft.type,
           reason: draft.reason,
-          ...(draft.expires_at !== draft.initial_expires_at
-            ? { expires_at: draft.expires_at }
-            : {})
+          ...(draft.expires_at !== draft.initial_expires_at ? { expires_at: draft.expires_at } : {})
         }
       : { type: draft.type, reason: draft.reason }
   )
@@ -102,7 +99,7 @@ const saveEdit = async (card: DisciplinaryCard) => {
 }
 
 const deleteCard = async (card: DisciplinaryCard) => {
-  await cardsStore.deleteCard(card.id, card.tournament_id)
+  await cardsStore.deleteCard(card.id)
   emit('changed')
 }
 </script>

@@ -10,6 +10,7 @@ import { FightCard } from '@/components/ui/fightCard'
 import { tData } from '@/lib/utils'
 
 import type { BracketSlot, CompetitionBlock, DisciplinaryCardType, FightData } from '@/model'
+import type { RoundScore } from '@shared/fightScoring'
 import { CardStatusIcon } from '@/widgets/DisciplinaryCards'
 import { AlertWidget } from '@/widgets/AlertWidget'
 
@@ -80,10 +81,8 @@ const isRoundResultsFixed = (round: number) => Boolean(getRoundState(round)?.res
 const hasLaterRound = (round: number) => props.block.roundStates.some((state) => state.round > round)
 
 const getFightWinnerCompetitorId = (fight: FightData) => {
-  if (!fight.isFinished || !fight.competitor1Id || !fight.competitor2Id) return null
-  if (fight.fighter1Score === fight.fighter2Score) return null
-
-  return fight.fighter1Score > fight.fighter2Score ? fight.competitor1Id : fight.competitor2Id
+  if (!fight.isFinished || !fight.winnerId) return null
+  return fight.winnerId
 }
 
 const pendingPairSlots = computed(() => {
@@ -157,21 +156,25 @@ const roundLabel = (fights: CompetitionBlock['fights']) => {
 const handleScoreUpdate = (
   fightId: number,
   fightNumber: number,
-  scores: { f1: number; f2: number }
+  scores: {
+    f1?: number
+    f2?: number
+    roundScores?: RoundScore[]
+    tieBreakRoundRevealed?: boolean
+  }
 ) => {
   competitionStore.updateGlobalScore({
     fightId,
     fightNumber,
     f1Score: scores.f1,
-    f2Score: scores.f2
+    f2Score: scores.f2,
+    roundScores: scores.roundScores,
+    tieBreakRoundRevealed: scores.tieBreakRoundRevealed
   })
 }
 
 const isFightReady = (fight: FightData) => {
-  return (
-    !(fight.fighter1Score === 0 && fight.fighter2Score === 0) &&
-    fight.fighter1Score !== fight.fighter2Score
-  )
+  return fight.isResultValid
 }
 
 const canRecordFights = (fights: FightData[]) => fights.length > 0 && fights.every(isFightReady)

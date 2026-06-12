@@ -51,9 +51,8 @@ export const useDisciplinaryCardsStore = defineStore('disciplinaryCards', {
       return data
     },
 
-    async deleteCard(id: number, tournamentId: number) {
+    async deleteCard(id: number) {
       await http.delete(API_ROUTES.DISCIPLINARY_CARDS.BY_ID(id))
-      await this.loadTournamentCards(tournamentId)
     }
   }
 })

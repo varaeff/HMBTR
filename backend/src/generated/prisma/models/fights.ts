@@ -36,6 +36,14 @@ export type FightsAvgAggregateOutputType = {
   competitor2_id: number | null
   competitor1_score: number | null
   competitor2_score: number | null
+  competitor1_round1_score: number | null
+  competitor2_round1_score: number | null
+  competitor1_round2_score: number | null
+  competitor2_round2_score: number | null
+  competitor1_round3_score: number | null
+  competitor2_round3_score: number | null
+  competitor1_round4_score: number | null
+  competitor2_round4_score: number | null
   winner_id: number | null
   stage: number | null
   fight_number: number | null
@@ -54,6 +62,14 @@ export type FightsSumAggregateOutputType = {
   competitor2_id: number | null
   competitor1_score: number | null
   competitor2_score: number | null
+  competitor1_round1_score: number | null
+  competitor2_round1_score: number | null
+  competitor1_round2_score: number | null
+  competitor2_round2_score: number | null
+  competitor1_round3_score: number | null
+  competitor2_round3_score: number | null
+  competitor1_round4_score: number | null
+  competitor2_round4_score: number | null
   winner_id: number | null
   stage: number | null
   fight_number: number | null
@@ -72,6 +88,14 @@ export type FightsMinAggregateOutputType = {
   competitor2_id: number | null
   competitor1_score: number | null
   competitor2_score: number | null
+  competitor1_round1_score: number | null
+  competitor2_round1_score: number | null
+  competitor1_round2_score: number | null
+  competitor2_round2_score: number | null
+  competitor1_round3_score: number | null
+  competitor2_round3_score: number | null
+  competitor1_round4_score: number | null
+  competitor2_round4_score: number | null
   winner_id: number | null
   stage: number | null
   fight_number: number | null
@@ -92,6 +116,14 @@ export type FightsMaxAggregateOutputType = {
   competitor2_id: number | null
   competitor1_score: number | null
   competitor2_score: number | null
+  competitor1_round1_score: number | null
+  competitor2_round1_score: number | null
+  competitor1_round2_score: number | null
+  competitor2_round2_score: number | null
+  competitor1_round3_score: number | null
+  competitor2_round3_score: number | null
+  competitor1_round4_score: number | null
+  competitor2_round4_score: number | null
   winner_id: number | null
   stage: number | null
   fight_number: number | null
@@ -112,6 +144,14 @@ export type FightsCountAggregateOutputType = {
   competitor2_id: number
   competitor1_score: number
   competitor2_score: number
+  competitor1_round1_score: number
+  competitor2_round1_score: number
+  competitor1_round2_score: number
+  competitor2_round2_score: number
+  competitor1_round3_score: number
+  competitor2_round3_score: number
+  competitor1_round4_score: number
+  competitor2_round4_score: number
   winner_id: number
   stage: number
   fight_number: number
@@ -134,6 +174,14 @@ export type FightsAvgAggregateInputType = {
   competitor2_id?: true
   competitor1_score?: true
   competitor2_score?: true
+  competitor1_round1_score?: true
+  competitor2_round1_score?: true
+  competitor1_round2_score?: true
+  competitor2_round2_score?: true
+  competitor1_round3_score?: true
+  competitor2_round3_score?: true
+  competitor1_round4_score?: true
+  competitor2_round4_score?: true
   winner_id?: true
   stage?: true
   fight_number?: true
@@ -152,6 +200,14 @@ export type FightsSumAggregateInputType = {
   competitor2_id?: true
   competitor1_score?: true
   competitor2_score?: true
+  competitor1_round1_score?: true
+  competitor2_round1_score?: true
+  competitor1_round2_score?: true
+  competitor2_round2_score?: true
+  competitor1_round3_score?: true
+  competitor2_round3_score?: true
+  competitor1_round4_score?: true
+  competitor2_round4_score?: true
   winner_id?: true
   stage?: true
   fight_number?: true
@@ -170,6 +226,14 @@ export type FightsMinAggregateInputType = {
   competitor2_id?: true
   competitor1_score?: true
   competitor2_score?: true
+  competitor1_round1_score?: true
+  competitor2_round1_score?: true
+  competitor1_round2_score?: true
+  competitor2_round2_score?: true
+  competitor1_round3_score?: true
+  competitor2_round3_score?: true
+  competitor1_round4_score?: true
+  competitor2_round4_score?: true
   winner_id?: true
   stage?: true
   fight_number?: true
@@ -190,6 +254,14 @@ export type FightsMaxAggregateInputType = {
   competitor2_id?: true
   competitor1_score?: true
   competitor2_score?: true
+  competitor1_round1_score?: true
+  competitor2_round1_score?: true
+  competitor1_round2_score?: true
+  competitor2_round2_score?: true
+  competitor1_round3_score?: true
+  competitor2_round3_score?: true
+  competitor1_round4_score?: true
+  competitor2_round4_score?: true
   winner_id?: true
   stage?: true
   fight_number?: true
@@ -210,6 +282,14 @@ export type FightsCountAggregateInputType = {
   competitor2_id?: true
   competitor1_score?: true
   competitor2_score?: true
+  competitor1_round1_score?: true
+  competitor2_round1_score?: true
+  competitor1_round2_score?: true
+  competitor2_round2_score?: true
+  competitor1_round3_score?: true
+  competitor2_round3_score?: true
+  competitor1_round4_score?: true
+  competitor2_round4_score?: true
   winner_id?: true
   stage?: true
   fight_number?: true
@@ -317,6 +397,14 @@ export type FightsGroupByOutputType = {
   competitor2_id: number
   competitor1_score: number
   competitor2_score: number
+  competitor1_round1_score: number
+  competitor2_round1_score: number
+  competitor1_round2_score: number
+  competitor2_round2_score: number
+  competitor1_round3_score: number
+  competitor2_round3_score: number
+  competitor1_round4_score: number
+  competitor2_round4_score: number
   winner_id: number | null
   stage: number
   fight_number: number
@@ -360,6 +448,14 @@ export type fightsWhereInput = {
   competitor2_id?: Prisma.IntFilter<"fights"> | number
   competitor1_score?: Prisma.IntFilter<"fights"> | number
   competitor2_score?: Prisma.IntFilter<"fights"> | number
+  competitor1_round1_score?: Prisma.IntFilter<"fights"> | number
+  competitor2_round1_score?: Prisma.IntFilter<"fights"> | number
+  competitor1_round2_score?: Prisma.IntFilter<"fights"> | number
+  competitor2_round2_score?: Prisma.IntFilter<"fights"> | number
+  competitor1_round3_score?: Prisma.IntFilter<"fights"> | number
+  competitor2_round3_score?: Prisma.IntFilter<"fights"> | number
+  competitor1_round4_score?: Prisma.IntFilter<"fights"> | number
+  competitor2_round4_score?: Prisma.IntFilter<"fights"> | number
   winner_id?: Prisma.IntNullableFilter<"fights"> | number | null
   stage?: Prisma.IntFilter<"fights"> | number
   fight_number?: Prisma.IntFilter<"fights"> | number
@@ -388,6 +484,14 @@ export type fightsOrderByWithRelationInput = {
   competitor2_id?: Prisma.SortOrder
   competitor1_score?: Prisma.SortOrder
   competitor2_score?: Prisma.SortOrder
+  competitor1_round1_score?: Prisma.SortOrder
+  competitor2_round1_score?: Prisma.SortOrder
+  competitor1_round2_score?: Prisma.SortOrder
+  competitor2_round2_score?: Prisma.SortOrder
+  competitor1_round3_score?: Prisma.SortOrder
+  competitor2_round3_score?: Prisma.SortOrder
+  competitor1_round4_score?: Prisma.SortOrder
+  competitor2_round4_score?: Prisma.SortOrder
   winner_id?: Prisma.SortOrderInput | Prisma.SortOrder
   stage?: Prisma.SortOrder
   fight_number?: Prisma.SortOrder
@@ -419,6 +523,14 @@ export type fightsWhereUniqueInput = Prisma.AtLeast<{
   competitor2_id?: Prisma.IntFilter<"fights"> | number
   competitor1_score?: Prisma.IntFilter<"fights"> | number
   competitor2_score?: Prisma.IntFilter<"fights"> | number
+  competitor1_round1_score?: Prisma.IntFilter<"fights"> | number
+  competitor2_round1_score?: Prisma.IntFilter<"fights"> | number
+  competitor1_round2_score?: Prisma.IntFilter<"fights"> | number
+  competitor2_round2_score?: Prisma.IntFilter<"fights"> | number
+  competitor1_round3_score?: Prisma.IntFilter<"fights"> | number
+  competitor2_round3_score?: Prisma.IntFilter<"fights"> | number
+  competitor1_round4_score?: Prisma.IntFilter<"fights"> | number
+  competitor2_round4_score?: Prisma.IntFilter<"fights"> | number
   winner_id?: Prisma.IntNullableFilter<"fights"> | number | null
   stage?: Prisma.IntFilter<"fights"> | number
   fight_number?: Prisma.IntFilter<"fights"> | number
@@ -447,6 +559,14 @@ export type fightsOrderByWithAggregationInput = {
   competitor2_id?: Prisma.SortOrder
   competitor1_score?: Prisma.SortOrder
   competitor2_score?: Prisma.SortOrder
+  competitor1_round1_score?: Prisma.SortOrder
+  competitor2_round1_score?: Prisma.SortOrder
+  competitor1_round2_score?: Prisma.SortOrder
+  competitor2_round2_score?: Prisma.SortOrder
+  competitor1_round3_score?: Prisma.SortOrder
+  competitor2_round3_score?: Prisma.SortOrder
+  competitor1_round4_score?: Prisma.SortOrder
+  competitor2_round4_score?: Prisma.SortOrder
   winner_id?: Prisma.SortOrderInput | Prisma.SortOrder
   stage?: Prisma.SortOrder
   fight_number?: Prisma.SortOrder
@@ -475,6 +595,14 @@ export type fightsScalarWhereWithAggregatesInput = {
   competitor2_id?: Prisma.IntWithAggregatesFilter<"fights"> | number
   competitor1_score?: Prisma.IntWithAggregatesFilter<"fights"> | number
   competitor2_score?: Prisma.IntWithAggregatesFilter<"fights"> | number
+  competitor1_round1_score?: Prisma.IntWithAggregatesFilter<"fights"> | number
+  competitor2_round1_score?: Prisma.IntWithAggregatesFilter<"fights"> | number
+  competitor1_round2_score?: Prisma.IntWithAggregatesFilter<"fights"> | number
+  competitor2_round2_score?: Prisma.IntWithAggregatesFilter<"fights"> | number
+  competitor1_round3_score?: Prisma.IntWithAggregatesFilter<"fights"> | number
+  competitor2_round3_score?: Prisma.IntWithAggregatesFilter<"fights"> | number
+  competitor1_round4_score?: Prisma.IntWithAggregatesFilter<"fights"> | number
+  competitor2_round4_score?: Prisma.IntWithAggregatesFilter<"fights"> | number
   winner_id?: Prisma.IntNullableWithAggregatesFilter<"fights"> | number | null
   stage?: Prisma.IntWithAggregatesFilter<"fights"> | number
   fight_number?: Prisma.IntWithAggregatesFilter<"fights"> | number
@@ -488,6 +616,14 @@ export type fightsScalarWhereWithAggregatesInput = {
 export type fightsCreateInput = {
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   stage?: number
   fight_number?: number
   bracket_round?: number | null
@@ -515,6 +651,14 @@ export type fightsUncheckedCreateInput = {
   competitor2_id: number
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   winner_id?: number | null
   stage?: number
   fight_number?: number
@@ -529,6 +673,14 @@ export type fightsUncheckedCreateInput = {
 export type fightsUpdateInput = {
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
   bracket_round?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -556,6 +708,14 @@ export type fightsUncheckedUpdateInput = {
   competitor2_id?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   winner_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
@@ -577,6 +737,14 @@ export type fightsCreateManyInput = {
   competitor2_id: number
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   winner_id?: number | null
   stage?: number
   fight_number?: number
@@ -590,6 +758,14 @@ export type fightsCreateManyInput = {
 export type fightsUpdateManyMutationInput = {
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
   bracket_round?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -609,6 +785,14 @@ export type fightsUncheckedUpdateManyInput = {
   competitor2_id?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   winner_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
@@ -639,6 +823,14 @@ export type fightsCountOrderByAggregateInput = {
   competitor2_id?: Prisma.SortOrder
   competitor1_score?: Prisma.SortOrder
   competitor2_score?: Prisma.SortOrder
+  competitor1_round1_score?: Prisma.SortOrder
+  competitor2_round1_score?: Prisma.SortOrder
+  competitor1_round2_score?: Prisma.SortOrder
+  competitor2_round2_score?: Prisma.SortOrder
+  competitor1_round3_score?: Prisma.SortOrder
+  competitor2_round3_score?: Prisma.SortOrder
+  competitor1_round4_score?: Prisma.SortOrder
+  competitor2_round4_score?: Prisma.SortOrder
   winner_id?: Prisma.SortOrder
   stage?: Prisma.SortOrder
   fight_number?: Prisma.SortOrder
@@ -659,6 +851,14 @@ export type fightsAvgOrderByAggregateInput = {
   competitor2_id?: Prisma.SortOrder
   competitor1_score?: Prisma.SortOrder
   competitor2_score?: Prisma.SortOrder
+  competitor1_round1_score?: Prisma.SortOrder
+  competitor2_round1_score?: Prisma.SortOrder
+  competitor1_round2_score?: Prisma.SortOrder
+  competitor2_round2_score?: Prisma.SortOrder
+  competitor1_round3_score?: Prisma.SortOrder
+  competitor2_round3_score?: Prisma.SortOrder
+  competitor1_round4_score?: Prisma.SortOrder
+  competitor2_round4_score?: Prisma.SortOrder
   winner_id?: Prisma.SortOrder
   stage?: Prisma.SortOrder
   fight_number?: Prisma.SortOrder
@@ -677,6 +877,14 @@ export type fightsMaxOrderByAggregateInput = {
   competitor2_id?: Prisma.SortOrder
   competitor1_score?: Prisma.SortOrder
   competitor2_score?: Prisma.SortOrder
+  competitor1_round1_score?: Prisma.SortOrder
+  competitor2_round1_score?: Prisma.SortOrder
+  competitor1_round2_score?: Prisma.SortOrder
+  competitor2_round2_score?: Prisma.SortOrder
+  competitor1_round3_score?: Prisma.SortOrder
+  competitor2_round3_score?: Prisma.SortOrder
+  competitor1_round4_score?: Prisma.SortOrder
+  competitor2_round4_score?: Prisma.SortOrder
   winner_id?: Prisma.SortOrder
   stage?: Prisma.SortOrder
   fight_number?: Prisma.SortOrder
@@ -697,6 +905,14 @@ export type fightsMinOrderByAggregateInput = {
   competitor2_id?: Prisma.SortOrder
   competitor1_score?: Prisma.SortOrder
   competitor2_score?: Prisma.SortOrder
+  competitor1_round1_score?: Prisma.SortOrder
+  competitor2_round1_score?: Prisma.SortOrder
+  competitor1_round2_score?: Prisma.SortOrder
+  competitor2_round2_score?: Prisma.SortOrder
+  competitor1_round3_score?: Prisma.SortOrder
+  competitor2_round3_score?: Prisma.SortOrder
+  competitor1_round4_score?: Prisma.SortOrder
+  competitor2_round4_score?: Prisma.SortOrder
   winner_id?: Prisma.SortOrder
   stage?: Prisma.SortOrder
   fight_number?: Prisma.SortOrder
@@ -717,6 +933,14 @@ export type fightsSumOrderByAggregateInput = {
   competitor2_id?: Prisma.SortOrder
   competitor1_score?: Prisma.SortOrder
   competitor2_score?: Prisma.SortOrder
+  competitor1_round1_score?: Prisma.SortOrder
+  competitor2_round1_score?: Prisma.SortOrder
+  competitor1_round2_score?: Prisma.SortOrder
+  competitor2_round2_score?: Prisma.SortOrder
+  competitor1_round3_score?: Prisma.SortOrder
+  competitor2_round3_score?: Prisma.SortOrder
+  competitor1_round4_score?: Prisma.SortOrder
+  competitor2_round4_score?: Prisma.SortOrder
   winner_id?: Prisma.SortOrder
   stage?: Prisma.SortOrder
   fight_number?: Prisma.SortOrder
@@ -1041,6 +1265,14 @@ export type fightsUncheckedUpdateManyWithoutBlockNestedInput = {
 export type fightsCreateWithoutTournamentInput = {
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   stage?: number
   fight_number?: number
   bracket_round?: number | null
@@ -1066,6 +1298,14 @@ export type fightsUncheckedCreateWithoutTournamentInput = {
   competitor2_id: number
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   winner_id?: number | null
   stage?: number
   fight_number?: number
@@ -1116,6 +1356,14 @@ export type fightsScalarWhereInput = {
   competitor2_id?: Prisma.IntFilter<"fights"> | number
   competitor1_score?: Prisma.IntFilter<"fights"> | number
   competitor2_score?: Prisma.IntFilter<"fights"> | number
+  competitor1_round1_score?: Prisma.IntFilter<"fights"> | number
+  competitor2_round1_score?: Prisma.IntFilter<"fights"> | number
+  competitor1_round2_score?: Prisma.IntFilter<"fights"> | number
+  competitor2_round2_score?: Prisma.IntFilter<"fights"> | number
+  competitor1_round3_score?: Prisma.IntFilter<"fights"> | number
+  competitor2_round3_score?: Prisma.IntFilter<"fights"> | number
+  competitor1_round4_score?: Prisma.IntFilter<"fights"> | number
+  competitor2_round4_score?: Prisma.IntFilter<"fights"> | number
   winner_id?: Prisma.IntNullableFilter<"fights"> | number | null
   stage?: Prisma.IntFilter<"fights"> | number
   fight_number?: Prisma.IntFilter<"fights"> | number
@@ -1129,6 +1377,14 @@ export type fightsScalarWhereInput = {
 export type fightsCreateWithoutNominationInput = {
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   stage?: number
   fight_number?: number
   bracket_round?: number | null
@@ -1154,6 +1410,14 @@ export type fightsUncheckedCreateWithoutNominationInput = {
   competitor2_id: number
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   winner_id?: number | null
   stage?: number
   fight_number?: number
@@ -1194,6 +1458,14 @@ export type fightsUpdateManyWithWhereWithoutNominationInput = {
 export type fightsCreateWithoutCompetitor1Input = {
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   stage?: number
   fight_number?: number
   bracket_round?: number | null
@@ -1219,6 +1491,14 @@ export type fightsUncheckedCreateWithoutCompetitor1Input = {
   competitor2_id: number
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   winner_id?: number | null
   stage?: number
   fight_number?: number
@@ -1243,6 +1523,14 @@ export type fightsCreateManyCompetitor1InputEnvelope = {
 export type fightsCreateWithoutCompetitor2Input = {
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   stage?: number
   fight_number?: number
   bracket_round?: number | null
@@ -1268,6 +1556,14 @@ export type fightsUncheckedCreateWithoutCompetitor2Input = {
   competitor1_id: number
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   winner_id?: number | null
   stage?: number
   fight_number?: number
@@ -1292,6 +1588,14 @@ export type fightsCreateManyCompetitor2InputEnvelope = {
 export type fightsCreateWithoutWinnerInput = {
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   stage?: number
   fight_number?: number
   bracket_round?: number | null
@@ -1318,6 +1622,14 @@ export type fightsUncheckedCreateWithoutWinnerInput = {
   competitor2_id: number
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   stage?: number
   fight_number?: number
   bracket_round?: number | null
@@ -1389,6 +1701,14 @@ export type fightsUpdateManyWithWhereWithoutWinnerInput = {
 export type fightsCreateWithoutGroupInput = {
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   stage?: number
   fight_number?: number
   bracket_round?: number | null
@@ -1414,6 +1734,14 @@ export type fightsUncheckedCreateWithoutGroupInput = {
   competitor2_id: number
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   winner_id?: number | null
   stage?: number
   fight_number?: number
@@ -1454,6 +1782,14 @@ export type fightsUpdateManyWithWhereWithoutGroupInput = {
 export type fightsCreateWithoutDisciplinary_cardsInput = {
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   stage?: number
   fight_number?: number
   bracket_round?: number | null
@@ -1480,6 +1816,14 @@ export type fightsUncheckedCreateWithoutDisciplinary_cardsInput = {
   competitor2_id: number
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   winner_id?: number | null
   stage?: number
   fight_number?: number
@@ -1509,6 +1853,14 @@ export type fightsUpdateToOneWithWhereWithoutDisciplinary_cardsInput = {
 export type fightsUpdateWithoutDisciplinary_cardsInput = {
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
   bracket_round?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1535,6 +1887,14 @@ export type fightsUncheckedUpdateWithoutDisciplinary_cardsInput = {
   competitor2_id?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   winner_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1548,6 +1908,14 @@ export type fightsUncheckedUpdateWithoutDisciplinary_cardsInput = {
 export type fightsCreateWithoutBlockInput = {
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   stage?: number
   fight_number?: number
   bracket_round?: number | null
@@ -1573,6 +1941,14 @@ export type fightsUncheckedCreateWithoutBlockInput = {
   competitor2_id: number
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   winner_id?: number | null
   stage?: number
   fight_number?: number
@@ -1619,6 +1995,14 @@ export type fightsCreateManyTournamentInput = {
   competitor2_id: number
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   winner_id?: number | null
   stage?: number
   fight_number?: number
@@ -1632,6 +2016,14 @@ export type fightsCreateManyTournamentInput = {
 export type fightsUpdateWithoutTournamentInput = {
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
   bracket_round?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1657,6 +2049,14 @@ export type fightsUncheckedUpdateWithoutTournamentInput = {
   competitor2_id?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   winner_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1677,6 +2077,14 @@ export type fightsUncheckedUpdateManyWithoutTournamentInput = {
   competitor2_id?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   winner_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1696,6 +2104,14 @@ export type fightsCreateManyNominationInput = {
   competitor2_id: number
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   winner_id?: number | null
   stage?: number
   fight_number?: number
@@ -1709,6 +2125,14 @@ export type fightsCreateManyNominationInput = {
 export type fightsUpdateWithoutNominationInput = {
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
   bracket_round?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1734,6 +2158,14 @@ export type fightsUncheckedUpdateWithoutNominationInput = {
   competitor2_id?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   winner_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1754,6 +2186,14 @@ export type fightsUncheckedUpdateManyWithoutNominationInput = {
   competitor2_id?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   winner_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1773,6 +2213,14 @@ export type fightsCreateManyCompetitor1Input = {
   competitor2_id: number
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   winner_id?: number | null
   stage?: number
   fight_number?: number
@@ -1792,6 +2240,14 @@ export type fightsCreateManyCompetitor2Input = {
   competitor1_id: number
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   winner_id?: number | null
   stage?: number
   fight_number?: number
@@ -1812,6 +2268,14 @@ export type fightsCreateManyWinnerInput = {
   competitor2_id: number
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   stage?: number
   fight_number?: number
   bracket_round?: number | null
@@ -1824,6 +2288,14 @@ export type fightsCreateManyWinnerInput = {
 export type fightsUpdateWithoutCompetitor1Input = {
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
   bracket_round?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1849,6 +2321,14 @@ export type fightsUncheckedUpdateWithoutCompetitor1Input = {
   competitor2_id?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   winner_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1869,6 +2349,14 @@ export type fightsUncheckedUpdateManyWithoutCompetitor1Input = {
   competitor2_id?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   winner_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1882,6 +2370,14 @@ export type fightsUncheckedUpdateManyWithoutCompetitor1Input = {
 export type fightsUpdateWithoutCompetitor2Input = {
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
   bracket_round?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1907,6 +2403,14 @@ export type fightsUncheckedUpdateWithoutCompetitor2Input = {
   competitor1_id?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   winner_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1927,6 +2431,14 @@ export type fightsUncheckedUpdateManyWithoutCompetitor2Input = {
   competitor1_id?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   winner_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1940,6 +2452,14 @@ export type fightsUncheckedUpdateManyWithoutCompetitor2Input = {
 export type fightsUpdateWithoutWinnerInput = {
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
   bracket_round?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1966,6 +2486,14 @@ export type fightsUncheckedUpdateWithoutWinnerInput = {
   competitor2_id?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
   bracket_round?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1986,6 +2514,14 @@ export type fightsUncheckedUpdateManyWithoutWinnerInput = {
   competitor2_id?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
   bracket_round?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2004,6 +2540,14 @@ export type fightsCreateManyGroupInput = {
   competitor2_id: number
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   winner_id?: number | null
   stage?: number
   fight_number?: number
@@ -2017,6 +2561,14 @@ export type fightsCreateManyGroupInput = {
 export type fightsUpdateWithoutGroupInput = {
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
   bracket_round?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2042,6 +2594,14 @@ export type fightsUncheckedUpdateWithoutGroupInput = {
   competitor2_id?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   winner_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2062,6 +2622,14 @@ export type fightsUncheckedUpdateManyWithoutGroupInput = {
   competitor2_id?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   winner_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2081,6 +2649,14 @@ export type fightsCreateManyBlockInput = {
   competitor2_id: number
   competitor1_score?: number
   competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
   winner_id?: number | null
   stage?: number
   fight_number?: number
@@ -2094,6 +2670,14 @@ export type fightsCreateManyBlockInput = {
 export type fightsUpdateWithoutBlockInput = {
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
   bracket_round?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2119,6 +2703,14 @@ export type fightsUncheckedUpdateWithoutBlockInput = {
   competitor2_id?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   winner_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2139,6 +2731,14 @@ export type fightsUncheckedUpdateManyWithoutBlockInput = {
   competitor2_id?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
   winner_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   fight_number?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2190,6 +2790,14 @@ export type fightsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   competitor2_id?: boolean
   competitor1_score?: boolean
   competitor2_score?: boolean
+  competitor1_round1_score?: boolean
+  competitor2_round1_score?: boolean
+  competitor1_round2_score?: boolean
+  competitor2_round2_score?: boolean
+  competitor1_round3_score?: boolean
+  competitor2_round3_score?: boolean
+  competitor1_round4_score?: boolean
+  competitor2_round4_score?: boolean
   winner_id?: boolean
   stage?: boolean
   fight_number?: boolean
@@ -2219,6 +2827,14 @@ export type fightsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   competitor2_id?: boolean
   competitor1_score?: boolean
   competitor2_score?: boolean
+  competitor1_round1_score?: boolean
+  competitor2_round1_score?: boolean
+  competitor1_round2_score?: boolean
+  competitor2_round2_score?: boolean
+  competitor1_round3_score?: boolean
+  competitor2_round3_score?: boolean
+  competitor1_round4_score?: boolean
+  competitor2_round4_score?: boolean
   winner_id?: boolean
   stage?: boolean
   fight_number?: boolean
@@ -2246,6 +2862,14 @@ export type fightsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   competitor2_id?: boolean
   competitor1_score?: boolean
   competitor2_score?: boolean
+  competitor1_round1_score?: boolean
+  competitor2_round1_score?: boolean
+  competitor1_round2_score?: boolean
+  competitor2_round2_score?: boolean
+  competitor1_round3_score?: boolean
+  competitor2_round3_score?: boolean
+  competitor1_round4_score?: boolean
+  competitor2_round4_score?: boolean
   winner_id?: boolean
   stage?: boolean
   fight_number?: boolean
@@ -2273,6 +2897,14 @@ export type fightsSelectScalar = {
   competitor2_id?: boolean
   competitor1_score?: boolean
   competitor2_score?: boolean
+  competitor1_round1_score?: boolean
+  competitor2_round1_score?: boolean
+  competitor1_round2_score?: boolean
+  competitor2_round2_score?: boolean
+  competitor1_round3_score?: boolean
+  competitor2_round3_score?: boolean
+  competitor1_round4_score?: boolean
+  competitor2_round4_score?: boolean
   winner_id?: boolean
   stage?: boolean
   fight_number?: boolean
@@ -2283,7 +2915,7 @@ export type fightsSelectScalar = {
   forfeit_card_id?: boolean
 }
 
-export type fightsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tournament_id" | "nomination_id" | "block_id" | "group_id" | "competitor1_id" | "competitor2_id" | "competitor1_score" | "competitor2_score" | "winner_id" | "stage" | "fight_number" | "bracket_round" | "bracket_position" | "is_bronze" | "is_finished" | "forfeit_card_id", ExtArgs["result"]["fights"]>
+export type fightsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tournament_id" | "nomination_id" | "block_id" | "group_id" | "competitor1_id" | "competitor2_id" | "competitor1_score" | "competitor2_score" | "competitor1_round1_score" | "competitor2_round1_score" | "competitor1_round2_score" | "competitor2_round2_score" | "competitor1_round3_score" | "competitor2_round3_score" | "competitor1_round4_score" | "competitor2_round4_score" | "winner_id" | "stage" | "fight_number" | "bracket_round" | "bracket_position" | "is_bronze" | "is_finished" | "forfeit_card_id", ExtArgs["result"]["fights"]>
 export type fightsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   nomination?: boolean | Prisma.nominationsDefaultArgs<ExtArgs>
@@ -2336,6 +2968,14 @@ export type $fightsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     competitor2_id: number
     competitor1_score: number
     competitor2_score: number
+    competitor1_round1_score: number
+    competitor2_round1_score: number
+    competitor1_round2_score: number
+    competitor2_round2_score: number
+    competitor1_round3_score: number
+    competitor2_round3_score: number
+    competitor1_round4_score: number
+    competitor2_round4_score: number
     winner_id: number | null
     stage: number
     fight_number: number
@@ -2784,6 +3424,14 @@ export interface fightsFieldRefs {
   readonly competitor2_id: Prisma.FieldRef<"fights", 'Int'>
   readonly competitor1_score: Prisma.FieldRef<"fights", 'Int'>
   readonly competitor2_score: Prisma.FieldRef<"fights", 'Int'>
+  readonly competitor1_round1_score: Prisma.FieldRef<"fights", 'Int'>
+  readonly competitor2_round1_score: Prisma.FieldRef<"fights", 'Int'>
+  readonly competitor1_round2_score: Prisma.FieldRef<"fights", 'Int'>
+  readonly competitor2_round2_score: Prisma.FieldRef<"fights", 'Int'>
+  readonly competitor1_round3_score: Prisma.FieldRef<"fights", 'Int'>
+  readonly competitor2_round3_score: Prisma.FieldRef<"fights", 'Int'>
+  readonly competitor1_round4_score: Prisma.FieldRef<"fights", 'Int'>
+  readonly competitor2_round4_score: Prisma.FieldRef<"fights", 'Int'>
   readonly winner_id: Prisma.FieldRef<"fights", 'Int'>
   readonly stage: Prisma.FieldRef<"fights", 'Int'>
   readonly fight_number: Prisma.FieldRef<"fights", 'Int'>

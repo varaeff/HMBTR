@@ -4,6 +4,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import {
+  evaluateFightScore,
+  formatFightResult,
+  type FightScoringRules,
+  type RoundScore,
+} from '@shared/fightScoring';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { AddNominationDto } from './dto/add-nomination.dto';
 import { UpdateNominationDto } from './dto/update-nomination.dto';
@@ -37,6 +43,8 @@ type FighterIdentity = FighterName & {
 type NominationDefinition = {
   name_en: string;
   name_ru: string;
+  rounds: number;
+  round_win: boolean;
 };
 
 type MarshalCategory = {
@@ -59,6 +67,16 @@ type Fight = {
   competitor2_id: number | null;
   competitor1_score: number;
   competitor2_score: number;
+  winner_id: number | null;
+  competitor1_round1_score: number;
+  competitor2_round1_score: number;
+  competitor1_round2_score: number;
+  competitor2_round2_score: number;
+  competitor1_round3_score: number;
+  competitor2_round3_score: number;
+  competitor1_round4_score: number;
+  competitor2_round4_score: number;
+  forfeit_card_id: number | null;
   bracket_round: number | null;
   bracket_position: number | null;
   is_bronze: boolean;
@@ -66,6 +84,7 @@ type Fight = {
   competitor1: { fighter: FighterName };
   competitor2: { fighter: FighterName };
   winner: { fighter: FighterName } | null;
+  nomination: NominationDefinition;
 };
 
 type CardFight = {
@@ -452,6 +471,7 @@ export class TournamentsService {
                     competitor1: { include: { fighter: true } },
                     competitor2: { include: { fighter: true } },
                     winner: { include: { fighter: true } },
+                    nomination: true,
                   },
                 },
                 bracket_slots: {
@@ -912,9 +932,7 @@ export class TournamentsService {
         this.formatFighterName(fight.competitor1.fighter),
         copy.blank,
         this.formatFighterName(fight.competitor2.fighter),
-        fight.is_finished
-          ? `${fight.competitor1_score}:${fight.competitor2_score}`
-          : '-',
+        fight.is_finished ? this.formatFightScore(fight) : '-',
         fight.winner ? this.formatFighterName(fight.winner.fighter) : '-',
       ]),
     );
@@ -950,12 +968,12 @@ export class TournamentsService {
 
       if (first) {
         first.diff += fight.competitor1_score - fight.competitor2_score;
-        if (fight.competitor1_score > fight.competitor2_score) first.wins++;
+        if (fight.winner_id === fight.competitor1_id) first.wins++;
       }
 
       if (second) {
         second.diff += fight.competitor2_score - fight.competitor1_score;
-        if (fight.competitor2_score > fight.competitor1_score) second.wins++;
+        if (fight.winner_id === fight.competitor2_id) second.wins++;
       }
     });
 
@@ -971,6 +989,69 @@ export class TournamentsService {
         this.formatFighterName(second.fighter),
       );
     });
+  }
+
+  private formatFightScore(fight: Fight) {
+    const nomination = fight.nomination ?? {
+      rounds: 1,
+      round_win: false,
+      name_en: '',
+      name_ru: '',
+    };
+    const rules: FightScoringRules = {
+      rounds: nomination.rounds as FightScoringRules['rounds'],
+      roundWin: nomination.round_win,
+    };
+    const allRounds: RoundScore[] = [
+      {
+        competitor1Score: fight.competitor1_round1_score,
+        competitor2Score: fight.competitor2_round1_score,
+      },
+      {
+        competitor1Score: fight.competitor1_round2_score,
+        competitor2Score: fight.competitor2_round2_score,
+      },
+      {
+        competitor1Score: fight.competitor1_round3_score,
+        competitor2Score: fight.competitor2_round3_score,
+      },
+    ];
+    if (
+      rules.roundWin &&
+      fight.competitor1_round4_score !== fight.competitor2_round4_score
+    ) {
+      allRounds.push({
+        competitor1Score: fight.competitor1_round4_score,
+        competitor2Score: fight.competitor2_round4_score,
+      });
+    }
+    const rounds = rules.rounds === 1 ? [] : allRounds.slice(0, rules.roundWin ? 4 : rules.rounds);
+    const evaluation = evaluateFightScore(
+      rules,
+      rounds,
+      rules.rounds === 1
+        ? {
+            competitor1Score: fight.competitor1_score,
+            competitor2Score: fight.competitor2_score,
+          }
+        : undefined,
+    );
+
+    const displayEvaluation =
+      fight.forfeit_card_id !== null
+        ? {
+            ...evaluation,
+            competitor1Total: fight.competitor1_score,
+            competitor2Total: fight.competitor2_score,
+          }
+        : evaluation;
+
+    return formatFightResult(
+      rules,
+      displayEvaluation,
+      rounds,
+      fight.forfeit_card_id !== null,
+    );
   }
 
   private getOlympicRounds(fights: Fight[]) {

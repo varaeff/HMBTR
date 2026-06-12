@@ -31,6 +31,7 @@ import { useCollapsiblePersist } from '@/composables/useCollapsiblePersist'
 import { tData } from '@/lib/utils'
 import { dateToString } from '@/lib/dateUtils'
 import { hasAccess, hasAdminAccess, hasTournamentMarshalAccess } from '@/lib/checkAccess'
+import { areFightResultsReady, canShowGroupFightActions } from '@/lib/fightResult'
 import { API_ROUTES } from '@shared/routes'
 
 import type { CompetitionBlock, DisciplinaryCardType, Tournament } from '@/model'
@@ -223,16 +224,28 @@ const activeCardTypes = computed<Partial<Record<number, DisciplinaryCardType>>>(
   return statuses
 })
 
+const getRedCardGroupFighterKeys = (block: CompetitionBlock) => {
+  const keys = new Set<string>()
+
+  for (const card of cardsStore.tournamentCards) {
+    if (
+      card.type !== 'RED' ||
+      card.nomination_id !== activeTab.value ||
+      card.fight_stage !== block.stage ||
+      !card.group_name ||
+      !isCardActive(card.received_at, card.expires_at)
+    ) {
+      continue
+    }
+    keys.add(`${card.group_name}:${card.fighter_id}`)
+  }
+
+  return keys
+}
+
 const activeGroupBlockComplete = computed(() => {
   if (!activeBlock.value || activeBlock.value.type !== 'GROUP') return false
-  return (
-    activeBlock.value.fights.length > 0 &&
-    activeBlock.value.fights.every(
-      (fight) =>
-        !(fight.fighter1Score === 0 && fight.fighter2Score === 0) &&
-        fight.fighter1Score !== fight.fighter2Score
-    )
-  )
+  return areFightResultsReady(activeBlock.value.fights)
 })
 
 const activeGroupFightsGenerated = computed(() => {
@@ -751,6 +764,7 @@ watch(
               <NominationGroups
                 :groups="block.groups"
                 :activeCardTypes="activeCardTypes"
+                :redCardGroupFighterKeys="getRedCardGroupFighterKeys(block)"
                 :highlightedAdvancerCompetitorIds="olympicCompetitorIds"
                 :isFixed="
                   !canEditCompetition || block.status !== 'ACTIVE' || block.fights.length > 0
@@ -790,11 +804,7 @@ watch(
                 @card-issued="refreshCardsAndCompetition"
               />
               <div
-                v-if="
-                  canEditCompetition &&
-                  block.status === 'ACTIVE' &&
-                  block.lifecycleState === 'FIGHTS_EDITABLE'
-                "
+                v-if="canEditCompetition && canShowGroupFightActions(block, pendingTie)"
                 class="flex flex-wrap justify-center gap-3 my-5"
               >
                 <Button
@@ -855,9 +865,9 @@ watch(
             !nominationFinished
           "
         >
-          <Button v-if="activeBlock.groups.length === 1" @click="finishCompetition"
-            >{{ $t('tournamentPageFixTournamentResults') }}</Button
-          >
+          <Button v-if="activeBlock.groups.length === 1" @click="finishCompetition">{{
+            $t('tournamentPageFixTournamentResults')
+          }}</Button>
           <template v-else>
             <Button @click="createGroupBlock">{{ $t('tournamentPageNextSubgroups') }}</Button>
             <Button v-if="canOfferOlympic" @click="() => createOlympicBlock()">{{

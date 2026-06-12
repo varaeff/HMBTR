@@ -7,6 +7,11 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateFightDto } from './dto/create-fight.dto';
 import { UpdateFightScoresDto } from './dto/update-fight-scores.dto';
 import { SetFightWinnerDto } from './dto/set-fight-winner.dto';
+import {
+  evaluateSubmittedFightScore,
+  fightScoreUpdateData,
+  scoringRules,
+} from './fight-score-data';
 
 @Injectable()
 export class FightsService {
@@ -99,19 +104,28 @@ export class FightsService {
   async updateScores(dto: UpdateFightScoresDto) {
     const fight = await this.prisma.fights.findUnique({
       where: { id: dto.fight_id },
+      include: { nomination: true },
     });
 
     if (!fight) throw new NotFoundException('Fight not found');
 
+    const evaluation = evaluateSubmittedFightScore(
+      scoringRules(fight.nomination),
+      dto,
+      false,
+    );
+    const winnerId =
+      evaluation.winnerSide === 1
+        ? fight.competitor1_id
+        : evaluation.winnerSide === 2
+          ? fight.competitor2_id
+          : null;
+
     return this.prisma.fights.update({
       where: { id: dto.fight_id },
       data: {
-        ...(dto.competitor1_score !== undefined && {
-          competitor1_score: dto.competitor1_score,
-        }),
-        ...(dto.competitor2_score !== undefined && {
-          competitor2_score: dto.competitor2_score,
-        }),
+        ...fightScoreUpdateData(evaluation, dto),
+        ...(fight.is_finished && { winner_id: winnerId }),
       },
     });
   }
