@@ -7,6 +7,18 @@ export interface RoundScore {
   competitor2Score: number
 }
 
+export interface FightWarning {
+  competitorId: number
+  round: number
+  reason: string
+}
+
+export interface FightWarningContext {
+  competitor1Id: number
+  competitor2Id: number
+  warnings: FightWarning[]
+}
+
 export interface FightScoringRules {
   rounds: 1 | 2 | 3
   roundWin: boolean
@@ -24,8 +36,155 @@ export interface FightScoreEvaluation {
   error: string | null
 }
 
+export interface WarningScorePart {
+  competitor1Score: number
+  competitor2Score: number
+  competitor1Bonus: number
+  competitor2Bonus: number
+}
+
+export interface WarningAdjustedScore {
+  aggregateScore: RoundScore
+  roundScores: RoundScore[]
+  scoreParts: WarningScorePart[]
+  technicalLoserSide: WinnerSide
+}
+
+export const WARNING_SCORE_BONUS = 3
+export const MAX_FIGHT_WARNINGS_PER_COMPETITOR = 3
+
 const isValidScore = (score: number) =>
   Number.isSafeInteger(score) && score >= 0 && score <= MAX_SCORE
+
+export const getFightWarningCount = (warnings: FightWarning[], competitorId: number) =>
+  warnings.filter((warning) => warning.competitorId === competitorId).length
+
+export const getFightWarningTechnicalLoserSide = ({
+  competitor1Id,
+  competitor2Id,
+  warnings
+}: FightWarningContext): WinnerSide => {
+  const competitor1Warnings = getFightWarningCount(warnings, competitor1Id)
+  const competitor2Warnings = getFightWarningCount(warnings, competitor2Id)
+
+  if (
+    competitor1Warnings >= MAX_FIGHT_WARNINGS_PER_COMPETITOR &&
+    competitor2Warnings < MAX_FIGHT_WARNINGS_PER_COMPETITOR
+  ) {
+    return 1
+  }
+
+  if (
+    competitor2Warnings >= MAX_FIGHT_WARNINGS_PER_COMPETITOR &&
+    competitor1Warnings < MAX_FIGHT_WARNINGS_PER_COMPETITOR
+  ) {
+    return 2
+  }
+
+  return null
+}
+
+export const getTechnicalDefeatScore = (
+  rules: FightScoringRules,
+  loserSide: 1 | 2
+): { aggregateScore: RoundScore; roundScores: RoundScore[] } => {
+  const winnerScore = rules.roundWin ? rules.rounds : 10
+  const winnerRoundScore = rules.roundWin ? 5 : 0
+  const winnerIsFirst = loserSide === 2
+  const roundScores = Array.from({ length: rules.rounds }, () => ({
+    competitor1Score: rules.roundWin && winnerIsFirst ? winnerRoundScore : 0,
+    competitor2Score: rules.roundWin && !winnerIsFirst ? winnerRoundScore : 0
+  }))
+
+  return {
+    aggregateScore: {
+      competitor1Score: winnerIsFirst ? winnerScore : 0,
+      competitor2Score: winnerIsFirst ? 0 : winnerScore
+    },
+    roundScores
+  }
+}
+
+export const applyFightWarningBonuses = (
+  rules: FightScoringRules,
+  warningContext: FightWarningContext,
+  roundScores: RoundScore[],
+  aggregateScores?: RoundScore
+): WarningAdjustedScore => {
+  const technicalLoserSide = getFightWarningTechnicalLoserSide(warningContext)
+
+  if (technicalLoserSide) {
+    const technicalScore = getTechnicalDefeatScore(rules, technicalLoserSide)
+    const technicalScoreParts =
+      rules.rounds === 1 ? [technicalScore.aggregateScore] : technicalScore.roundScores
+    return {
+      aggregateScore: technicalScore.aggregateScore,
+      roundScores: technicalScore.roundScores,
+      scoreParts: technicalScoreParts.map((score) => ({
+        ...score,
+        competitor1Bonus: 0,
+        competitor2Bonus: 0
+      })),
+      technicalLoserSide
+    }
+  }
+
+  const scoreParts =
+    rules.rounds === 1
+      ? [
+          {
+            competitor1Score: aggregateScores?.competitor1Score ?? 0,
+            competitor2Score: aggregateScores?.competitor2Score ?? 0,
+            competitor1Bonus:
+              getFightWarningCount(warningContext.warnings, warningContext.competitor2Id) *
+              WARNING_SCORE_BONUS,
+            competitor2Bonus:
+              getFightWarningCount(warningContext.warnings, warningContext.competitor1Id) *
+              WARNING_SCORE_BONUS
+          }
+        ]
+      : roundScores.map((score, index) => {
+          const round = index + 1
+          return {
+            competitor1Score: score.competitor1Score,
+            competitor2Score: score.competitor2Score,
+            competitor1Bonus:
+              warningContext.warnings.filter(
+                (warning) =>
+                  warning.competitorId === warningContext.competitor2Id &&
+                  warning.round === round
+              ).length * WARNING_SCORE_BONUS,
+            competitor2Bonus:
+              warningContext.warnings.filter(
+                (warning) =>
+                  warning.competitorId === warningContext.competitor1Id &&
+                  warning.round === round
+              ).length * WARNING_SCORE_BONUS
+          }
+        })
+
+  const adjustedRounds = scoreParts.map((score) => ({
+    competitor1Score: score.competitor1Score + score.competitor1Bonus,
+    competitor2Score: score.competitor2Score + score.competitor2Bonus
+  }))
+  const aggregateScore =
+    rules.rounds === 1
+      ? adjustedRounds[0]
+      : adjustedRounds.reduce(
+          (sum, score) => ({
+            competitor1Score: sum.competitor1Score + score.competitor1Score,
+            competitor2Score: sum.competitor2Score + score.competitor2Score
+          }),
+          { competitor1Score: 0, competitor2Score: 0 }
+        )
+
+  return {
+    aggregateScore,
+    roundScores: adjustedRounds,
+    scoreParts,
+    technicalLoserSide
+  }
+}
 
 export const evaluateFightScore = (
   rules: FightScoringRules,

@@ -65,6 +65,7 @@ export const ModelName = {
   groups: 'groups',
   group_competitors: 'group_competitors',
   fights: 'fights',
+  fight_warnings: 'fight_warnings',
   disciplinary_cards: 'disciplinary_cards',
   fighter_nomination_ratings: 'fighter_nomination_ratings',
   fighter_nomination_rating_history: 'fighter_nomination_rating_history',
@@ -267,6 +268,18 @@ export const FightsScalarFieldEnum = {
 } as const
 
 export type FightsScalarFieldEnum = (typeof FightsScalarFieldEnum)[keyof typeof FightsScalarFieldEnum]
+
+
+export const Fight_warningsScalarFieldEnum = {
+  id: 'id',
+  fight_id: 'fight_id',
+  competitor_id: 'competitor_id',
+  round: 'round',
+  reason: 'reason',
+  created_at: 'created_at'
+} as const
+
+export type Fight_warningsScalarFieldEnum = (typeof Fight_warningsScalarFieldEnum)[keyof typeof Fight_warningsScalarFieldEnum]
 
 
 export const Disciplinary_cardsScalarFieldEnum = {

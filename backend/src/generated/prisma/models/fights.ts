@@ -472,6 +472,7 @@ export type fightsWhereInput = {
   competitor2?: Prisma.XOR<Prisma.CompetitorsScalarRelationFilter, Prisma.competitorsWhereInput>
   winner?: Prisma.XOR<Prisma.CompetitorsNullableScalarRelationFilter, Prisma.competitorsWhereInput> | null
   disciplinary_cards?: Prisma.Disciplinary_cardsListRelationFilter
+  warnings?: Prisma.Fight_warningsListRelationFilter
 }
 
 export type fightsOrderByWithRelationInput = {
@@ -508,6 +509,7 @@ export type fightsOrderByWithRelationInput = {
   competitor2?: Prisma.competitorsOrderByWithRelationInput
   winner?: Prisma.competitorsOrderByWithRelationInput
   disciplinary_cards?: Prisma.disciplinary_cardsOrderByRelationAggregateInput
+  warnings?: Prisma.fight_warningsOrderByRelationAggregateInput
 }
 
 export type fightsWhereUniqueInput = Prisma.AtLeast<{
@@ -547,6 +549,7 @@ export type fightsWhereUniqueInput = Prisma.AtLeast<{
   competitor2?: Prisma.XOR<Prisma.CompetitorsScalarRelationFilter, Prisma.competitorsWhereInput>
   winner?: Prisma.XOR<Prisma.CompetitorsNullableScalarRelationFilter, Prisma.competitorsWhereInput> | null
   disciplinary_cards?: Prisma.Disciplinary_cardsListRelationFilter
+  warnings?: Prisma.Fight_warningsListRelationFilter
 }, "id">
 
 export type fightsOrderByWithAggregationInput = {
@@ -639,6 +642,7 @@ export type fightsCreateInput = {
   competitor2: Prisma.competitorsCreateNestedOneWithoutFights_as_f2Input
   winner?: Prisma.competitorsCreateNestedOneWithoutFights_wonInput
   disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutFightInput
+  warnings?: Prisma.fight_warningsCreateNestedManyWithoutFightInput
 }
 
 export type fightsUncheckedCreateInput = {
@@ -668,6 +672,7 @@ export type fightsUncheckedCreateInput = {
   is_finished?: boolean
   forfeit_card_id?: number | null
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutFightInput
+  warnings?: Prisma.fight_warningsUncheckedCreateNestedManyWithoutFightInput
 }
 
 export type fightsUpdateInput = {
@@ -696,6 +701,7 @@ export type fightsUpdateInput = {
   competitor2?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f2NestedInput
   winner?: Prisma.competitorsUpdateOneWithoutFights_wonNestedInput
   disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutFightNestedInput
+  warnings?: Prisma.fight_warningsUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateInput = {
@@ -725,6 +731,7 @@ export type fightsUncheckedUpdateInput = {
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFightNestedInput
+  warnings?: Prisma.fight_warningsUncheckedUpdateManyWithoutFightNestedInput
 }
 
 export type fightsCreateManyInput = {
@@ -1206,6 +1213,20 @@ export type fightsUncheckedUpdateManyWithoutGroupNestedInput = {
   deleteMany?: Prisma.fightsScalarWhereInput | Prisma.fightsScalarWhereInput[]
 }
 
+export type fightsCreateNestedOneWithoutWarningsInput = {
+  create?: Prisma.XOR<Prisma.fightsCreateWithoutWarningsInput, Prisma.fightsUncheckedCreateWithoutWarningsInput>
+  connectOrCreate?: Prisma.fightsCreateOrConnectWithoutWarningsInput
+  connect?: Prisma.fightsWhereUniqueInput
+}
+
+export type fightsUpdateOneRequiredWithoutWarningsNestedInput = {
+  create?: Prisma.XOR<Prisma.fightsCreateWithoutWarningsInput, Prisma.fightsUncheckedCreateWithoutWarningsInput>
+  connectOrCreate?: Prisma.fightsCreateOrConnectWithoutWarningsInput
+  upsert?: Prisma.fightsUpsertWithoutWarningsInput
+  connect?: Prisma.fightsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.fightsUpdateToOneWithWhereWithoutWarningsInput, Prisma.fightsUpdateWithoutWarningsInput>, Prisma.fightsUncheckedUpdateWithoutWarningsInput>
+}
+
 export type fightsCreateNestedOneWithoutDisciplinary_cardsInput = {
   create?: Prisma.XOR<Prisma.fightsCreateWithoutDisciplinary_cardsInput, Prisma.fightsUncheckedCreateWithoutDisciplinary_cardsInput>
   connectOrCreate?: Prisma.fightsCreateOrConnectWithoutDisciplinary_cardsInput
@@ -1287,6 +1308,7 @@ export type fightsCreateWithoutTournamentInput = {
   competitor2: Prisma.competitorsCreateNestedOneWithoutFights_as_f2Input
   winner?: Prisma.competitorsCreateNestedOneWithoutFights_wonInput
   disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutFightInput
+  warnings?: Prisma.fight_warningsCreateNestedManyWithoutFightInput
 }
 
 export type fightsUncheckedCreateWithoutTournamentInput = {
@@ -1315,6 +1337,7 @@ export type fightsUncheckedCreateWithoutTournamentInput = {
   is_finished?: boolean
   forfeit_card_id?: number | null
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutFightInput
+  warnings?: Prisma.fight_warningsUncheckedCreateNestedManyWithoutFightInput
 }
 
 export type fightsCreateOrConnectWithoutTournamentInput = {
@@ -1399,6 +1422,7 @@ export type fightsCreateWithoutNominationInput = {
   competitor2: Prisma.competitorsCreateNestedOneWithoutFights_as_f2Input
   winner?: Prisma.competitorsCreateNestedOneWithoutFights_wonInput
   disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutFightInput
+  warnings?: Prisma.fight_warningsCreateNestedManyWithoutFightInput
 }
 
 export type fightsUncheckedCreateWithoutNominationInput = {
@@ -1427,6 +1451,7 @@ export type fightsUncheckedCreateWithoutNominationInput = {
   is_finished?: boolean
   forfeit_card_id?: number | null
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutFightInput
+  warnings?: Prisma.fight_warningsUncheckedCreateNestedManyWithoutFightInput
 }
 
 export type fightsCreateOrConnectWithoutNominationInput = {
@@ -1480,6 +1505,7 @@ export type fightsCreateWithoutCompetitor1Input = {
   competitor2: Prisma.competitorsCreateNestedOneWithoutFights_as_f2Input
   winner?: Prisma.competitorsCreateNestedOneWithoutFights_wonInput
   disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutFightInput
+  warnings?: Prisma.fight_warningsCreateNestedManyWithoutFightInput
 }
 
 export type fightsUncheckedCreateWithoutCompetitor1Input = {
@@ -1508,6 +1534,7 @@ export type fightsUncheckedCreateWithoutCompetitor1Input = {
   is_finished?: boolean
   forfeit_card_id?: number | null
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutFightInput
+  warnings?: Prisma.fight_warningsUncheckedCreateNestedManyWithoutFightInput
 }
 
 export type fightsCreateOrConnectWithoutCompetitor1Input = {
@@ -1545,6 +1572,7 @@ export type fightsCreateWithoutCompetitor2Input = {
   competitor1: Prisma.competitorsCreateNestedOneWithoutFights_as_f1Input
   winner?: Prisma.competitorsCreateNestedOneWithoutFights_wonInput
   disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutFightInput
+  warnings?: Prisma.fight_warningsCreateNestedManyWithoutFightInput
 }
 
 export type fightsUncheckedCreateWithoutCompetitor2Input = {
@@ -1573,6 +1601,7 @@ export type fightsUncheckedCreateWithoutCompetitor2Input = {
   is_finished?: boolean
   forfeit_card_id?: number | null
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutFightInput
+  warnings?: Prisma.fight_warningsUncheckedCreateNestedManyWithoutFightInput
 }
 
 export type fightsCreateOrConnectWithoutCompetitor2Input = {
@@ -1610,6 +1639,7 @@ export type fightsCreateWithoutWinnerInput = {
   competitor1: Prisma.competitorsCreateNestedOneWithoutFights_as_f1Input
   competitor2: Prisma.competitorsCreateNestedOneWithoutFights_as_f2Input
   disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutFightInput
+  warnings?: Prisma.fight_warningsCreateNestedManyWithoutFightInput
 }
 
 export type fightsUncheckedCreateWithoutWinnerInput = {
@@ -1638,6 +1668,7 @@ export type fightsUncheckedCreateWithoutWinnerInput = {
   is_finished?: boolean
   forfeit_card_id?: number | null
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutFightInput
+  warnings?: Prisma.fight_warningsUncheckedCreateNestedManyWithoutFightInput
 }
 
 export type fightsCreateOrConnectWithoutWinnerInput = {
@@ -1723,6 +1754,7 @@ export type fightsCreateWithoutGroupInput = {
   competitor2: Prisma.competitorsCreateNestedOneWithoutFights_as_f2Input
   winner?: Prisma.competitorsCreateNestedOneWithoutFights_wonInput
   disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutFightInput
+  warnings?: Prisma.fight_warningsCreateNestedManyWithoutFightInput
 }
 
 export type fightsUncheckedCreateWithoutGroupInput = {
@@ -1751,6 +1783,7 @@ export type fightsUncheckedCreateWithoutGroupInput = {
   is_finished?: boolean
   forfeit_card_id?: number | null
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutFightInput
+  warnings?: Prisma.fight_warningsUncheckedCreateNestedManyWithoutFightInput
 }
 
 export type fightsCreateOrConnectWithoutGroupInput = {
@@ -1779,6 +1812,136 @@ export type fightsUpdateManyWithWhereWithoutGroupInput = {
   data: Prisma.XOR<Prisma.fightsUpdateManyMutationInput, Prisma.fightsUncheckedUpdateManyWithoutGroupInput>
 }
 
+export type fightsCreateWithoutWarningsInput = {
+  competitor1_score?: number
+  competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
+  stage?: number
+  fight_number?: number
+  bracket_round?: number | null
+  bracket_position?: number | null
+  is_bronze?: boolean
+  is_finished?: boolean
+  forfeit_card_id?: number | null
+  tournament: Prisma.tournamentsCreateNestedOneWithoutFightsInput
+  nomination: Prisma.nominationsCreateNestedOneWithoutFightsInput
+  block?: Prisma.competition_blocksCreateNestedOneWithoutFightsInput
+  group?: Prisma.groupsCreateNestedOneWithoutFightsInput
+  competitor1: Prisma.competitorsCreateNestedOneWithoutFights_as_f1Input
+  competitor2: Prisma.competitorsCreateNestedOneWithoutFights_as_f2Input
+  winner?: Prisma.competitorsCreateNestedOneWithoutFights_wonInput
+  disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutFightInput
+}
+
+export type fightsUncheckedCreateWithoutWarningsInput = {
+  id?: number
+  tournament_id: number
+  nomination_id: number
+  block_id?: number | null
+  group_id?: number | null
+  competitor1_id: number
+  competitor2_id: number
+  competitor1_score?: number
+  competitor2_score?: number
+  competitor1_round1_score?: number
+  competitor2_round1_score?: number
+  competitor1_round2_score?: number
+  competitor2_round2_score?: number
+  competitor1_round3_score?: number
+  competitor2_round3_score?: number
+  competitor1_round4_score?: number
+  competitor2_round4_score?: number
+  winner_id?: number | null
+  stage?: number
+  fight_number?: number
+  bracket_round?: number | null
+  bracket_position?: number | null
+  is_bronze?: boolean
+  is_finished?: boolean
+  forfeit_card_id?: number | null
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutFightInput
+}
+
+export type fightsCreateOrConnectWithoutWarningsInput = {
+  where: Prisma.fightsWhereUniqueInput
+  create: Prisma.XOR<Prisma.fightsCreateWithoutWarningsInput, Prisma.fightsUncheckedCreateWithoutWarningsInput>
+}
+
+export type fightsUpsertWithoutWarningsInput = {
+  update: Prisma.XOR<Prisma.fightsUpdateWithoutWarningsInput, Prisma.fightsUncheckedUpdateWithoutWarningsInput>
+  create: Prisma.XOR<Prisma.fightsCreateWithoutWarningsInput, Prisma.fightsUncheckedCreateWithoutWarningsInput>
+  where?: Prisma.fightsWhereInput
+}
+
+export type fightsUpdateToOneWithWhereWithoutWarningsInput = {
+  where?: Prisma.fightsWhereInput
+  data: Prisma.XOR<Prisma.fightsUpdateWithoutWarningsInput, Prisma.fightsUncheckedUpdateWithoutWarningsInput>
+}
+
+export type fightsUpdateWithoutWarningsInput = {
+  competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  fight_number?: Prisma.IntFieldUpdateOperationsInput | number
+  bracket_round?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tournament?: Prisma.tournamentsUpdateOneRequiredWithoutFightsNestedInput
+  nomination?: Prisma.nominationsUpdateOneRequiredWithoutFightsNestedInput
+  block?: Prisma.competition_blocksUpdateOneWithoutFightsNestedInput
+  group?: Prisma.groupsUpdateOneWithoutFightsNestedInput
+  competitor1?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f1NestedInput
+  competitor2?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f2NestedInput
+  winner?: Prisma.competitorsUpdateOneWithoutFights_wonNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutFightNestedInput
+}
+
+export type fightsUncheckedUpdateWithoutWarningsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  block_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  group_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  competitor1_id?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_id?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round1_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round3_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor1_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  competitor2_round4_score?: Prisma.IntFieldUpdateOperationsInput | number
+  winner_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  fight_number?: Prisma.IntFieldUpdateOperationsInput | number
+  bracket_round?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  bracket_position?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFightNestedInput
+}
+
 export type fightsCreateWithoutDisciplinary_cardsInput = {
   competitor1_score?: number
   competitor2_score?: number
@@ -1804,6 +1967,7 @@ export type fightsCreateWithoutDisciplinary_cardsInput = {
   competitor1: Prisma.competitorsCreateNestedOneWithoutFights_as_f1Input
   competitor2: Prisma.competitorsCreateNestedOneWithoutFights_as_f2Input
   winner?: Prisma.competitorsCreateNestedOneWithoutFights_wonInput
+  warnings?: Prisma.fight_warningsCreateNestedManyWithoutFightInput
 }
 
 export type fightsUncheckedCreateWithoutDisciplinary_cardsInput = {
@@ -1832,6 +1996,7 @@ export type fightsUncheckedCreateWithoutDisciplinary_cardsInput = {
   is_bronze?: boolean
   is_finished?: boolean
   forfeit_card_id?: number | null
+  warnings?: Prisma.fight_warningsUncheckedCreateNestedManyWithoutFightInput
 }
 
 export type fightsCreateOrConnectWithoutDisciplinary_cardsInput = {
@@ -1875,6 +2040,7 @@ export type fightsUpdateWithoutDisciplinary_cardsInput = {
   competitor1?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f1NestedInput
   competitor2?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f2NestedInput
   winner?: Prisma.competitorsUpdateOneWithoutFights_wonNestedInput
+  warnings?: Prisma.fight_warningsUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateWithoutDisciplinary_cardsInput = {
@@ -1903,6 +2069,7 @@ export type fightsUncheckedUpdateWithoutDisciplinary_cardsInput = {
   is_bronze?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  warnings?: Prisma.fight_warningsUncheckedUpdateManyWithoutFightNestedInput
 }
 
 export type fightsCreateWithoutBlockInput = {
@@ -1930,6 +2097,7 @@ export type fightsCreateWithoutBlockInput = {
   competitor2: Prisma.competitorsCreateNestedOneWithoutFights_as_f2Input
   winner?: Prisma.competitorsCreateNestedOneWithoutFights_wonInput
   disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutFightInput
+  warnings?: Prisma.fight_warningsCreateNestedManyWithoutFightInput
 }
 
 export type fightsUncheckedCreateWithoutBlockInput = {
@@ -1958,6 +2126,7 @@ export type fightsUncheckedCreateWithoutBlockInput = {
   is_finished?: boolean
   forfeit_card_id?: number | null
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutFightInput
+  warnings?: Prisma.fight_warningsUncheckedCreateNestedManyWithoutFightInput
 }
 
 export type fightsCreateOrConnectWithoutBlockInput = {
@@ -2038,6 +2207,7 @@ export type fightsUpdateWithoutTournamentInput = {
   competitor2?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f2NestedInput
   winner?: Prisma.competitorsUpdateOneWithoutFights_wonNestedInput
   disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutFightNestedInput
+  warnings?: Prisma.fight_warningsUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateWithoutTournamentInput = {
@@ -2066,6 +2236,7 @@ export type fightsUncheckedUpdateWithoutTournamentInput = {
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFightNestedInput
+  warnings?: Prisma.fight_warningsUncheckedUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateManyWithoutTournamentInput = {
@@ -2147,6 +2318,7 @@ export type fightsUpdateWithoutNominationInput = {
   competitor2?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f2NestedInput
   winner?: Prisma.competitorsUpdateOneWithoutFights_wonNestedInput
   disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutFightNestedInput
+  warnings?: Prisma.fight_warningsUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateWithoutNominationInput = {
@@ -2175,6 +2347,7 @@ export type fightsUncheckedUpdateWithoutNominationInput = {
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFightNestedInput
+  warnings?: Prisma.fight_warningsUncheckedUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateManyWithoutNominationInput = {
@@ -2310,6 +2483,7 @@ export type fightsUpdateWithoutCompetitor1Input = {
   competitor2?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f2NestedInput
   winner?: Prisma.competitorsUpdateOneWithoutFights_wonNestedInput
   disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutFightNestedInput
+  warnings?: Prisma.fight_warningsUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateWithoutCompetitor1Input = {
@@ -2338,6 +2512,7 @@ export type fightsUncheckedUpdateWithoutCompetitor1Input = {
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFightNestedInput
+  warnings?: Prisma.fight_warningsUncheckedUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateManyWithoutCompetitor1Input = {
@@ -2392,6 +2567,7 @@ export type fightsUpdateWithoutCompetitor2Input = {
   competitor1?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f1NestedInput
   winner?: Prisma.competitorsUpdateOneWithoutFights_wonNestedInput
   disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutFightNestedInput
+  warnings?: Prisma.fight_warningsUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateWithoutCompetitor2Input = {
@@ -2420,6 +2596,7 @@ export type fightsUncheckedUpdateWithoutCompetitor2Input = {
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFightNestedInput
+  warnings?: Prisma.fight_warningsUncheckedUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateManyWithoutCompetitor2Input = {
@@ -2474,6 +2651,7 @@ export type fightsUpdateWithoutWinnerInput = {
   competitor1?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f1NestedInput
   competitor2?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f2NestedInput
   disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutFightNestedInput
+  warnings?: Prisma.fight_warningsUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateWithoutWinnerInput = {
@@ -2502,6 +2680,7 @@ export type fightsUncheckedUpdateWithoutWinnerInput = {
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFightNestedInput
+  warnings?: Prisma.fight_warningsUncheckedUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateManyWithoutWinnerInput = {
@@ -2583,6 +2762,7 @@ export type fightsUpdateWithoutGroupInput = {
   competitor2?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f2NestedInput
   winner?: Prisma.competitorsUpdateOneWithoutFights_wonNestedInput
   disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutFightNestedInput
+  warnings?: Prisma.fight_warningsUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateWithoutGroupInput = {
@@ -2611,6 +2791,7 @@ export type fightsUncheckedUpdateWithoutGroupInput = {
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFightNestedInput
+  warnings?: Prisma.fight_warningsUncheckedUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateManyWithoutGroupInput = {
@@ -2692,6 +2873,7 @@ export type fightsUpdateWithoutBlockInput = {
   competitor2?: Prisma.competitorsUpdateOneRequiredWithoutFights_as_f2NestedInput
   winner?: Prisma.competitorsUpdateOneWithoutFights_wonNestedInput
   disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutFightNestedInput
+  warnings?: Prisma.fight_warningsUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateWithoutBlockInput = {
@@ -2720,6 +2902,7 @@ export type fightsUncheckedUpdateWithoutBlockInput = {
   is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   forfeit_card_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFightNestedInput
+  warnings?: Prisma.fight_warningsUncheckedUpdateManyWithoutFightNestedInput
 }
 
 export type fightsUncheckedUpdateManyWithoutBlockInput = {
@@ -2756,10 +2939,12 @@ export type fightsUncheckedUpdateManyWithoutBlockInput = {
 
 export type FightsCountOutputType = {
   disciplinary_cards: number
+  warnings: number
 }
 
 export type FightsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   disciplinary_cards?: boolean | FightsCountOutputTypeCountDisciplinary_cardsArgs
+  warnings?: boolean | FightsCountOutputTypeCountWarningsArgs
 }
 
 /**
@@ -2777,6 +2962,13 @@ export type FightsCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exten
  */
 export type FightsCountOutputTypeCountDisciplinary_cardsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.disciplinary_cardsWhereInput
+}
+
+/**
+ * FightsCountOutputType without action
+ */
+export type FightsCountOutputTypeCountWarningsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.fight_warningsWhereInput
 }
 
 
@@ -2814,6 +3006,7 @@ export type fightsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   competitor2?: boolean | Prisma.competitorsDefaultArgs<ExtArgs>
   winner?: boolean | Prisma.fights$winnerArgs<ExtArgs>
   disciplinary_cards?: boolean | Prisma.fights$disciplinary_cardsArgs<ExtArgs>
+  warnings?: boolean | Prisma.fights$warningsArgs<ExtArgs>
   _count?: boolean | Prisma.FightsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["fights"]>
 
@@ -2925,6 +3118,7 @@ export type fightsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   competitor2?: boolean | Prisma.competitorsDefaultArgs<ExtArgs>
   winner?: boolean | Prisma.fights$winnerArgs<ExtArgs>
   disciplinary_cards?: boolean | Prisma.fights$disciplinary_cardsArgs<ExtArgs>
+  warnings?: boolean | Prisma.fights$warningsArgs<ExtArgs>
   _count?: boolean | Prisma.FightsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type fightsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2957,6 +3151,7 @@ export type $fightsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     competitor2: Prisma.$competitorsPayload<ExtArgs>
     winner: Prisma.$competitorsPayload<ExtArgs> | null
     disciplinary_cards: Prisma.$disciplinary_cardsPayload<ExtArgs>[]
+    warnings: Prisma.$fight_warningsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -3386,6 +3581,7 @@ export interface Prisma__fightsClient<T, Null = never, ExtArgs extends runtime.T
   competitor2<T extends Prisma.competitorsDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competitorsDefaultArgs<ExtArgs>>): Prisma.Prisma__competitorsClient<runtime.Types.Result.GetResult<Prisma.$competitorsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   winner<T extends Prisma.fights$winnerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.fights$winnerArgs<ExtArgs>>): Prisma.Prisma__competitorsClient<runtime.Types.Result.GetResult<Prisma.$competitorsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   disciplinary_cards<T extends Prisma.fights$disciplinary_cardsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.fights$disciplinary_cardsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$disciplinary_cardsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  warnings<T extends Prisma.fights$warningsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.fights$warningsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fight_warningsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3914,6 +4110,30 @@ export type fights$disciplinary_cardsArgs<ExtArgs extends runtime.Types.Extensio
   take?: number
   skip?: number
   distinct?: Prisma.Disciplinary_cardsScalarFieldEnum | Prisma.Disciplinary_cardsScalarFieldEnum[]
+}
+
+/**
+ * fights.warnings
+ */
+export type fights$warningsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the fight_warnings
+   */
+  select?: Prisma.fight_warningsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the fight_warnings
+   */
+  omit?: Prisma.fight_warningsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.fight_warningsInclude<ExtArgs> | null
+  where?: Prisma.fight_warningsWhereInput
+  orderBy?: Prisma.fight_warningsOrderByWithRelationInput | Prisma.fight_warningsOrderByWithRelationInput[]
+  cursor?: Prisma.fight_warningsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Fight_warningsScalarFieldEnum | Prisma.Fight_warningsScalarFieldEnum[]
 }
 
 /**

@@ -4,7 +4,7 @@ import { useTranslation } from 'i18next-vue'
 import { useCompetitionStore } from '@/stores/competition'
 import { FightCard } from '@/components/ui/fightCard'
 import type { BlockData, DisciplinaryCardType } from '@/model'
-import type { RoundScore } from '@shared/fightScoring'
+import type { FightWarning, RoundScore } from '@shared/fightScoring'
 
 const props = defineProps<{
   hasAccess: boolean
@@ -46,6 +46,7 @@ const handleScoreUpdate = (
     f2?: number
     roundScores?: RoundScore[]
     tieBreakRoundRevealed?: boolean
+    warnings?: FightWarning[]
   }
 ) => {
   competitionStore.updateGlobalScore({
@@ -54,7 +55,8 @@ const handleScoreUpdate = (
     f1Score: scores.f1,
     f2Score: scores.f2,
     roundScores: scores.roundScores,
-    tieBreakRoundRevealed: scores.tieBreakRoundRevealed
+    tieBreakRoundRevealed: scores.tieBreakRoundRevealed,
+    warnings: scores.warnings
   })
 }
 

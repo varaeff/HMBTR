@@ -1,10 +1,12 @@
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   ArrayMaxSize,
   ArrayMinSize,
   IsArray,
   IsInt,
+  IsNotEmpty,
   IsOptional,
+  IsString,
   Max,
   Min,
   ValidateNested,
@@ -22,6 +24,23 @@ export class RoundScoreDto {
   @Min(0)
   @Max(MAX_SCORE)
   competitor2_score: number;
+}
+
+export class FightWarningDto {
+  @IsInt()
+  competitor_id: number;
+
+  @IsInt()
+  @Min(1)
+  @Max(4)
+  round: number;
+
+  @IsString()
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
+  @IsNotEmpty()
+  reason: string;
 }
 
 export class SaveCompetitionResultFightDto {
@@ -47,6 +66,13 @@ export class SaveCompetitionResultFightDto {
   @ValidateNested({ each: true })
   @Type(() => RoundScoreDto)
   round_scores?: RoundScoreDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(6)
+  @ValidateNested({ each: true })
+  @Type(() => FightWarningDto)
+  warnings?: FightWarningDto[];
 }
 
 export class SaveCompetitionResultsDto {

@@ -120,7 +120,10 @@ export interface FightData {
   competitor2Id?: number
   fighter1Score: number
   fighter2Score: number
+  fighter1EffectiveScore?: number
+  fighter2EffectiveScore?: number
   roundScores: Array<{ competitor1Score: number; competitor2Score: number }>
+  warnings?: Array<{ competitorId: number; round: number; reason: string }>
   rounds: 1 | 2 | 3
   roundWin: boolean
   tieBreakRoundRevealed?: boolean
@@ -320,10 +323,7 @@ export interface FighterRegistrationEligibility {
 
 export type CompetitionBlockType = 'GROUP' | 'OLYMPIC'
 export type CompetitionBlockStatus = 'ACTIVE' | 'LOCKED'
-export type CompetitionLifecycleState =
-  | 'FORMATION_EDITABLE'
-  | 'FIGHTS_EDITABLE'
-  | 'RESULTS_FIXED'
+export type CompetitionLifecycleState = 'FORMATION_EDITABLE' | 'FIGHTS_EDITABLE' | 'RESULTS_FIXED'
 
 export interface CompetitionRoundState {
   round: number

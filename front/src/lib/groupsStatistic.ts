@@ -18,7 +18,16 @@ export const updateGroupsStatistics = (groups: Group[], blocks: BlockData[]): vo
 
   // 3. Расчет очков
   for (const fight of allFights) {
-    const { fighter1Score: s1, fighter2Score: s2, fighter1, fighter2 } = fight
+    const {
+      fighter1Score,
+      fighter2Score,
+      fighter1EffectiveScore,
+      fighter2EffectiveScore,
+      fighter1,
+      fighter2
+    } = fight
+    const s1 = fighter1EffectiveScore ?? fighter1Score
+    const s2 = fighter2EffectiveScore ?? fighter2Score
 
     // Пропускаем бои без результата
     if (s1 === 0 && s2 === 0) continue

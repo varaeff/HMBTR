@@ -2,25 +2,25 @@
 import { computed, ref, watch } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { useDisciplinaryCardsStore } from '@/stores/disciplinaryCards'
-import { Button } from '@/components/ui/button'
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuTrigger
-} from '@/components/ui/context-menu'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog'
-import { CardStatusIcon } from '@/widgets/DisciplinaryCards'
 import { tData } from '@/lib/utils'
 import type { DisciplinaryCardType, FightData, Fighter } from '@/model'
-import { evaluateFightScore, formatFightResult, type RoundScore } from '@shared/fightScoring'
+import FightParticipantLabel from './FightParticipantLabel.vue'
+import FightResultDisplay from './FightResultDisplay.vue'
+import FightScoreEditor from './FightScoreEditor.vue'
+import FightWarningIssueDialog from './FightWarningIssueDialog.vue'
+import IssueCardDialog from './IssueCardDialog.vue'
+import { useFightWarningPresentation } from './useFightWarningPresentation'
+import { useIssueCardDialog } from './useIssueCardDialog'
+import type { FighterSide, FightResultDisplayText, FightWarningResultScore } from './types'
+import {
+  applyFightWarningBonuses,
+  evaluateFightScore,
+  formatFightResult,
+  getFightWarningCount,
+  type FightScoreEvaluation,
+  type FightWarning,
+  type RoundScore
+} from '@shared/fightScoring'
 
 const props = defineProps<{
   fight: FightData
@@ -39,6 +39,7 @@ const emit = defineEmits<{
       f2?: number
       roundScores?: RoundScore[]
       tieBreakRoundRevealed?: boolean
+      warnings?: FightWarning[]
     }
   ): void
   (e: 'card-issued'): void
@@ -47,29 +48,69 @@ const emit = defineEmits<{
 const score1 = ref(props.fight.fighter1Score)
 const score2 = ref(props.fight.fighter2Score)
 const roundScores = ref<RoundScore[]>(props.fight.roundScores.map((score) => ({ ...score })))
+const warnings = ref<FightWarning[]>(
+  (props.fight.warnings ?? []).map((warning) => ({ ...warning }))
+)
 const tieBreakRoundRevealed = ref(Boolean(props.fight.tieBreakRoundRevealed))
 const { i18next } = useTranslation()
 const cardsStore = useDisciplinaryCardsStore()
-const issueDialogOpen = ref(false)
-const issueFighter = ref<Fighter | null>(null)
-const issueType = ref<DisciplinaryCardType>('YELLOW')
-const issueDate = ref(new Date().toISOString().slice(0, 10))
-const issueReason = ref('')
-const isIssuing = ref(false)
+const warningIssueDialogOpen = ref(false)
+const warningIssueFighterSide = ref<FighterSide>(1)
+const warningIssueRound = ref(1)
+const warningIssueReason = ref('')
 
-const canEdit = computed(() => props.hasAccess && !props.fight.isFinished)
-const evaluation = computed(() =>
-  evaluateFightScore(
+const fightRef = computed(() => props.fight)
+const competitor1Id = computed(() => props.fight.competitor1Id ?? props.fight.fighter1.id)
+const competitor2Id = computed(() => props.fight.competitor2Id ?? props.fight.fighter2.id)
+const warningContext = computed(() => ({
+  competitor1Id: competitor1Id.value,
+  competitor2Id: competitor2Id.value,
+  warnings: warnings.value
+}))
+const warningAdjustedScore = computed(() =>
+  applyFightWarningBonuses(
     { rounds: props.fight.rounds, roundWin: props.fight.roundWin },
+    warningContext.value,
     props.fight.rounds === 1 ? [] : roundScores.value,
     props.fight.rounds === 1
       ? { competitor1Score: score1.value, competitor2Score: score2.value }
       : undefined
   )
 )
+const evaluation = computed<FightScoreEvaluation>(() =>
+  props.fight.forfeitCardId
+    ? evaluateFightScore(
+        { rounds: props.fight.rounds, roundWin: props.fight.roundWin },
+        props.fight.rounds === 1 ? [] : roundScores.value,
+        props.fight.rounds === 1
+          ? { competitor1Score: score1.value, competitor2Score: score2.value }
+          : undefined
+      )
+    : {
+        ...evaluateFightScore(
+          { rounds: props.fight.rounds, roundWin: props.fight.roundWin },
+          props.fight.rounds === 1 ? [] : warningAdjustedScore.value.roundScores,
+          props.fight.rounds === 1 ? warningAdjustedScore.value.aggregateScore : undefined
+        ),
+        ...(warningAdjustedScore.value.technicalLoserSide
+          ? {
+              winnerSide: (warningAdjustedScore.value.technicalLoserSide === 1 ? 2 : 1) as 1 | 2,
+              isValidResult: true,
+              error: null
+            }
+          : {})
+      }
+)
+const hasWarningTechnicalLoss = computed(
+  () => !props.fight.forfeitCardId && Boolean(warningAdjustedScore.value.technicalLoserSide)
+)
+const canEdit = computed(() => props.hasAccess && !props.fight.isFinished)
+const canEditScores = computed(() => canEdit.value && !hasWarningTechnicalLoss.value)
+const canOpenFighterMenu = computed(() => Boolean(props.canIssueCards) && !props.fight.isFinished)
+const canRemoveWarnings = computed(() => canOpenFighterMenu.value && canEdit.value)
 const isTieScore = computed(
   () =>
-    canEdit.value &&
+    canEditScores.value &&
     props.fight.rounds === 1 &&
     score1.value === score2.value &&
     !(score1.value === 0 && score2.value === 0)
@@ -88,7 +129,26 @@ const resultText = computed(() =>
     Boolean(props.fight.forfeitCardId)
   )
 )
-const resultDisplay = computed(() => {
+const hasWarnings = computed(() => warnings.value.length > 0)
+const warningResultScore = computed<FightWarningResultScore | null>(() => {
+  if (!hasWarnings.value || props.fight.forfeitCardId) return null
+  if (props.fight.rounds === 1) {
+    return {
+      leading: '',
+      parts: warningAdjustedScore.value.scoreParts
+    }
+  }
+
+  const leading = props.fight.roundWin
+    ? `${evaluation.value.competitor1RoundWins}:${evaluation.value.competitor2RoundWins}`
+    : `${warningAdjustedScore.value.aggregateScore.competitor1Score}:${warningAdjustedScore.value.aggregateScore.competitor2Score}`
+
+  return {
+    leading,
+    parts: warningAdjustedScore.value.scoreParts
+  }
+})
+const resultDisplay = computed<FightResultDisplayText>(() => {
   const detailsStart = resultText.value.indexOf(' (')
 
   return detailsStart === -1
@@ -110,6 +170,22 @@ const fighter2Surname = computed(() => tData(props.fight.fighter2.surname, curre
 const fighter1CardType = computed(() => props.activeCardTypes?.[props.fight.fighter1.id])
 const fighter2CardType = computed(() => props.activeCardTypes?.[props.fight.fighter2.id])
 const cardDate = computed(() => props.cardDate ?? new Date().toISOString().slice(0, 10))
+const {
+  issueDialogOpen,
+  issueFighter,
+  issueType,
+  issueDate,
+  issueReason,
+  isIssuing,
+  openIssueDialog: openIssueCardDialog,
+  issueCard
+} = useIssueCardDialog({
+  cardsStore,
+  getFight: () => props.fight,
+  getTournamentId: () => props.tournamentId,
+  cardDate,
+  emitCardIssued: () => emit('card-issued')
+})
 
 const sanitizeScore = (value: string) => {
   const digitsOnly = value.replace(/\D/g, '')
@@ -119,17 +195,22 @@ const sanitizeScore = (value: string) => {
 
 const emitScoreUpdate = () => {
   if (props.fight.rounds === 1) {
-    emit('update:score', { f1: score1.value, f2: score2.value })
+    emit('update:score', {
+      f1: score1.value,
+      f2: score2.value,
+      warnings: warnings.value.map((warning) => ({ ...warning }))
+    })
     return
   }
 
   emit('update:score', {
     roundScores: roundScores.value.map((score) => ({ ...score })),
-    tieBreakRoundRevealed: tieBreakRoundRevealed.value
+    tieBreakRoundRevealed: tieBreakRoundRevealed.value,
+    warnings: warnings.value.map((warning) => ({ ...warning }))
   })
 }
 
-const updateScore = (fighter: 1 | 2, value: string, roundIndex?: number) => {
+const updateScore = (fighter: FighterSide, value: string, roundIndex?: number) => {
   const normalizedValue = sanitizeScore(value)
   const currentValue =
     roundIndex === undefined
@@ -153,10 +234,8 @@ const updateScore = (fighter: 1 | 2, value: string, roundIndex?: number) => {
   if (
     props.fight.roundWin &&
     tieBreakRoundRevealed.value &&
-    !evaluateFightScore(
-      { rounds: 3, roundWin: true },
-      roundScores.value.slice(0, 3)
-    ).requiresTieBreakRound
+    !evaluateFightScore({ rounds: 3, roundWin: true }, roundScores.value.slice(0, 3))
+      .requiresTieBreakRound
   ) {
     tieBreakRoundRevealed.value = false
     roundScores.value = roundScores.value.slice(0, 3)
@@ -167,47 +246,7 @@ const updateScore = (fighter: 1 | 2, value: string, roundIndex?: number) => {
   }
 }
 
-const handleKeydown = (event: KeyboardEvent) => {
-  const allowedKeys = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End']
-
-  if (event.key === 'Enter') {
-    event.preventDefault()
-
-    const currentElement = event.target as HTMLInputElement
-    const form = currentElement.form || document
-
-    if (form) {
-      const inputs = Array.from(form.querySelectorAll<HTMLInputElement>('input:not([disabled])'))
-
-      const currentIndex = inputs.indexOf(currentElement)
-      if (currentIndex > -1 && currentIndex < inputs.length - 1) {
-        inputs[currentIndex + 1].focus()
-      }
-    }
-    return
-  }
-
-  if (allowedKeys.includes(event.key) || event.ctrlKey || event.metaKey) {
-    return
-  }
-
-  if (!/^\d$/.test(event.key)) {
-    event.preventDefault()
-  }
-}
-
-const handlePaste = (event: ClipboardEvent, fighter: 1 | 2, roundIndex?: number) => {
-  event.preventDefault()
-
-  const pastedText = event.clipboardData?.getData('text') ?? ''
-  updateScore(fighter, pastedText, roundIndex)
-}
-
-const selectInputContent = (event: Event) => {
-  ;(event.target as HTMLInputElement).select()
-}
-
-const handleBlur = (event: Event, fighter: 1 | 2, roundIndex?: number) => {
+const handleBlur = (event: Event, fighter: FighterSide, roundIndex?: number) => {
   const input = event.target as HTMLInputElement
   const normalizedValue = sanitizeScore(input.value)
 
@@ -223,36 +262,70 @@ const handleBlur = (event: Event, fighter: 1 | 2, roundIndex?: number) => {
   }
 }
 
+const {
+  warningTitle,
+  availableWarningIssueRounds,
+  warningCompetitorId,
+  warningMarkers,
+  bonusForScore
+} = useFightWarningPresentation({
+  fight: fightRef,
+  warnings,
+  visibleRoundScores,
+  competitor1Id,
+  competitor2Id,
+  translate: i18next.t.bind(i18next)
+})
+
+const canIssueWarning = (fighter: FighterSide) =>
+  canEdit.value &&
+  !hasWarningTechnicalLoss.value &&
+  getFightWarningCount(warnings.value, warningCompetitorId(fighter)) < 3
+
+const issueWarningInRound = (fighter: FighterSide, round: number, reason: string) => {
+  if (!canEdit.value) return
+  const competitorId = warningCompetitorId(fighter)
+  if (!canIssueWarning(fighter)) return
+  if (!availableWarningIssueRounds.value.includes(round)) return
+  const trimmedReason = reason.trim()
+  if (!trimmedReason) return
+
+  warnings.value = [...warnings.value, { competitorId, round, reason: trimmedReason }]
+  emitScoreUpdate()
+}
+
+const removeWarningAtIndex = (warningIndex: number) => {
+  if (!canEdit.value) return
+  if (warningIndex < 0 || warningIndex >= warnings.value.length) return
+
+  warnings.value = warnings.value.filter((_, index) => index !== warningIndex)
+  emitScoreUpdate()
+}
+
+const issueWarning = (fighter: FighterSide) => {
+  if (!canIssueWarning(fighter)) return
+  warningIssueFighterSide.value = fighter
+  warningIssueRound.value = availableWarningIssueRounds.value[0] ?? 1
+  warningIssueReason.value = ''
+  warningIssueDialogOpen.value = true
+}
+
+const confirmWarningIssue = () => {
+  if (!warningIssueReason.value.trim()) return
+  if (!availableWarningIssueRounds.value.includes(warningIssueRound.value)) return
+
+  issueWarningInRound(
+    warningIssueFighterSide.value,
+    warningIssueRound.value,
+    warningIssueReason.value
+  )
+  warningIssueDialogOpen.value = false
+}
+
 const openIssueDialog = (fighter: Fighter) => {
   if (!props.canIssueCards) return
 
-  issueFighter.value = fighter
-  issueType.value = 'YELLOW'
-  issueDate.value = cardDate.value
-  issueReason.value = ''
-  issueDialogOpen.value = true
-}
-
-const issueCard = async () => {
-  if (!issueFighter.value || !props.tournamentId || !issueReason.value.trim()) return
-
-  try {
-    isIssuing.value = true
-    await cardsStore.createCard({
-      fighter_id: issueFighter.value.id,
-      tournament_id: props.tournamentId,
-      fight_id: props.fight.id,
-      type: issueType.value,
-      received_at: issueDate.value,
-      reason: issueReason.value.trim()
-    })
-    issueDialogOpen.value = false
-    emit('card-issued')
-  } catch (error) {
-    console.error('Failed to issue disciplinary card:', error)
-  } finally {
-    isIssuing.value = false
-  }
+  openIssueCardDialog(fighter)
 }
 
 watch(
@@ -261,6 +334,7 @@ watch(
     if (score1.value !== newVal.fighter1Score) score1.value = newVal.fighter1Score
     if (score2.value !== newVal.fighter2Score) score2.value = newVal.fighter2Score
     roundScores.value = newVal.roundScores.map((score) => ({ ...score }))
+    warnings.value = (newVal.warnings ?? []).map((warning) => ({ ...warning }))
     tieBreakRoundRevealed.value = Boolean(newVal.tieBreakRoundRevealed)
   },
   { deep: true }
@@ -272,186 +346,73 @@ watch(
     <div class="w-auto shrink-0 text-sm text-slate-400 font-semibold">{{ fight.number }}.</div>
 
     <div class="flex-1 text-sm font-medium">
-      <ContextMenu v-if="canIssueCards">
-        <ContextMenuTrigger as-child>
-          <span class="inline-flex cursor-context-menu items-center gap-1">
-            {{ fighter1Surname }}
-            <CardStatusIcon :type="fighter1CardType" />
-          </span>
-        </ContextMenuTrigger>
-        <ContextMenuContent>
-          <ContextMenuItem @select="openIssueDialog(fight.fighter1)">
-            {{ $t('disciplinaryCardsIssueAction') }}
-          </ContextMenuItem>
-        </ContextMenuContent>
-      </ContextMenu>
-      <span v-else class="inline-flex items-center gap-1">
-        {{ fighter1Surname }}
-        <CardStatusIcon :type="fighter1CardType" />
-      </span>
+      <FightParticipantLabel
+        :surname="fighter1Surname"
+        :fighter="fight.fighter1"
+        :card-type="fighter1CardType"
+        :warning-markers="warningMarkers(1)"
+        :warning-title="warningTitle"
+        :can-open-menu="canOpenFighterMenu"
+        :can-issue-warning="canIssueWarning(1)"
+        :can-remove-warnings="canRemoveWarnings"
+        @issue-card="openIssueDialog"
+        @issue-warning="issueWarning(1)"
+        @remove-warning="removeWarningAtIndex"
+      />
       <span class="px-2">-</span>
-      <ContextMenu v-if="canIssueCards">
-        <ContextMenuTrigger as-child>
-          <span class="inline-flex cursor-context-menu items-center gap-1">
-            {{ fighter2Surname }}
-            <CardStatusIcon :type="fighter2CardType" />
-          </span>
-        </ContextMenuTrigger>
-        <ContextMenuContent>
-          <ContextMenuItem @select="openIssueDialog(fight.fighter2)">
-            {{ $t('disciplinaryCardsIssueAction') }}
-          </ContextMenuItem>
-        </ContextMenuContent>
-      </ContextMenu>
-      <span v-else class="inline-flex items-center gap-1">
-        {{ fighter2Surname }}
-        <CardStatusIcon :type="fighter2CardType" />
-      </span>
+      <FightParticipantLabel
+        :surname="fighter2Surname"
+        :fighter="fight.fighter2"
+        :card-type="fighter2CardType"
+        :warning-markers="warningMarkers(2)"
+        :warning-title="warningTitle"
+        :can-open-menu="canOpenFighterMenu"
+        :can-issue-warning="canIssueWarning(2)"
+        :can-remove-warnings="canRemoveWarnings"
+        @issue-card="openIssueDialog"
+        @issue-warning="issueWarning(2)"
+        @remove-warning="removeWarningAtIndex"
+      />
     </div>
 
     <div class="flex items-center gap-2">
-      <template v-if="canEdit && fight.rounds === 1">
-        <input
-          :value="score1"
-          type="text"
-          inputmode="numeric"
-          pattern="[0-9]*"
-          class="w-14 h-8 border rounded text-center focus:ring-2 outline-none"
-          :class="
-            isTieScore
-              ? 'border-red-500 bg-red-50 text-red-700 focus:ring-red-500'
-              : 'focus:ring-blue-500'
-          "
-          @keydown="handleKeydown"
-          @focus="selectInputContent"
-          @click="selectInputContent"
-          @input="updateScore(1, ($event.target as HTMLInputElement).value)"
-          @blur="handleBlur($event, 1)"
-          @paste="handlePaste($event, 1)"
-        />
-      </template>
-      <span v-if="canEdit && fight.rounds === 1" class="font-bold">:</span>
-      <template v-if="canEdit && fight.rounds === 1">
-        <input
-          :value="score2"
-          type="text"
-          inputmode="numeric"
-          pattern="[0-9]*"
-          class="w-14 h-8 border rounded text-center focus:ring-2 outline-none"
-          :class="
-            isTieScore
-              ? 'border-red-500 bg-red-50 text-red-700 focus:ring-red-500'
-              : 'focus:ring-blue-500'
-          "
-          @keydown="handleKeydown"
-          @focus="selectInputContent"
-          @click="selectInputContent"
-          @input="updateScore(2, ($event.target as HTMLInputElement).value)"
-          @blur="handleBlur($event, 2)"
-          @paste="handlePaste($event, 2)"
-        />
-      </template>
-      <template v-else-if="canEdit">
-        <div class="grid gap-1">
-          <div
-            v-for="(round, roundIndex) in visibleRoundScores"
-            :key="roundIndex"
-            class="grid grid-cols-[1.75rem_3.5rem_auto_3.5rem] items-center gap-2"
-          >
-            <span class="text-xs font-semibold text-muted-foreground">R{{ roundIndex + 1 }}</span>
-            <input
-              :value="round.competitor1Score"
-              type="text"
-              inputmode="numeric"
-              pattern="[0-9]*"
-              class="h-8 w-14 rounded border text-center outline-none focus:ring-2 focus:ring-blue-500"
-              @keydown="handleKeydown"
-              @focus="selectInputContent"
-              @click="selectInputContent"
-              @input="updateScore(1, ($event.target as HTMLInputElement).value, roundIndex)"
-              @blur="handleBlur($event, 1, roundIndex)"
-              @paste="handlePaste($event, 1, roundIndex)"
-            />
-            <span class="font-bold">:</span>
-            <input
-              :value="round.competitor2Score"
-              type="text"
-              inputmode="numeric"
-              pattern="[0-9]*"
-              class="h-8 w-14 rounded border text-center outline-none focus:ring-2 focus:ring-blue-500"
-              @keydown="handleKeydown"
-              @focus="selectInputContent"
-              @click="selectInputContent"
-              @input="updateScore(2, ($event.target as HTMLInputElement).value, roundIndex)"
-              @blur="handleBlur($event, 2, roundIndex)"
-              @paste="handlePaste($event, 2, roundIndex)"
-            />
-          </div>
-        </div>
-      </template>
-      <div v-else class="text-center">
-        <strong>{{ resultDisplay.score }}</strong>
-        {{ ' ' }}
-        <span v-if="resultDisplay.details" class="fight-result-details font-normal">
-          {{ resultDisplay.details }}
-        </span>
-      </div>
+      <FightScoreEditor
+        v-if="canEdit"
+        :rounds="fight.rounds"
+        :score1="score1"
+        :score2="score2"
+        :visible-round-scores="visibleRoundScores"
+        :can-edit-scores="canEditScores"
+        :is-tie-score="isTieScore"
+        :bonus-for-score="bonusForScore"
+        @update-score="updateScore"
+        @score-blur="handleBlur"
+      />
+      <FightResultDisplay
+        v-else
+        :rounds="fight.rounds"
+        :warning-result-score="warningResultScore"
+        :result-display="resultDisplay"
+      />
     </div>
   </div>
 
-  <Dialog v-model:open="issueDialogOpen">
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>{{ $t('disciplinaryCardsIssueTitle') }}</DialogTitle>
-        <DialogDescription>
-          {{ $t('disciplinaryCardsIssueDescription') }}
-        </DialogDescription>
-      </DialogHeader>
-      <div class="space-y-3">
-        <div class="text-sm font-medium">
-          {{ issueFighter ? `${tData(issueFighter.surname)} ${tData(issueFighter.name)}` : '' }}
-        </div>
-        <div class="grid gap-2">
-          <label class="text-sm font-medium" for="card-type">{{
-            $t('disciplinaryCardsType')
-          }}</label>
-          <select id="card-type" v-model="issueType" class="h-9 rounded border bg-background px-2">
-            <option value="YELLOW">{{ $t('disciplinaryCardsYellow') }}</option>
-            <option value="RED">{{ $t('disciplinaryCardsRed') }}</option>
-          </select>
-        </div>
-        <div class="grid gap-2">
-          <label class="text-sm font-medium" for="card-date">{{
-            $t('disciplinaryCardsDate')
-          }}</label>
-          <input
-            id="card-date"
-            :value="issueDate"
-            type="date"
-            disabled
-            class="h-9 rounded border bg-muted px-2 text-muted-foreground"
-          />
-        </div>
-        <div class="grid gap-2">
-          <label class="text-sm font-medium" for="card-reason">{{
-            $t('disciplinaryCardsReason')
-          }}</label>
-          <input
-            id="card-reason"
-            v-model="issueReason"
-            autocomplete="off"
-            class="h-9 rounded border bg-background px-2"
-          />
-        </div>
-      </div>
-      <DialogFooter>
-        <Button type="button" variant="outline" @click="issueDialogOpen = false">{{
-          $t('disciplinaryCardsCancel')
-        }}</Button>
-        <Button type="button" :disabled="isIssuing || !issueReason.trim()" @click="issueCard">
-          {{ $t('disciplinaryCardsSave') }}
-        </Button>
-      </DialogFooter>
-    </DialogContent>
-  </Dialog>
+  <FightWarningIssueDialog
+    v-model:open="warningIssueDialogOpen"
+    v-model:selected-round="warningIssueRound"
+    v-model:reason="warningIssueReason"
+    :rounds="fight.rounds"
+    :issue-rounds="availableWarningIssueRounds"
+    @confirm="confirmWarningIssue"
+  />
+
+  <IssueCardDialog
+    v-model:open="issueDialogOpen"
+    v-model:type="issueType"
+    v-model:reason="issueReason"
+    :fighter="issueFighter"
+    :date="issueDate"
+    :is-issuing="isIssuing"
+    @issue="issueCard"
+  />
 </template>

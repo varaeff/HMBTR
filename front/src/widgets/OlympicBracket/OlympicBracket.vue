@@ -10,7 +10,7 @@ import { FightCard } from '@/components/ui/fightCard'
 import { tData } from '@/lib/utils'
 
 import type { BracketSlot, CompetitionBlock, DisciplinaryCardType, FightData } from '@/model'
-import type { RoundScore } from '@shared/fightScoring'
+import type { FightWarning, RoundScore } from '@shared/fightScoring'
 import { CardStatusIcon } from '@/widgets/DisciplinaryCards'
 import { AlertWidget } from '@/widgets/AlertWidget'
 
@@ -161,6 +161,7 @@ const handleScoreUpdate = (
     f2?: number
     roundScores?: RoundScore[]
     tieBreakRoundRevealed?: boolean
+    warnings?: FightWarning[]
   }
 ) => {
   competitionStore.updateGlobalScore({
@@ -169,7 +170,8 @@ const handleScoreUpdate = (
     f1Score: scores.f1,
     f2Score: scores.f2,
     roundScores: scores.roundScores,
-    tieBreakRoundRevealed: scores.tieBreakRoundRevealed
+    tieBreakRoundRevealed: scores.tieBreakRoundRevealed,
+    warnings: scores.warnings
   })
 }
 

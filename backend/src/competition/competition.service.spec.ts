@@ -19,6 +19,57 @@ type CreatedFight = {
 };
 
 describe('CompetitionService', () => {
+  it('returns fight warning reasons in competition state', async () => {
+    const prisma = {
+      competition_blocks: {
+        findMany: jest.fn().mockResolvedValue([
+          {
+            id: 90,
+            status: 'ACTIVE',
+            type: 'GROUP',
+            groups: [],
+            fights: [
+              {
+                id: 637,
+                warnings: [{ competitor_id: 104, round: 1, reason: 'Holding' }],
+              },
+            ],
+            bracket_slots: [],
+            round_states: [],
+          },
+        ]),
+      },
+      competition_placements: {
+        findMany: jest.fn().mockResolvedValue([]),
+      },
+    };
+    const service = new CompetitionService(
+      prisma as unknown as PrismaService,
+      {} as RatingsService,
+    );
+    const serviceInternals = service as unknown as {
+      getTournamentNomination: jest.Mock;
+      normalizeBronzeFinalFightNumbers: jest.Mock;
+      getPendingTie: jest.Mock;
+    };
+    serviceInternals.getTournamentNomination = jest.fn().mockResolvedValue({
+      id: 15,
+      is_finished: false,
+    });
+    serviceInternals.normalizeBronzeFinalFightNumbers = jest
+      .fn()
+      .mockResolvedValue(undefined);
+    serviceInternals.getPendingTie = jest.fn().mockResolvedValue(null);
+
+    const state = await service.getState(31, 5);
+
+    expect(state.blocks[0].fights[0].warnings[0]).toMatchObject({
+      competitor_id: 104,
+      round: 1,
+      reason: 'Holding',
+    });
+  });
+
   it('reorders Olympic winners after a non-semifinal round without creating next fights', async () => {
     const slots = Array.from({ length: 8 }, (_, index) => ({
       id: index + 1,
@@ -637,6 +688,10 @@ describe('CompetitionService', () => {
       fights: {
         update: jest.fn(),
       },
+      fight_warnings: {
+        deleteMany: jest.fn(),
+        createMany: jest.fn(),
+      },
     };
     const prisma = {
       competition_blocks: {
@@ -702,6 +757,7 @@ describe('CompetitionService', () => {
             { competitor1_score: 5, competitor2_score: 3 },
             { competitor1_score: 5, competitor2_score: 0 },
           ],
+          warnings: [{ competitor_id: 104, round: 1, reason: 'Holding' }],
         },
       ],
     });
@@ -710,5 +766,13 @@ describe('CompetitionService', () => {
     expect(tx.fights.update).toHaveBeenCalledWith(
       expect.objectContaining({ where: { id: 637 } }),
     );
+    expect(tx.fight_warnings.deleteMany).toHaveBeenCalledWith({
+      where: { fight_id: 637 },
+    });
+    expect(tx.fight_warnings.createMany).toHaveBeenCalledWith({
+      data: [
+        { fight_id: 637, competitor_id: 104, round: 1, reason: 'Holding' },
+      ],
+    });
   });
 });

@@ -108,6 +108,11 @@ export type group_competitors = Prisma.group_competitorsModel
  */
 export type fights = Prisma.fightsModel
 /**
+ * Model fight_warnings
+ * 
+ */
+export type fight_warnings = Prisma.fight_warningsModel
+/**
  * Model disciplinary_cards
  * 
  */

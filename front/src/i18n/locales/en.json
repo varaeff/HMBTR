@@ -248,5 +248,15 @@
   "disciplinaryCardsDelete": "Delete",
   "disciplinaryCardsGroup": "group",
   "disciplinaryCardsActiveYellow": "Active yellow card",
-  "disciplinaryCardsActiveRed": "Active red card"
+  "disciplinaryCardsActiveRed": "Active red card",
+  "fightWarningIssueAction": "Issue warning",
+  "fightWarningRemoveAction": "Remove warning",
+  "fightWarningTooltip": "Warning",
+  "fightWarningReasonTooltip": "Warning: {{reason}}",
+  "fightWarningRoundReasonTooltip": "Warning (round {{round}}): {{reason}}",
+  "fightWarningIssueReasonTitle": "Warning reason",
+  "fightWarningIssueReasonDescription": "Enter the reason for this warning.",
+  "fightWarningReasonLabel": "Reason",
+  "fightWarningRoundDescription": "Select the round for this warning.",
+  "fightWarningRoundLabel": "Round {{round}}"
 }

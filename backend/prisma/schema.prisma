@@ -122,10 +122,10 @@ model tournament_marshals {
 }
 
 model nominations {
-  id      Int     @id @default(autoincrement())
-  name_ru String  @db.VarChar(255)
-  name_en String  @db.VarChar(255)
-  is_male Boolean @default(true)
+  id        Int     @id @default(autoincrement())
+  name_ru   String  @db.VarChar(255)
+  name_en   String  @db.VarChar(255)
+  is_male   Boolean @default(true)
   rounds    Int     @default(1)
   round_win Boolean @default(false)
 
@@ -172,9 +172,10 @@ model competitors {
   placements    competition_placements[]
 
   // Связи для таблицы боев (кто участвовал)
-  fights_as_f1 fights[] @relation("Fighter1")
-  fights_as_f2 fights[] @relation("Fighter2")
-  fights_won   fights[] @relation("Winner")
+  fights_as_f1   fights[]         @relation("Fighter1")
+  fights_as_f2   fights[]         @relation("Fighter2")
+  fights_won     fights[]         @relation("Winner")
+  fight_warnings fight_warnings[]
 }
 
 model groups {
@@ -203,15 +204,15 @@ model group_competitors {
 }
 
 model fights {
-  id                Int     @id @default(autoincrement())
-  tournament_id     Int
-  nomination_id     Int
-  block_id          Int?
-  group_id          Int?
-  competitor1_id    Int
-  competitor2_id    Int
-  competitor1_score Int     @default(0)
-  competitor2_score Int     @default(0)
+  id                       Int     @id @default(autoincrement())
+  tournament_id            Int
+  nomination_id            Int
+  block_id                 Int?
+  group_id                 Int?
+  competitor1_id           Int
+  competitor2_id           Int
+  competitor1_score        Int     @default(0)
+  competitor2_score        Int     @default(0)
   competitor1_round1_score Int     @default(0)
   competitor2_round1_score Int     @default(0)
   competitor1_round2_score Int     @default(0)
@@ -220,14 +221,14 @@ model fights {
   competitor2_round3_score Int     @default(0)
   competitor1_round4_score Int     @default(0)
   competitor2_round4_score Int     @default(0)
-  winner_id         Int?
-  stage             Int     @default(0)
-  fight_number      Int     @default(0)
-  bracket_round     Int?
-  bracket_position  Int?
-  is_bronze         Boolean @default(false)
-  is_finished       Boolean @default(false)
-  forfeit_card_id   Int?
+  winner_id                Int?
+  stage                    Int     @default(0)
+  fight_number             Int     @default(0)
+  bracket_round            Int?
+  bracket_position         Int?
+  is_bronze                Boolean @default(false)
+  is_finished              Boolean @default(false)
+  forfeit_card_id          Int?
 
   tournament tournaments         @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
   nomination nominations         @relation(fields: [nomination_id], references: [id], onDelete: Cascade)
@@ -239,8 +240,24 @@ model fights {
   competitor2        competitors          @relation("Fighter2", fields: [competitor2_id], references: [id])
   winner             competitors?         @relation("Winner", fields: [winner_id], references: [id])
   disciplinary_cards disciplinary_cards[]
+  warnings           fight_warnings[]
 
   @@index([forfeit_card_id])
+}
+
+model fight_warnings {
+  id            Int      @id @default(autoincrement())
+  fight_id      Int
+  competitor_id Int
+  round         Int
+  reason        String   @db.Text
+  created_at    DateTime @default(now())
+
+  fight      fights      @relation(fields: [fight_id], references: [id], onDelete: Cascade)
+  competitor competitors @relation(fields: [competitor_id], references: [id], onDelete: Cascade)
+
+  @@index([fight_id])
+  @@index([competitor_id])
 }
 
 model disciplinary_cards {
@@ -311,7 +328,7 @@ model competition_blocks {
   lifecycle_state          String   @default("FORMATION_EDITABLE") @db.VarChar(32)
   created_at               DateTime @default(now())
 
-  tournament_nomination tournament_nominations   @relation(fields: [tournament_nomination_id], references: [id], onDelete: Cascade)
+  tournament_nomination tournament_nominations     @relation(fields: [tournament_nomination_id], references: [id], onDelete: Cascade)
   groups                groups[]
   fights                fights[]
   bracket_slots         bracket_slots[]
