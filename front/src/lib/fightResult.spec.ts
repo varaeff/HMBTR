@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest'
 import type { CompetitionBlock, FightData, PendingTie } from '@/model'
 import {
   areFightResultsReady,
+  buildSubmittedFightResult,
   canShowGroupFightActions,
+  getIncompleteFightNumbers,
   getSubmittedRoundScores
 } from './fightResult'
 
@@ -53,10 +55,20 @@ describe('areFightResultsReady', () => {
 
     expect(areFightResultsReady([fight])).toBe(true)
   })
+
+  it('reports incomplete fight numbers for block-specific result recording guards', () => {
+    expect(
+      getIncompleteFightNumbers([
+        roundWinFight({ number: 1, isResultValid: true }),
+        roundWinFight({ number: 2, isResultValid: false }),
+        roundWinFight({ number: 3, isResultValid: false })
+      ])
+    ).toEqual([2, 3])
+  })
 })
 
 describe('getSubmittedRoundScores', () => {
-  it('omits a stale fourth round when the first three rounds already have a winner', () => {
+  it('omits stale extra rounds when base rounds already have a winner', () => {
     const fight = roundWinFight({
       roundScores: [
         { competitor1Score: 1, competitor2Score: 0 },
@@ -69,17 +81,78 @@ describe('getSubmittedRoundScores', () => {
     expect(getSubmittedRoundScores(fight)).toHaveLength(3)
   })
 
-  it('keeps a required fourth round', () => {
+  it('keeps tied extras through the first decisive extra round', () => {
     const fight = roundWinFight({
+      rounds: 1,
+      roundWin: false,
       roundScores: [
-        { competitor1Score: 1, competitor2Score: 0 },
-        { competitor1Score: 0, competitor2Score: 1 },
+        { competitor1Score: 2, competitor2Score: 2 },
         { competitor1Score: 0, competitor2Score: 0 },
-        { competitor1Score: 1, competitor2Score: 0 }
+        { competitor1Score: 1, competitor2Score: 0 },
+        { competitor1Score: 0, competitor2Score: 1 }
       ]
     })
 
-    expect(getSubmittedRoundScores(fight)).toHaveLength(4)
+    expect(getSubmittedRoundScores(fight)).toEqual(fight.roundScores.slice(0, 3))
+  })
+
+  it('keeps extra rounds required by warning-adjusted scores', () => {
+    const fight = roundWinFight({
+      competitor1Id: 101,
+      competitor2Id: 202,
+      rounds: 1,
+      roundWin: false,
+      roundScores: [
+        { competitor1Score: 3, competitor2Score: 0 },
+        { competitor1Score: 1, competitor2Score: 0 }
+      ],
+      warnings: [{ competitorId: 101, round: 1, reason: 'Holding' }]
+    })
+
+    expect(getSubmittedRoundScores(fight)).toEqual(fight.roundScores)
+  })
+})
+
+describe('buildSubmittedFightResult', () => {
+  it('serializes one-round fights with round_scores instead of aggregate score fields', () => {
+    const fight = roundWinFight({
+      rounds: 1,
+      roundWin: false,
+      roundScores: [{ competitor1Score: 5, competitor2Score: 3 }],
+      warnings: [{ competitorId: 101, round: 1, reason: 'Holding' }]
+    })
+
+    const payload = buildSubmittedFightResult(fight)
+
+    expect(payload).toEqual({
+      fight_id: fight.id,
+      round_scores: [{ competitor1_score: 5, competitor2_score: 3 }],
+      warnings: [{ competitor_id: 101, round: 1, reason: 'Holding' }]
+    })
+    expect('competitor1_score' in payload).toBe(false)
+    expect('competitor2_score' in payload).toBe(false)
+  })
+
+  it('serializes extra rounds required after warning bonuses', () => {
+    const fight = roundWinFight({
+      competitor1Id: 101,
+      competitor2Id: 202,
+      rounds: 1,
+      roundWin: false,
+      roundScores: [
+        { competitor1Score: 3, competitor2Score: 0 },
+        { competitor1Score: 1, competitor2Score: 0 }
+      ],
+      warnings: [{ competitorId: 101, round: 1, reason: 'Holding' }]
+    })
+
+    const payload = buildSubmittedFightResult(fight)
+
+    expect(payload.round_scores).toEqual([
+      { competitor1_score: 3, competitor2_score: 0 },
+      { competitor1_score: 1, competitor2_score: 0 }
+    ])
+    expect(payload.warnings).toEqual([{ competitor_id: 101, round: 1, reason: 'Holding' }])
   })
 })
 

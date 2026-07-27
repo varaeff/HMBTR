@@ -126,7 +126,6 @@ export interface FightData {
   warnings?: Array<{ competitorId: number; round: number; reason: string }>
   rounds: 1 | 2 | 3
   roundWin: boolean
-  tieBreakRoundRevealed?: boolean
   isResultValid: boolean
   winnerId?: number | null
   forfeitCardId?: number | null

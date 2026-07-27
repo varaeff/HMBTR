@@ -91,9 +91,11 @@ export const getTechnicalDefeatScore = (
   const winnerScore = rules.roundWin ? rules.rounds : 10
   const winnerRoundScore = rules.roundWin ? 5 : 0
   const winnerIsFirst = loserSide === 2
-  const roundScores = Array.from({ length: rules.rounds }, () => ({
-    competitor1Score: rules.roundWin && winnerIsFirst ? winnerRoundScore : 0,
-    competitor2Score: rules.roundWin && !winnerIsFirst ? winnerRoundScore : 0
+  const roundScores = Array.from({ length: rules.rounds }, (_, index) => ({
+    competitor1Score:
+      (rules.roundWin || index === 0) && winnerIsFirst ? winnerRoundScore || winnerScore : 0,
+    competitor2Score:
+      (rules.roundWin || index === 0) && !winnerIsFirst ? winnerRoundScore || winnerScore : 0
   }))
 
   return {
@@ -115,12 +117,10 @@ export const applyFightWarningBonuses = (
 
   if (technicalLoserSide) {
     const technicalScore = getTechnicalDefeatScore(rules, technicalLoserSide)
-    const technicalScoreParts =
-      rules.rounds === 1 ? [technicalScore.aggregateScore] : technicalScore.roundScores
     return {
       aggregateScore: technicalScore.aggregateScore,
       roundScores: technicalScore.roundScores,
-      scoreParts: technicalScoreParts.map((score) => ({
+      scoreParts: technicalScore.roundScores.map((score) => ({
         ...score,
         competitor1Bonus: 0,
         competitor2Bonus: 0
@@ -129,54 +129,37 @@ export const applyFightWarningBonuses = (
     }
   }
 
-  const scoreParts =
-    rules.rounds === 1
-      ? [
-          {
-            competitor1Score: aggregateScores?.competitor1Score ?? 0,
-            competitor2Score: aggregateScores?.competitor2Score ?? 0,
-            competitor1Bonus:
-              getFightWarningCount(warningContext.warnings, warningContext.competitor2Id) *
-              WARNING_SCORE_BONUS,
-            competitor2Bonus:
-              getFightWarningCount(warningContext.warnings, warningContext.competitor1Id) *
-              WARNING_SCORE_BONUS
-          }
-        ]
-      : roundScores.map((score, index) => {
-          const round = index + 1
-          return {
-            competitor1Score: score.competitor1Score,
-            competitor2Score: score.competitor2Score,
-            competitor1Bonus:
-              warningContext.warnings.filter(
-                (warning) =>
-                  warning.competitorId === warningContext.competitor2Id &&
-                  warning.round === round
-              ).length * WARNING_SCORE_BONUS,
-            competitor2Bonus:
-              warningContext.warnings.filter(
-                (warning) =>
-                  warning.competitorId === warningContext.competitor1Id &&
-                  warning.round === round
-              ).length * WARNING_SCORE_BONUS
-          }
-        })
+  const baseScores =
+    rules.rounds === 1 && roundScores.length === 0 && aggregateScores ? [aggregateScores] : roundScores
+  const scoreParts = baseScores.map((score, index) => {
+    const round = index + 1
+    return {
+      competitor1Score: score.competitor1Score,
+      competitor2Score: score.competitor2Score,
+      competitor1Bonus:
+        warningContext.warnings.filter(
+          (warning) =>
+            warning.competitorId === warningContext.competitor2Id && warning.round === round
+        ).length * WARNING_SCORE_BONUS,
+      competitor2Bonus:
+        warningContext.warnings.filter(
+          (warning) =>
+            warning.competitorId === warningContext.competitor1Id && warning.round === round
+        ).length * WARNING_SCORE_BONUS
+    }
+  })
 
   const adjustedRounds = scoreParts.map((score) => ({
     competitor1Score: score.competitor1Score + score.competitor1Bonus,
     competitor2Score: score.competitor2Score + score.competitor2Bonus
   }))
-  const aggregateScore =
-    rules.rounds === 1
-      ? adjustedRounds[0]
-      : adjustedRounds.reduce(
-          (sum, score) => ({
-            competitor1Score: sum.competitor1Score + score.competitor1Score,
-            competitor2Score: sum.competitor2Score + score.competitor2Score
-          }),
-          { competitor1Score: 0, competitor2Score: 0 }
-        )
+  const aggregateScore = adjustedRounds.reduce(
+    (sum, score) => ({
+      competitor1Score: sum.competitor1Score + score.competitor1Score,
+      competitor2Score: sum.competitor2Score + score.competitor2Score
+    }),
+    { competitor1Score: 0, competitor2Score: 0 }
+  )
 
   return {
     aggregateScore,
@@ -207,37 +190,12 @@ export const evaluateFightScore = (
     return invalid('Invalid nomination scoring configuration')
   }
 
-  if (rules.rounds === 1) {
-    if (!aggregateScores || roundScores.length > 0) {
-      return invalid('Single-round fights require aggregate scores only')
-    }
-    if (
-      !isValidScore(aggregateScores.competitor1Score) ||
-      !isValidScore(aggregateScores.competitor2Score)
-    ) {
-      return invalid('Scores must be non-negative 32-bit integers')
-    }
-
-    const { competitor1Score, competitor2Score } = aggregateScores
-    const winnerSide =
-      competitor1Score === competitor2Score ? null : competitor1Score > competitor2Score ? 1 : 2
-
-    return {
-      competitor1Total: competitor1Score,
-      competitor2Total: competitor2Score,
-      competitor1RoundWins: winnerSide === 1 ? 1 : 0,
-      competitor2RoundWins: winnerSide === 2 ? 1 : 0,
-      winnerSide,
-      requiresTieBreakRound: false,
-      isValidDraft: true,
-      isValidResult: winnerSide !== null,
-      error: winnerSide === null ? 'Every recorded fight must have a winner' : null
-    }
+  if (aggregateScores) {
+    return invalid('Fights require round scores')
   }
 
-  const allowedLengths = rules.roundWin ? [3, 4] : [rules.rounds]
-  if (!allowedLengths.includes(roundScores.length)) {
-    return invalid(`Expected ${rules.rounds} round scores${rules.roundWin ? ' or 4 with tie-break' : ''}`)
+  if (roundScores.length < rules.rounds) {
+    return invalid(`Expected at least ${rules.rounds} round scores`)
   }
   if (
     roundScores.some(
@@ -245,21 +203,6 @@ export const evaluateFightScore = (
     )
   ) {
     return invalid('Scores must be non-negative 32-bit integers')
-  }
-
-  const normalRounds = roundScores.slice(0, rules.rounds)
-  const normalRoundWins = normalRounds.reduce(
-    (wins, score) => {
-      if (score.competitor1Score > score.competitor2Score) wins[0]++
-      if (score.competitor2Score > score.competitor1Score) wins[1]++
-      return wins
-    },
-    [0, 0]
-  )
-  const requiresTieBreakRound = rules.roundWin && normalRoundWins[0] === normalRoundWins[1]
-
-  if (roundScores.length === 4 && !requiresTieBreakRound) {
-    return invalid('Tie-break round is not required')
   }
 
   const totals = roundScores.reduce(
@@ -270,44 +213,163 @@ export const evaluateFightScore = (
     return invalid('Aggregate score exceeds the 32-bit integer limit')
   }
 
-  let competitor1RoundWins = normalRoundWins[0]
-  let competitor2RoundWins = normalRoundWins[1]
-  const tieBreak = roundScores[3]
-  if (tieBreak?.competitor1Score > tieBreak?.competitor2Score) competitor1RoundWins++
-  if (tieBreak?.competitor2Score > tieBreak?.competitor1Score) competitor2RoundWins++
+  const countRoundWins = (scores: RoundScore[]) =>
+    scores.reduce(
+      (wins, score) => {
+        if (score.competitor1Score > score.competitor2Score) wins[0]++
+        if (score.competitor2Score > score.competitor1Score) wins[1]++
+        return wins
+      },
+      [0, 0]
+    )
 
+  const winnerFromComparison = (competitor1Value: number, competitor2Value: number): WinnerSide =>
+    competitor1Value === competitor2Value ? null : competitor1Value > competitor2Value ? 1 : 2
+
+  const normalRounds = roundScores.slice(0, rules.rounds)
+  const extraRounds = roundScores.slice(rules.rounds)
+  const normalRoundWins = countRoundWins(normalRounds)
+  const normalWinnerSide: WinnerSide = rules.roundWin
+    ? winnerFromComparison(normalRoundWins[0], normalRoundWins[1])
+    : winnerFromComparison(
+        normalRounds.reduce((sum, score) => sum + score.competitor1Score, 0),
+        normalRounds.reduce((sum, score) => sum + score.competitor2Score, 0)
+      )
+
+  if (normalWinnerSide && extraRounds.length > 0) {
+    return invalid('Extra round is not required')
+  }
+
+  let decisiveExtraRoundIndex = -1
+  for (let index = 0; index < extraRounds.length; index++) {
+    const score = extraRounds[index]
+    if (score.competitor1Score !== score.competitor2Score) {
+      decisiveExtraRoundIndex = index
+      break
+    }
+  }
+
+  if (decisiveExtraRoundIndex !== -1 && decisiveExtraRoundIndex < extraRounds.length - 1) {
+    return invalid('Extra round is not required')
+  }
+
+  const allRoundWins = countRoundWins(roundScores)
   const winnerSide: WinnerSide = rules.roundWin
-    ? competitor1RoundWins === competitor2RoundWins
-      ? null
-      : competitor1RoundWins > competitor2RoundWins
-        ? 1
-        : 2
-    : totals[0] === totals[1]
-      ? null
-      : totals[0] > totals[1]
-        ? 1
-        : 2
-
-  const tieBreakIsValid =
-    !requiresTieBreakRound ||
-    (roundScores.length === 4 && tieBreak.competitor1Score !== tieBreak.competitor2Score)
+    ? winnerFromComparison(allRoundWins[0], allRoundWins[1])
+    : winnerFromComparison(totals[0], totals[1])
+  const requiresTieBreakRound = winnerSide === null
 
   return {
     competitor1Total: totals[0],
     competitor2Total: totals[1],
-    competitor1RoundWins,
-    competitor2RoundWins,
+    competitor1RoundWins: allRoundWins[0],
+    competitor2RoundWins: allRoundWins[1],
     winnerSide,
     requiresTieBreakRound,
     isValidDraft: true,
-    isValidResult: winnerSide !== null && tieBreakIsValid,
-    error:
-      winnerSide === null || !tieBreakIsValid
-        ? requiresTieBreakRound
-          ? 'A non-draw tie-break round is required'
-          : 'Every recorded fight must have a winner'
-        : null
+    isValidResult: winnerSide !== null,
+    error: winnerSide === null ? 'Every recorded fight must have a winner' : null
   }
+}
+
+export const getRequiredRoundScores = (
+  rules: FightScoringRules,
+  roundScores: RoundScore[]
+): RoundScore[] => {
+  const baseRounds = roundScores.slice(0, rules.rounds)
+  if (baseRounds.length < rules.rounds) return baseRounds
+
+  const baseEvaluation = evaluateFightScore(rules, baseRounds)
+  if (!baseEvaluation.requiresTieBreakRound) return baseRounds
+
+  const requiredRounds = [...baseRounds]
+  for (const extraRound of roundScores.slice(rules.rounds)) {
+    requiredRounds.push(extraRound)
+    if (extraRound.competitor1Score !== extraRound.competitor2Score) break
+  }
+
+  return requiredRounds
+}
+
+export const getInitialRoundScores = (rules: FightScoringRules) =>
+  Array.from({ length: rules.rounds }, () => ({
+    competitor1Score: 0,
+    competitor2Score: 0
+  }))
+
+export const hasRoundScoreValue = (score: RoundScore) =>
+  score.competitor1Score !== 0 || score.competitor2Score !== 0
+
+export const legacyRoundScoresFromColumns = (
+  rules: FightScoringRules,
+  scores: {
+    competitor1Round1Score: number
+    competitor2Round1Score: number
+    competitor1Round2Score: number
+    competitor2Round2Score: number
+    competitor1Round3Score: number
+    competitor2Round3Score: number
+    competitor1Round4Score: number
+    competitor2Round4Score: number
+  },
+  warnings: Array<{ round: number }>
+) => {
+  const storedRounds = [
+    {
+      competitor1Score: scores.competitor1Round1Score,
+      competitor2Score: scores.competitor2Round1Score
+    },
+    {
+      competitor1Score: scores.competitor1Round2Score,
+      competitor2Score: scores.competitor2Round2Score
+    },
+    {
+      competitor1Score: scores.competitor1Round3Score,
+      competitor2Score: scores.competitor2Round3Score
+    }
+  ].slice(0, rules.rounds)
+
+  const fourthRound = {
+    competitor1Score: scores.competitor1Round4Score,
+    competitor2Score: scores.competitor2Round4Score
+  }
+  if (
+    rules.roundWin &&
+    (hasRoundScoreValue(fourthRound) ||
+      fourthRound.competitor1Score !== fourthRound.competitor2Score ||
+      warnings.some((warning) => warning.round === 4))
+  ) {
+    storedRounds.push(fourthRound)
+  }
+
+  return storedRounds
+}
+
+export const evaluateLegacyFightScore = (
+  rules: FightScoringRules,
+  roundScores: RoundScore[],
+  aggregateScores?: RoundScore
+): FightScoreEvaluation => {
+  if (roundScores.length > 0) return evaluateFightScore(rules, roundScores)
+
+  if (rules.rounds !== 1 || !aggregateScores) {
+    return evaluateFightScore(rules, roundScores)
+  }
+
+  return evaluateFightScore(rules, [aggregateScores])
+}
+
+/*
+ * The formatter keeps the old compact one-round display for base-only fights,
+ * but shows a breakdown when a one-round fight needed extra rounds.
+ */
+export const shouldFormatRoundBreakdown = (
+  rules: FightScoringRules,
+  roundScores: RoundScore[],
+  isForfeit: boolean
+) => {
+  if (isForfeit && !rules.roundWin) return false
+  return rules.rounds > 1 || roundScores.length > 1
 }
 
 export const formatFightResult = (
@@ -316,7 +378,7 @@ export const formatFightResult = (
   roundScores: RoundScore[],
   isForfeit = false
 ) => {
-  if (rules.rounds === 1 || (isForfeit && !rules.roundWin)) {
+  if (!shouldFormatRoundBreakdown(rules, roundScores, isForfeit)) {
     return `${evaluation.competitor1Total}:${evaluation.competitor2Total}`
   }
 

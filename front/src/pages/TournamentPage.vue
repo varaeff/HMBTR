@@ -31,7 +31,11 @@ import { useCollapsiblePersist } from '@/composables/useCollapsiblePersist'
 import { tData } from '@/lib/utils'
 import { dateToString } from '@/lib/dateUtils'
 import { hasAccess, hasAdminAccess, hasTournamentMarshalAccess } from '@/lib/checkAccess'
-import { areFightResultsReady, canShowGroupFightActions } from '@/lib/fightResult'
+import {
+  areFightResultsReady,
+  canShowGroupFightActions,
+  getIncompleteFightNumbers
+} from '@/lib/fightResult'
 import { API_ROUTES } from '@shared/routes'
 
 import type { CompetitionBlock, DisciplinaryCardType, Tournament } from '@/model'
@@ -248,6 +252,9 @@ const activeGroupBlockComplete = computed(() => {
   return areFightResultsReady(activeBlock.value.fights)
 })
 
+const isGroupBlockComplete = (block: CompetitionBlock) =>
+  block.type === 'GROUP' && areFightResultsReady(block.fights)
+
 const activeGroupFightsGenerated = computed(() => {
   return Boolean(activeBlock.value?.type === 'GROUP' && activeBlock.value.fights.length > 0)
 })
@@ -371,8 +378,22 @@ const finishCompetition = async () => {
 const fixGroupResults = async (blockId: number) => {
   const block = blocks.value.find((item) => item.id === blockId)
   if (!block) return
+  const incompleteFightNumbers = getIncompleteFightNumbers(block.fights)
+  if (incompleteFightNumbers.length) {
+    apiUiStore.setError(
+      i18next.t('tournamentPageIncompleteFightResults', {
+        fights: incompleteFightNumbers.join(', ')
+      })
+    )
+    return
+  }
+
   try {
     await competitionStore.fixResults(blockId, block.fights)
+  } catch (error) {
+    const message = await getReportErrorMessage(error)
+    apiUiStore.setError(message)
+    console.error('Failed to fix group results:', message, error)
   } finally {
     await refreshCardsAndCompetition()
   }
@@ -808,7 +829,7 @@ watch(
                 class="flex flex-wrap justify-center gap-3 my-5"
               >
                 <Button
-                  :disabled="!activeGroupBlockComplete || hasBlockingGroupAdvancementTie"
+                  :disabled="!isGroupBlockComplete(block) || hasBlockingGroupAdvancementTie"
                   @click="fixGroupResults(block.id)"
                 >
                   {{ $t('tournamentPageFixResults') }}

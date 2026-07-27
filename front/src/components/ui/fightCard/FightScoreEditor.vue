@@ -3,18 +3,21 @@ import type { RoundScore } from '@shared/fightScoring'
 import type { FighterSide } from './types'
 
 const props = defineProps<{
-  rounds: 1 | 2 | 3
-  score1: number
-  score2: number
   visibleRoundScores: RoundScore[]
   canEditScores: boolean
-  isTieScore: boolean
+  highlightTieBreakRequired: boolean
   bonusForScore: (fighter: FighterSide, round?: number) => number
 }>()
 
 const emit = defineEmits<{
   (e: 'update-score', fighter: FighterSide, value: string, roundIndex?: number): void
-  (e: 'score-blur', event: Event, fighter: FighterSide, roundIndex?: number): void
+  (
+    e: 'score-blur',
+    event: FocusEvent,
+    fighter: FighterSide,
+    roundIndex: number,
+    isLastInput: boolean
+  ): void
 }>()
 
 const handleKeydown = (event: KeyboardEvent) => {
@@ -24,6 +27,7 @@ const handleKeydown = (event: KeyboardEvent) => {
     event.preventDefault()
 
     const currentElement = event.target as HTMLInputElement
+    currentElement.dataset.fightScoreEnterNavigation = 'true'
     const form = currentElement.form || document
     const inputs = Array.from(form.querySelectorAll<HTMLInputElement>('input:not([disabled])'))
     const currentIndex = inputs.indexOf(currentElement)
@@ -31,6 +35,12 @@ const handleKeydown = (event: KeyboardEvent) => {
     if (currentIndex > -1 && currentIndex < inputs.length - 1) {
       inputs[currentIndex + 1].focus()
     }
+    return
+  }
+
+  if (event.key === 'Tab' && !event.shiftKey) {
+    const currentElement = event.target as HTMLInputElement
+    currentElement.dataset.fightScoreTabNavigation = 'true'
     return
   }
 
@@ -56,59 +66,7 @@ const selectInputContent = (event: Event) => {
 </script>
 
 <template>
-  <template v-if="rounds === 1">
-    <span class="inline-flex min-w-20 items-center justify-end gap-1">
-      <input
-        :value="score1"
-        type="text"
-        inputmode="numeric"
-        pattern="[0-9]*"
-        class="w-14 h-8 border rounded text-center focus:ring-2 outline-none disabled:bg-muted disabled:text-muted-foreground"
-        :class="
-          isTieScore
-            ? 'border-red-500 bg-red-50 text-red-700 focus:ring-red-500'
-            : 'focus:ring-blue-500'
-        "
-        :disabled="!canEditScores"
-        @keydown="handleKeydown"
-        @focus="selectInputContent"
-        @click="selectInputContent"
-        @input="emit('update-score', 1, ($event.target as HTMLInputElement).value)"
-        @blur="emit('score-blur', $event, 1)"
-        @paste="handlePaste($event, 1)"
-      />
-      <span v-if="bonusForScore(1) > 0" class="font-bold text-red-900">
-        +{{ bonusForScore(1) }}
-      </span>
-    </span>
-    <span class="font-bold">:</span>
-    <span class="inline-flex min-w-20 items-center gap-1">
-      <input
-        :value="score2"
-        type="text"
-        inputmode="numeric"
-        pattern="[0-9]*"
-        class="w-14 h-8 border rounded text-center focus:ring-2 outline-none disabled:bg-muted disabled:text-muted-foreground"
-        :class="
-          isTieScore
-            ? 'border-red-500 bg-red-50 text-red-700 focus:ring-red-500'
-            : 'focus:ring-blue-500'
-        "
-        :disabled="!canEditScores"
-        @keydown="handleKeydown"
-        @focus="selectInputContent"
-        @click="selectInputContent"
-        @input="emit('update-score', 2, ($event.target as HTMLInputElement).value)"
-        @blur="emit('score-blur', $event, 2)"
-        @paste="handlePaste($event, 2)"
-      />
-      <span v-if="bonusForScore(2) > 0" class="font-bold text-red-900">
-        +{{ bonusForScore(2) }}
-      </span>
-    </span>
-  </template>
-
-  <div v-else class="grid gap-1">
+  <div class="grid gap-1">
     <div
       v-for="(round, roundIndex) in visibleRoundScores"
       :key="roundIndex"
@@ -120,13 +78,22 @@ const selectInputContent = (event: Event) => {
         type="text"
         inputmode="numeric"
         pattern="[0-9]*"
-        class="h-8 w-14 rounded border text-center outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-muted disabled:text-muted-foreground"
+        data-fight-score-input="true"
+        :data-round-index="roundIndex"
+        data-fighter-side="1"
+        data-testid="fight-score-input"
+        class="h-8 w-14 rounded border text-center outline-none focus:ring-2 disabled:bg-muted disabled:text-muted-foreground"
+        :class="
+          highlightTieBreakRequired
+            ? 'border-red-500 bg-red-50 text-red-700 focus:ring-red-500'
+            : 'focus:ring-blue-500'
+        "
         :disabled="!canEditScores"
         @keydown="handleKeydown"
         @focus="selectInputContent"
         @click="selectInputContent"
         @input="emit('update-score', 1, ($event.target as HTMLInputElement).value, roundIndex)"
-        @blur="emit('score-blur', $event, 1, roundIndex)"
+        @blur="emit('score-blur', $event, 1, roundIndex, false)"
         @paste="handlePaste($event, 1, roundIndex)"
       />
       <span class="text-sm font-bold text-red-900">
@@ -138,13 +105,24 @@ const selectInputContent = (event: Event) => {
         type="text"
         inputmode="numeric"
         pattern="[0-9]*"
-        class="h-8 w-14 rounded border text-center outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-muted disabled:text-muted-foreground"
+        data-fight-score-input="true"
+        :data-round-index="roundIndex"
+        data-fighter-side="2"
+        data-testid="fight-score-input"
+        class="h-8 w-14 rounded border text-center outline-none focus:ring-2 disabled:bg-muted disabled:text-muted-foreground"
+        :class="
+          highlightTieBreakRequired
+            ? 'border-red-500 bg-red-50 text-red-700 focus:ring-red-500'
+            : 'focus:ring-blue-500'
+        "
         :disabled="!canEditScores"
         @keydown="handleKeydown"
         @focus="selectInputContent"
         @click="selectInputContent"
         @input="emit('update-score', 2, ($event.target as HTMLInputElement).value, roundIndex)"
-        @blur="emit('score-blur', $event, 2, roundIndex)"
+        @blur="
+          emit('score-blur', $event, 2, roundIndex, roundIndex === visibleRoundScores.length - 1)
+        "
         @paste="handlePaste($event, 2, roundIndex)"
       />
       <span class="text-sm font-bold text-red-900">

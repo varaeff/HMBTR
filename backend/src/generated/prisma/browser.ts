@@ -88,6 +88,11 @@ export type group_competitors = Prisma.group_competitorsModel
  */
 export type fights = Prisma.fightsModel
 /**
+ * Model fight_round_scores
+ * 
+ */
+export type fight_round_scores = Prisma.fight_round_scoresModel
+/**
  * Model fight_warnings
  * 
  */

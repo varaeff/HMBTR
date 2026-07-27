@@ -2,7 +2,6 @@
 import type { FightResultDisplayText, FightWarningResultScore } from './types'
 
 defineProps<{
-  rounds: 1 | 2 | 3
   warningResultScore: FightWarningResultScore | null
   resultDisplay: FightResultDisplayText
 }>()
@@ -11,7 +10,7 @@ defineProps<{
 <template>
   <div class="text-center">
     <template v-if="warningResultScore">
-      <strong v-if="rounds === 1 && warningResultScore.parts[0]">
+      <strong v-if="!warningResultScore.leading && warningResultScore.parts[0]">
         <span>{{ warningResultScore.parts[0].competitor1Score }}</span
         ><span v-if="warningResultScore.parts[0].competitor1Bonus > 0" class="text-red-900"
           >+{{ warningResultScore.parts[0].competitor1Bonus }}</span
@@ -24,7 +23,7 @@ defineProps<{
       </strong>
       <strong v-else>{{ warningResultScore.leading }}</strong>
       <span
-        v-if="rounds > 1 && warningResultScore.parts.length"
+        v-if="warningResultScore.leading && warningResultScore.parts.length"
         class="fight-result-details font-normal"
         ><span>(</span
         ><template v-for="(part, index) in warningResultScore.parts" :key="index">

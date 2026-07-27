@@ -51,7 +51,7 @@ export const stageGroupFights = (groups: Group[]): BlockData[] => {
           fighter2: f2,
           fighter1Score: 0,
           fighter2Score: 0,
-          roundScores: [],
+          roundScores: [{ competitor1Score: 0, competitor2Score: 0 }],
           rounds: 1,
           roundWin: false,
           isResultValid: false
@@ -67,7 +67,7 @@ export const stageGroupFights = (groups: Group[]): BlockData[] => {
           fighter2: f2,
           fighter1Score: 0,
           fighter2Score: 0,
-          roundScores: [],
+          roundScores: [{ competitor1Score: 0, competitor2Score: 0 }],
           rounds: 1,
           roundWin: false,
           isResultValid: false

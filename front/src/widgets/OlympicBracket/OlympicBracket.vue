@@ -157,20 +157,14 @@ const handleScoreUpdate = (
   fightId: number,
   fightNumber: number,
   scores: {
-    f1?: number
-    f2?: number
     roundScores?: RoundScore[]
-    tieBreakRoundRevealed?: boolean
     warnings?: FightWarning[]
   }
 ) => {
   competitionStore.updateGlobalScore({
     fightId,
     fightNumber,
-    f1Score: scores.f1,
-    f2Score: scores.f2,
     roundScores: scores.roundScores,
-    tieBreakRoundRevealed: scores.tieBreakRoundRevealed,
     warnings: scores.warnings
   })
 }

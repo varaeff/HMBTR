@@ -8,6 +8,7 @@ import {
   applyFightWarningBonuses,
   evaluateFightScore,
   formatFightResult,
+  legacyRoundScoresFromColumns,
   type FightScoreEvaluation,
   type FightScoringRules,
   type FightWarning,
@@ -90,6 +91,10 @@ type Fight = {
   winner: { fighter: FighterName } | null;
   nomination: NominationDefinition;
   warnings: Array<{ competitor_id: number; round: number; reason: string }>;
+  round_scores: Array<{
+    competitor1_score: number;
+    competitor2_score: number;
+  }>;
 };
 
 type CardFight = {
@@ -480,6 +485,7 @@ export class TournamentsService {
                     winner: { include: { fighter: true } },
                     nomination: true,
                     warnings: { orderBy: { id: 'asc' } },
+                    round_scores: { orderBy: { round: 'asc' } },
                   },
                 },
                 bracket_slots: {
@@ -1012,34 +1018,7 @@ export class TournamentsService {
       roundWin: nomination.round_win,
     };
     const warnings = this.getFightWarnings(fight);
-    const allRounds: RoundScore[] = [
-      {
-        competitor1Score: fight.competitor1_round1_score,
-        competitor2Score: fight.competitor2_round1_score,
-      },
-      {
-        competitor1Score: fight.competitor1_round2_score,
-        competitor2Score: fight.competitor2_round2_score,
-      },
-      {
-        competitor1Score: fight.competitor1_round3_score,
-        competitor2Score: fight.competitor2_round3_score,
-      },
-    ];
-    if (
-      rules.roundWin &&
-      (fight.competitor1_round4_score !== fight.competitor2_round4_score ||
-        warnings.some((warning) => warning.round === 4))
-    ) {
-      allRounds.push({
-        competitor1Score: fight.competitor1_round4_score,
-        competitor2Score: fight.competitor2_round4_score,
-      });
-    }
-    const rounds =
-      rules.rounds === 1
-        ? []
-        : allRounds.slice(0, rules.roundWin ? 4 : rules.rounds);
+    const rounds = this.getPersistedRoundScores(rules, fight, warnings);
     const adjusted = applyFightWarningBonuses(
       rules,
       {
@@ -1048,18 +1027,8 @@ export class TournamentsService {
         warnings,
       },
       rounds,
-      rules.rounds === 1
-        ? {
-            competitor1Score: fight.competitor1_score,
-            competitor2Score: fight.competitor2_score,
-          }
-        : undefined,
     );
-    const evaluation = evaluateFightScore(
-      rules,
-      rules.rounds === 1 ? [] : adjusted.roundScores,
-      rules.rounds === 1 ? adjusted.aggregateScore : undefined,
-    );
+    const evaluation = evaluateFightScore(rules, adjusted.roundScores);
 
     const displayEvaluation =
       fight.forfeit_card_id !== null
@@ -1093,6 +1062,34 @@ export class TournamentsService {
     }));
   }
 
+  private getPersistedRoundScores(
+    rules: FightScoringRules,
+    fight: Fight,
+    warnings: Array<{ round: number }>,
+  ): RoundScore[] {
+    if (fight.round_scores.length) {
+      return fight.round_scores.map((score) => ({
+        competitor1Score: score.competitor1_score,
+        competitor2Score: score.competitor2_score,
+      }));
+    }
+
+    return legacyRoundScoresFromColumns(
+      rules,
+      {
+        competitor1Round1Score: fight.competitor1_round1_score,
+        competitor2Round1Score: fight.competitor2_round1_score,
+        competitor1Round2Score: fight.competitor1_round2_score,
+        competitor2Round2Score: fight.competitor2_round2_score,
+        competitor1Round3Score: fight.competitor1_round3_score,
+        competitor2Round3Score: fight.competitor2_round3_score,
+        competitor1Round4Score: fight.competitor1_round4_score,
+        competitor2Round4Score: fight.competitor2_round4_score,
+      },
+      warnings,
+    );
+  }
+
   private formatFightWarningScore(
     rules: FightScoringRules,
     evaluation: FightScoreEvaluation,
@@ -1105,7 +1102,7 @@ export class TournamentsService {
     const scorePart = (score: number, bonus: number) =>
       `${score}${bonus > 0 ? `+${bonus}` : ''}`;
 
-    if (rules.rounds === 1) {
+    if (rules.rounds === 1 && adjusted.scoreParts.length === 1) {
       const part = adjusted.scoreParts[0];
       return `${scorePart(part.competitor1Score, part.competitor1Bonus)}:${scorePart(
         part.competitor2Score,
@@ -1142,31 +1139,7 @@ export class TournamentsService {
       roundWin: fight.nomination.round_win,
     };
     const warnings = this.getFightWarnings(fight);
-    const roundScores: RoundScore[] = [
-      {
-        competitor1Score: fight.competitor1_round1_score,
-        competitor2Score: fight.competitor2_round1_score,
-      },
-      {
-        competitor1Score: fight.competitor1_round2_score,
-        competitor2Score: fight.competitor2_round2_score,
-      },
-      {
-        competitor1Score: fight.competitor1_round3_score,
-        competitor2Score: fight.competitor2_round3_score,
-      },
-    ].slice(0, rules.rounds);
-
-    if (
-      rules.roundWin &&
-      (fight.competitor1_round4_score !== fight.competitor2_round4_score ||
-        warnings.some((warning) => warning.round === 4))
-    ) {
-      roundScores.push({
-        competitor1Score: fight.competitor1_round4_score,
-        competitor2Score: fight.competitor2_round4_score,
-      });
-    }
+    const roundScores = this.getPersistedRoundScores(rules, fight, warnings);
 
     return applyFightWarningBonuses(
       rules,
@@ -1175,13 +1148,7 @@ export class TournamentsService {
         competitor2Id: fight.competitor2_id ?? 0,
         warnings,
       },
-      rules.rounds === 1 ? [] : roundScores,
-      rules.rounds === 1
-        ? {
-            competitor1Score: fight.competitor1_score,
-            competitor2Score: fight.competitor2_score,
-          }
-        : undefined,
+      roundScores,
     ).aggregateScore;
   }
 

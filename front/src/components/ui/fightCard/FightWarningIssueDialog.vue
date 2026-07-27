@@ -9,9 +9,8 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 
-defineProps<{
+const props = defineProps<{
   open: boolean
-  rounds: 1 | 2 | 3
   issueRounds: number[]
   selectedRound: number
   reason: string
@@ -27,6 +26,13 @@ const emit = defineEmits<{
 const updateReason = (event: Event) => {
   emit('update:reason', (event.target as HTMLInputElement).value)
 }
+
+const confirmFromReasonInput = (event: KeyboardEvent) => {
+  const inputReason = (event.target as HTMLInputElement).value
+  if (inputReason.trim() || props.reason.trim()) {
+    emit('confirm')
+  }
+}
 </script>
 
 <template>
@@ -39,7 +45,7 @@ const updateReason = (event: Event) => {
         </DialogDescription>
       </DialogHeader>
       <div class="grid gap-3">
-        <div v-if="rounds > 1" class="grid gap-2">
+        <div v-if="issueRounds.length > 1" class="grid gap-2">
           <label
             v-for="round in issueRounds"
             :key="round"
@@ -65,6 +71,7 @@ const updateReason = (event: Event) => {
             class="h-9 rounded border bg-background px-2"
             data-testid="fight-warning-reason-input"
             @input="updateReason"
+            @keydown.enter.prevent="confirmFromReasonInput"
           />
         </div>
       </div>

@@ -1,6 +1,7 @@
 import {
   evaluateFightScore,
   formatFightResult,
+  getRequiredRoundScores,
 } from '../../../shared/fightScoring';
 
 describe('fight scoring', () => {
@@ -22,7 +23,50 @@ describe('fight scoring', () => {
     );
   });
 
-  it('requires and counts a non-draw fourth round when round wins are tied', () => {
+  it.each([
+    {
+      rules: { rounds: 1 as const, roundWin: false },
+      winnerSide: 1 as const,
+      rounds: [
+        { competitor1Score: 5, competitor2Score: 5 },
+        { competitor1Score: 1, competitor2Score: 1 },
+        { competitor1Score: 2, competitor2Score: 0 },
+      ],
+    },
+    {
+      rules: { rounds: 2 as const, roundWin: false },
+      winnerSide: 2 as const,
+      rounds: [
+        { competitor1Score: 3, competitor2Score: 1 },
+        { competitor1Score: 1, competitor2Score: 3 },
+        { competitor1Score: 4, competitor2Score: 4 },
+        { competitor1Score: 0, competitor2Score: 1 },
+      ],
+    },
+    {
+      rules: { rounds: 3 as const, roundWin: false },
+      winnerSide: 2 as const,
+      rounds: [
+        { competitor1Score: 2, competitor2Score: 1 },
+        { competitor1Score: 1, competitor2Score: 2 },
+        { competitor1Score: 3, competitor2Score: 3 },
+        { competitor1Score: 0, competitor2Score: 2 },
+      ],
+    },
+  ])('requires extra rounds for tied total-score base rounds', ({ rules, rounds, winnerSide }) => {
+    expect(evaluateFightScore(rules, rounds.slice(0, rules.rounds))).toMatchObject({
+      requiresTieBreakRound: true,
+      isValidResult: false,
+    });
+
+    const result = evaluateFightScore(rules, rounds);
+    expect(result).toMatchObject({
+      winnerSide,
+      isValidResult: true,
+    });
+  });
+
+  it('requires and counts extra rounds until round wins are no longer tied', () => {
     const firstThree = [
       { competitor1Score: 5, competitor2Score: 3 },
       { competitor1Score: 2, competitor2Score: 4 },
@@ -34,6 +78,7 @@ describe('fight scoring', () => {
 
     const rounds = [
       ...firstThree,
+      { competitor1Score: 0, competitor2Score: 0 },
       { competitor1Score: 3, competitor2Score: 2 },
     ];
     const result = evaluateFightScore({ rounds: 3, roundWin: true }, rounds);
@@ -44,7 +89,23 @@ describe('fight scoring', () => {
       isValidResult: true,
     });
     expect(formatFightResult({ rounds: 3, roundWin: true }, result, rounds)).toBe(
-      '2:1 (5:3, 2:4, 1:1, 3:2)',
+      '2:1 (5:3, 2:4, 1:1, 0:0, 3:2)',
+    );
+  });
+
+  it('rejects stale extra rounds after the first decisive extra round', () => {
+    const rounds = [
+      { competitor1Score: 5, competitor2Score: 5 },
+      { competitor1Score: 1, competitor2Score: 0 },
+      { competitor1Score: 0, competitor2Score: 1 },
+    ];
+
+    expect(evaluateFightScore({ rounds: 1, roundWin: false }, rounds)).toMatchObject({
+      isValidDraft: false,
+      error: 'Extra round is not required',
+    });
+    expect(getRequiredRoundScores({ rounds: 1, roundWin: false }, rounds)).toEqual(
+      rounds.slice(0, 2),
     );
   });
 

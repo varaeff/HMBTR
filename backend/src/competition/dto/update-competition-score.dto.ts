@@ -1,6 +1,5 @@
 import { Type } from 'class-transformer';
 import {
-  ArrayMaxSize,
   ArrayMinSize,
   IsArray,
   IsInt,
@@ -31,8 +30,7 @@ export class UpdateCompetitionScoreDto {
 
   @IsOptional()
   @IsArray()
-  @ArrayMinSize(2)
-  @ArrayMaxSize(4)
+  @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => RoundScoreDto)
   round_scores?: RoundScoreDto[];

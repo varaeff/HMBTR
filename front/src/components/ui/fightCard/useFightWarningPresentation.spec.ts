@@ -90,6 +90,13 @@ describe('fight warning presentation', () => {
         { competitor1Score: 0, competitor2Score: 0 }
       ])
     ).toEqual([1, 2])
+    expect(
+      availableIssueWarningRounds(1, [
+        { competitor1Score: 3, competitor2Score: 3 },
+        { competitor1Score: 1, competitor2Score: 1 },
+        { competitor1Score: 0, competitor2Score: 0 }
+      ])
+    ).toEqual([1, 2, 3])
     expect(bonusForScore(1, 1, warnings, { competitor1Id: 101, competitor2Id: 202 })).toBe(6)
     expect(bonusForScore(2, 2, warnings, { competitor1Id: 101, competitor2Id: 202 })).toBe(3)
   })

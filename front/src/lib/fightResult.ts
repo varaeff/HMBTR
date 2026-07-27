@@ -1,8 +1,32 @@
 import type { CompetitionBlock, FightData, PendingTie } from '@/model'
-import { evaluateFightScore, type RoundScore } from '@shared/fightScoring'
+import {
+  applyFightWarningBonuses,
+  getRequiredRoundScores,
+  type RoundScore
+} from '@shared/fightScoring'
+
+export interface SubmittedCompetitionRoundScore {
+  competitor1_score: number
+  competitor2_score: number
+}
+
+export interface SubmittedCompetitionFightWarning {
+  competitor_id: number
+  round: number
+  reason: string
+}
+
+export interface SubmittedCompetitionFightResult {
+  fight_id: number
+  round_scores: SubmittedCompetitionRoundScore[]
+  warnings: SubmittedCompetitionFightWarning[]
+}
 
 export const areFightResultsReady = (fights: FightData[]) =>
   fights.length > 0 && fights.every((fight) => fight.isResultValid)
+
+export const getIncompleteFightNumbers = (fights: FightData[]) =>
+  fights.filter((fight) => !fight.isResultValid).map((fight) => fight.number)
 
 export const canShowGroupFightActions = (block: CompetitionBlock, pendingTie: PendingTie | null) =>
   block.type === 'GROUP' &&
@@ -11,15 +35,34 @@ export const canShowGroupFightActions = (block: CompetitionBlock, pendingTie: Pe
   !(pendingTie?.blockId === block.id && (pendingTie.scope ?? 'GROUP') === 'GROUP')
 
 export const getSubmittedRoundScores = (fight: FightData): RoundScore[] => {
-  if (fight.rounds === 1) return []
-
-  const normalRounds = fight.roundScores.slice(0, fight.rounds)
-  if (!fight.roundWin) return normalRounds
-
-  const evaluation = evaluateFightScore(
+  const adjustedScore = applyFightWarningBonuses(
     { rounds: fight.rounds, roundWin: fight.roundWin },
-    normalRounds
+    {
+      competitor1Id: fight.competitor1Id ?? 0,
+      competitor2Id: fight.competitor2Id ?? 0,
+      warnings: fight.warnings ?? []
+    },
+    fight.roundScores
   )
+  const requiredAdjustedRounds = getRequiredRoundScores(
+    { rounds: fight.rounds, roundWin: fight.roundWin },
+    adjustedScore.roundScores
+  )
+  const lastWarningRound = Math.max(0, ...(fight.warnings ?? []).map((warning) => warning.round))
+  const requiredRoundCount = Math.max(requiredAdjustedRounds.length, lastWarningRound)
 
-  return evaluation.requiresTieBreakRound ? fight.roundScores.slice(0, 4) : normalRounds
+  return fight.roundScores.slice(0, requiredRoundCount)
 }
+
+export const buildSubmittedFightResult = (fight: FightData): SubmittedCompetitionFightResult => ({
+  fight_id: fight.id,
+  round_scores: getSubmittedRoundScores(fight).map((score) => ({
+    competitor1_score: score.competitor1Score,
+    competitor2_score: score.competitor2Score
+  })),
+  warnings: (fight.warnings ?? []).map((warning) => ({
+    competitor_id: warning.competitorId,
+    round: warning.round,
+    reason: warning.reason
+  }))
+})

@@ -102,7 +102,12 @@ export const loadTournamentData = async (
           fighter2: competitorMap.get(f.competitor2_id)?.fighter,
           fighter1Score: f.competitor1_score,
           fighter2Score: f.competitor2_score,
-          roundScores: [],
+          roundScores: [
+            {
+              competitor1Score: f.competitor1_score,
+              competitor2Score: f.competitor2_score
+            }
+          ],
           rounds: 1 as const,
           roundWin: false,
           isResultValid: f.competitor1_score !== f.competitor2_score
@@ -117,7 +122,7 @@ export const loadTournamentData = async (
             fighter2: Fighter
             fighter1Score: number
             fighter2Score: number
-            roundScores: []
+            roundScores: [{ competitor1Score: number; competitor2Score: number }]
             rounds: 1
             roundWin: false
             isResultValid: boolean

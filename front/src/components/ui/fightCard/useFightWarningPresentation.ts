@@ -36,7 +36,7 @@ export const warningMarkerTitle = (
   rounds: FightData['rounds'],
   translate: Translate
 ) =>
-  rounds === 1
+  rounds === 1 && warning.round === 1
     ? translate('fightWarningReasonTooltip', { reason: warning.reason })
     : translate('fightWarningRoundReasonTooltip', {
         round: warning.round,
@@ -60,6 +60,7 @@ export const createFightWarningMarkers = ({
     return fighterWarnings.map(({ warning, index }) => ({
       id: `${fighter}-${index}`,
       warningIndex: index,
+      round: warning.round > 1 ? warning.round : undefined,
       title: warningMarkerTitle(warning, rounds, translate)
     }))
   }
@@ -73,9 +74,9 @@ export const createFightWarningMarkers = ({
 }
 
 export const availableIssueWarningRounds = (
-  rounds: FightData['rounds'],
+  _rounds: FightData['rounds'],
   visibleRoundScores: RoundScore[]
-) => (rounds === 1 ? [1] : visibleRoundScores.map((_, index) => index + 1))
+) => visibleRoundScores.map((_, index) => index + 1)
 
 export const bonusForScore = (
   fighter: FighterSide,

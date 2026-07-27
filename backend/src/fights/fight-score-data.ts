@@ -41,6 +41,12 @@ export interface FightScoreUpdateData {
   competitor2_round4_score: number;
 }
 
+export interface FightRoundScoreCreateData {
+  round: number;
+  competitor1_score: number;
+  competitor2_score: number;
+}
+
 export const scoringRules = (nomination: {
   rounds: number;
   round_win: boolean;
@@ -62,31 +68,18 @@ export const evaluateSubmittedFightScore = (
   score: SubmittedFightScore,
   requireWinner: boolean,
 ): FightScoreEvaluation => {
-  const hasBothAggregateScores =
-    score.competitor1_score !== undefined &&
-    score.competitor2_score !== undefined;
   const hasAnyAggregateScore =
     score.competitor1_score !== undefined ||
     score.competitor2_score !== undefined;
-  if (rules.rounds === 1 && !hasBothAggregateScores) {
-    throw new BadRequestException(
-      'Single-round fights require both aggregate scores',
-    );
+  if (hasAnyAggregateScore) {
+    throw new BadRequestException('Fights require round scores only');
   }
-  if (rules.rounds > 1 && hasAnyAggregateScore) {
-    throw new BadRequestException(
-      'Multi-round fights require round scores only',
-    );
+  if (!score.round_scores?.length) {
+    throw new BadRequestException('Fights require round scores');
   }
   const evaluation = evaluateFightScore(
     rules,
     submittedRoundScores(score),
-    hasBothAggregateScores
-      ? {
-          competitor1Score: score.competitor1_score!,
-          competitor2Score: score.competitor2_score!,
-        }
-      : undefined,
   );
 
   if (
@@ -116,8 +109,7 @@ export const validateSubmittedFightWarnings = (
 ) => {
   const warnings = submittedFightWarnings(score);
   const validCompetitorIds = new Set([competitor1Id, competitor2Id]);
-  const roundCount =
-    rules.rounds === 1 ? 1 : submittedRoundScores(score).length;
+  const roundCount = submittedRoundScores(score).length;
 
   for (const warning of warnings) {
     if (!warning.reason) {
@@ -128,19 +120,9 @@ export const validateSubmittedFightWarnings = (
         'Warning competitor does not belong to the fight',
       );
     }
-    if (rules.rounds === 1 && warning.round !== 1) {
-      throw new BadRequestException(
-        'Single-round fight warnings must use round 1',
-      );
-    }
-    if (rules.rounds > 1 && (warning.round < 1 || warning.round > roundCount)) {
+    if (warning.round < 1 || warning.round > roundCount) {
       throw new BadRequestException(
         'Warning round is not available for the fight score',
-      );
-    }
-    if (warning.round === 4 && (!rules.roundWin || roundCount !== 4)) {
-      throw new BadRequestException(
-        'Round 4 warning requires an active tie-break round',
       );
     }
   }
@@ -200,8 +182,7 @@ export const evaluateSubmittedFightScoreWithWarnings = (
     return {
       ...evaluateFightScore(
         rules,
-        rules.rounds === 1 ? [] : adjusted.roundScores,
-        rules.rounds === 1 ? adjusted.aggregateScore : undefined,
+        adjusted.roundScores,
       ),
       winnerSide,
       isValidDraft: true,
@@ -214,8 +195,7 @@ export const evaluateSubmittedFightScoreWithWarnings = (
 
   const evaluation = evaluateFightScore(
     rules,
-    rules.rounds === 1 ? [] : adjusted.roundScores,
-    rules.rounds === 1 ? adjusted.aggregateScore : undefined,
+    adjusted.roundScores,
   );
 
   if (
@@ -231,6 +211,15 @@ export const evaluateSubmittedFightScoreWithWarnings = (
     technicalLoserSide: adjusted.technicalLoserSide,
   };
 };
+
+export const fightRoundScoreCreateData = (
+  score: SubmittedFightScore,
+): FightRoundScoreCreateData[] =>
+  submittedRoundScores(score).map((round, index) => ({
+    round: index + 1,
+    competitor1_score: round.competitor1Score,
+    competitor2_score: round.competitor2Score,
+  }));
 
 export const fightScoreUpdateData = (
   evaluation: FightScoreEvaluation,

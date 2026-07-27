@@ -313,10 +313,23 @@ describe('CompetitionService', () => {
     );
   });
 
-  it('forfeits only the group fight where the red card was issued', async () => {
+  it('forfeits the current and following group fights after a red card', async () => {
+    const groupBlock = {
+      id: 8,
+      type: 'GROUP',
+      status: 'ACTIVE',
+      lifecycle_state: 'FIGHTS_EDITABLE',
+      tournament_nomination: { is_finished: false },
+    };
     const groupFight = {
       id: 41,
-      block: { type: 'GROUP' },
+      block_id: 8,
+      tournament_id: 31,
+      nomination_id: 5,
+      fight_number: 2,
+      is_finished: false,
+      forfeit_card_id: null,
+      block: groupBlock,
       competitor1_id: 101,
       competitor2_id: 102,
       competitor1: { fighter_id: 1 },
@@ -324,17 +337,33 @@ describe('CompetitionService', () => {
       nomination: { rounds: 1, round_win: false },
     };
     const prisma = {
+      $transaction: jest.fn(async (callback: (tx: unknown) => Promise<unknown>) =>
+        callback(prisma),
+      ),
       fights: {
         findMany: jest.fn().mockResolvedValue([
+          {
+            ...groupFight,
+            id: 40,
+            fight_number: 1,
+            competitor2_id: 100,
+            competitor2: { fighter_id: 4 },
+            is_finished: true,
+          },
           groupFight,
           {
             ...groupFight,
             id: 42,
+            fight_number: 3,
             competitor2_id: 103,
             competitor2: { fighter_id: 3 },
           },
         ]),
         update: jest.fn(),
+      },
+      fight_round_scores: {
+        deleteMany: jest.fn(),
+        createMany: jest.fn(),
       },
     };
     const service = new CompetitionService(
@@ -350,16 +379,15 @@ describe('CompetitionService', () => {
     };
     serviceInternals.getActiveRedCards = jest.fn().mockResolvedValue([
       {
-        id: 71,
-        fighter_id: 1,
-        fight_id: 40,
-        received_at: new Date('2026-06-12T00:00:00.000Z'),
-      },
-      {
         id: 72,
         fighter_id: 1,
         fight_id: 41,
         received_at: new Date('2026-06-12T00:00:00.000Z'),
+        source_block_id: 8,
+        source_block_type: 'GROUP',
+        source_fight_number: 2,
+        source_tournament_id: 31,
+        source_nomination_id: 5,
       },
     ]);
 
@@ -368,10 +396,21 @@ describe('CompetitionService', () => {
       new Date('2026-06-12T00:00:00.000Z'),
     );
 
-    expect(prisma.fights.update).toHaveBeenCalledTimes(1);
+    expect(prisma.fights.update).toHaveBeenCalledTimes(2);
+    expect(prisma.fights.update).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 40 },
+      }),
+    );
     expect(prisma.fights.update).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { id: 41 },
+        data: expect.objectContaining({ forfeit_card_id: 72 }),
+      }),
+    );
+    expect(prisma.fights.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 42 },
         data: expect.objectContaining({ forfeit_card_id: 72 }),
       }),
     );
@@ -379,11 +418,26 @@ describe('CompetitionService', () => {
 
   it('records round-win red-card forfeits as X:0 with 5:0 in each round', async () => {
     const prisma = {
+      $transaction: jest.fn(async (callback: (tx: unknown) => Promise<unknown>) =>
+        callback(prisma),
+      ),
       fights: {
         findMany: jest.fn().mockResolvedValue([
           {
             id: 41,
-            block: { type: 'GROUP' },
+            block_id: 8,
+            tournament_id: 31,
+            nomination_id: 5,
+            fight_number: 2,
+            is_finished: false,
+            forfeit_card_id: null,
+            block: {
+              id: 8,
+              type: 'GROUP',
+              status: 'ACTIVE',
+              lifecycle_state: 'FIGHTS_EDITABLE',
+              tournament_nomination: { is_finished: false },
+            },
             competitor1_id: 101,
             competitor2_id: 102,
             competitor1: { fighter_id: 1 },
@@ -393,6 +447,10 @@ describe('CompetitionService', () => {
         ]),
         update: jest.fn(),
       },
+      fight_round_scores: {
+        deleteMany: jest.fn(),
+        createMany: jest.fn(),
+      },
     };
     const service = new CompetitionService(
       prisma as unknown as PrismaService,
@@ -411,6 +469,11 @@ describe('CompetitionService', () => {
         fighter_id: 1,
         fight_id: 41,
         received_at: new Date('2026-06-12T00:00:00.000Z'),
+        source_block_id: 8,
+        source_block_type: 'GROUP',
+        source_fight_number: 2,
+        source_tournament_id: 31,
+        source_nomination_id: 5,
       },
     ]);
 
@@ -604,7 +667,103 @@ describe('CompetitionService', () => {
       data: { results_fixed: false },
     });
     expect(tx.fights.updateMany).toHaveBeenCalledWith({
-      where: { block_id: 9, bracket_round: 1 },
+      where: { block_id: 9, bracket_round: 1, forfeit_card_id: null },
+      data: { is_finished: false, winner_id: null },
+    });
+  });
+
+  it('keeps red-card forfeits fixed when canceling group results', async () => {
+    const tx = {
+      competition_placements: {
+        deleteMany: jest.fn(),
+      },
+      fights: {
+        updateMany: jest.fn(),
+      },
+      competition_blocks: {
+        updateMany: jest.fn().mockResolvedValue({ count: 1 }),
+      },
+    };
+    const prisma = {
+      competition_blocks: {
+        findUnique: jest.fn().mockResolvedValue({
+          id: 9,
+          type: 'GROUP',
+          status: 'ACTIVE',
+          lifecycle_state: 'RESULTS_FIXED',
+          tournament_id: 31,
+          nomination_id: 5,
+          tournament_nomination_id: 15,
+          tournament_nomination: { is_finished: false },
+          groups: [{ id: 101 }],
+          round_states: [],
+        }),
+      },
+      $transaction: jest.fn(
+        async (callback: (transaction: typeof tx) => Promise<void>) =>
+          callback(tx),
+      ),
+    };
+    const service = new CompetitionService(
+      prisma as unknown as PrismaService,
+      {} as RatingsService,
+    );
+    const serviceInternals = service as unknown as {
+      resetRatingState: jest.Mock;
+    };
+    serviceInternals.resetRatingState = jest.fn();
+    jest.spyOn(service, 'getState').mockResolvedValue({
+      blocks: [],
+    } as never);
+
+    await service.cancelResultsFixation({ block_id: 9 });
+
+    expect(tx.fights.updateMany).toHaveBeenCalledWith({
+      where: { block_id: 9, forfeit_card_id: null },
+      data: { is_finished: false, winner_id: null },
+    });
+  });
+
+  it('keeps red-card forfeits fixed when canceling Olympic round results', async () => {
+    const prisma = {
+      competition_blocks: {
+        findUnique: jest.fn().mockResolvedValue({
+          id: 10,
+          type: 'OLYMPIC',
+          status: 'ACTIVE',
+          tournament_id: 31,
+          nomination_id: 5,
+          tournament_nomination_id: 15,
+          tournament_nomination: { is_finished: false },
+          groups: [],
+          round_states: [
+            { id: 201, round: 1, pairs_fixed: true, results_fixed: true },
+          ],
+        }),
+      },
+      competition_round_states: {
+        updateMany: jest.fn().mockResolvedValue({ count: 1 }),
+      },
+      fights: {
+        updateMany: jest.fn(),
+      },
+    };
+    const service = new CompetitionService(
+      prisma as unknown as PrismaService,
+      {} as RatingsService,
+    );
+    const serviceInternals = service as unknown as {
+      resetRatingState: jest.Mock;
+    };
+    serviceInternals.resetRatingState = jest.fn();
+    jest.spyOn(service, 'getState').mockResolvedValue({
+      blocks: [],
+    } as never);
+
+    await service.cancelResultsFixation({ block_id: 10, round: 1 });
+
+    expect(prisma.fights.updateMany).toHaveBeenCalledWith({
+      where: { block_id: 10, bracket_round: 1, forfeit_card_id: null },
       data: { is_finished: false, winner_id: null },
     });
   });
@@ -692,6 +851,10 @@ describe('CompetitionService', () => {
         deleteMany: jest.fn(),
         createMany: jest.fn(),
       },
+      fight_round_scores: {
+        deleteMany: jest.fn(),
+        createMany: jest.fn(),
+      },
     };
     const prisma = {
       competition_blocks: {
@@ -772,6 +935,202 @@ describe('CompetitionService', () => {
     expect(tx.fight_warnings.createMany).toHaveBeenCalledWith({
       data: [
         { fight_id: 637, competitor_id: 104, round: 1, reason: 'Holding' },
+      ],
+    });
+  });
+
+  it('fixes group results when warnings decide a raw tied fight', async () => {
+    const tx = {
+      competition_blocks: {
+        count: jest.fn().mockResolvedValue(1),
+        updateMany: jest.fn().mockResolvedValue({ count: 1 }),
+      },
+      fights: {
+        update: jest.fn(),
+      },
+      fight_warnings: {
+        deleteMany: jest.fn(),
+        createMany: jest.fn(),
+      },
+      fight_round_scores: {
+        deleteMany: jest.fn(),
+        createMany: jest.fn(),
+      },
+    };
+    const prisma = {
+      competition_blocks: {
+        findUnique: jest.fn().mockResolvedValue({
+          id: 91,
+          tournament_id: 31,
+          nomination_id: 5,
+          type: 'GROUP',
+          status: 'ACTIVE',
+          lifecycle_state: 'FIGHTS_EDITABLE',
+          fights: [
+            {
+              id: 638,
+              competitor1_id: 101,
+              competitor2_id: 102,
+              forfeit_card_id: null,
+            },
+          ],
+          groups: [{ id: 1 }],
+          tournament_nomination: {
+            is_finished: false,
+            nomination: { rounds: 1, round_win: false },
+          },
+          round_states: [],
+        }),
+      },
+      $transaction: jest.fn(
+        async (callback: (transaction: typeof tx) => Promise<void>) =>
+          callback(tx),
+      ),
+    };
+    const service = new CompetitionService(
+      prisma as unknown as PrismaService,
+      {} as RatingsService,
+    );
+    const serviceInternals = service as unknown as {
+      getPendingTieTx: jest.Mock;
+    };
+    serviceInternals.getPendingTieTx = jest.fn().mockResolvedValue(null);
+    jest.spyOn(service, 'getState').mockResolvedValue({
+      blocks: [],
+    } as never);
+
+    await service.fixResults({
+      block_id: 91,
+      fights: [
+        {
+          fight_id: 638,
+          round_scores: [{ competitor1_score: 0, competitor2_score: 0 }],
+          warnings: [{ competitor_id: 101, round: 1, reason: 'Holding' }],
+        },
+      ],
+    });
+
+    expect(tx.fights.update).toHaveBeenCalledWith({
+      where: { id: 638 },
+      data: expect.objectContaining({
+        competitor1_score: 0,
+        competitor2_score: 0,
+        winner_id: 102,
+        is_finished: true,
+      }),
+    });
+    expect(tx.fight_round_scores.createMany).toHaveBeenCalledWith({
+      data: [
+        {
+          fight_id: 638,
+          round: 1,
+          competitor1_score: 0,
+          competitor2_score: 0,
+        },
+      ],
+    });
+    expect(tx.fight_warnings.createMany).toHaveBeenCalledWith({
+      data: [
+        { fight_id: 638, competitor_id: 101, round: 1, reason: 'Holding' },
+      ],
+    });
+  });
+
+  it('fixes Olympic round results when warnings decide a raw tied fight', async () => {
+    const tx = {
+      fights: {
+        update: jest.fn(),
+      },
+      fight_warnings: {
+        deleteMany: jest.fn(),
+        createMany: jest.fn(),
+      },
+      fight_round_scores: {
+        deleteMany: jest.fn(),
+        createMany: jest.fn(),
+      },
+      competition_round_states: {
+        updateMany: jest.fn().mockResolvedValue({ count: 1 }),
+      },
+    };
+    const prisma = {
+      competition_blocks: {
+        findUnique: jest.fn().mockResolvedValue({
+          id: 92,
+          tournament_id: 31,
+          nomination_id: 5,
+          type: 'OLYMPIC',
+          status: 'ACTIVE',
+          lifecycle_state: 'FIGHTS_EDITABLE',
+          fights: [
+            {
+              id: 639,
+              competitor1_id: 201,
+              competitor2_id: 202,
+              bracket_round: 1,
+              is_bronze: false,
+              forfeit_card_id: null,
+            },
+          ],
+          groups: [],
+          tournament_nomination: {
+            is_finished: false,
+            nomination: { rounds: 1, round_win: false },
+          },
+          round_states: [
+            { id: 77, round: 1, pairs_fixed: true, results_fixed: false },
+          ],
+        }),
+      },
+      bracket_slots: {
+        count: jest.fn().mockResolvedValue(2),
+      },
+      $transaction: jest.fn(
+        async (callback: (transaction: typeof tx) => Promise<void>) =>
+          callback(tx),
+      ),
+    };
+    const service = new CompetitionService(
+      prisma as unknown as PrismaService,
+      {} as RatingsService,
+    );
+    const serviceInternals = service as unknown as {
+      progressOlympicBlockTx: jest.Mock;
+    };
+    serviceInternals.progressOlympicBlockTx = jest.fn().mockResolvedValue(undefined);
+    jest.spyOn(service, 'getState').mockResolvedValue({
+      blocks: [],
+    } as never);
+    jest.spyOn(service, 'applyRedCardForfeits').mockResolvedValue(undefined);
+
+    await service.fixResults({
+      block_id: 92,
+      round: 1,
+      fights: [
+        {
+          fight_id: 639,
+          round_scores: [{ competitor1_score: 1, competitor2_score: 1 }],
+          warnings: [{ competitor_id: 202, round: 1, reason: 'Holding' }],
+        },
+      ],
+    });
+
+    expect(tx.fights.update).toHaveBeenCalledWith({
+      where: { id: 639 },
+      data: expect.objectContaining({
+        competitor1_score: 1,
+        competitor2_score: 1,
+        winner_id: 201,
+        is_finished: true,
+      }),
+    });
+    expect(tx.competition_round_states.updateMany).toHaveBeenCalledWith({
+      where: { id: 77, pairs_fixed: true, results_fixed: false },
+      data: { results_fixed: true },
+    });
+    expect(tx.fight_warnings.createMany).toHaveBeenCalledWith({
+      data: [
+        { fight_id: 639, competitor_id: 202, round: 1, reason: 'Holding' },
       ],
     });
   });

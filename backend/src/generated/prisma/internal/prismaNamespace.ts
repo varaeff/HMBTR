@@ -398,6 +398,7 @@ export const ModelName = {
   groups: 'groups',
   group_competitors: 'group_competitors',
   fights: 'fights',
+  fight_round_scores: 'fight_round_scores',
   fight_warnings: 'fight_warnings',
   disciplinary_cards: 'disciplinary_cards',
   fighter_nomination_ratings: 'fighter_nomination_ratings',
@@ -423,7 +424,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "countries" | "cities" | "clubs" | "fighters" | "marshals" | "marshals_categories" | "tournaments" | "tournament_marshals" | "nominations" | "tournament_nominations" | "competitors" | "groups" | "group_competitors" | "fights" | "fight_warnings" | "disciplinary_cards" | "fighter_nomination_ratings" | "fighter_nomination_rating_history" | "competition_blocks" | "competition_round_states" | "bracket_slots" | "competition_placements" | "tournament_reports" | "users"
+    modelProps: "countries" | "cities" | "clubs" | "fighters" | "marshals" | "marshals_categories" | "tournaments" | "tournament_marshals" | "nominations" | "tournament_nominations" | "competitors" | "groups" | "group_competitors" | "fights" | "fight_round_scores" | "fight_warnings" | "disciplinary_cards" | "fighter_nomination_ratings" | "fighter_nomination_rating_history" | "competition_blocks" | "competition_round_states" | "bracket_slots" | "competition_placements" | "tournament_reports" | "users"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1463,6 +1464,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    fight_round_scores: {
+      payload: Prisma.$fight_round_scoresPayload<ExtArgs>
+      fields: Prisma.fight_round_scoresFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.fight_round_scoresFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fight_round_scoresPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.fight_round_scoresFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fight_round_scoresPayload>
+        }
+        findFirst: {
+          args: Prisma.fight_round_scoresFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fight_round_scoresPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.fight_round_scoresFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fight_round_scoresPayload>
+        }
+        findMany: {
+          args: Prisma.fight_round_scoresFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fight_round_scoresPayload>[]
+        }
+        create: {
+          args: Prisma.fight_round_scoresCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fight_round_scoresPayload>
+        }
+        createMany: {
+          args: Prisma.fight_round_scoresCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.fight_round_scoresCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fight_round_scoresPayload>[]
+        }
+        delete: {
+          args: Prisma.fight_round_scoresDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fight_round_scoresPayload>
+        }
+        update: {
+          args: Prisma.fight_round_scoresUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fight_round_scoresPayload>
+        }
+        deleteMany: {
+          args: Prisma.fight_round_scoresDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.fight_round_scoresUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.fight_round_scoresUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fight_round_scoresPayload>[]
+        }
+        upsert: {
+          args: Prisma.fight_round_scoresUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fight_round_scoresPayload>
+        }
+        aggregate: {
+          args: Prisma.Fight_round_scoresAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFight_round_scores>
+        }
+        groupBy: {
+          args: Prisma.fight_round_scoresGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Fight_round_scoresGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.fight_round_scoresCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Fight_round_scoresCountAggregateOutputType> | number
+        }
+      }
+    }
     fight_warnings: {
       payload: Prisma.$fight_warningsPayload<ExtArgs>
       fields: Prisma.fight_warningsFieldRefs
@@ -2419,6 +2494,17 @@ export const FightsScalarFieldEnum = {
 export type FightsScalarFieldEnum = (typeof FightsScalarFieldEnum)[keyof typeof FightsScalarFieldEnum]
 
 
+export const Fight_round_scoresScalarFieldEnum = {
+  id: 'id',
+  fight_id: 'fight_id',
+  round: 'round',
+  competitor1_score: 'competitor1_score',
+  competitor2_score: 'competitor2_score'
+} as const
+
+export type Fight_round_scoresScalarFieldEnum = (typeof Fight_round_scoresScalarFieldEnum)[keyof typeof Fight_round_scoresScalarFieldEnum]
+
+
 export const Fight_warningsScalarFieldEnum = {
   id: 'id',
   fight_id: 'fight_id',
@@ -2770,6 +2856,7 @@ export type GlobalOmitConfig = {
   groups?: Prisma.groupsOmit
   group_competitors?: Prisma.group_competitorsOmit
   fights?: Prisma.fightsOmit
+  fight_round_scores?: Prisma.fight_round_scoresOmit
   fight_warnings?: Prisma.fight_warningsOmit
   disciplinary_cards?: Prisma.disciplinary_cardsOmit
   fighter_nomination_ratings?: Prisma.fighter_nomination_ratingsOmit

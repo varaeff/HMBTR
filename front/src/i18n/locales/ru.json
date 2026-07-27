@@ -157,6 +157,7 @@
   "tournamentPageConfirmReturnPreviousRound": "Вернуться к предыдущему раунду? Будут удалены последующие бои: {{fights}}, их результаты и связанные карточки: {{cards}}. Результаты предыдущего раунда станут доступны для редактирования.",
   "tournamentPageBackwardConfirmationTitle": "Подтвердите возврат",
   "tournamentPageConfirmBackwardAction": "Подтвердить",
+  "tournamentPageIncompleteFightResults": "Заполните результат с победителем для боев: {{fights}}.",
 
   "groupsTableFighter": "Боец",
   "groupsTableClub": "Клуб",
@@ -231,6 +232,9 @@
   "fightWarningReasonLabel": "Причина",
   "fightWarningRoundDescription": "Выберите раунд для этого замечания.",
   "fightWarningRoundLabel": "Раунд {{round}}",
+  "fightExtraRoundWarningRemovalTitle": "Удалить дополнительный раунд с замечаниями?",
+  "fightExtraRoundWarningRemovalDescription": "Счет в базовом раунде был изменен с ничейного на победу одного из бойцов. Дополнительные раунды должны быть удалены, но в раунде {{round}} обнаружены замечания. Удалить дополнительный раунд {{round}} вместе с замечаниями?",
+  "fightExtraRoundWarningRemovalConfirm": "Да",
 
   "marshalsPageName": "Список судей",
   "addMarshalButton": "+",

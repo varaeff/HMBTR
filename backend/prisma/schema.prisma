@@ -241,8 +241,22 @@ model fights {
   winner             competitors?         @relation("Winner", fields: [winner_id], references: [id])
   disciplinary_cards disciplinary_cards[]
   warnings           fight_warnings[]
+  round_scores       fight_round_scores[]
 
   @@index([forfeit_card_id])
+}
+
+model fight_round_scores {
+  id                Int @id @default(autoincrement())
+  fight_id          Int
+  round             Int
+  competitor1_score Int @default(0)
+  competitor2_score Int @default(0)
+
+  fight fights @relation(fields: [fight_id], references: [id], onDelete: Cascade)
+
+  @@unique([fight_id, round])
+  @@index([fight_id])
 }
 
 model fight_warnings {

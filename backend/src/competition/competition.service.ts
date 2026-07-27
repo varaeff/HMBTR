@@ -31,11 +31,14 @@ import {
   evaluateSubmittedFightScoreWithWarnings,
   evaluateSubmittedFightScore,
   fightScoreUpdateData,
+  submittedRoundScores,
   scoringRules,
 } from '../fights/fight-score-data';
 import {
   applyFightWarningBonuses,
+  legacyRoundScoresFromColumns,
   type FightScoringRules,
+  type RoundScore,
 } from '@shared/fightScoring';
 
 const BLOCK_GROUP = 'GROUP';
@@ -81,6 +84,29 @@ interface ActiveRedCard {
   fighter_id: number;
   fight_id: number;
   received_at: Date;
+  source_block_id: number | null;
+  source_block_type: string | null;
+  source_fight_number: number | null;
+  source_tournament_id: number | null;
+  source_nomination_id: number | null;
+}
+
+interface RedCardForfeitFight {
+  id: number;
+  tournament_id: number;
+  nomination_id: number;
+  block_id: number | null;
+  fight_number: number;
+  is_finished: boolean;
+  forfeit_card_id: number | null;
+  block: {
+    type: string;
+    status: string;
+    lifecycle_state: string;
+    tournament_nomination: {
+      is_finished: boolean;
+    };
+  } | null;
 }
 
 @Injectable()
@@ -126,6 +152,7 @@ export class CompetitionService {
             competitor1: { include: { fighter: true } },
             competitor2: { include: { fighter: true } },
             warnings: { orderBy: { id: 'asc' } },
+            round_scores: { orderBy: { round: 'asc' } },
           },
         },
         bracket_slots: {
@@ -624,6 +651,10 @@ export class CompetitionService {
         is_finished: evaluation.isValidResult,
       },
     });
+    await this.replaceFightRoundScores(
+      dto.fight_id,
+      submittedRoundScores(dto),
+    );
 
     return this.getState(fight.tournament_id, fight.nomination_id);
   }
@@ -693,7 +724,7 @@ export class CompetitionService {
             evaluateSubmittedFightScore(
               scoringRules(block.tournament_nomination.nomination),
               result,
-              true,
+              false,
             ),
           ] as const,
         ];
@@ -748,6 +779,11 @@ export class CompetitionService {
               is_finished: true,
             },
           });
+          await this.replaceFightRoundScoresTx(
+            tx,
+            result.fight_id,
+            submittedRoundScores(result),
+          );
           await tx.fight_warnings.deleteMany({
             where: { fight_id: result.fight_id },
           });
@@ -862,10 +898,13 @@ export class CompetitionService {
     const fights = await this.prisma.fights.findMany({
       where: {
         tournament_id: tournamentId,
-        is_finished: false,
       },
       include: {
-        block: true,
+        block: {
+          include: {
+            tournament_nomination: true,
+          },
+        },
         competitor1: true,
         competitor2: true,
         nomination: true,
@@ -890,16 +929,18 @@ export class CompetitionService {
       activeRedsByFighter.set(card.fighter_id, fighterCards);
     }
     for (const fight of fights) {
+      if (!this.canApplyRedCardForfeitToFight(fight)) continue;
+
       const firstReds = activeRedsByFighter.get(fight.competitor1.fighter_id);
       const secondReds = activeRedsByFighter.get(fight.competitor2.fighter_id);
-      const firstApplicableRed =
-        fight.block?.type === BLOCK_GROUP
-          ? firstReds?.find((card) => card.fight_id === fight.id)
-          : firstReds?.[0];
-      const secondApplicableRed =
-        fight.block?.type === BLOCK_GROUP
-          ? secondReds?.find((card) => card.fight_id === fight.id)
-          : secondReds?.[0];
+      const firstApplicableRed = this.getApplicableRedForFight(
+        fight,
+        firstReds ?? [],
+      );
+      const secondApplicableRed = this.getApplicableRedForFight(
+        fight,
+        secondReds ?? [],
+      );
       const losingCompetitorId = this.getRedCardLosingCompetitorId({
         firstCompetitorId: fight.competitor1_id,
         secondCompetitorId: fight.competitor2_id,
@@ -910,6 +951,11 @@ export class CompetitionService {
       if (!losingCompetitorId) continue;
 
       const firstLoses = losingCompetitorId === fight.competitor1_id;
+      const forfeitRoundScores = this.getRedCardForfeitRoundScores(
+        fight.nomination.rounds,
+        fight.nomination.round_win,
+        firstLoses,
+      );
       await this.prisma.fights.update({
         where: { id: fight.id },
         data: {
@@ -925,10 +971,56 @@ export class CompetitionService {
             : secondApplicableRed?.id,
         },
       });
+      await this.replaceFightRoundScores(fight.id, forfeitRoundScores);
     }
   }
 
+  private canApplyRedCardForfeitToFight(fight: RedCardForfeitFight) {
+    if (
+      !fight.block ||
+      fight.block.status !== STATUS_ACTIVE ||
+      fight.block.tournament_nomination.is_finished
+    ) {
+      return false;
+    }
+
+    if (fight.block.type === BLOCK_GROUP) {
+      return fight.block.lifecycle_state !== LIFECYCLE_RESULTS_FIXED;
+    }
+
+    return !fight.is_finished || this.isForfeitFight(fight);
+  }
+
+  private getApplicableRedForFight(
+    fight: RedCardForfeitFight,
+    cards: ActiveRedCard[],
+  ) {
+    return cards.find((card) => this.isRedCardApplicableToFight(fight, card));
+  }
+
+  private isRedCardApplicableToFight(
+    fight: RedCardForfeitFight,
+    card: ActiveRedCard,
+  ) {
+    if (fight.block?.type !== BLOCK_GROUP) return true;
+    if (card.source_block_type !== BLOCK_GROUP) {
+      return card.fight_id === fight.id;
+    }
+
+    return (
+      fight.block_id === card.source_block_id &&
+      fight.tournament_id === card.source_tournament_id &&
+      fight.nomination_id === card.source_nomination_id &&
+      fight.fight_number >=
+        (card.source_fight_number ?? Number.POSITIVE_INFINITY)
+    );
+  }
+
   async resetForfeitsForCard(cardId: number) {
+    const fights = await this.prisma.fights.findMany({
+      where: { forfeit_card_id: cardId },
+      select: { id: true },
+    });
     await this.prisma.fights.updateMany({
       where: { forfeit_card_id: cardId },
       data: {
@@ -947,6 +1039,11 @@ export class CompetitionService {
         forfeit_card_id: null,
       },
     });
+    if (fights.length) {
+      await this.prisma.fight_round_scores.deleteMany({
+        where: { fight_id: { in: fights.map((fight) => fight.id) } },
+      });
+    }
   }
 
   async assertFightLifecycleEditable(fightId: number) {
@@ -1141,7 +1238,7 @@ export class CompetitionService {
             evaluateSubmittedFightScore(
               scoringRules(block.tournament_nomination.nomination),
               result,
-              true,
+              false,
             ),
           ] as const,
         ];
@@ -1221,6 +1318,11 @@ export class CompetitionService {
               is_finished: true,
             },
           });
+          await this.replaceFightRoundScoresTx(
+            tx,
+            result.fight_id,
+            submittedRoundScores(result),
+          );
           await tx.fight_warnings.deleteMany({
             where: { fight_id: result.fight_id },
           });
@@ -1301,6 +1403,11 @@ export class CompetitionService {
             is_finished: true,
           },
         });
+        await this.replaceFightRoundScoresTx(
+          tx,
+          result.fight_id,
+          submittedRoundScores(result),
+        );
         await tx.fight_warnings.deleteMany({
           where: { fight_id: result.fight_id },
         });
@@ -1366,7 +1473,7 @@ export class CompetitionService {
           },
         });
         await tx.fights.updateMany({
-          where: { block_id: block.id },
+          where: { block_id: block.id, forfeit_card_id: null },
           data: { is_finished: false, winner_id: null },
         });
         const transition = await tx.competition_blocks.updateMany({
@@ -1400,7 +1507,7 @@ export class CompetitionService {
         );
       }
       await this.prisma.fights.updateMany({
-        where: { block_id: block.id, bracket_round: round },
+        where: { block_id: block.id, bracket_round: round, forfeit_card_id: null },
         data: { is_finished: false, winner_id: null },
       });
     }
@@ -1552,7 +1659,7 @@ export class CompetitionService {
           );
         }
         await tx.fights.updateMany({
-          where: { block_id: block.id, bracket_round: round - 1 },
+          where: { block_id: block.id, bracket_round: round - 1, forfeit_card_id: null },
           data: { is_finished: false, winner_id: null },
         });
       });
@@ -2194,6 +2301,7 @@ export class CompetitionService {
       include: {
         warnings: true,
         nomination: true,
+        round_scores: { orderBy: { round: 'asc' } },
       },
     });
 
@@ -2209,16 +2317,13 @@ export class CompetitionService {
         competitor2Id: fight.competitor2_id,
         competitor1Score: fight.competitor1_score,
         competitor2Score: fight.competitor2_score,
-        competitor1Round1Score: fight.competitor1_round1_score,
-        competitor2Round1Score: fight.competitor2_round1_score,
-        competitor1Round2Score: fight.competitor1_round2_score,
-        competitor2Round2Score: fight.competitor2_round2_score,
-        competitor1Round3Score: fight.competitor1_round3_score,
-        competitor2Round3Score: fight.competitor2_round3_score,
-        competitor1Round4Score: fight.competitor1_round4_score,
-        competitor2Round4Score: fight.competitor2_round4_score,
         forfeitCardId: fight.forfeit_card_id,
         rules: scoringRules(fight.nomination),
+        roundScores: this.getPersistedRoundScores(
+          scoringRules(fight.nomination),
+          fight,
+          fight.warnings,
+        ),
         warnings: fight.warnings.map((warning) => ({
           competitorId: warning.competitor_id,
           round: warning.round,
@@ -2245,19 +2350,53 @@ export class CompetitionService {
     return { stats, manualOrder };
   }
 
+  private getPersistedRoundScores(
+    rules: FightScoringRules,
+    fight: {
+      competitor1_round1_score: number;
+      competitor2_round1_score: number;
+      competitor1_round2_score: number;
+      competitor2_round2_score: number;
+      competitor1_round3_score: number;
+      competitor2_round3_score: number;
+      competitor1_round4_score: number;
+      competitor2_round4_score: number;
+      round_scores?: Array<{
+        competitor1_score: number;
+        competitor2_score: number;
+      }>;
+    },
+    warnings: Array<{ round: number }>,
+  ): RoundScore[] {
+    if (fight.round_scores?.length) {
+      return fight.round_scores.map((score) => ({
+        competitor1Score: score.competitor1_score,
+        competitor2Score: score.competitor2_score,
+      }));
+    }
+
+    return legacyRoundScoresFromColumns(
+      rules,
+      {
+        competitor1Round1Score: fight.competitor1_round1_score,
+        competitor2Round1Score: fight.competitor2_round1_score,
+        competitor1Round2Score: fight.competitor1_round2_score,
+        competitor2Round2Score: fight.competitor2_round2_score,
+        competitor1Round3Score: fight.competitor1_round3_score,
+        competitor2Round3Score: fight.competitor2_round3_score,
+        competitor1Round4Score: fight.competitor1_round4_score,
+        competitor2Round4Score: fight.competitor2_round4_score,
+      },
+      warnings,
+    );
+  }
+
   private getEffectiveFightAggregateScore(params: {
     competitor1Id: number;
     competitor2Id: number;
     competitor1Score: number;
     competitor2Score: number;
-    competitor1Round1Score: number;
-    competitor2Round1Score: number;
-    competitor1Round2Score: number;
-    competitor2Round2Score: number;
-    competitor1Round3Score: number;
-    competitor2Round3Score: number;
-    competitor1Round4Score: number;
-    competitor2Round4Score: number;
+    roundScores: RoundScore[];
     forfeitCardId: number | null;
     rules: FightScoringRules;
     warnings: Array<{ competitorId: number; round: number; reason: string }>;
@@ -2269,32 +2408,6 @@ export class CompetitionService {
       };
     }
 
-    const roundScores = [
-      {
-        competitor1Score: params.competitor1Round1Score,
-        competitor2Score: params.competitor2Round1Score,
-      },
-      {
-        competitor1Score: params.competitor1Round2Score,
-        competitor2Score: params.competitor2Round2Score,
-      },
-      {
-        competitor1Score: params.competitor1Round3Score,
-        competitor2Score: params.competitor2Round3Score,
-      },
-    ].slice(0, params.rules.rounds);
-
-    if (
-      params.rules.roundWin &&
-      (params.competitor1Round4Score !== params.competitor2Round4Score ||
-        params.warnings.some((warning) => warning.round === 4))
-    ) {
-      roundScores.push({
-        competitor1Score: params.competitor1Round4Score,
-        competitor2Score: params.competitor2Round4Score,
-      });
-    }
-
     return applyFightWarningBonuses(
       params.rules,
       {
@@ -2302,14 +2415,35 @@ export class CompetitionService {
         competitor2Id: params.competitor2Id,
         warnings: params.warnings,
       },
-      params.rules.rounds === 1 ? [] : roundScores,
-      params.rules.rounds === 1
-        ? {
-            competitor1Score: params.competitor1Score,
-            competitor2Score: params.competitor2Score,
-          }
-        : undefined,
+      params.roundScores,
     ).aggregateScore;
+  }
+
+  private async replaceFightRoundScores(
+    fightId: number,
+    roundScores: RoundScore[],
+  ) {
+    await this.prisma.$transaction(async (tx) => {
+      await this.replaceFightRoundScoresTx(tx, fightId, roundScores);
+    });
+  }
+
+  private async replaceFightRoundScoresTx(
+    tx: PrismaTx,
+    fightId: number,
+    roundScores: RoundScore[],
+  ) {
+    await tx.fight_round_scores.deleteMany({ where: { fight_id: fightId } });
+    if (!roundScores.length) return;
+
+    await tx.fight_round_scores.createMany({
+      data: roundScores.map((score, index) => ({
+        fight_id: fightId,
+        round: index + 1,
+        competitor1_score: score.competitor1Score,
+        competitor2_score: score.competitor2Score,
+      })),
+    });
   }
 
   private async disciplinaryCardStorageExists() {
@@ -2328,16 +2462,23 @@ export class CompetitionService {
     for (const fighterId of fighterIds) {
       const rows = await this.prisma.$queryRaw<ActiveRedCard[]>`
         SELECT
-          "id",
-          "fighter_id",
-          "fight_id",
-          "received_at"
-        FROM "disciplinary_cards"
-        WHERE "fighter_id" = ${fighterId}
-          AND "type" = 'RED'
-          AND "received_at" <= ${checkDate}
-          AND "expires_at" >= ${checkDate}
-        ORDER BY "received_at" ASC, "id" ASC
+          dc."id",
+          dc."fighter_id",
+          dc."fight_id",
+          dc."received_at",
+          source_fight."block_id" AS "source_block_id",
+          source_block."type" AS "source_block_type",
+          source_fight."fight_number" AS "source_fight_number",
+          source_fight."tournament_id" AS "source_tournament_id",
+          source_fight."nomination_id" AS "source_nomination_id"
+        FROM "disciplinary_cards" dc
+        LEFT JOIN "fights" source_fight ON source_fight."id" = dc."fight_id"
+        LEFT JOIN "competition_blocks" source_block ON source_block."id" = source_fight."block_id"
+        WHERE dc."fighter_id" = ${fighterId}
+          AND dc."type" = 'RED'
+          AND dc."received_at" <= ${checkDate}
+          AND dc."expires_at" >= ${checkDate}
+        ORDER BY dc."received_at" ASC, dc."id" ASC
       `;
 
       activeCards.push(...rows);
@@ -2370,6 +2511,18 @@ export class CompetitionService {
       competitor1_round4_score: 0,
       competitor2_round4_score: 0,
     };
+  }
+
+  private getRedCardForfeitRoundScores(
+    rounds: number,
+    roundWin: boolean,
+    firstLoses: boolean,
+  ): RoundScore[] {
+    const winnerRoundScore = roundWin ? 5 : 0;
+    return Array.from({ length: rounds }, () => ({
+      competitor1Score: roundWin && !firstLoses ? winnerRoundScore : 0,
+      competitor2Score: roundWin && firstLoses ? winnerRoundScore : 0,
+    }));
   }
 
   private isForfeitFight(fight?: { forfeit_card_id?: number | null }) {
@@ -2851,6 +3004,10 @@ export class CompetitionService {
       select: { id: true },
     });
     if (!cards.length) return;
+    const affectedFights = await tx.fights.findMany({
+      where: { forfeit_card_id: { in: cards.map((card) => card.id) } },
+      select: { id: true },
+    });
     await tx.fights.updateMany({
       where: { forfeit_card_id: { in: cards.map((card) => card.id) } },
       data: {
@@ -2861,6 +3018,11 @@ export class CompetitionService {
         forfeit_card_id: null,
       },
     });
+    if (affectedFights.length) {
+      await tx.fight_round_scores.deleteMany({
+        where: { fight_id: { in: affectedFights.map((fight) => fight.id) } },
+      });
+    }
   }
 
   private async renumberNominationFights(

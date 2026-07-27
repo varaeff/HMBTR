@@ -16,10 +16,12 @@ import type {
 import { API_ROUTES } from '@shared/routes'
 import { useFightersListStore } from '@/stores/fightersList'
 import { updateGroupsStatistics } from '@/lib/groupsStatistic'
-import { getSubmittedRoundScores } from '@/lib/fightResult'
+import { buildSubmittedFightResult } from '@/lib/fightResult'
 import {
   applyFightWarningBonuses,
   evaluateFightScore,
+  getInitialRoundScores,
+  legacyRoundScoresFromColumns,
   type FightScoringRules,
   type FightWarning,
   type RoundScore
@@ -42,18 +44,12 @@ interface UpdateGlobalScoreParams {
   fightId: number
   fightNumber: number
   roundScores?: RoundScore[]
-  f1Score?: number
-  f2Score?: number
-  tieBreakRoundRevealed?: boolean
   warnings?: FightWarning[]
 }
 
 interface FightResultDraft {
   blockId: number
   roundScores?: RoundScore[]
-  competitor1Score?: number
-  competitor2Score?: number
-  tieBreakRoundRevealed?: boolean
   warnings?: FightWarning[]
 }
 
@@ -102,6 +98,10 @@ interface RawFight {
     competitor_id: number
     round: number
     reason: string
+  }>
+  round_scores?: Array<{
+    competitor1_score: number
+    competitor2_score: number
   }>
 }
 
@@ -225,13 +225,14 @@ const evaluateFightWithWarnings = (
   if (fight.forfeitCardId) {
     const evaluation = evaluateFightScore(
       rules,
-      rules.rounds === 1 ? [] : fight.roundScores,
-      rules.rounds === 1
-        ? {
-            competitor1Score: fight.fighter1Score,
-            competitor2Score: fight.fighter2Score
-          }
-        : undefined
+      fight.roundScores.length
+        ? fight.roundScores
+        : [
+            {
+              competitor1Score: fight.fighter1Score,
+              competitor2Score: fight.fighter2Score
+            }
+          ]
     )
 
     return {
@@ -248,18 +249,11 @@ const evaluateFightWithWarnings = (
       competitor2Id: fight.competitor2Id ?? 0,
       warnings: fight.warnings ?? []
     },
-    rules.rounds === 1 ? [] : fight.roundScores,
-    rules.rounds === 1
-      ? {
-          competitor1Score: fight.fighter1Score,
-          competitor2Score: fight.fighter2Score
-        }
-      : undefined
+    fight.roundScores
   )
   const evaluation = evaluateFightScore(
     rules,
-    rules.rounds === 1 ? [] : adjusted.roundScores,
-    rules.rounds === 1 ? adjusted.aggregateScore : undefined
+    adjusted.roundScores
   )
 
   return {
@@ -296,36 +290,35 @@ const mapFight = (fight: RawFight, rules: FightScoringRules): FightData => {
       round: warning.round,
       reason: warning.reason
     })) ?? []
-  const storedRounds = [
+  const relationRounds =
+    fight.round_scores?.map((score) => ({
+      competitor1Score: score.competitor1_score,
+      competitor2Score: score.competitor2_score
+    })) ?? []
+  const legacyRounds = legacyRoundScoresFromColumns(
+    rules,
     {
-      competitor1Score: fight.competitor1_round1_score,
-      competitor2Score: fight.competitor2_round1_score
+      competitor1Round1Score:
+        rules.rounds === 1 ? fight.competitor1_score : fight.competitor1_round1_score,
+      competitor2Round1Score:
+        rules.rounds === 1 ? fight.competitor2_score : fight.competitor2_round1_score,
+      competitor1Round2Score: fight.competitor1_round2_score,
+      competitor2Round2Score: fight.competitor2_round2_score,
+      competitor1Round3Score: fight.competitor1_round3_score,
+      competitor2Round3Score: fight.competitor2_round3_score,
+      competitor1Round4Score: fight.competitor1_round4_score,
+      competitor2Round4Score: fight.competitor2_round4_score
     },
-    {
-      competitor1Score: fight.competitor1_round2_score,
-      competitor2Score: fight.competitor2_round2_score
-    },
-    {
-      competitor1Score: fight.competitor1_round3_score,
-      competitor2Score: fight.competitor2_round3_score
-    }
-  ].slice(0, rules.rounds)
-  if (
-    rules.roundWin &&
-    (fight.competitor1_round4_score !== fight.competitor2_round4_score ||
-      warnings.some((warning) => warning.round === 4))
-  ) {
-    storedRounds.push({
-      competitor1Score: fight.competitor1_round4_score,
-      competitor2Score: fight.competitor2_round4_score
-    })
-  }
+    warnings
+  )
+  const storedRounds = relationRounds.length ? relationRounds : legacyRounds
+  const editableRounds = storedRounds.length ? storedRounds : getInitialRoundScores(rules)
   const scored = evaluateFightWithWarnings(rules, {
     competitor1Id: fight.competitor1_id,
     competitor2Id: fight.competitor2_id,
     fighter1Score: fight.competitor1_score,
     fighter2Score: fight.competitor2_score,
-    roundScores: storedRounds,
+    roundScores: editableRounds,
     warnings,
     forfeitCardId: fight.forfeit_card_id
   })
@@ -342,11 +335,10 @@ const mapFight = (fight: RawFight, rules: FightScoringRules): FightData => {
     fighter2Score: fight.competitor2_score,
     fighter1EffectiveScore: scored.fighter1EffectiveScore,
     fighter2EffectiveScore: scored.fighter2EffectiveScore,
-    roundScores: rules.rounds === 1 ? [] : storedRounds,
+    roundScores: editableRounds,
     warnings,
     rounds: rules.rounds,
     roundWin: rules.roundWin,
-    tieBreakRoundRevealed: storedRounds.length > rules.rounds ? true : undefined,
     isResultValid: Boolean(fight.forfeit_card_id) || scored.evaluation.isValidResult,
     winnerId: fight.winner_id,
     forfeitCardId: fight.forfeit_card_id,
@@ -409,21 +401,19 @@ const mapCompetitionState = (
       if (draft && !fight.isFinished) {
         const roundScores = draft.roundScores ?? fight.roundScores
         const warnings = draft.warnings ?? fight.warnings ?? []
-        const fighter1Score = draft.competitor1Score ?? fight.fighter1Score
-        const fighter2Score = draft.competitor2Score ?? fight.fighter2Score
         const scored = evaluateFightWithWarnings(scoringRules, {
           competitor1Id: fight.competitor1Id,
           competitor2Id: fight.competitor2Id,
-          fighter1Score,
-          fighter2Score,
+          fighter1Score: fight.fighter1Score,
+          fighter2Score: fight.fighter2Score,
           roundScores,
           warnings,
           forfeitCardId: fight.forfeitCardId
         })
         fight.roundScores = roundScores
         fight.warnings = warnings
-        fight.fighter1Score = fighter1Score
-        fight.fighter2Score = fighter2Score
+        fight.fighter1Score = scored.evaluation.competitor1Total
+        fight.fighter2Score = scored.evaluation.competitor2Total
         fight.fighter1EffectiveScore = scored.fighter1EffectiveScore
         fight.fighter2EffectiveScore = scored.fighter2EffectiveScore
         fight.isResultValid = scored.evaluation.isValidResult
@@ -433,7 +423,6 @@ const mapCompetitionState = (
             : scored.evaluation.winnerSide === 2
               ? fight.competitor2Id
               : null
-        fight.tieBreakRoundRevealed = draft.tieBreakRoundRevealed
       }
 
       return fight
@@ -631,10 +620,7 @@ export const useCompetitionStore = defineStore({
     updateGlobalScore({
       fightId,
       fightNumber,
-      f1Score,
-      f2Score,
       roundScores,
-      tieBreakRoundRevealed,
       warnings
     }: UpdateGlobalScoreParams) {
       let targetBlock: CompetitionBlock | undefined
@@ -648,19 +634,13 @@ export const useCompetitionStore = defineStore({
           const previousDraft = drafts[String(fight.id)]
           const nextWarnings = warnings ?? previousDraft?.warnings ?? fight.warnings ?? []
           const nextRoundScores = roundScores ?? fight.roundScores
-          const nextFighter1Score = f1Score ?? fight.fighter1Score
-          const nextFighter2Score = f2Score ?? fight.fighter2Score
-          const nextTieBreakRoundRevealed =
-            tieBreakRoundRevealed ??
-            previousDraft?.tieBreakRoundRevealed ??
-            fight.tieBreakRoundRevealed
           const scored = evaluateFightWithWarnings(
             { rounds: fight.rounds, roundWin: fight.roundWin },
             {
               competitor1Id: fight.competitor1Id,
               competitor2Id: fight.competitor2Id,
-              fighter1Score: nextFighter1Score,
-              fighter2Score: nextFighter2Score,
+              fighter1Score: fight.fighter1Score,
+              fighter2Score: fight.fighter2Score,
               roundScores: nextRoundScores,
               warnings: nextWarnings,
               forfeitCardId: fight.forfeitCardId
@@ -668,8 +648,8 @@ export const useCompetitionStore = defineStore({
           )
           fight.roundScores = nextRoundScores
           fight.warnings = nextWarnings
-          fight.fighter1Score = nextFighter1Score
-          fight.fighter2Score = nextFighter2Score
+          fight.fighter1Score = scored.evaluation.competitor1Total
+          fight.fighter2Score = scored.evaluation.competitor2Total
           fight.fighter1EffectiveScore = scored.fighter1EffectiveScore
           fight.fighter2EffectiveScore = scored.fighter2EffectiveScore
           fight.isResultValid = scored.evaluation.isValidResult
@@ -679,16 +659,12 @@ export const useCompetitionStore = defineStore({
               : scored.evaluation.winnerSide === 2
                 ? fight.competitor2Id
                 : null
-          fight.tieBreakRoundRevealed = nextTieBreakRoundRevealed
           fight.isFinished = false
           targetBlock = block
 
           drafts[String(fight.id)] = {
             blockId: block.id,
-            competitor1Score: nextFighter1Score,
-            competitor2Score: nextFighter2Score,
             roundScores: nextRoundScores,
-            tieBreakRoundRevealed: nextTieBreakRoundRevealed,
             warnings: nextWarnings
           }
           writeFightResultDrafts(this.tournamentId, this.nominationId, drafts)
@@ -734,25 +710,7 @@ export const useCompetitionStore = defineStore({
       const { data } = await http.post(API_ROUTES.COMPETITION.FIX_RESULTS, {
         block_id: blockId,
         round,
-        fights: fights.map((fight) => ({
-          fight_id: fight.id,
-          ...(fight.rounds === 1
-            ? {
-                competitor1_score: fight.fighter1Score,
-                competitor2_score: fight.fighter2Score
-              }
-            : {
-                round_scores: getSubmittedRoundScores(fight).map((score) => ({
-                  competitor1_score: score.competitor1Score,
-                  competitor2_score: score.competitor2Score
-                }))
-              }),
-          warnings: (fight.warnings ?? []).map((warning) => ({
-            competitor_id: warning.competitorId,
-            round: warning.round,
-            reason: warning.reason
-          }))
-        }))
+        fights: fights.map(buildSubmittedFightResult)
       })
       const drafts = readFightResultDrafts(this.tournamentId, this.nominationId)
       fights.forEach((fight) => delete drafts[String(fight.id)])

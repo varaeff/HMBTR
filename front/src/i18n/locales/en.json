@@ -176,6 +176,7 @@
   "tournamentPageConfirmReturnPreviousRound": "Return to the previous round? This will delete {{fights}} downstream fights, their scores, and {{cards}} attached cards. The previous round results will become editable.",
   "tournamentPageBackwardConfirmationTitle": "Confirm return",
   "tournamentPageConfirmBackwardAction": "Confirm",
+  "tournamentPageIncompleteFightResults": "Fill in a winning result for fights: {{fights}}.",
   "tournamentPageAddJudgesButton": "Add judges",
   "tournamentPageMarshalsTitle": "Tournament Marshals",
   "tournamentPageFinishMarshalsButton": "Finish adding marshals",
@@ -258,5 +259,8 @@
   "fightWarningIssueReasonDescription": "Enter the reason for this warning.",
   "fightWarningReasonLabel": "Reason",
   "fightWarningRoundDescription": "Select the round for this warning.",
-  "fightWarningRoundLabel": "Round {{round}}"
+  "fightWarningRoundLabel": "Round {{round}}",
+  "fightExtraRoundWarningRemovalTitle": "Delete extra round with warnings?",
+  "fightExtraRoundWarningRemovalDescription": "The base-round score changed from a tie to a win. Extra rounds must be deleted, but round {{round}} has warnings. Delete extra round {{round}} together with its warnings?",
+  "fightExtraRoundWarningRemovalConfirm": "Yes"
 }

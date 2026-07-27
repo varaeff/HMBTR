@@ -11,7 +11,7 @@ import {
 import { tData } from '@/lib/utils'
 import type { DisciplinaryCardType, Fighter } from '@/model'
 
-defineProps<{
+const props = defineProps<{
   open: boolean
   fighter: Fighter | null
   type: DisciplinaryCardType
@@ -33,6 +33,13 @@ const updateType = (event: Event) => {
 
 const updateReason = (event: Event) => {
   emit('update:reason', (event.target as HTMLInputElement).value)
+}
+
+const issueFromReasonInput = (event: KeyboardEvent) => {
+  const inputReason = (event.target as HTMLInputElement).value
+  if (!props.isIssuing && (inputReason.trim() || props.reason.trim())) {
+    emit('issue')
+  }
 }
 </script>
 
@@ -84,7 +91,9 @@ const updateReason = (event: Event) => {
             :value="reason"
             autocomplete="off"
             class="h-9 rounded border bg-background px-2"
+            data-testid="card-reason-input"
             @input="updateReason"
+            @keydown.enter.prevent="issueFromReasonInput"
           />
         </div>
       </div>
@@ -92,7 +101,12 @@ const updateReason = (event: Event) => {
         <Button type="button" variant="outline" @click="emit('update:open', false)">{{
           $t('disciplinaryCardsCancel')
         }}</Button>
-        <Button type="button" :disabled="isIssuing || !reason.trim()" @click="emit('issue')">
+        <Button
+          type="button"
+          :disabled="isIssuing || !reason.trim()"
+          data-testid="card-issue-confirm"
+          @click="emit('issue')"
+        >
           {{ $t('disciplinaryCardsSave') }}
         </Button>
       </DialogFooter>

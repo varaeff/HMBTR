@@ -45,21 +45,18 @@ describe('submitted fight scores', () => {
     ).toThrow(BadRequestException);
   });
 
-  it('rejects client-supplied aggregate scores for multi-round fights', () => {
+  it('rejects client-supplied aggregate scores', () => {
     expect(() =>
       evaluateSubmittedFightScore(
-        { rounds: 2, roundWin: false },
+        { rounds: 1, roundWin: false },
         {
           competitor1_score: 100,
           competitor2_score: 0,
-          round_scores: [
-            { competitor1_score: 1, competitor2_score: 0 },
-            { competitor1_score: 0, competitor2_score: 1 },
-          ],
+          round_scores: [{ competitor1_score: 1, competitor2_score: 0 }],
         },
         false,
       ),
-    ).toThrow('Multi-round fights require round scores only');
+    ).toThrow('Fights require round scores only');
   });
 
   it('applies warning bonuses when determining the winner', () => {
@@ -110,8 +107,7 @@ describe('submitted fight scores', () => {
 
   it('turns a third warning into a technical defeat without requiring a scoring winner', () => {
     const score = {
-      competitor1_score: 0,
-      competitor2_score: 0,
+      round_scores: [{ competitor1_score: 0, competitor2_score: 0 }],
       warnings: [
         { competitor_id: 101, round: 1, reason: 'First warning' },
         { competitor_id: 101, round: 1, reason: 'Second warning' },
@@ -141,8 +137,7 @@ describe('submitted fight scores', () => {
       evaluateSubmittedFightScoreWithWarnings(
         { rounds: 1, roundWin: false },
         {
-          competitor1_score: 1,
-          competitor2_score: 0,
+          round_scores: [{ competitor1_score: 1, competitor2_score: 0 }],
           warnings: [{ competitor_id: 101, round: 1, reason: '   ' }],
         },
         101,
@@ -150,5 +145,24 @@ describe('submitted fight scores', () => {
         false,
       ),
     ).toThrow('Warning reason is required');
+  });
+
+  it('allows warnings on any submitted extra round', () => {
+    const evaluation = evaluateSubmittedFightScoreWithWarnings(
+      { rounds: 1, roundWin: false },
+      {
+        round_scores: [
+          { competitor1_score: 5, competitor2_score: 5 },
+          { competitor1_score: 2, competitor2_score: 2 },
+          { competitor1_score: 1, competitor2_score: 0 },
+        ],
+        warnings: [{ competitor_id: 202, round: 3, reason: 'Holding' }],
+      },
+      101,
+      202,
+      true,
+    );
+
+    expect(evaluation).toMatchObject({ winnerSide: 1, isValidResult: true });
   });
 });
