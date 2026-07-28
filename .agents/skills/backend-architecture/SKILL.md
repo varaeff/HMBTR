@@ -39,6 +39,17 @@ Prefer task names over vague names:
 - `lifecycle/*` for rollback/cancel/backward flows.
 - `finish/*` for finalization and completion workflows.
 - `red-cards/*` or similar domain folders for domain side effects and policy.
+- `reports/*` for report orchestration, storage/cache, read-model queries, markdown/PDF formatting, and report-specific normalization.
+
+## Report And Read-Model Services
+
+For report-heavy modules, keep rendering separate from business lifecycle:
+
+- Use one report facade to orchestrate cache lookup, read-model loading, validation, rendering, and storage.
+- Put large Prisma include trees into a reader service with an explicit internal result type.
+- Put cache/table checks and raw SQL persistence into a storage service.
+- Put markdown/table/text formatting into formatters or builders, not into CRUD services.
+- Keep compatibility normalizers local to the report flow when they exist only to repair old display/order data.
 
 ## Decomposition Heuristics
 

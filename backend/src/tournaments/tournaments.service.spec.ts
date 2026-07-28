@@ -18,12 +18,25 @@ jest.mock('./tournament-report.pdf', () => {
 import { TournamentsService } from './tournaments.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { createTournamentReportPdf } from './tournament-report.pdf';
+import { TournamentCrudService } from './core/tournament-crud.service';
+import { TournamentMarshalService } from './marshals/tournament-marshal.service';
+import { TournamentNominationService } from './nominations/tournament-nomination.service';
+import { TournamentFightNumberNormalizer } from './reports/tournament-fight-number-normalizer.service';
+import { TournamentReportCompetitionFormatter } from './reports/tournament-report-competition.formatter';
+import { TournamentReportFightScoreFormatter } from './reports/tournament-report-fight-score.formatter';
+import { TournamentReportMarkdownBuilder } from './reports/tournament-report-markdown.builder';
+import { TournamentReportReader } from './reports/tournament-report-reader.service';
+import { TournamentReportStorage } from './reports/tournament-report-storage.service';
+import { TournamentReportService } from './reports/tournament-report.service';
+import { REPORT_COPY } from './reports/tournament-report-copy';
+import { getGroupFighterWord } from './reports/tournament-report-formatters';
 
 describe('TournamentsService', () => {
   const createService = () => {
     const prisma = {
       $executeRawUnsafe: jest.fn(),
       $queryRawUnsafe: jest.fn(),
+      $transaction: jest.fn(),
       competitors: {
         findMany: jest.fn(),
       },
@@ -52,15 +65,43 @@ describe('TournamentsService', () => {
         delete: jest.fn(),
       },
     };
+    const prismaService = prisma as unknown as PrismaService;
+    const crud = new TournamentCrudService(prismaService);
+    const nominations = new TournamentNominationService(prismaService);
+    const marshals = new TournamentMarshalService(prismaService);
+    const storage = new TournamentReportStorage(prismaService);
+    const reader = new TournamentReportReader(prismaService);
+    const normalizer = new TournamentFightNumberNormalizer(prismaService);
+    const fightScoreFormatter = new TournamentReportFightScoreFormatter();
+    const competitionFormatter = new TournamentReportCompetitionFormatter(
+      fightScoreFormatter,
+    );
+    const markdownBuilder = new TournamentReportMarkdownBuilder(
+      competitionFormatter,
+    );
+    const reports = new TournamentReportService(
+      storage,
+      normalizer,
+      reader,
+      markdownBuilder,
+    );
 
     return {
       prisma,
-      service: new TournamentsService(prisma as unknown as PrismaService),
+      service: new TournamentsService(crud, nominations, marshals, reports),
     };
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  it('keeps Russian report copy in UTF-8', () => {
+    expect(REPORT_COPY.ru.title).toBe('Отчет о результатах турнира');
+    expect(REPORT_COPY.ru.marshals).toBe('Судьи');
+    expect(REPORT_COPY.ru.fightNumber).toBe('№ боя');
+    expect(getGroupFighterWord(3, 'ru', REPORT_COPY.ru)).toBe('бойца');
+    expect(getGroupFighterWord(5, 'ru', REPORT_COPY.ru)).toBe('бойцов');
   });
 
   it('updates nomination open state by tournament and nomination ids', async () => {
@@ -190,7 +231,6 @@ describe('TournamentsService', () => {
       data: { is_marshals_registration_closed: false },
     });
   });
-
 
   it('rejects marshal registration when no fighter nominations are open', async () => {
     const { prisma, service } = createService();
