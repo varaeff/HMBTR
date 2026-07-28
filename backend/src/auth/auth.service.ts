@@ -16,20 +16,41 @@ import { AuthResponseDto } from './dto/auth-response.dto';
 import { JwtPayload } from './dto/jwt-payload.dto';
 import type { StringValue } from 'ms';
 
+type AuthUser = {
+  id: number;
+  username: string;
+  name: string;
+  surname: string;
+  patronymic?: string | null;
+  email?: string | null;
+  is_admin: boolean;
+  is_organizer: boolean;
+  is_secretary: boolean;
+};
+
+type AuthTokenPair = {
+  access_token: string;
+  refresh_token: string;
+};
+
+type AdminNotificationRecipient = {
+  email: string | null;
+  username: string;
+};
+
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
-    private prismaService: PrismaService,
-    private jwtService: JwtService,
-    private emailService: EmailService,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+    private readonly prismaService: PrismaService,
+    private readonly jwtService: JwtService,
+    private readonly emailService: EmailService,
   ) {}
 
   async register(registerDto: RegisterDto): Promise<AuthResponseDto> {
     const { username, password, name, surname, patronymic, email } =
       registerDto;
 
-    // Check if user already exists
     const existingUser = await this.prismaService.users.findUnique({
       where: { username },
     });
@@ -38,7 +59,6 @@ export class AuthService {
       throw new BadRequestException('Username already exists');
     }
 
-    // Check if email already exists (if provided)
     if (email) {
       const existingEmail = await this.prismaService.users.findUnique({
         where: { email },
@@ -49,10 +69,8 @@ export class AuthService {
       }
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user in database
     const user = await this.prismaService.users.create({
       data: {
         username,
@@ -63,112 +81,24 @@ export class AuthService {
         email,
       },
     });
+    const response = await this.issueAuthResponse(user);
 
-    // Generate tokens
-    const tokens = await this.generateTokens(
-      user.id,
-      user.username,
-      user.email ?? undefined,
-    );
-
-    // Update refresh token in database
-    await this.prismaService.users.update({
-      where: { id: user.id },
-      data: { refreshToken: tokens.refresh_token },
-    });
-
-    // Send email to all admins about new user registration
+    // Registration must succeed even when notification delivery fails.
     try {
-      this.logger.info(
-        '[Email] Step 1: Starting email notification process for new user registration',
-      );
-
-      const adminUsers = await this.prismaService.users.findMany({
-        where: { is_admin: true },
-        select: { email: true, username: true },
-      });
-
-      this.logger.info(
-        `[Email] Step 2: Found ${adminUsers.length} admin user(s) in database: ${adminUsers.map((u) => u.username).join(', ')}`,
-      );
-
-      if (adminUsers.length === 0) {
-        this.logger.warn(
-          '[Email] No admin users found in database - email notification skipped',
-        );
-      }
-
-      const validAdminEmails = adminUsers
-        .filter((admin) => {
-          const hasEmail = !!admin.email;
-          if (!hasEmail) {
-            this.logger.warn(
-              `[Email] Admin user "${admin.username}" has no email address - skipping`,
-            );
-          }
-          return hasEmail;
-        })
-        .map((admin) => admin.email!);
-
-      this.logger.info(
-        `[Email] Step 3: Found ${validAdminEmails.length} admin(s) with valid email(s): ${validAdminEmails.join(', ')}`,
-      );
-
-      if (validAdminEmails.length > 0) {
-        const fullName = `${name} ${surname}${patronymic ? ' ' + patronymic : ''}`;
-        this.logger.info(
-          `[Email] Step 4: Sending notification email to ${validAdminEmails.length} admin(s) about new user: ${fullName}`,
-        );
-
-        try {
-          await this.emailService.sendNewUserNotification(
-            validAdminEmails,
-            fullName,
-            email || 'No email provided',
-          );
-          this.logger.info(
-            '[Email] Step 5: Email notification sent successfully',
-          );
-        } catch (emailError) {
-          this.logger.error(
-            '[Email] Step 5 FAILED: Email service error:',
-            emailError,
-          );
-          throw emailError;
-        }
-      } else {
-        this.logger.warn(
-          '[Email] No valid admin emails found - email notification skipped',
-        );
-      }
+      await this.notifyAdminsAboutRegistration(user);
     } catch (error) {
       this.logger.error(
-        '[Email] CRITICAL: Failed to send admin notification email:',
+        '[Email] Failed to send admin notification email:',
         error,
       );
-      // Don't throw error - registration should succeed even if email fails
     }
 
-    return {
-      access_token: tokens.access_token,
-      refresh_token: tokens.refresh_token,
-      user: {
-        id: user.id,
-        username: user.username,
-        name: user.name,
-        surname: user.surname,
-        email: user.email ?? undefined,
-        is_admin: user.is_admin,
-        is_organizer: user.is_organizer,
-        is_secretary: user.is_secretary,
-      },
-    };
+    return response;
   }
 
   async login(loginDto: LoginDto): Promise<AuthResponseDto> {
     const { username, password } = loginDto;
 
-    // Find user by username
     const user = await this.prismaService.users.findUnique({
       where: { username },
     });
@@ -177,40 +107,13 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // Generate tokens
-    const tokens = await this.generateTokens(
-      user.id,
-      user.username,
-      user.email ?? undefined,
-    );
-
-    // Update refresh token in database
-    await this.prismaService.users.update({
-      where: { id: user.id },
-      data: { refreshToken: tokens.refresh_token },
-    });
-
-    return {
-      access_token: tokens.access_token,
-      refresh_token: tokens.refresh_token,
-      user: {
-        id: user.id,
-        username: user.username,
-        name: user.name,
-        surname: user.surname,
-        email: user.email ?? undefined,
-        is_admin: user.is_admin,
-        is_organizer: user.is_organizer,
-        is_secretary: user.is_secretary,
-      },
-    };
+    return this.issueAuthResponse(user);
   }
 
   async validateUser(payload: JwtPayload) {
@@ -240,6 +143,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
+    return this.issueAuthResponse(user);
+  }
+
+  private async issueAuthResponse(user: AuthUser): Promise<AuthResponseDto> {
     const tokens = await this.generateTokens(
       user.id,
       user.username,
@@ -251,6 +158,13 @@ export class AuthService {
       data: { refreshToken: tokens.refresh_token },
     });
 
+    return this.buildAuthResponse(user, tokens);
+  }
+
+  private buildAuthResponse(
+    user: AuthUser,
+    tokens: AuthTokenPair,
+  ): AuthResponseDto {
     return {
       access_token: tokens.access_token,
       refresh_token: tokens.refresh_token,
@@ -267,11 +181,53 @@ export class AuthService {
     };
   }
 
+  private async notifyAdminsAboutRegistration(user: AuthUser) {
+    const adminUsers: AdminNotificationRecipient[] =
+      await this.prismaService.users.findMany({
+        where: { is_admin: true },
+        select: { email: true, username: true },
+      });
+    const adminEmails = this.getValidAdminEmails(adminUsers);
+
+    if (!adminEmails.length) {
+      this.logger.warn(
+        '[Email] New user notification skipped: no admin emails available',
+      );
+      return;
+    }
+
+    await this.emailService.sendNewUserNotification(
+      adminEmails,
+      this.formatFullName(user),
+      user.email || 'No email provided',
+    );
+  }
+
+  private getValidAdminEmails(adminUsers: AdminNotificationRecipient[]) {
+    return adminUsers
+      .filter((admin): admin is { email: string; username: string } => {
+        const hasEmail = Boolean(admin.email);
+
+        if (!hasEmail) {
+          this.logger.warn(
+            `[Email] Admin user "${admin.username}" has no email address - skipping`,
+          );
+        }
+
+        return hasEmail;
+      })
+      .map((admin) => admin.email);
+  }
+
+  private formatFullName(user: AuthUser) {
+    return [user.name, user.surname, user.patronymic].filter(Boolean).join(' ');
+  }
+
   private async generateTokens(
     userId: number,
     username: string,
     email?: string,
-  ) {
+  ): Promise<AuthTokenPair> {
     const payload: JwtPayload = {
       sub: userId,
       username,

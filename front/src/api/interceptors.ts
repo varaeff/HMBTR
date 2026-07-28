@@ -10,6 +10,14 @@ let failedQueue: Array<{
   reject: (reason?: unknown) => void
 }> = []
 
+export const isAuthEndpoint = (url?: string) => {
+  if (!url) return false
+
+  return ['/auth/login', '/auth/register', '/auth/refresh'].some((endpoint) =>
+    url.includes(endpoint)
+  )
+}
+
 const processQueue = (error?: unknown) => {
   failedQueue.forEach((prom) => {
     if (error) {
@@ -52,11 +60,11 @@ const setupInterceptors = (pinia: Pinia) => {
 
       ui.stopLoading()
 
-      // Don't retry refresh endpoint itself - if refresh fails, logout immediately
+      const isAuthRequest = isAuthEndpoint(originalRequest.url)
       const isRefreshEndpoint = originalRequest.url?.includes('/auth/refresh')
 
       // Handle 401 Unauthorized - Token expired
-      if (error.response?.status === 401 && !originalRequest._retry && !isRefreshEndpoint) {
+      if (error.response?.status === 401 && !originalRequest._retry && !isAuthRequest) {
         if (isRefreshing) {
           // Queue the request to be retried after token refresh
           return new Promise((resolve, reject) => {
@@ -89,6 +97,7 @@ const setupInterceptors = (pinia: Pinia) => {
             return http(originalRequest)
           } else {
             // No refresh token, logout user
+            isRefreshing = false
             auth.logout()
             router.push('/')
             return Promise.reject(error)
