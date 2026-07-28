@@ -295,9 +295,7 @@ describe('competition logic', () => {
       Array.from({ length: seeded.length / 2 }, (_, index) =>
         seeded
           .slice(index * 2, index * 2 + 2)
-          .map(
-            (item) => `${item.olympicGroupName}${item.olympicGroupPlace}`,
-          ),
+          .map((item) => `${item.olympicGroupName}${item.olympicGroupPlace}`),
       ),
     ).toEqual([
       ['A1', 'B2'],
@@ -325,7 +323,9 @@ describe('competition logic', () => {
         .map((item) => `${item.olympicGroupName}${item.olympicGroupPlace}`),
     );
     expect(
-      pairs.map((pair) => [...pair].sort()).sort((a, b) => a[0].localeCompare(b[0])),
+      pairs
+        .map((pair) => [...pair].sort())
+        .sort((a, b) => a[0].localeCompare(b[0])),
     ).toEqual([
       ['A1', 'B3'],
       ['A2', 'C1'],
