@@ -1,14 +1,8 @@
-import { PrismaService } from '../prisma/prisma.service';
+import type { PrismaClient } from '../generated/prisma/client';
 
 export type PrismaTx = Omit<
-  PrismaService,
-  | '$connect'
-  | '$disconnect'
-  | '$on'
-  | '$transaction'
-  | '$use'
-  | '$extends'
-  | 'onModuleInit'
+  PrismaClient,
+  '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
 >;
 
 export interface FighterProfileNomination {

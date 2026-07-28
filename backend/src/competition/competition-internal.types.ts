@@ -1,4 +1,4 @@
-import type { PrismaService } from '../prisma/prisma.service';
+import type { PrismaClient } from '../generated/prisma/client';
 import type { RankedCompetitor } from './competition.logic';
 import type { SCOPE_GROUP, SCOPE_OLYMPIC_THIRD } from './competition.constants';
 
@@ -17,14 +17,8 @@ export interface GroupRankings {
 }
 
 export type PrismaTx = Omit<
-  PrismaService,
-  | '$connect'
-  | '$disconnect'
-  | '$on'
-  | '$transaction'
-  | '$use'
-  | '$extends'
-  | 'onModuleInit'
+  PrismaClient,
+  '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
 >;
 
 export interface ActiveRedCard {

@@ -114,3 +114,17 @@ rg "\bany\b" src/<module>
 ```
 
 Avoid broad auto-fix commands when the requested scope is narrow.
+
+## Integration Tests
+
+Use integration tests when unit tests cannot cover the contract between guards,
+controllers, DTO validation, services, Prisma persistence, and side effects.
+
+- Keep integration tests on a separate database and a separate script. Do not reuse the local dev database.
+- Prefer `prisma db push --force-reset` for disposable test databases when migrations are not the source of truth yet.
+- Seed data through Prisma fixtures, then exercise the system through HTTP routes.
+- Keep fixtures explicit and typed; avoid hidden global state and `any`.
+- Mock external IO at the edge, such as email delivery or PDF rendering, while preserving real internal formatting/read-model code.
+- Test a few high-value vertical flows rather than duplicating every unit scenario.
+- Ensure Nest app shutdown closes Prisma and the underlying `pg.Pool`, otherwise Jest can pass while leaving open handles.
+- Keep transaction aliases based on generated `PrismaClient`, not Nest-specific `PrismaService`, so lifecycle hooks do not leak into transaction types.
