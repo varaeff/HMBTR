@@ -2,6 +2,7 @@ import { BadRequestException } from '@nestjs/common';
 import {
   evaluateSubmittedFightScoreWithWarnings,
   evaluateSubmittedFightScore,
+  evaluateSubmittedRawFightScoreForPersistence,
   fightScoreUpdateData,
 } from './fight-score-data';
 
@@ -164,5 +165,54 @@ describe('submitted fight scores', () => {
     );
 
     expect(evaluation).toMatchObject({ winnerSide: 1, isValidResult: true });
+  });
+
+  it('accepts an extra round required only after warning bonuses', () => {
+    const score = {
+      round_scores: [
+        { competitor1_score: 3, competitor2_score: 0 },
+        { competitor1_score: 1, competitor2_score: 0 },
+      ],
+      warnings: [{ competitor_id: 101, round: 1, reason: 'Holding' }],
+    };
+
+    const evaluation = evaluateSubmittedFightScoreWithWarnings(
+      { rounds: 1, roundWin: false },
+      score,
+      101,
+      202,
+      true,
+    );
+
+    expect(evaluation).toMatchObject({
+      competitor1Total: 4,
+      competitor2Total: 3,
+      winnerSide: 1,
+      isValidResult: true,
+    });
+  });
+
+  it('keeps raw judge totals for persistence when warnings require an extra round', () => {
+    const score = {
+      round_scores: [
+        { competitor1_score: 3, competitor2_score: 0 },
+        { competitor1_score: 1, competitor2_score: 0 },
+      ],
+      warnings: [{ competitor_id: 101, round: 1, reason: 'Holding' }],
+    };
+
+    const evaluation = evaluateSubmittedRawFightScoreForPersistence(
+      { rounds: 1, roundWin: false },
+      score,
+    );
+
+    expect(fightScoreUpdateData(evaluation, score)).toMatchObject({
+      competitor1_score: 4,
+      competitor2_score: 0,
+      competitor1_round1_score: 3,
+      competitor2_round1_score: 0,
+      competitor1_round2_score: 1,
+      competitor2_round2_score: 0,
+    });
   });
 });

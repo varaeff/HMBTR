@@ -78,6 +78,7 @@ model marshals {
   city        cities                @relation(fields: [city_id], references: [id])
   category    marshals_categories   @relation(fields: [category_id], references: [id])
   tournaments tournament_marshals[]
+  disciplinary_cards disciplinary_cards[]
 }
 
 model marshals_categories {
@@ -135,6 +136,9 @@ model nominations {
   fights                 fights[]
   fighter_ratings        fighter_nomination_ratings[]
   fighter_rating_history fighter_nomination_rating_history[]
+
+  @@unique([name_ru, is_male])
+  @@unique([name_en, is_male])
 }
 
 // --- СОРЕВНОВАТЕЛЬНАЯ ЛОГИКА ---
@@ -229,6 +233,8 @@ model fights {
   is_bronze                Boolean @default(false)
   is_finished              Boolean @default(false)
   forfeit_card_id          Int?
+  rounds                   Int     @default(1)
+  round_win                Boolean @default(false)
 
   tournament tournaments         @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
   nomination nominations         @relation(fields: [nomination_id], references: [id], onDelete: Cascade)
@@ -279,21 +285,55 @@ model disciplinary_cards {
   fighter_id    Int
   tournament_id Int
   fight_id      Int
+  marshal_id    Int
   type          String   @db.VarChar(16)
   source        String   @default("MANUAL") @db.VarChar(16)
   received_at   DateTime @db.Date
   reason        String   @db.Text
   expires_at    DateTime @db.Date
+  active        Boolean  @default(true)
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
 
   fighter    fighters    @relation(fields: [fighter_id], references: [id], onDelete: Cascade)
   tournament tournaments @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
   fight      fights      @relation(fields: [fight_id], references: [id], onDelete: Cascade)
+  marshal    marshals    @relation(fields: [marshal_id], references: [id])
+  red_card_yellow_sources_as_red    red_card_yellow_sources[] @relation("RedCardSources")
+  red_card_yellow_sources_as_yellow red_card_yellow_sources[] @relation("YellowCardSources")
 
   @@index([fighter_id, type, received_at, expires_at])
   @@index([tournament_id])
   @@index([fight_id])
+  @@index([marshal_id])
+}
+
+model red_card_yellow_sources {
+  id                              Int      @id @default(autoincrement())
+  red_card_id                     Int
+  yellow_card_id                  Int
+  yellow_expires_at_before_close  DateTime? @db.Date
+  yellow_active_before_close      Boolean?
+  closed_at                       DateTime? @db.Date
+  created_at                      DateTime @default(now())
+
+  red_card    disciplinary_cards @relation("RedCardSources", fields: [red_card_id], references: [id], onDelete: Cascade)
+  yellow_card disciplinary_cards @relation("YellowCardSources", fields: [yellow_card_id], references: [id], onDelete: Cascade)
+
+  @@unique([red_card_id, yellow_card_id])
+  @@index([yellow_card_id])
+}
+
+model disciplinary_card_settings {
+  id                                    Int      @id @default(1)
+  yellow_expiration_mode                String   @default("END_OF_YEAR_MONTH") @db.VarChar(32)
+  yellow_expiration_month               Int      @default(12)
+  yellow_expiration_days                Int      @default(365)
+  red_auto_yellow_days                  Int      @default(45)
+  red_manual_days                       Int      @default(90)
+  red_manual_with_one_yellow_days       Int      @default(120)
+  red_manual_with_two_or_more_yellows_days Int   @default(180)
+  updated_at                            DateTime @updatedAt
 }
 
 model fighter_nomination_ratings {

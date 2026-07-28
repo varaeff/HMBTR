@@ -54,6 +54,11 @@ const links = [
     title: 'menuUsersLink',
     url: '/users',
     adminOnly: true
+  },
+  {
+    title: 'menuSettingsLink',
+    url: '/settings',
+    adminOnly: true
   }
 ]
 </script>

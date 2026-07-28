@@ -34,6 +34,8 @@ const handleKeydown = (event: KeyboardEvent) => {
 
     if (currentIndex > -1 && currentIndex < inputs.length - 1) {
       inputs[currentIndex + 1].focus()
+    } else {
+      currentElement.blur()
     }
     return
   }

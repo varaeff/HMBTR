@@ -65,6 +65,8 @@ export class FightsService {
         competitor2_id: dto.competitor2_id,
         stage: dto.stage,
         fight_number: dto.fight_number,
+        rounds: nomination.rounds,
+        round_win: nomination.round_win,
       },
     });
   }
@@ -110,7 +112,7 @@ export class FightsService {
     if (!fight) throw new NotFoundException('Fight not found');
 
     const evaluation = evaluateSubmittedFightScore(
-      scoringRules(fight.nomination),
+      scoringRules(fight),
       dto,
       false,
     );

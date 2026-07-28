@@ -401,6 +401,8 @@ export const ModelName = {
   fight_round_scores: 'fight_round_scores',
   fight_warnings: 'fight_warnings',
   disciplinary_cards: 'disciplinary_cards',
+  red_card_yellow_sources: 'red_card_yellow_sources',
+  disciplinary_card_settings: 'disciplinary_card_settings',
   fighter_nomination_ratings: 'fighter_nomination_ratings',
   fighter_nomination_rating_history: 'fighter_nomination_rating_history',
   competition_blocks: 'competition_blocks',
@@ -424,7 +426,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "countries" | "cities" | "clubs" | "fighters" | "marshals" | "marshals_categories" | "tournaments" | "tournament_marshals" | "nominations" | "tournament_nominations" | "competitors" | "groups" | "group_competitors" | "fights" | "fight_round_scores" | "fight_warnings" | "disciplinary_cards" | "fighter_nomination_ratings" | "fighter_nomination_rating_history" | "competition_blocks" | "competition_round_states" | "bracket_slots" | "competition_placements" | "tournament_reports" | "users"
+    modelProps: "countries" | "cities" | "clubs" | "fighters" | "marshals" | "marshals_categories" | "tournaments" | "tournament_marshals" | "nominations" | "tournament_nominations" | "competitors" | "groups" | "group_competitors" | "fights" | "fight_round_scores" | "fight_warnings" | "disciplinary_cards" | "red_card_yellow_sources" | "disciplinary_card_settings" | "fighter_nomination_ratings" | "fighter_nomination_rating_history" | "competition_blocks" | "competition_round_states" | "bracket_slots" | "competition_placements" | "tournament_reports" | "users"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1686,6 +1688,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    red_card_yellow_sources: {
+      payload: Prisma.$red_card_yellow_sourcesPayload<ExtArgs>
+      fields: Prisma.red_card_yellow_sourcesFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.red_card_yellow_sourcesFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$red_card_yellow_sourcesPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.red_card_yellow_sourcesFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$red_card_yellow_sourcesPayload>
+        }
+        findFirst: {
+          args: Prisma.red_card_yellow_sourcesFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$red_card_yellow_sourcesPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.red_card_yellow_sourcesFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$red_card_yellow_sourcesPayload>
+        }
+        findMany: {
+          args: Prisma.red_card_yellow_sourcesFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$red_card_yellow_sourcesPayload>[]
+        }
+        create: {
+          args: Prisma.red_card_yellow_sourcesCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$red_card_yellow_sourcesPayload>
+        }
+        createMany: {
+          args: Prisma.red_card_yellow_sourcesCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.red_card_yellow_sourcesCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$red_card_yellow_sourcesPayload>[]
+        }
+        delete: {
+          args: Prisma.red_card_yellow_sourcesDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$red_card_yellow_sourcesPayload>
+        }
+        update: {
+          args: Prisma.red_card_yellow_sourcesUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$red_card_yellow_sourcesPayload>
+        }
+        deleteMany: {
+          args: Prisma.red_card_yellow_sourcesDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.red_card_yellow_sourcesUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.red_card_yellow_sourcesUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$red_card_yellow_sourcesPayload>[]
+        }
+        upsert: {
+          args: Prisma.red_card_yellow_sourcesUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$red_card_yellow_sourcesPayload>
+        }
+        aggregate: {
+          args: Prisma.Red_card_yellow_sourcesAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRed_card_yellow_sources>
+        }
+        groupBy: {
+          args: Prisma.red_card_yellow_sourcesGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Red_card_yellow_sourcesGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.red_card_yellow_sourcesCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Red_card_yellow_sourcesCountAggregateOutputType> | number
+        }
+      }
+    }
+    disciplinary_card_settings: {
+      payload: Prisma.$disciplinary_card_settingsPayload<ExtArgs>
+      fields: Prisma.disciplinary_card_settingsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.disciplinary_card_settingsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$disciplinary_card_settingsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.disciplinary_card_settingsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$disciplinary_card_settingsPayload>
+        }
+        findFirst: {
+          args: Prisma.disciplinary_card_settingsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$disciplinary_card_settingsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.disciplinary_card_settingsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$disciplinary_card_settingsPayload>
+        }
+        findMany: {
+          args: Prisma.disciplinary_card_settingsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$disciplinary_card_settingsPayload>[]
+        }
+        create: {
+          args: Prisma.disciplinary_card_settingsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$disciplinary_card_settingsPayload>
+        }
+        createMany: {
+          args: Prisma.disciplinary_card_settingsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.disciplinary_card_settingsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$disciplinary_card_settingsPayload>[]
+        }
+        delete: {
+          args: Prisma.disciplinary_card_settingsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$disciplinary_card_settingsPayload>
+        }
+        update: {
+          args: Prisma.disciplinary_card_settingsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$disciplinary_card_settingsPayload>
+        }
+        deleteMany: {
+          args: Prisma.disciplinary_card_settingsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.disciplinary_card_settingsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.disciplinary_card_settingsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$disciplinary_card_settingsPayload>[]
+        }
+        upsert: {
+          args: Prisma.disciplinary_card_settingsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$disciplinary_card_settingsPayload>
+        }
+        aggregate: {
+          args: Prisma.Disciplinary_card_settingsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDisciplinary_card_settings>
+        }
+        groupBy: {
+          args: Prisma.disciplinary_card_settingsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Disciplinary_card_settingsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.disciplinary_card_settingsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Disciplinary_card_settingsCountAggregateOutputType> | number
+        }
+      }
+    }
     fighter_nomination_ratings: {
       payload: Prisma.$fighter_nomination_ratingsPayload<ExtArgs>
       fields: Prisma.fighter_nomination_ratingsFieldRefs
@@ -2488,7 +2638,9 @@ export const FightsScalarFieldEnum = {
   bracket_position: 'bracket_position',
   is_bronze: 'is_bronze',
   is_finished: 'is_finished',
-  forfeit_card_id: 'forfeit_card_id'
+  forfeit_card_id: 'forfeit_card_id',
+  rounds: 'rounds',
+  round_win: 'round_win'
 } as const
 
 export type FightsScalarFieldEnum = (typeof FightsScalarFieldEnum)[keyof typeof FightsScalarFieldEnum]
@@ -2522,16 +2674,46 @@ export const Disciplinary_cardsScalarFieldEnum = {
   fighter_id: 'fighter_id',
   tournament_id: 'tournament_id',
   fight_id: 'fight_id',
+  marshal_id: 'marshal_id',
   type: 'type',
   source: 'source',
   received_at: 'received_at',
   reason: 'reason',
   expires_at: 'expires_at',
+  active: 'active',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const
 
 export type Disciplinary_cardsScalarFieldEnum = (typeof Disciplinary_cardsScalarFieldEnum)[keyof typeof Disciplinary_cardsScalarFieldEnum]
+
+
+export const Red_card_yellow_sourcesScalarFieldEnum = {
+  id: 'id',
+  red_card_id: 'red_card_id',
+  yellow_card_id: 'yellow_card_id',
+  yellow_expires_at_before_close: 'yellow_expires_at_before_close',
+  yellow_active_before_close: 'yellow_active_before_close',
+  closed_at: 'closed_at',
+  created_at: 'created_at'
+} as const
+
+export type Red_card_yellow_sourcesScalarFieldEnum = (typeof Red_card_yellow_sourcesScalarFieldEnum)[keyof typeof Red_card_yellow_sourcesScalarFieldEnum]
+
+
+export const Disciplinary_card_settingsScalarFieldEnum = {
+  id: 'id',
+  yellow_expiration_mode: 'yellow_expiration_mode',
+  yellow_expiration_month: 'yellow_expiration_month',
+  yellow_expiration_days: 'yellow_expiration_days',
+  red_auto_yellow_days: 'red_auto_yellow_days',
+  red_manual_days: 'red_manual_days',
+  red_manual_with_one_yellow_days: 'red_manual_with_one_yellow_days',
+  red_manual_with_two_or_more_yellows_days: 'red_manual_with_two_or_more_yellows_days',
+  updated_at: 'updated_at'
+} as const
+
+export type Disciplinary_card_settingsScalarFieldEnum = (typeof Disciplinary_card_settingsScalarFieldEnum)[keyof typeof Disciplinary_card_settingsScalarFieldEnum]
 
 
 export const Fighter_nomination_ratingsScalarFieldEnum = {
@@ -2859,6 +3041,8 @@ export type GlobalOmitConfig = {
   fight_round_scores?: Prisma.fight_round_scoresOmit
   fight_warnings?: Prisma.fight_warningsOmit
   disciplinary_cards?: Prisma.disciplinary_cardsOmit
+  red_card_yellow_sources?: Prisma.red_card_yellow_sourcesOmit
+  disciplinary_card_settings?: Prisma.disciplinary_card_settingsOmit
   fighter_nomination_ratings?: Prisma.fighter_nomination_ratingsOmit
   fighter_nomination_rating_history?: Prisma.fighter_nomination_rating_historyOmit
   competition_blocks?: Prisma.competition_blocksOmit

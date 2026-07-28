@@ -14,6 +14,7 @@ jest.mock('./disciplinary-cards.service', () => ({
 import { DisciplinaryCardsController } from './disciplinary-cards.controller';
 import type { DisciplinaryCardsService } from './disciplinary-cards.service';
 import { CreateDisciplinaryCardDto } from './dto/create-disciplinary-card.dto';
+import { UpdateDisciplinaryCardDto } from './dto/update-disciplinary-card.dto';
 
 describe('DisciplinaryCardsController', () => {
   const createController = () => {
@@ -37,6 +38,7 @@ describe('DisciplinaryCardsController', () => {
     fighter_id: 1,
     tournament_id: 2,
     fight_id: 3,
+    marshal_id: 4,
     type: 'YELLOW',
     received_at: '2026-05-15',
     reason: 'Passive conduct',
@@ -58,14 +60,25 @@ describe('DisciplinaryCardsController', () => {
     );
   });
 
-  it('allows only admins to delete cards', () => {
+  it('allows card managers to delete cards', () => {
     const { controller, service } = createController();
 
-    controller.delete(7, { user: { is_admin: true } });
+    controller.delete(7, { user: { is_secretary: true } });
 
     expect(service.delete).toHaveBeenCalledWith(7);
     expect(() =>
-      controller.delete(7, { user: { is_organizer: true } }),
+      controller.delete(7, { user: {} }),
     ).toThrow(ForbiddenException);
+  });
+
+  it('allows card managers to update card marshal', () => {
+    const { controller, service } = createController();
+    const updateDto: UpdateDisciplinaryCardDto = {
+      marshal_id: 8,
+    };
+
+    controller.update(7, updateDto, { user: { is_secretary: true } });
+
+    expect(service.update).toHaveBeenCalledWith(7, updateDto);
   });
 });

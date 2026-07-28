@@ -103,6 +103,16 @@ export type fight_warnings = Prisma.fight_warningsModel
  */
 export type disciplinary_cards = Prisma.disciplinary_cardsModel
 /**
+ * Model red_card_yellow_sources
+ * 
+ */
+export type red_card_yellow_sources = Prisma.red_card_yellow_sourcesModel
+/**
+ * Model disciplinary_card_settings
+ * 
+ */
+export type disciplinary_card_settings = Prisma.disciplinary_card_settingsModel
+/**
  * Model fighter_nomination_ratings
  * 
  */

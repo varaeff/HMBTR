@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { watch } from 'vue'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -9,7 +10,7 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import { tData } from '@/lib/utils'
-import type { DisciplinaryCardType, Fighter } from '@/model'
+import type { DisciplinaryCardType, Fighter, TournamentMarshal } from '@/model'
 
 const props = defineProps<{
   open: boolean
@@ -17,6 +18,8 @@ const props = defineProps<{
   type: DisciplinaryCardType
   date: string
   reason: string
+  marshalId: number | null
+  tournamentMarshals: TournamentMarshal[]
   isIssuing: boolean
 }>()
 
@@ -24,6 +27,7 @@ const emit = defineEmits<{
   (e: 'update:open', value: boolean): void
   (e: 'update:type', value: DisciplinaryCardType): void
   (e: 'update:reason', value: string): void
+  (e: 'update:marshalId', value: number | null): void
   (e: 'issue'): void
 }>()
 
@@ -35,9 +39,27 @@ const updateReason = (event: Event) => {
   emit('update:reason', (event.target as HTMLInputElement).value)
 }
 
+const updateMarshal = (event: Event) => {
+  const value = (event.target as HTMLSelectElement).value
+  emit('update:marshalId', value ? Number(value) : null)
+}
+
+const marshalLabel = (item: TournamentMarshal) =>
+  `${tData(item.marshal.surname)} ${tData(item.marshal.name)}`
+
+watch(
+  () => [props.open, props.marshalId, props.tournamentMarshals] as const,
+  ([open, marshalId, tournamentMarshals]) => {
+    if (open && !marshalId && tournamentMarshals[0]) {
+      emit('update:marshalId', tournamentMarshals[0].marshal_id)
+    }
+  },
+  { immediate: true }
+)
+
 const issueFromReasonInput = (event: KeyboardEvent) => {
   const inputReason = (event.target as HTMLInputElement).value
-  if (!props.isIssuing && (inputReason.trim() || props.reason.trim())) {
+  if (!props.isIssuing && props.marshalId && (inputReason.trim() || props.reason.trim())) {
     emit('issue')
   }
 }
@@ -83,6 +105,26 @@ const issueFromReasonInput = (event: KeyboardEvent) => {
           />
         </div>
         <div class="grid gap-2">
+          <label class="text-sm font-medium" for="card-marshal">{{
+            $t('disciplinaryCardsMarshal')
+          }}</label>
+          <select
+            id="card-marshal"
+            :value="marshalId ?? ''"
+            class="h-9 rounded border bg-background px-2"
+            data-testid="card-marshal-select"
+            @change="updateMarshal"
+          >
+            <option
+              v-for="item in tournamentMarshals"
+              :key="item.marshal_id"
+              :value="item.marshal_id"
+            >
+              {{ marshalLabel(item) }}
+            </option>
+          </select>
+        </div>
+        <div class="grid gap-2">
           <label class="text-sm font-medium" for="card-reason">{{
             $t('disciplinaryCardsReason')
           }}</label>
@@ -103,7 +145,7 @@ const issueFromReasonInput = (event: KeyboardEvent) => {
         }}</Button>
         <Button
           type="button"
-          :disabled="isIssuing || !reason.trim()"
+          :disabled="isIssuing || !reason.trim() || !marshalId"
           data-testid="card-issue-confirm"
           @click="emit('issue')"
         >

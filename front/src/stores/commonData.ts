@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import http from '@/api/http'
-import type { City, Club, Country, Nomination } from '@/model'
+import type { City, Club, Country, Nomination, NominationPayload } from '@/model'
 import { API_ROUTES } from '@shared/routes'
 
 interface CommonDataState {
@@ -127,6 +127,27 @@ export const useCommonDataStore = defineStore({
       const data = response.data
       this.nominations.push(...data)
       return data.sort((a: Nomination, b: Nomination) => a.id - b.id)
+    },
+
+    async refreshNominations() {
+      const response = await http.get<Nomination[]>(API_ROUTES.NOMINATIONS.ROOT)
+      this.nominations = response.data.sort((a: Nomination, b: Nomination) => a.id - b.id)
+      return this.nominations
+    },
+
+    async createNomination(payload: NominationPayload) {
+      await http.post(API_ROUTES.NOMINATIONS.ROOT, payload)
+      return this.refreshNominations()
+    },
+
+    async updateNomination(id: number, payload: Partial<NominationPayload>) {
+      await http.patch(API_ROUTES.NOMINATIONS.BY_ID(id), payload)
+      return this.refreshNominations()
+    },
+
+    async deleteNomination(id: number) {
+      await http.delete(API_ROUTES.NOMINATIONS.BY_ID(id))
+      return this.refreshNominations()
     }
   }
 })

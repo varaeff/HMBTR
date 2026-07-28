@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsNumber, IsOptional, ValidateNested } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsNumber,
+  IsOptional,
+  ValidateNested,
+} from 'class-validator';
 import { SaveCompetitionResultFightDto } from './save-competition-results.dto';
 
 export class CompetitionLifecycleDto {
@@ -15,4 +21,8 @@ export class CompetitionLifecycleDto {
   @ValidateNested({ each: true })
   @Type(() => SaveCompetitionResultFightDto)
   fights?: SaveCompetitionResultFightDto[];
+
+  @IsOptional()
+  @IsBoolean()
+  remove_active_red_competitors?: boolean;
 }

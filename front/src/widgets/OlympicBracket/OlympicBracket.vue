@@ -9,7 +9,13 @@ import { FightCard } from '@/components/ui/fightCard'
 
 import { tData } from '@/lib/utils'
 
-import type { BracketSlot, CompetitionBlock, DisciplinaryCardType, FightData } from '@/model'
+import type {
+  BracketSlot,
+  CompetitionBlock,
+  DisciplinaryCardStatus,
+  FightData,
+  TournamentMarshal
+} from '@/model'
 import type { FightWarning, RoundScore } from '@shared/fightScoring'
 import { CardStatusIcon } from '@/widgets/DisciplinaryCards'
 import { AlertWidget } from '@/widgets/AlertWidget'
@@ -17,10 +23,12 @@ import { AlertWidget } from '@/widgets/AlertWidget'
 const props = defineProps<{
   block: CompetitionBlock
   hasAccess: boolean
+  canUseBackwardActions?: boolean
   canIssueCards?: boolean
   tournamentId?: number
   cardDate?: string
-  activeCardTypes?: Partial<Record<number, DisciplinaryCardType>>
+  activeCardTypes?: Partial<Record<number, DisciplinaryCardStatus>>
+  tournamentMarshals?: TournamentMarshal[]
   attachedCardCountByFightId?: Record<number, number>
 }>()
 
@@ -37,6 +45,51 @@ const backwardConfirmation = ref<{
   mainText: string
   action: () => Promise<void>
 } | null>(null)
+
+interface ApiErrorWithResponse {
+  response?: {
+    data?: {
+      details?: unknown
+    }
+  }
+}
+
+interface ActiveRedRollbackCompetitor {
+  name: string
+  surname: string
+  patronymic?: string | null
+}
+
+interface ActiveRedRollbackDetails {
+  code: 'ACTIVE_RED_CARD_COMPETITORS_REQUIRE_ROLLBACK'
+  block_id: number
+  competitors: ActiveRedRollbackCompetitor[]
+}
+
+const isActiveRedRollbackDetails = (value: unknown): value is ActiveRedRollbackDetails =>
+  typeof value === 'object' &&
+  value !== null &&
+  'code' in value &&
+  value.code === 'ACTIVE_RED_CARD_COMPETITORS_REQUIRE_ROLLBACK' &&
+  'block_id' in value &&
+  typeof value.block_id === 'number' &&
+  'competitors' in value &&
+  Array.isArray(value.competitors)
+
+const getActiveRedRollbackDetails = (error: unknown) => {
+  const details = (error as ApiErrorWithResponse).response?.data?.details
+  return isActiveRedRollbackDetails(details) ? details : null
+}
+
+const activeRedRollbackCompetitorNames = (competitors: ActiveRedRollbackCompetitor[]) =>
+  competitors
+    .map((fighter) =>
+      [fighter.surname, fighter.name, fighter.patronymic]
+        .filter((part): part is string => Boolean(part))
+        .map((part) => tData(part, i18next.language))
+        .join(' ')
+    )
+    .join(', ')
 
 const closeBackwardConfirmation = () => {
   backwardConfirmation.value = null
@@ -191,6 +244,21 @@ const fixPairs = async () => {
   isFixingPairs.value = true
   try {
     await competitionStore.generateOlympicFights(props.block.id)
+  } catch (error: unknown) {
+    const details = getActiveRedRollbackDetails(error)
+    if (details) {
+      requestBackwardConfirmation(
+        i18next.t('tournamentPageActiveRedRollbackWarning', {
+          fighters: activeRedRollbackCompetitorNames(details.competitors)
+        }),
+        async () => {
+          await competitionStore.rollback(details.block_id, undefined, true)
+          emit('lifecycle-changed')
+        }
+      )
+      return
+    }
+    throw error
   } finally {
     isFixingPairs.value = false
     emit('lifecycle-changed')
@@ -333,30 +401,39 @@ const finalBoundaryFights = computed(() => [
             :tournamentId="tournamentId"
             :cardDate="cardDate"
             :activeCardTypes="activeCardTypes"
+            :tournamentMarshals="tournamentMarshals"
             @update:score="(scores) => handleScoreUpdate(fight.id, fight.number, scores)"
             @card-issued="emit('card-issued')"
           />
         </div>
         <div
-          v-if="hasAccess && latestRoundState?.round === round.round"
+          v-if="(hasAccess || canUseBackwardActions) && latestRoundState?.round === round.round"
           class="flex flex-wrap justify-center gap-3 pt-2"
         >
           <Button
-            v-if="!isRoundResultsFixed(round.round)"
+            v-if="hasAccess && !isRoundResultsFixed(round.round)"
             :disabled="!canRecordFights(round.fights)"
             @click="fixRoundResults(round.round, round.fights)"
           >
             {{ $t('tournamentPageFixResults') }}
           </Button>
           <Button
-            v-if="isRoundResultsFixed(round.round) && !hasLaterRound(round.round)"
+            v-if="
+              canUseBackwardActions &&
+              isRoundResultsFixed(round.round) &&
+              !hasLaterRound(round.round)
+            "
             variant="destructive"
             @click="cancelRoundResultsFixation(round.round)"
           >
             {{ $t('tournamentPageCancelResultsFixation') }}
           </Button>
           <Button
-            v-if="getRoundState(round.round)?.pairsFixed && !isRoundResultsFixed(round.round)"
+            v-if="
+              canUseBackwardActions &&
+              getRoundState(round.round)?.pairsFixed &&
+              !isRoundResultsFixed(round.round)
+            "
             variant="destructive"
             @click="cancelPairFixation(round.round)"
           >
@@ -364,6 +441,7 @@ const finalBoundaryFights = computed(() => [
           </Button>
           <Button
             v-if="
+              canUseBackwardActions &&
               round.round > 1 &&
               !getRoundState(round.round)?.pairsFixed &&
               !isRoundResultsFixed(round.round)
@@ -392,6 +470,7 @@ const finalBoundaryFights = computed(() => [
             :tournamentId="tournamentId"
             :cardDate="cardDate"
             :activeCardTypes="activeCardTypes"
+            :tournamentMarshals="tournamentMarshals"
             @update:score="(scores) => handleScoreUpdate(fight.id, fight.number, scores)"
             @card-issued="emit('card-issued')"
           />
@@ -423,31 +502,36 @@ const finalBoundaryFights = computed(() => [
             :tournamentId="tournamentId"
             :cardDate="cardDate"
             :activeCardTypes="activeCardTypes"
+            :tournamentMarshals="tournamentMarshals"
             @update:score="(scores) => handleScoreUpdate(fight.id, fight.number, scores)"
             @card-issued="emit('card-issued')"
           />
         </div>
       </section>
       <div
-        v-if="hasAccess && finalRound && latestRoundState?.round === finalRound.round"
+        v-if="
+          (hasAccess || canUseBackwardActions) &&
+          finalRound &&
+          latestRoundState?.round === finalRound.round
+        "
         class="flex flex-wrap justify-center gap-3"
       >
         <Button
-          v-if="!isRoundResultsFixed(finalRound.round)"
+          v-if="hasAccess && !isRoundResultsFixed(finalRound.round)"
           :disabled="!canRecordFights(finalBoundaryFights)"
           @click="fixRoundResults(finalRound.round, finalBoundaryFights)"
         >
           {{ $t('tournamentPageFixFinalResults') }}
         </Button>
         <Button
-          v-if="isRoundResultsFixed(finalRound.round)"
+          v-if="canUseBackwardActions && isRoundResultsFixed(finalRound.round)"
           variant="destructive"
           @click="cancelRoundResultsFixation(finalRound.round)"
         >
           {{ $t('tournamentPageCancelResultsFixation') }}
         </Button>
         <Button
-          v-if="!isRoundResultsFixed(finalRound.round)"
+          v-if="canUseBackwardActions && !isRoundResultsFixed(finalRound.round)"
           variant="destructive"
           @click="rollbackRound(finalRound.round)"
         >
@@ -501,7 +585,7 @@ const finalBoundaryFights = computed(() => [
       </Button>
     </div>
     <div
-      v-if="hasAccess && hasPendingPairs"
+      v-if="canUseBackwardActions && hasPendingPairs"
       class="flex justify-center"
     >
       <Button

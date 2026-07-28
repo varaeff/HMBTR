@@ -4,7 +4,7 @@ import { nextTick } from 'vue'
 import i18next from 'i18next'
 import I18NextVue from 'i18next-vue'
 import FightersSelect from './FightersSelect.vue'
-import type { Fighter } from '@/model'
+import type { Fighter, Nomination } from '@/model'
 
 const mocks = vi.hoisted(() => ({
   fighters: [] as Fighter[],
@@ -70,10 +70,31 @@ const fighters: Fighter[] = [
   }
 ]
 
-const nominations = [
-  { id: 1, name_ru: 'Male entered', name_en: 'Male entered', is_male: true },
-  { id: 2, name_ru: 'Male available', name_en: 'Male available', is_male: true },
-  { id: 3, name_ru: 'Female available', name_en: 'Female available', is_male: false }
+const nominations: Nomination[] = [
+  {
+    id: 1,
+    name_ru: 'Male entered',
+    name_en: 'Male entered',
+    is_male: true,
+    rounds: 1,
+    round_win: false
+  },
+  {
+    id: 2,
+    name_ru: 'Male available',
+    name_en: 'Male available',
+    is_male: true,
+    rounds: 1,
+    round_win: false
+  },
+  {
+    id: 3,
+    name_ru: 'Female available',
+    name_en: 'Female available',
+    is_male: false,
+    rounds: 1,
+    round_win: false
+  }
 ]
 
 const createI18n = async () => {

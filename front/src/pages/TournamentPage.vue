@@ -11,6 +11,7 @@ import { useCommonDataStore } from '@/stores/commonData'
 import { useCompetitionStore } from '@/stores/competition'
 import { useApiUiStore } from '@/stores/apiUi'
 import { useDisciplinaryCardsStore } from '@/stores/disciplinaryCards'
+import { useTournamentMarshalsStore } from '@/stores/tournamentMarshals'
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -32,13 +33,17 @@ import { tData } from '@/lib/utils'
 import { dateToString } from '@/lib/dateUtils'
 import { hasAccess, hasAdminAccess, hasTournamentMarshalAccess } from '@/lib/checkAccess'
 import {
+  canShowAddJudgesButton as getCanShowAddJudgesButton,
+  canShowTournamentMarshalSelector
+} from '@/lib/tournamentMarshalRegistration'
+import {
   areFightResultsReady,
   canShowGroupFightActions,
   getIncompleteFightNumbers
 } from '@/lib/fightResult'
 import { API_ROUTES } from '@shared/routes'
 
-import type { CompetitionBlock, DisciplinaryCardType, Tournament } from '@/model'
+import type { CompetitionBlock, DisciplinaryCardStatus, Tournament } from '@/model'
 
 const props = defineProps<{
   id: string
@@ -50,6 +55,7 @@ const commonDataStore = useCommonDataStore()
 const competitionStore = useCompetitionStore()
 const apiUiStore = useApiUiStore()
 const cardsStore = useDisciplinaryCardsStore()
+const tournamentMarshalsStore = useTournamentMarshalsStore()
 const { i18next } = useTranslation()
 const route = useRoute()
 
@@ -176,15 +182,23 @@ const allTournamentNominationsFinished = computed(
 )
 
 const canEditCompetition = computed(() => canEdit && !nominationFinished.value)
-const canManageCards = computed(() => canEdit)
+const canUseCompetitionBackwardActions = computed(() => canEdit)
+const canManageCards = computed(() => canEdit || hasTournamentMarshalAccess())
 const canManageTournamentMarshals = computed(() => hasTournamentMarshalAccess())
 const hasOpenFighterRegistration = computed(() => tournamentNominations.value.open.length > 0)
-const canShowAddJudgesButton = computed(
-  () =>
-    canManageTournamentMarshals.value &&
-    hasOpenFighterRegistration.value &&
-    !tournament.value?.is_marshals_registration_closed &&
-    !isMarshalRegistrationOpen.value
+const hasTournamentMarshals = computed(() => tournamentMarshalsStore.tournamentMarshals.length > 0)
+const marshalRegistrationState = computed(() => ({
+  canManageTournamentMarshals: canManageTournamentMarshals.value,
+  hasOpenFighterRegistration: hasOpenFighterRegistration.value,
+  hasTournamentMarshals: hasTournamentMarshals.value,
+  isMarshalRegistrationOpen: isMarshalRegistrationOpen.value,
+  isMarshalsRegistrationClosed: Boolean(tournament.value?.is_marshals_registration_closed)
+}))
+const canShowAddJudgesButton = computed(() =>
+  getCanShowAddJudgesButton(marshalRegistrationState.value)
+)
+const showTournamentMarshalSelector = computed(() =>
+  canShowTournamentMarshalSelector(marshalRegistrationState.value)
 )
 
 const toDateInputValue = (date: Date) => {
@@ -215,13 +229,21 @@ const isCardActive = (receivedAt: string, expiresAt: string) => {
   return received <= checkDate && expires >= checkDate
 }
 
-const activeCardTypes = computed<Partial<Record<number, DisciplinaryCardType>>>(() => {
-  const statuses: Partial<Record<number, DisciplinaryCardType>> = {}
+const activeCardTypes = computed<Partial<Record<number, DisciplinaryCardStatus>>>(() => {
+  const statuses: Partial<Record<number, DisciplinaryCardStatus>> = {}
+  const priority = (status: DisciplinaryCardStatus) =>
+    status.type === 'RED' ? (status.active ? 3 : 2) : 1
 
   for (const card of cardsStore.tournamentCards) {
     if (!isCardActive(card.received_at, card.expires_at)) continue
-    if (card.type === 'RED' || statuses[card.fighter_id] !== 'RED') {
-      statuses[card.fighter_id] = card.type
+    if (card.type === 'YELLOW' && !card.active) continue
+    const nextStatus: DisciplinaryCardStatus = {
+      type: card.type,
+      active: card.active
+    }
+    const currentStatus = statuses[card.fighter_id]
+    if (!currentStatus || priority(nextStatus) > priority(currentStatus)) {
+      statuses[card.fighter_id] = nextStatus
     }
   }
 
@@ -234,6 +256,7 @@ const getRedCardGroupFighterKeys = (block: CompetitionBlock) => {
   for (const card of cardsStore.tournamentCards) {
     if (
       card.type !== 'RED' ||
+      !card.active ||
       card.nomination_id !== activeTab.value ||
       card.fight_stage !== block.stage ||
       !card.group_name ||
@@ -337,12 +360,26 @@ const canOfferOlympicWithThirdPlaces = computed(
 )
 
 const closeRegistration = async () => {
+  if (!hasTournamentMarshals.value) {
+    apiUiStore.setError(i18next.t('tournamentPageAddJudgesHint'))
+    return
+  }
   await TournamentsListStore.updateTournamentNomination(tournamentId.value, activeTab.value, false)
   competitionStore.setRegistrationOpen(false)
   const targetNom = tournament.value?.nominations.find((n) => n.nomination_id === activeTab.value)
 
   if (targetNom) {
     targetNom.is_open = false
+  }
+}
+
+const openRegistration = async () => {
+  await TournamentsListStore.updateTournamentNomination(tournamentId.value, activeTab.value, true)
+  competitionStore.setRegistrationOpen(true)
+  const targetNom = tournament.value?.nominations.find((n) => n.nomination_id === activeTab.value)
+
+  if (targetNom) {
+    targetNom.is_open = true
   }
 }
 
@@ -357,6 +394,13 @@ const createOlympicBlock = (includeThirdPlaces = false) => {
 const generateGroupFights = async (blockId: number) => {
   try {
     await competitionStore.generateGroupFights(blockId)
+  } catch (error: unknown) {
+    const details = getActiveRedRollbackDetails(error)
+    if (details) {
+      requestActiveRedRollback(details)
+      return
+    }
+    throw error
   } finally {
     await refreshCardsAndCompetition()
   }
@@ -472,12 +516,72 @@ interface ApiErrorWithResponse {
 }
 
 interface ReportErrorData {
-  details?: string[] | string
+  details?: string[] | string | ActiveRedRollbackDetails
   error?: string
+}
+
+interface ActiveRedRollbackCompetitor {
+  name: string
+  surname: string
+  patronymic?: string | null
+}
+
+interface ActiveRedRollbackDetails {
+  code: 'ACTIVE_RED_CARD_COMPETITORS_REQUIRE_ROLLBACK'
+  block_id: number
+  competitors: ActiveRedRollbackCompetitor[]
 }
 
 const isReportErrorData = (value: unknown): value is ReportErrorData =>
   typeof value === 'object' && value !== null
+
+const isActiveRedRollbackDetails = (value: unknown): value is ActiveRedRollbackDetails =>
+  typeof value === 'object' &&
+  value !== null &&
+  'code' in value &&
+  value.code === 'ACTIVE_RED_CARD_COMPETITORS_REQUIRE_ROLLBACK' &&
+  'block_id' in value &&
+  typeof value.block_id === 'number' &&
+  'competitors' in value &&
+  Array.isArray(value.competitors)
+
+const getActiveRedRollbackDetails = (error: unknown) => {
+  const responseData = (error as ApiErrorWithResponse).response?.data
+
+  if (!isReportErrorData(responseData)) return null
+  return isActiveRedRollbackDetails(responseData.details) ? responseData.details : null
+}
+
+const activeRedRollbackCompetitorNames = (competitors: ActiveRedRollbackCompetitor[]) =>
+  competitors
+    .map((fighter) =>
+      [fighter.surname, fighter.name, fighter.patronymic]
+        .filter((part): part is string => Boolean(part))
+        .map((part) => tData(part, currentLanguage.value))
+        .join(' ')
+    )
+    .join(', ')
+
+const requestActiveRedRollback = (details: ActiveRedRollbackDetails) => {
+  requestBackwardConfirmation(
+    i18next.t('tournamentPageActiveRedRollbackWarning', {
+      fighters: activeRedRollbackCompetitorNames(details.competitors)
+    }),
+    async () => {
+      try {
+        await competitionStore.rollback(details.block_id, undefined, true)
+        const targetNom = tournament.value?.nominations.find(
+          (n) => n.nomination_id === activeTab.value
+        )
+        if (targetNom && !competitionStore.getBlocks.length) {
+          targetNom.is_open = true
+        }
+      } finally {
+        await refreshCardsAndCompetition()
+      }
+    }
+  )
+}
 
 const getReportErrorMessage = async (error: unknown) => {
   const responseData = (error as ApiErrorWithResponse).response?.data
@@ -487,7 +591,11 @@ const getReportErrorMessage = async (error: unknown) => {
 
     try {
       const parsed = JSON.parse(text) as ReportErrorData
-      const details = Array.isArray(parsed.details) ? parsed.details.join(', ') : parsed.details
+      const details = Array.isArray(parsed.details)
+        ? parsed.details.join(', ')
+        : typeof parsed.details === 'string'
+          ? parsed.details
+          : undefined
 
       return details || parsed.error || text || 'Failed to download tournament report'
     } catch {
@@ -498,7 +606,9 @@ const getReportErrorMessage = async (error: unknown) => {
   if (isReportErrorData(responseData)) {
     const details = Array.isArray(responseData.details)
       ? responseData.details.join(', ')
-      : responseData.details
+      : typeof responseData.details === 'string'
+        ? responseData.details
+        : undefined
 
     return details || responseData.error || 'Failed to download tournament report'
   }
@@ -576,7 +686,8 @@ onMounted(async () => {
     commonDataStore.fetchNominations(),
     TournamentsListStore.showTournamentDetails(tournamentId.value),
     FightersListStore.getFightersList(),
-    cardsStore.loadTournamentCards(tournamentId.value)
+    cardsStore.loadTournamentCards(tournamentId.value),
+    tournamentMarshalsStore.loadTournamentMarshals(tournamentId.value)
   ])
 
   tournament.value = fetchedTournament
@@ -677,12 +788,7 @@ watch(
   <TournamentMarshals
     v-if="tournament"
     :tournamentId="tournament.id"
-    :showSelector="
-      isMarshalRegistrationOpen &&
-      canManageTournamentMarshals &&
-      hasOpenFighterRegistration &&
-      !tournament.is_marshals_registration_closed
-    "
+    :showSelector="showTournamentMarshalSelector"
     :canManage="canManageTournamentMarshals"
     @finished="finishMarshalRegistration"
   />
@@ -704,6 +810,7 @@ watch(
       :cards="cardsStore.tournamentCards"
       :canManage="canManageCards"
       :canDelete="canDeleteCards"
+      :tournamentMarshals="tournamentMarshalsStore.tournamentMarshals"
       @changed="refreshCardsAndCompetition"
     />
   </CollapsibleSection>
@@ -743,6 +850,8 @@ watch(
             :isOpen="isCurrentNominationOpen"
             :hasBlocks="blocks.length > 0"
             :activeCardTypes="activeCardTypes"
+            :canCloseRegistration="hasTournamentMarshals"
+            :closeRegistrationHint="$t('tournamentPageAddJudgesHint')"
             @close="closeRegistration"
           />
         </CollapsibleSection>
@@ -752,11 +861,15 @@ watch(
           v-if="
             canEditCompetition &&
             !isCurrentNominationOpen &&
-            !blocks.length &&
-            nominationCompetitors.length >= 3
+            !blocks.length
           "
         >
-          <Button @click="createGroupBlock">{{ $t('tournamentPageCreateGroups') }}</Button>
+          <Button @click="openRegistration">{{
+            $t('tournamentPageOpenRegistrationButton')
+          }}</Button>
+          <Button v-if="nominationCompetitors.length >= 3" @click="createGroupBlock">{{
+            $t('tournamentPageCreateGroups')
+          }}</Button>
           <Button v-if="canOfferOlympic" @click="() => createOlympicBlock()">{{
             $t('tournamentPageOlympicBracket')
           }}</Button>
@@ -822,25 +935,34 @@ watch(
                 :tournamentId="tournamentId"
                 :cardDate="cardIssueDate"
                 :activeCardTypes="activeCardTypes"
+                :tournamentMarshals="tournamentMarshalsStore.tournamentMarshals"
                 @card-issued="refreshCardsAndCompetition"
               />
               <div
-                v-if="canEditCompetition && canShowGroupFightActions(block, pendingTie)"
+                v-if="
+                  (canEditCompetition || canUseCompetitionBackwardActions) &&
+                  canShowGroupFightActions(block, pendingTie)
+                "
                 class="flex flex-wrap justify-center gap-3 my-5"
               >
                 <Button
+                  v-if="canEditCompetition"
                   :disabled="!isGroupBlockComplete(block) || hasBlockingGroupAdvancementTie"
                   @click="fixGroupResults(block.id)"
                 >
                   {{ $t('tournamentPageFixResults') }}
                 </Button>
-                <Button variant="destructive" @click="cancelGroupFightsFixation(block.id)">
+                <Button
+                  v-if="canUseCompetitionBackwardActions"
+                  variant="destructive"
+                  @click="cancelGroupFightsFixation(block.id)"
+                >
                   {{ $t('tournamentPageCancelGroupFixation') }}
                 </Button>
               </div>
               <div
                 v-if="
-                  canEditCompetition &&
+                  canUseCompetitionBackwardActions &&
                   block.status === 'ACTIVE' &&
                   block.lifecycleState === 'RESULTS_FIXED'
                 "
@@ -856,10 +978,12 @@ watch(
               v-else
               :block="block"
               :hasAccess="canEditCompetition && block.status === 'ACTIVE'"
+              :canUseBackwardActions="canUseCompetitionBackwardActions && block.status === 'ACTIVE'"
               :canIssueCards="canManageCards"
               :tournamentId="tournamentId"
               :cardDate="cardIssueDate"
               :activeCardTypes="activeCardTypes"
+              :tournamentMarshals="tournamentMarshalsStore.tournamentMarshals"
               :attachedCardCountByFightId="attachedCardCountByFightId"
               @card-issued="refreshCardsAndCompetition"
               @lifecycle-changed="refreshCardsAndCompetition"

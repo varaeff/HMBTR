@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   db:
     container_name: db_hmbtr
@@ -11,7 +9,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     ports:
-      - "8080:5432"
+      - '8080:5432'
     networks:
       - hmbtr
 
@@ -21,11 +19,11 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
-      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
     volumes:
       - pgadmin-data:/var/lib/pgadmin
     ports:
-      - "5050:80"
+      - '5050:80'
     networks:
       - hmbtr
 

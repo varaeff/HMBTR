@@ -73,6 +73,12 @@ const router = createRouter({
       meta: { requiresAuth: true, requiresAdmin: true }
     },
     {
+      path: '/settings',
+      name: 'settings',
+      component: () => import('@/pages/SettingsPage.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true }
+    },
+    {
       path: '/403',
       name: 'forbidden',
       component: () => import('@/pages/ForbiddenPage.vue')

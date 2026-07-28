@@ -256,6 +256,7 @@ export type marshalsWhereInput = {
   city?: Prisma.XOR<Prisma.CitiesScalarRelationFilter, Prisma.citiesWhereInput>
   category?: Prisma.XOR<Prisma.Marshals_categoriesScalarRelationFilter, Prisma.marshals_categoriesWhereInput>
   tournaments?: Prisma.Tournament_marshalsListRelationFilter
+  disciplinary_cards?: Prisma.Disciplinary_cardsListRelationFilter
 }
 
 export type marshalsOrderByWithRelationInput = {
@@ -271,6 +272,7 @@ export type marshalsOrderByWithRelationInput = {
   city?: Prisma.citiesOrderByWithRelationInput
   category?: Prisma.marshals_categoriesOrderByWithRelationInput
   tournaments?: Prisma.tournament_marshalsOrderByRelationAggregateInput
+  disciplinary_cards?: Prisma.disciplinary_cardsOrderByRelationAggregateInput
 }
 
 export type marshalsWhereUniqueInput = Prisma.AtLeast<{
@@ -289,6 +291,7 @@ export type marshalsWhereUniqueInput = Prisma.AtLeast<{
   city?: Prisma.XOR<Prisma.CitiesScalarRelationFilter, Prisma.citiesWhereInput>
   category?: Prisma.XOR<Prisma.Marshals_categoriesScalarRelationFilter, Prisma.marshals_categoriesWhereInput>
   tournaments?: Prisma.Tournament_marshalsListRelationFilter
+  disciplinary_cards?: Prisma.Disciplinary_cardsListRelationFilter
 }, "id">
 
 export type marshalsOrderByWithAggregationInput = {
@@ -330,6 +333,7 @@ export type marshalsCreateInput = {
   city: Prisma.citiesCreateNestedOneWithoutMarshalsInput
   category: Prisma.marshals_categoriesCreateNestedOneWithoutMarshalsInput
   tournaments?: Prisma.tournament_marshalsCreateNestedManyWithoutMarshalInput
+  disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutMarshalInput
 }
 
 export type marshalsUncheckedCreateInput = {
@@ -342,6 +346,7 @@ export type marshalsUncheckedCreateInput = {
   category_id: number
   pic?: string | null
   tournaments?: Prisma.tournament_marshalsUncheckedCreateNestedManyWithoutMarshalInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutMarshalInput
 }
 
 export type marshalsUpdateInput = {
@@ -353,6 +358,7 @@ export type marshalsUpdateInput = {
   city?: Prisma.citiesUpdateOneRequiredWithoutMarshalsNestedInput
   category?: Prisma.marshals_categoriesUpdateOneRequiredWithoutMarshalsNestedInput
   tournaments?: Prisma.tournament_marshalsUpdateManyWithoutMarshalNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutMarshalNestedInput
 }
 
 export type marshalsUncheckedUpdateInput = {
@@ -365,6 +371,7 @@ export type marshalsUncheckedUpdateInput = {
   category_id?: Prisma.IntFieldUpdateOperationsInput | number
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tournaments?: Prisma.tournament_marshalsUncheckedUpdateManyWithoutMarshalNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutMarshalNestedInput
 }
 
 export type marshalsCreateManyInput = {
@@ -598,6 +605,20 @@ export type marshalsUpdateOneRequiredWithoutTournamentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.marshalsUpdateToOneWithWhereWithoutTournamentsInput, Prisma.marshalsUpdateWithoutTournamentsInput>, Prisma.marshalsUncheckedUpdateWithoutTournamentsInput>
 }
 
+export type marshalsCreateNestedOneWithoutDisciplinary_cardsInput = {
+  create?: Prisma.XOR<Prisma.marshalsCreateWithoutDisciplinary_cardsInput, Prisma.marshalsUncheckedCreateWithoutDisciplinary_cardsInput>
+  connectOrCreate?: Prisma.marshalsCreateOrConnectWithoutDisciplinary_cardsInput
+  connect?: Prisma.marshalsWhereUniqueInput
+}
+
+export type marshalsUpdateOneRequiredWithoutDisciplinary_cardsNestedInput = {
+  create?: Prisma.XOR<Prisma.marshalsCreateWithoutDisciplinary_cardsInput, Prisma.marshalsUncheckedCreateWithoutDisciplinary_cardsInput>
+  connectOrCreate?: Prisma.marshalsCreateOrConnectWithoutDisciplinary_cardsInput
+  upsert?: Prisma.marshalsUpsertWithoutDisciplinary_cardsInput
+  connect?: Prisma.marshalsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.marshalsUpdateToOneWithWhereWithoutDisciplinary_cardsInput, Prisma.marshalsUpdateWithoutDisciplinary_cardsInput>, Prisma.marshalsUncheckedUpdateWithoutDisciplinary_cardsInput>
+}
+
 export type marshalsCreateWithoutCountryInput = {
   name: string
   surname: string
@@ -606,6 +627,7 @@ export type marshalsCreateWithoutCountryInput = {
   city: Prisma.citiesCreateNestedOneWithoutMarshalsInput
   category: Prisma.marshals_categoriesCreateNestedOneWithoutMarshalsInput
   tournaments?: Prisma.tournament_marshalsCreateNestedManyWithoutMarshalInput
+  disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutMarshalInput
 }
 
 export type marshalsUncheckedCreateWithoutCountryInput = {
@@ -617,6 +639,7 @@ export type marshalsUncheckedCreateWithoutCountryInput = {
   category_id: number
   pic?: string | null
   tournaments?: Prisma.tournament_marshalsUncheckedCreateNestedManyWithoutMarshalInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutMarshalInput
 }
 
 export type marshalsCreateOrConnectWithoutCountryInput = {
@@ -667,6 +690,7 @@ export type marshalsCreateWithoutCityInput = {
   country: Prisma.countriesCreateNestedOneWithoutMarshalsInput
   category: Prisma.marshals_categoriesCreateNestedOneWithoutMarshalsInput
   tournaments?: Prisma.tournament_marshalsCreateNestedManyWithoutMarshalInput
+  disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutMarshalInput
 }
 
 export type marshalsUncheckedCreateWithoutCityInput = {
@@ -678,6 +702,7 @@ export type marshalsUncheckedCreateWithoutCityInput = {
   category_id: number
   pic?: string | null
   tournaments?: Prisma.tournament_marshalsUncheckedCreateNestedManyWithoutMarshalInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutMarshalInput
 }
 
 export type marshalsCreateOrConnectWithoutCityInput = {
@@ -714,6 +739,7 @@ export type marshalsCreateWithoutCategoryInput = {
   country: Prisma.countriesCreateNestedOneWithoutMarshalsInput
   city: Prisma.citiesCreateNestedOneWithoutMarshalsInput
   tournaments?: Prisma.tournament_marshalsCreateNestedManyWithoutMarshalInput
+  disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutMarshalInput
 }
 
 export type marshalsUncheckedCreateWithoutCategoryInput = {
@@ -725,6 +751,7 @@ export type marshalsUncheckedCreateWithoutCategoryInput = {
   city_id: number
   pic?: string | null
   tournaments?: Prisma.tournament_marshalsUncheckedCreateNestedManyWithoutMarshalInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutMarshalInput
 }
 
 export type marshalsCreateOrConnectWithoutCategoryInput = {
@@ -761,6 +788,7 @@ export type marshalsCreateWithoutTournamentsInput = {
   country: Prisma.countriesCreateNestedOneWithoutMarshalsInput
   city: Prisma.citiesCreateNestedOneWithoutMarshalsInput
   category: Prisma.marshals_categoriesCreateNestedOneWithoutMarshalsInput
+  disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutMarshalInput
 }
 
 export type marshalsUncheckedCreateWithoutTournamentsInput = {
@@ -772,6 +800,7 @@ export type marshalsUncheckedCreateWithoutTournamentsInput = {
   city_id: number
   category_id: number
   pic?: string | null
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutMarshalInput
 }
 
 export type marshalsCreateOrConnectWithoutTournamentsInput = {
@@ -798,6 +827,7 @@ export type marshalsUpdateWithoutTournamentsInput = {
   country?: Prisma.countriesUpdateOneRequiredWithoutMarshalsNestedInput
   city?: Prisma.citiesUpdateOneRequiredWithoutMarshalsNestedInput
   category?: Prisma.marshals_categoriesUpdateOneRequiredWithoutMarshalsNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutMarshalNestedInput
 }
 
 export type marshalsUncheckedUpdateWithoutTournamentsInput = {
@@ -809,6 +839,69 @@ export type marshalsUncheckedUpdateWithoutTournamentsInput = {
   city_id?: Prisma.IntFieldUpdateOperationsInput | number
   category_id?: Prisma.IntFieldUpdateOperationsInput | number
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutMarshalNestedInput
+}
+
+export type marshalsCreateWithoutDisciplinary_cardsInput = {
+  name: string
+  surname: string
+  patronymic?: string | null
+  pic?: string | null
+  country: Prisma.countriesCreateNestedOneWithoutMarshalsInput
+  city: Prisma.citiesCreateNestedOneWithoutMarshalsInput
+  category: Prisma.marshals_categoriesCreateNestedOneWithoutMarshalsInput
+  tournaments?: Prisma.tournament_marshalsCreateNestedManyWithoutMarshalInput
+}
+
+export type marshalsUncheckedCreateWithoutDisciplinary_cardsInput = {
+  id?: number
+  name: string
+  surname: string
+  patronymic?: string | null
+  country_id: number
+  city_id: number
+  category_id: number
+  pic?: string | null
+  tournaments?: Prisma.tournament_marshalsUncheckedCreateNestedManyWithoutMarshalInput
+}
+
+export type marshalsCreateOrConnectWithoutDisciplinary_cardsInput = {
+  where: Prisma.marshalsWhereUniqueInput
+  create: Prisma.XOR<Prisma.marshalsCreateWithoutDisciplinary_cardsInput, Prisma.marshalsUncheckedCreateWithoutDisciplinary_cardsInput>
+}
+
+export type marshalsUpsertWithoutDisciplinary_cardsInput = {
+  update: Prisma.XOR<Prisma.marshalsUpdateWithoutDisciplinary_cardsInput, Prisma.marshalsUncheckedUpdateWithoutDisciplinary_cardsInput>
+  create: Prisma.XOR<Prisma.marshalsCreateWithoutDisciplinary_cardsInput, Prisma.marshalsUncheckedCreateWithoutDisciplinary_cardsInput>
+  where?: Prisma.marshalsWhereInput
+}
+
+export type marshalsUpdateToOneWithWhereWithoutDisciplinary_cardsInput = {
+  where?: Prisma.marshalsWhereInput
+  data: Prisma.XOR<Prisma.marshalsUpdateWithoutDisciplinary_cardsInput, Prisma.marshalsUncheckedUpdateWithoutDisciplinary_cardsInput>
+}
+
+export type marshalsUpdateWithoutDisciplinary_cardsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  surname?: Prisma.StringFieldUpdateOperationsInput | string
+  patronymic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.countriesUpdateOneRequiredWithoutMarshalsNestedInput
+  city?: Prisma.citiesUpdateOneRequiredWithoutMarshalsNestedInput
+  category?: Prisma.marshals_categoriesUpdateOneRequiredWithoutMarshalsNestedInput
+  tournaments?: Prisma.tournament_marshalsUpdateManyWithoutMarshalNestedInput
+}
+
+export type marshalsUncheckedUpdateWithoutDisciplinary_cardsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  surname?: Prisma.StringFieldUpdateOperationsInput | string
+  patronymic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country_id?: Prisma.IntFieldUpdateOperationsInput | number
+  city_id?: Prisma.IntFieldUpdateOperationsInput | number
+  category_id?: Prisma.IntFieldUpdateOperationsInput | number
+  pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tournaments?: Prisma.tournament_marshalsUncheckedUpdateManyWithoutMarshalNestedInput
 }
 
 export type marshalsCreateManyCountryInput = {
@@ -829,6 +922,7 @@ export type marshalsUpdateWithoutCountryInput = {
   city?: Prisma.citiesUpdateOneRequiredWithoutMarshalsNestedInput
   category?: Prisma.marshals_categoriesUpdateOneRequiredWithoutMarshalsNestedInput
   tournaments?: Prisma.tournament_marshalsUpdateManyWithoutMarshalNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutMarshalNestedInput
 }
 
 export type marshalsUncheckedUpdateWithoutCountryInput = {
@@ -840,6 +934,7 @@ export type marshalsUncheckedUpdateWithoutCountryInput = {
   category_id?: Prisma.IntFieldUpdateOperationsInput | number
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tournaments?: Prisma.tournament_marshalsUncheckedUpdateManyWithoutMarshalNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutMarshalNestedInput
 }
 
 export type marshalsUncheckedUpdateManyWithoutCountryInput = {
@@ -870,6 +965,7 @@ export type marshalsUpdateWithoutCityInput = {
   country?: Prisma.countriesUpdateOneRequiredWithoutMarshalsNestedInput
   category?: Prisma.marshals_categoriesUpdateOneRequiredWithoutMarshalsNestedInput
   tournaments?: Prisma.tournament_marshalsUpdateManyWithoutMarshalNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutMarshalNestedInput
 }
 
 export type marshalsUncheckedUpdateWithoutCityInput = {
@@ -881,6 +977,7 @@ export type marshalsUncheckedUpdateWithoutCityInput = {
   category_id?: Prisma.IntFieldUpdateOperationsInput | number
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tournaments?: Prisma.tournament_marshalsUncheckedUpdateManyWithoutMarshalNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutMarshalNestedInput
 }
 
 export type marshalsUncheckedUpdateManyWithoutCityInput = {
@@ -911,6 +1008,7 @@ export type marshalsUpdateWithoutCategoryInput = {
   country?: Prisma.countriesUpdateOneRequiredWithoutMarshalsNestedInput
   city?: Prisma.citiesUpdateOneRequiredWithoutMarshalsNestedInput
   tournaments?: Prisma.tournament_marshalsUpdateManyWithoutMarshalNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutMarshalNestedInput
 }
 
 export type marshalsUncheckedUpdateWithoutCategoryInput = {
@@ -922,6 +1020,7 @@ export type marshalsUncheckedUpdateWithoutCategoryInput = {
   city_id?: Prisma.IntFieldUpdateOperationsInput | number
   pic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tournaments?: Prisma.tournament_marshalsUncheckedUpdateManyWithoutMarshalNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutMarshalNestedInput
 }
 
 export type marshalsUncheckedUpdateManyWithoutCategoryInput = {
@@ -941,10 +1040,12 @@ export type marshalsUncheckedUpdateManyWithoutCategoryInput = {
 
 export type MarshalsCountOutputType = {
   tournaments: number
+  disciplinary_cards: number
 }
 
 export type MarshalsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tournaments?: boolean | MarshalsCountOutputTypeCountTournamentsArgs
+  disciplinary_cards?: boolean | MarshalsCountOutputTypeCountDisciplinary_cardsArgs
 }
 
 /**
@@ -964,6 +1065,13 @@ export type MarshalsCountOutputTypeCountTournamentsArgs<ExtArgs extends runtime.
   where?: Prisma.tournament_marshalsWhereInput
 }
 
+/**
+ * MarshalsCountOutputType without action
+ */
+export type MarshalsCountOutputTypeCountDisciplinary_cardsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.disciplinary_cardsWhereInput
+}
+
 
 export type marshalsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -978,6 +1086,7 @@ export type marshalsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   city?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
   category?: boolean | Prisma.marshals_categoriesDefaultArgs<ExtArgs>
   tournaments?: boolean | Prisma.marshals$tournamentsArgs<ExtArgs>
+  disciplinary_cards?: boolean | Prisma.marshals$disciplinary_cardsArgs<ExtArgs>
   _count?: boolean | Prisma.MarshalsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["marshals"]>
 
@@ -1026,6 +1135,7 @@ export type marshalsInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   city?: boolean | Prisma.citiesDefaultArgs<ExtArgs>
   category?: boolean | Prisma.marshals_categoriesDefaultArgs<ExtArgs>
   tournaments?: boolean | Prisma.marshals$tournamentsArgs<ExtArgs>
+  disciplinary_cards?: boolean | Prisma.marshals$disciplinary_cardsArgs<ExtArgs>
   _count?: boolean | Prisma.MarshalsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type marshalsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1046,6 +1156,7 @@ export type $marshalsPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     city: Prisma.$citiesPayload<ExtArgs>
     category: Prisma.$marshals_categoriesPayload<ExtArgs>
     tournaments: Prisma.$tournament_marshalsPayload<ExtArgs>[]
+    disciplinary_cards: Prisma.$disciplinary_cardsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1454,6 +1565,7 @@ export interface Prisma__marshalsClient<T, Null = never, ExtArgs extends runtime
   city<T extends Prisma.citiesDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.citiesDefaultArgs<ExtArgs>>): Prisma.Prisma__citiesClient<runtime.Types.Result.GetResult<Prisma.$citiesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   category<T extends Prisma.marshals_categoriesDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.marshals_categoriesDefaultArgs<ExtArgs>>): Prisma.Prisma__marshals_categoriesClient<runtime.Types.Result.GetResult<Prisma.$marshals_categoriesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   tournaments<T extends Prisma.marshals$tournamentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.marshals$tournamentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$tournament_marshalsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  disciplinary_cards<T extends Prisma.marshals$disciplinary_cardsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.marshals$disciplinary_cardsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$disciplinary_cardsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1908,6 +2020,30 @@ export type marshals$tournamentsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.Tournament_marshalsScalarFieldEnum | Prisma.Tournament_marshalsScalarFieldEnum[]
+}
+
+/**
+ * marshals.disciplinary_cards
+ */
+export type marshals$disciplinary_cardsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the disciplinary_cards
+   */
+  select?: Prisma.disciplinary_cardsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the disciplinary_cards
+   */
+  omit?: Prisma.disciplinary_cardsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.disciplinary_cardsInclude<ExtArgs> | null
+  where?: Prisma.disciplinary_cardsWhereInput
+  orderBy?: Prisma.disciplinary_cardsOrderByWithRelationInput | Prisma.disciplinary_cardsOrderByWithRelationInput[]
+  cursor?: Prisma.disciplinary_cardsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Disciplinary_cardsScalarFieldEnum | Prisma.Disciplinary_cardsScalarFieldEnum[]
 }
 
 /**

@@ -13,6 +13,10 @@ export class CreateDisciplinaryCardDto {
   @Min(1)
   fight_id: number;
 
+  @IsInt()
+  @Min(1)
+  marshal_id: number;
+
   @IsIn(['YELLOW', 'RED'])
   type: 'YELLOW' | 'RED';
 

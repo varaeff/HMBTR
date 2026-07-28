@@ -5,12 +5,12 @@ import { useCompetitionStore } from '@/stores/competition'
 import { tData } from '@/lib/utils'
 import { Table, TableHeader, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import { CardStatusIcon } from '@/widgets/DisciplinaryCards'
-import type { DisciplinaryCardType, GroupFighter, Group } from '@/model'
+import type { DisciplinaryCardStatus, GroupFighter, Group } from '@/model'
 
 const props = defineProps<{
   isFixed: boolean
   groups?: Group[]
-  activeCardTypes?: Partial<Record<number, DisciplinaryCardType>>
+  activeCardTypes?: Partial<Record<number, DisciplinaryCardStatus>>
   redCardGroupFighterKeys?: Set<string>
   highlightedAdvancerCompetitorIds?: Set<number>
 }>()

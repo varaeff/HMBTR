@@ -94,6 +94,8 @@ interface RawFight {
   bracket_position?: number
   is_bronze?: boolean
   is_finished?: boolean
+  rounds?: 1 | 2 | 3
+  round_win?: boolean
   warnings?: Array<{
     competitor_id: number
     round: number
@@ -284,6 +286,10 @@ const groupFighterFromCompetitor = (competitor: RawCompetitor): GroupFighter => 
 }
 
 const mapFight = (fight: RawFight, rules: FightScoringRules): FightData => {
+  const fightRules: FightScoringRules = {
+    rounds: fight.rounds ?? rules.rounds,
+    roundWin: fight.round_win ?? rules.roundWin
+  }
   const warnings =
     fight.warnings?.map((warning) => ({
       competitorId: warning.competitor_id,
@@ -296,12 +302,12 @@ const mapFight = (fight: RawFight, rules: FightScoringRules): FightData => {
       competitor2Score: score.competitor2_score
     })) ?? []
   const legacyRounds = legacyRoundScoresFromColumns(
-    rules,
+    fightRules,
     {
       competitor1Round1Score:
-        rules.rounds === 1 ? fight.competitor1_score : fight.competitor1_round1_score,
+        fightRules.rounds === 1 ? fight.competitor1_score : fight.competitor1_round1_score,
       competitor2Round1Score:
-        rules.rounds === 1 ? fight.competitor2_score : fight.competitor2_round1_score,
+        fightRules.rounds === 1 ? fight.competitor2_score : fight.competitor2_round1_score,
       competitor1Round2Score: fight.competitor1_round2_score,
       competitor2Round2Score: fight.competitor2_round2_score,
       competitor1Round3Score: fight.competitor1_round3_score,
@@ -312,8 +318,8 @@ const mapFight = (fight: RawFight, rules: FightScoringRules): FightData => {
     warnings
   )
   const storedRounds = relationRounds.length ? relationRounds : legacyRounds
-  const editableRounds = storedRounds.length ? storedRounds : getInitialRoundScores(rules)
-  const scored = evaluateFightWithWarnings(rules, {
+  const editableRounds = storedRounds.length ? storedRounds : getInitialRoundScores(fightRules)
+  const scored = evaluateFightWithWarnings(fightRules, {
     competitor1Id: fight.competitor1_id,
     competitor2Id: fight.competitor2_id,
     fighter1Score: fight.competitor1_score,
@@ -337,8 +343,8 @@ const mapFight = (fight: RawFight, rules: FightScoringRules): FightData => {
     fighter2EffectiveScore: scored.fighter2EffectiveScore,
     roundScores: editableRounds,
     warnings,
-    rounds: rules.rounds,
-    roundWin: rules.roundWin,
+    rounds: fightRules.rounds,
+    roundWin: fightRules.roundWin,
     isResultValid: Boolean(fight.forfeit_card_id) || scored.evaluation.isValidResult,
     winnerId: fight.winner_id,
     forfeitCardId: fight.forfeit_card_id,
@@ -401,7 +407,7 @@ const mapCompetitionState = (
       if (draft && !fight.isFinished) {
         const roundScores = draft.roundScores ?? fight.roundScores
         const warnings = draft.warnings ?? fight.warnings ?? []
-        const scored = evaluateFightWithWarnings(scoringRules, {
+        const scored = evaluateFightWithWarnings({ rounds: fight.rounds, roundWin: fight.roundWin }, {
           competitor1Id: fight.competitor1Id,
           competitor2Id: fight.competitor2Id,
           fighter1Score: fight.fighter1Score,
@@ -734,10 +740,11 @@ export const useCompetitionStore = defineStore({
       this.applyCompetitionState(data)
     },
 
-    async rollback(blockId: number, round?: number) {
+    async rollback(blockId: number, round?: number, removeActiveRedCompetitors = false) {
       const { data } = await http.post(API_ROUTES.COMPETITION.ROLLBACK, {
         block_id: blockId,
-        round
+        round,
+        remove_active_red_competitors: removeActiveRedCompetitors || undefined
       })
       this.applyCompetitionState(data)
     },

@@ -8,7 +8,7 @@ import FightCard from './FightCard.vue'
 import FightParticipantLabel from './FightParticipantLabel.vue'
 import IssueCardDialog from './IssueCardDialog.vue'
 import FightWarningIssueDialog from './FightWarningIssueDialog.vue'
-import type { FightData, Fighter } from '@/model'
+import type { FightData, Fighter, TournamentMarshal } from '@/model'
 import type { FightWarning, RoundScore } from '@shared/fightScoring'
 
 interface FightScoreUpdatePayload {
@@ -36,6 +36,26 @@ const fight: FightData = {
   rounds: 1,
   roundWin: false,
   isResultValid: false
+}
+
+const tournamentMarshal: TournamentMarshal = {
+  id: 1,
+  tournament_id: 1,
+  marshal_id: 11,
+  marshal: {
+    id: 11,
+    name: 'Judge',
+    surname: 'Smith',
+    patronymic: 'A',
+    category_id: 1,
+    country: 'Georgia',
+    city: 'Tbilisi',
+    category: {
+      id: 1,
+      name_ru: 'A',
+      name_en: 'A'
+    }
+  }
 }
 
 describe('FightCard', () => {
@@ -182,6 +202,34 @@ describe('FightCard', () => {
     expect(updatedInputs).toHaveLength(4)
     expect(document.activeElement).toBe(updatedInputs[2].element)
     nextFightInput.remove()
+    wrapper.unmount()
+  })
+
+  it('reveals an extra round when Enter is pressed on the last tied fight input without a next input', async () => {
+    const instance = i18next.createInstance()
+    await instance.init({ lng: 'en', resources: { en: { translation: {} } } })
+    const wrapper = mount(FightCard, {
+      attachTo: document.body,
+      props: {
+        fight: {
+          ...fight,
+          roundScores: [{ competitor1Score: 0, competitor2Score: 0 }],
+          rounds: 1,
+          roundWin: false
+        },
+        hasAccess: true
+      },
+      global: { plugins: [createPinia(), [I18NextVue, { i18next: instance }]] }
+    })
+
+    const inputs = wrapper.findAll<HTMLInputElement>('[data-testid="fight-score-input"]')
+    inputs[1].element.focus()
+    await inputs[1].trigger('keydown', { key: 'Enter' })
+    await nextTick()
+
+    const updatedInputs = wrapper.findAll<HTMLInputElement>('[data-testid="fight-score-input"]')
+    expect(updatedInputs).toHaveLength(4)
+    expect(document.activeElement).toBe(updatedInputs[2].element)
     wrapper.unmount()
   })
 
@@ -778,6 +826,8 @@ describe('FightCard', () => {
             disciplinaryCardsDate: 'Date',
             disciplinaryCardsIssueDescription: 'Enter card',
             disciplinaryCardsIssueTitle: 'Card',
+            disciplinaryCardsMarshal: 'Judge',
+            disciplinaryCardsMarshalPlaceholder: 'Select a judge',
             disciplinaryCardsReason: 'Reason',
             disciplinaryCardsRed: 'Red',
             disciplinaryCardsSave: 'Save',
@@ -795,6 +845,8 @@ describe('FightCard', () => {
         type: 'YELLOW',
         date: '2026-07-24',
         reason: '   ',
+        marshalId: null,
+        tournamentMarshals: [tournamentMarshal],
         isIssuing: false
       },
       global: {
@@ -811,10 +863,21 @@ describe('FightCard', () => {
     })
 
     const reasonInput = () => wrapper.find<HTMLInputElement>('[data-testid="card-reason-input"]')
+    const marshalSelect = wrapper.find<HTMLSelectElement>('[data-testid="card-marshal-select"]')
+    const marshalOptions = marshalSelect.findAll('option')
+
+    expect(marshalOptions).toHaveLength(1)
+    expect(marshalOptions[0].text()).toBe('Smith Judge')
+    expect(wrapper.emitted('update:marshalId')?.[0]).toEqual([11])
+
     await reasonInput().trigger('keydown', { key: 'Enter' })
     expect(wrapper.emitted('issue')).toBeUndefined()
 
     await wrapper.setProps({ reason: 'Late strike' })
+    await reasonInput().trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('issue')).toBeUndefined()
+
+    await wrapper.setProps({ marshalId: 11 })
     await reasonInput().trigger('keydown', { key: 'Enter' })
     expect(wrapper.emitted('issue')).toHaveLength(1)
 

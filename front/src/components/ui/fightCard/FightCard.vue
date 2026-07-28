@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
-import type { DisciplinaryCardType, FightData, Fighter } from '@/model'
+import type { DisciplinaryCardStatus, FightData, Fighter, TournamentMarshal } from '@/model'
 import FightParticipantLabel from './FightParticipantLabel.vue'
 import FightResultDisplay from './FightResultDisplay.vue'
 import FightScoreEditor from './FightScoreEditor.vue'
@@ -45,7 +45,8 @@ const props = defineProps<{
   canIssueCards?: boolean
   tournamentId?: number
   cardDate?: string
-  activeCardTypes?: Partial<Record<number, DisciplinaryCardType>>
+  activeCardTypes?: Partial<Record<number, DisciplinaryCardStatus>>
+  tournamentMarshals?: TournamentMarshal[]
 }>()
 
 const emit = defineEmits<{
@@ -161,6 +162,7 @@ const {
   issueType,
   issueDate,
   issueReason,
+  issueMarshalId,
   isIssuing,
   openIssueDialog: openIssueCardDialog,
   issueCard
@@ -602,8 +604,10 @@ watch(
     v-model:open="issueDialogOpen"
     v-model:type="issueType"
     v-model:reason="issueReason"
+    v-model:marshalId="issueMarshalId"
     :fighter="issueFighter"
     :date="issueDate"
+    :tournament-marshals="tournamentMarshals ?? []"
     :is-issuing="isIssuing"
     @issue="issueCard"
   />

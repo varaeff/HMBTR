@@ -4,7 +4,7 @@ import { createPinia, setActivePinia } from 'pinia'
 import i18next from 'i18next'
 import I18NextVue from 'i18next-vue'
 import NominationGroups from './NominationGroups.vue'
-import type { Group } from '@/model'
+import type { DisciplinaryCardStatus, Group } from '@/model'
 
 vi.mock('@/stores/competition', () => ({
   useCompetitionStore: () => ({
@@ -81,7 +81,7 @@ describe('NominationGroups', () => {
       props: {
         groups,
         isFixed: true,
-        activeCardTypes: { 1: 'RED' },
+        activeCardTypes: { 1: { type: 'RED', active: true } as DisciplinaryCardStatus },
         redCardGroupFighterKeys: new Set(['A:1'])
       },
       global: {

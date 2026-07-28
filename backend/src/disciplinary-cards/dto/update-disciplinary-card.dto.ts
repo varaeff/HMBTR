@@ -1,4 +1,11 @@
-import { IsDateString, IsIn, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsDateString,
+  IsIn,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class UpdateDisciplinaryCardDto {
   @IsOptional()
@@ -10,6 +17,14 @@ export class UpdateDisciplinaryCardDto {
   reason?: string;
 
   @IsOptional()
+  @IsNumber()
+  marshal_id?: number;
+
+  @IsOptional()
   @IsDateString()
   expires_at?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  active?: boolean;
 }

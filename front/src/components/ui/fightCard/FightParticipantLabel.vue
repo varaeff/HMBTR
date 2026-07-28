@@ -7,13 +7,13 @@ import {
   ContextMenuTrigger
 } from '@/components/ui/context-menu'
 import { CardStatusIcon } from '@/widgets/DisciplinaryCards'
-import type { DisciplinaryCardType, Fighter } from '@/model'
+import type { DisciplinaryCardStatus, Fighter } from '@/model'
 import type { FightWarningMarker } from './types'
 
 const props = defineProps<{
   surname: string
   fighter: Fighter
-  cardType?: DisciplinaryCardType
+  cardType?: DisciplinaryCardStatus
   warningMarkers: FightWarningMarker[]
   warningTitle: string
   canOpenMenu: boolean

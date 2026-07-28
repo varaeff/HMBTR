@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -30,6 +31,7 @@ import { CompetitionLifecycleDto } from './dto/competition-lifecycle.dto';
 import {
   evaluateSubmittedFightScoreWithWarnings,
   evaluateSubmittedFightScore,
+  evaluateSubmittedRawFightScoreForPersistence,
   fightScoreUpdateData,
   submittedRoundScores,
   scoringRules,
@@ -97,8 +99,12 @@ interface RedCardForfeitFight {
   nomination_id: number;
   block_id: number | null;
   fight_number: number;
+  bracket_round: number | null;
+  is_bronze: boolean | null;
   is_finished: boolean;
   forfeit_card_id: number | null;
+  rounds: number;
+  round_win: boolean;
   block: {
     type: string;
     status: string;
@@ -106,6 +112,10 @@ interface RedCardForfeitFight {
     tournament_nomination: {
       is_finished: boolean;
     };
+    round_states?: Array<{
+      round: number;
+      results_fixed: boolean;
+    }>;
   } | null;
 }
 
@@ -354,6 +364,7 @@ export class CompetitionService {
         'Groups must contain the same fighters exactly once',
       );
     }
+    await this.assertNoActiveRedCompetitorsInUnfoughtBlock(block.id);
 
     await this.prisma.$transaction(async (tx) => {
       const transition = await tx.competition_blocks.updateMany({
@@ -559,6 +570,7 @@ export class CompetitionService {
     if (!pendingPairs) {
       throw new BadRequestException('No Olympic pairs to fix');
     }
+    await this.assertNoActiveRedCompetitorsInUnfoughtBlock(block.id);
     const pendingRoundState = block.round_states.find(
       (state) => state.round === pendingPairs.round,
     );
@@ -632,7 +644,7 @@ export class CompetitionService {
     }
 
     const evaluation = evaluateSubmittedFightScore(
-      scoringRules(fight.nomination),
+      scoringRules(fight),
       dto,
       false,
     );
@@ -714,17 +726,24 @@ export class CompetitionService {
     const rawEvaluations = new Map(
       dto.fights.flatMap((result) => {
         const fight = block.fights.find((item) => item.id === result.fight_id);
+        if (!fight) {
+          throw new BadRequestException('Fight does not belong to the block');
+        }
         if (this.isForfeitFight(fight)) {
           return [];
         }
+        const rules = scoringRules({
+          rounds: fight.rounds ?? block.tournament_nomination.nomination.rounds,
+          round_win:
+            fight.round_win ?? block.tournament_nomination.nomination.round_win,
+        });
 
         return [
           [
             result.fight_id,
-            evaluateSubmittedFightScore(
-              scoringRules(block.tournament_nomination.nomination),
+            evaluateSubmittedRawFightScoreForPersistence(
+              rules,
               result,
-              false,
             ),
           ] as const,
         ];
@@ -736,12 +755,17 @@ export class CompetitionService {
         if (!fight || this.isForfeitFight(fight)) {
           return [];
         }
+        const rules = scoringRules({
+          rounds: fight.rounds ?? block.tournament_nomination.nomination.rounds,
+          round_win:
+            fight.round_win ?? block.tournament_nomination.nomination.round_win,
+        });
 
         return [
           [
             result.fight_id,
             evaluateSubmittedFightScoreWithWarnings(
-              scoringRules(block.tournament_nomination.nomination),
+              rules,
               result,
               fight.competitor1_id,
               fight.competitor2_id,
@@ -870,6 +894,67 @@ export class CompetitionService {
     await this.applyRedCardForfeitsPass(tournamentId, checkDate);
   }
 
+  private async assertNoActiveRedCompetitorsInUnfoughtBlock(blockId: number) {
+    const conflicts = await this.getActiveRedCompetitorsInUnfoughtBlock(blockId);
+    if (!conflicts.length) return;
+
+    throw new ConflictException({
+      error: 'Conflict',
+      details: {
+        code: 'ACTIVE_RED_CARD_COMPETITORS_REQUIRE_ROLLBACK',
+        block_id: blockId,
+        competitors: conflicts,
+      },
+    });
+  }
+
+  private async getActiveRedCompetitorsInUnfoughtBlock(blockId: number) {
+    if (!(await this.disciplinaryCardStorageExists())) return [];
+
+    const block = await this.prisma.competition_blocks.findUnique({
+      where: { id: blockId },
+      include: {
+        fights: true,
+        groups: { include: { fighters: true } },
+        bracket_slots: true,
+      },
+    });
+    if (!block) throw new NotFoundException('Block not found');
+    if (block.fights.length > 0) return [];
+
+    const competitorIds =
+      block.type === BLOCK_GROUP
+        ? block.groups.flatMap((group) =>
+            group.fighters.map((fighter) => fighter.competitor_id),
+          )
+        : block.bracket_slots.map((slot) => slot.competitor_id);
+
+    if (!competitorIds.length) return [];
+
+    const competitors = await this.prisma.competitors.findMany({
+      where: { id: { in: competitorIds } },
+      include: { fighter: true },
+    });
+    const checkDate = await this.getTournamentCheckDate(block.tournament_id);
+    const activeReds = await this.getActiveRedCards(
+      competitors.map((competitor) => competitor.fighter_id),
+      checkDate,
+    );
+    const activeRedFighterIds = new Set(
+      activeReds.map((card) => card.fighter_id),
+    );
+
+    return competitors
+      .filter((competitor) => activeRedFighterIds.has(competitor.fighter_id))
+      .map((competitor) => ({
+        competitor_id: competitor.id,
+        fighter_id: competitor.fighter_id,
+        name: competitor.fighter.name,
+        surname: competitor.fighter.surname,
+        patronymic: competitor.fighter.patronymic,
+      }));
+  }
+
   async applyRedCardConsequences(tournamentId: number) {
     if (!(await this.disciplinaryCardStorageExists())) return;
 
@@ -903,6 +988,7 @@ export class CompetitionService {
         block: {
           include: {
             tournament_nomination: true,
+            round_states: true,
           },
         },
         competitor1: true,
@@ -952,16 +1038,16 @@ export class CompetitionService {
 
       const firstLoses = losingCompetitorId === fight.competitor1_id;
       const forfeitRoundScores = this.getRedCardForfeitRoundScores(
-        fight.nomination.rounds,
-        fight.nomination.round_win,
+        fight.rounds,
+        fight.round_win,
         firstLoses,
       );
       await this.prisma.fights.update({
         where: { id: fight.id },
         data: {
           ...this.getRedCardForfeitScoreData(
-            fight.nomination.rounds,
-            fight.nomination.round_win,
+            fight.rounds,
+            fight.round_win,
             firstLoses,
           ),
           winner_id: firstLoses ? fight.competitor2_id : fight.competitor1_id,
@@ -988,7 +1074,24 @@ export class CompetitionService {
       return fight.block.lifecycle_state !== LIFECYCLE_RESULTS_FIXED;
     }
 
-    return !fight.is_finished || this.isForfeitFight(fight);
+    return !this.isOlympicFightResultsFixed(fight);
+  }
+
+  private isOlympicFightResultsFixed(fight: RedCardForfeitFight) {
+    if (fight.block?.type !== BLOCK_OLYMPIC) return false;
+    const finalRound = Math.max(
+      ...(fight.block.round_states ?? []).map((state) => state.round),
+      0,
+    );
+
+    return (
+      fight.block.round_states?.some(
+        (state) =>
+          state.results_fixed &&
+          (state.round === fight.bracket_round ||
+            (fight.is_bronze && state.round === finalRound)),
+      ) ?? false
+    );
   }
 
   private getApplicableRedForFight(
@@ -1002,6 +1105,7 @@ export class CompetitionService {
     fight: RedCardForfeitFight,
     card: ActiveRedCard,
   ) {
+    if (fight.nomination_id !== card.source_nomination_id) return true;
     if (fight.block?.type !== BLOCK_GROUP) return true;
     if (card.source_block_type !== BLOCK_GROUP) {
       return card.fight_id === fight.id;
@@ -1044,6 +1148,47 @@ export class CompetitionService {
         where: { fight_id: { in: fights.map((fight) => fight.id) } },
       });
     }
+  }
+
+  async resetEditableForfeitsForCard(cardId: number) {
+    const fights = await this.prisma.fights.findMany({
+      where: { forfeit_card_id: cardId },
+      include: {
+        block: {
+          include: {
+            tournament_nomination: true,
+            round_states: true,
+          },
+        },
+      },
+    });
+    const editableFightIds = fights
+      .filter((fight) => this.canApplyRedCardForfeitToFight(fight))
+      .map((fight) => fight.id);
+
+    if (!editableFightIds.length) return;
+
+    await this.prisma.fights.updateMany({
+      where: { id: { in: editableFightIds } },
+      data: {
+        competitor1_score: 0,
+        competitor2_score: 0,
+        competitor1_round1_score: 0,
+        competitor2_round1_score: 0,
+        competitor1_round2_score: 0,
+        competitor2_round2_score: 0,
+        competitor1_round3_score: 0,
+        competitor2_round3_score: 0,
+        competitor1_round4_score: 0,
+        competitor2_round4_score: 0,
+        winner_id: null,
+        is_finished: false,
+        forfeit_card_id: null,
+      },
+    });
+    await this.prisma.fight_round_scores.deleteMany({
+      where: { fight_id: { in: editableFightIds } },
+    });
   }
 
   async assertFightLifecycleEditable(fightId: number) {
@@ -1231,14 +1376,18 @@ export class CompetitionService {
         if (this.isForfeitFight(fight)) {
           return [];
         }
+        const rules = scoringRules({
+          rounds: fight.rounds ?? block.tournament_nomination.nomination.rounds,
+          round_win:
+            fight.round_win ?? block.tournament_nomination.nomination.round_win,
+        });
 
         return [
           [
             result.fight_id,
-            evaluateSubmittedFightScore(
-              scoringRules(block.tournament_nomination.nomination),
+            evaluateSubmittedRawFightScoreForPersistence(
+              rules,
               result,
-              false,
             ),
           ] as const,
         ];
@@ -1253,12 +1402,17 @@ export class CompetitionService {
         if (this.isForfeitFight(fight)) {
           return [];
         }
+        const rules = scoringRules({
+          rounds: fight.rounds ?? block.tournament_nomination.nomination.rounds,
+          round_win:
+            fight.round_win ?? block.tournament_nomination.nomination.round_win,
+        });
 
         return [
           [
             result.fight_id,
             evaluateSubmittedFightScoreWithWarnings(
-              scoringRules(block.tournament_nomination.nomination),
+              rules,
               result,
               fight.competitor1_id,
               fight.competitor2_id,
@@ -1681,6 +1835,11 @@ export class CompetitionService {
         );
       }
       const firstStage = block.stage === 1;
+      if (dto.remove_active_red_competitors && !firstStage) {
+        throw new BadRequestException(
+          'Active red rollback is allowed only for the first block',
+        );
+      }
       await this.prisma.$transaction(async (tx) => {
         await this.resetForfeitsForDeletedFightsTx(tx, block.id);
         await tx.competition_blocks.delete({ where: { id: block.id } });
@@ -1701,6 +1860,9 @@ export class CompetitionService {
             is_open: firstStage,
           },
         });
+        if (dto.remove_active_red_competitors && firstStage) {
+          await this.removeActiveRedCompetitorsFromRegistrationTx(tx, block);
+        }
       });
     }
 
@@ -2000,6 +2162,11 @@ export class CompetitionService {
       competitors: Array<{ id: number }>;
     }>,
   ) {
+    const nomination = await tx.nominations.findUnique({
+      where: { id: nominationId },
+      select: { rounds: true, round_win: true },
+    });
+    if (!nomination) throw new NotFoundException('Nomination not found');
     let fightNumber = await this.getNextFightNumberTx(
       tx,
       tournamentId,
@@ -2027,6 +2194,8 @@ export class CompetitionService {
               competitor2_id: c2.id,
               stage,
               fight_number: fightNumber++,
+              rounds: nomination.rounds,
+              round_win: nomination.round_win,
             },
           });
         }
@@ -2043,6 +2212,8 @@ export class CompetitionService {
               competitor2_id: c2.id,
               stage,
               fight_number: fightNumber++,
+              rounds: nomination.rounds,
+              round_win: nomination.round_win,
             },
           });
         }
@@ -2318,9 +2489,9 @@ export class CompetitionService {
         competitor1Score: fight.competitor1_score,
         competitor2Score: fight.competitor2_score,
         forfeitCardId: fight.forfeit_card_id,
-        rules: scoringRules(fight.nomination),
+        rules: scoringRules(fight),
         roundScores: this.getPersistedRoundScores(
-          scoringRules(fight.nomination),
+          scoringRules(fight),
           fight,
           fight.warnings,
         ),
@@ -2476,6 +2647,7 @@ export class CompetitionService {
         LEFT JOIN "competition_blocks" source_block ON source_block."id" = source_fight."block_id"
         WHERE dc."fighter_id" = ${fighterId}
           AND dc."type" = 'RED'
+          AND dc."active" = true
           AND dc."received_at" <= ${checkDate}
           AND dc."expires_at" >= ${checkDate}
         ORDER BY dc."received_at" ASC, dc."id" ASC
@@ -2686,6 +2858,11 @@ export class CompetitionService {
       slots: Array<{ competitor_id: number }>;
     },
   ) {
+    const nomination = await tx.nominations.findUnique({
+      where: { id: params.nominationId },
+      select: { rounds: true, round_win: true },
+    });
+    if (!nomination) throw new NotFoundException('Nomination not found');
     let fightNumber = await this.getNextFightNumberTx(
       tx,
       params.tournamentId,
@@ -2704,6 +2881,8 @@ export class CompetitionService {
           fight_number: fightNumber++,
           bracket_round: params.round,
           bracket_position: i / 2 + 1,
+          rounds: nomination.rounds,
+          round_win: nomination.round_win,
         },
       });
     }
@@ -2813,6 +2992,11 @@ export class CompetitionService {
       include: { bracket_slots: true },
     });
     if (!block) throw new NotFoundException('Block not found');
+    const nomination = await tx.nominations.findUnique({
+      where: { id: block.nomination_id },
+      select: { rounds: true, round_win: true },
+    });
+    if (!nomination) throw new NotFoundException('Nomination not found');
 
     const slotCount = block.bracket_slots.length;
     const mainRounds = Math.log2(slotCount);
@@ -2901,6 +3085,8 @@ export class CompetitionService {
             bracket_round: mainRounds + 1,
             bracket_position: 1,
             is_bronze: true,
+            rounds: nomination.rounds,
+            round_win: nomination.round_win,
           },
         });
       }
@@ -2917,6 +3103,8 @@ export class CompetitionService {
             fight_number: fightNumber++,
             bracket_round: mainRounds,
             bracket_position: 1,
+            rounds: nomination.rounds,
+            round_win: nomination.round_win,
           },
         });
       }
@@ -3054,6 +3242,43 @@ export class CompetitionService {
     nominationId: number,
   ) {
     return (await this.getTournamentNomination(tournamentId, nominationId)).id;
+  }
+
+  private async removeActiveRedCompetitorsFromRegistrationTx(
+    tx: PrismaTx,
+    block: {
+      tournament_id: number;
+      nomination_id: number;
+    },
+  ) {
+    if (!(await this.disciplinaryCardStorageExists())) return;
+
+    const competitors = await tx.competitors.findMany({
+      where: {
+        tournament_id: block.tournament_id,
+        nomination_id: block.nomination_id,
+      },
+      select: { id: true, fighter_id: true },
+    });
+    if (!competitors.length) return;
+
+    const checkDate = await this.getTournamentCheckDate(block.tournament_id);
+    const activeReds = await this.getActiveRedCards(
+      competitors.map((competitor) => competitor.fighter_id),
+      checkDate,
+    );
+    const activeRedFighterIds = new Set(
+      activeReds.map((card) => card.fighter_id),
+    );
+    const removableCompetitorIds = competitors
+      .filter((competitor) => activeRedFighterIds.has(competitor.fighter_id))
+      .map((competitor) => competitor.id);
+
+    if (!removableCompetitorIds.length) return;
+
+    await tx.competitors.deleteMany({
+      where: { id: { in: removableCompetitorIds } },
+    });
   }
 
   private async saveFinalPlacementsTx(

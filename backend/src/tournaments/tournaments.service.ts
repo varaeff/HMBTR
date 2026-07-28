@@ -339,7 +339,9 @@ export class TournamentsService {
   }
 
   async addTournamentMarshal(dto: AddTournamentMarshalDto) {
-    await this.assertCanChangeTournamentMarshals(dto.tournament_id);
+    const tournament = await this.assertCanChangeTournamentMarshals(
+      dto.tournament_id,
+    );
 
     const marshal = await this.prisma.marshals.findUnique({
       where: { id: dto.marshal_id },
@@ -360,7 +362,7 @@ export class TournamentsService {
       throw new BadRequestException('Marshal already registered');
     }
 
-    return this.prisma.tournament_marshals.create({
+    const tournamentMarshal = await this.prisma.tournament_marshals.create({
       data: dto,
       include: {
         marshal: {
@@ -372,6 +374,15 @@ export class TournamentsService {
         },
       },
     });
+
+    if (tournament.is_marshals_registration_closed) {
+      await this.prisma.tournaments.update({
+        where: { id: dto.tournament_id },
+        data: { is_marshals_registration_closed: false },
+      });
+    }
+
+    return tournamentMarshal;
   }
 
   async deleteTournamentMarshal(id: number) {
@@ -394,6 +405,16 @@ export class TournamentsService {
 
   async finishTournamentMarshalRegistration(tournamentId: number) {
     await this.assertTournamentExists(tournamentId);
+    const tournamentMarshal = await this.prisma.tournament_marshals.findFirst({
+      where: { tournament_id: tournamentId },
+      select: { id: true },
+    });
+
+    if (!tournamentMarshal) {
+      throw new BadRequestException(
+        'Add marshals before finishing marshal registration',
+      );
+    }
 
     return this.prisma.tournaments.update({
       where: { id: tournamentId },
@@ -563,6 +584,17 @@ export class TournamentsService {
 
     if (!nomination) throw new NotFoundException('Nomination not found');
 
+    if (nomination.is_open && !dto.is_open) {
+      const tournamentMarshal = await this.prisma.tournament_marshals.findFirst({
+        where: { tournament_id: dto.tournament_id },
+        select: { id: true },
+      });
+
+      if (!tournamentMarshal) {
+        throw new BadRequestException('Add marshals before closing registration');
+      }
+    }
+
     return this.prisma.tournament_nominations.update({
       where: { id: nomination.id },
       data: {
@@ -679,18 +711,26 @@ export class TournamentsService {
         nominations: {
           select: { is_open: true },
         },
+        marshals: {
+          select: { id: true },
+        },
       },
     });
 
     if (!tournament) throw new NotFoundException('Tournament not found');
 
-    if (tournament.is_marshals_registration_closed) {
+    if (
+      tournament.is_marshals_registration_closed &&
+      tournament.marshals.length > 0
+    ) {
       throw new BadRequestException('Marshal registration is finished');
     }
 
     if (!tournament.nominations.some((nomination) => nomination.is_open)) {
       throw new BadRequestException('Fighter registration is closed');
     }
+
+    return tournament;
   }
 
   private buildReportMarkdown(

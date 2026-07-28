@@ -19,6 +19,7 @@ import { UpdateDisciplinaryCardDto } from './dto/update-disciplinary-card.dto';
 interface RequestUser {
   is_admin?: boolean;
   is_organizer?: boolean;
+  is_secretary?: boolean;
 }
 
 @Controller(API_ROUTES.DISCIPLINARY_CARDS.ROOT)
@@ -44,7 +45,7 @@ export class DisciplinaryCardsController {
     @Body() dto: CreateDisciplinaryCardDto,
     @Req() req: { user?: RequestUser },
   ) {
-    this.requireOrganizer(req.user);
+    this.requireCardManager(req.user);
 
     return this.disciplinaryCardsService.create(dto);
   }
@@ -55,7 +56,7 @@ export class DisciplinaryCardsController {
     @Body() dto: UpdateDisciplinaryCardDto,
     @Req() req: { user?: RequestUser },
   ) {
-    this.requireOrganizer(req.user);
+    this.requireCardManager(req.user);
 
     return this.disciplinaryCardsService.update(id, dto);
   }
@@ -65,16 +66,16 @@ export class DisciplinaryCardsController {
     @Param('id', ParseIntPipe) id: number,
     @Req() req: { user?: RequestUser },
   ) {
-    if (!req.user?.is_admin) {
-      throw new ForbiddenException('Administrator access required');
-    }
+    this.requireCardManager(req.user);
 
     return this.disciplinaryCardsService.delete(id);
   }
 
-  private requireOrganizer(user?: RequestUser) {
-    if (!user?.is_admin && !user?.is_organizer) {
-      throw new ForbiddenException('Organizer access required');
+  private requireCardManager(user?: RequestUser) {
+    if (!user?.is_admin && !user?.is_organizer && !user?.is_secretary) {
+      throw new ForbiddenException(
+        'Organizer, secretary or administrator access required',
+      );
     }
   }
 }

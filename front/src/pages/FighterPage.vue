@@ -5,6 +5,7 @@ import { useTranslation } from 'i18next-vue'
 import { useFightersListStore } from '@/stores/fightersList'
 import { useAuthStore } from '@/stores/auth'
 import { useDisciplinaryCardsStore } from '@/stores/disciplinaryCards'
+import { parseTournamentMarshal } from '@/stores/marshalsList'
 import NoPhoto from '@/entities/NoPhoto.jpg'
 import http from '@/api/http'
 import { API_ROUTES } from '@shared/routes'
@@ -27,7 +28,14 @@ import { TournamentCardsTable } from '@/widgets/DisciplinaryCards'
 import { FighterRatingChart } from '@/widgets/FighterRatingChart'
 import { useRequiredFields } from '@/composables/useRequiredFields'
 import { useAddEntityAlert } from '@/composables/useAddEntityAlert'
-import type { Fighter, FighterDB, FighterProfileNomination, FighterProfileStats } from '@/model'
+import type {
+  Fighter,
+  FighterDB,
+  FighterProfileNomination,
+  FighterProfileStats,
+  TournamentMarshal,
+  TournamentMarshalDB
+} from '@/model'
 import { tData } from '@/lib/utils'
 import { dateToString } from '@/lib/dateUtils'
 import { hasAccess, hasAdminAccess } from '@/lib/checkAccess'
@@ -57,6 +65,7 @@ const isEditing = ref(false)
 const isStatsLoading = ref(false)
 const statsError = ref('')
 const selectedRatingNominationId = ref('')
+const tournamentMarshalsByTournamentId = ref<Record<number, TournamentMarshal[]>>({})
 const { showAlert, alertData, handleRequestAdd } = useAddEntityAlert()
 const initialDocumentTitle = document.title
 
@@ -87,6 +96,7 @@ onMounted(async () => {
     loadFighterStats()
   ])
   fighter.value = fetchedFighter
+  await loadCardTournamentMarshals()
 })
 
 const fullName = computed(() => {
@@ -172,6 +182,28 @@ const loadFighterStats = async () => {
     fighterStats.value = null
   } finally {
     isStatsLoading.value = false
+  }
+}
+
+const loadCardTournamentMarshals = async () => {
+  const tournamentIds = [
+    ...new Set(cardsStore.fighterCards.map((card) => card.tournament_id))
+  ].filter((tournamentId) => !tournamentMarshalsByTournamentId.value[tournamentId])
+
+  const entries = await Promise.all(
+    tournamentIds.map(async (tournamentId) => {
+      const data = (
+        await http.get(API_ROUTES.TOURNAMENTS.MARSHALS_BY_TOURNAMENT(tournamentId))
+      ).data as TournamentMarshalDB[]
+      const marshals = await Promise.all(data.map((item) => parseTournamentMarshal(item)))
+
+      return [tournamentId, marshals] as const
+    })
+  )
+
+  tournamentMarshalsByTournamentId.value = {
+    ...tournamentMarshalsByTournamentId.value,
+    ...Object.fromEntries(entries)
   }
 }
 
@@ -438,7 +470,7 @@ const saveFighter = async () => {
             </div>
           </section>
 
-          <section v-if="cardsStore.fighterCards.length" class="mx-auto mb-10 w-full max-w-5xl">
+          <section v-if="cardsStore.fighterCards.length" class="mb-10 w-full min-w-0">
             <h3 class="mb-6 text-center text-xl font-semibold">
               {{ $t('disciplinaryCardsTitle') }}
             </h3>
@@ -447,7 +479,13 @@ const saveFighter = async () => {
               :canManage="canManageCards"
               :canDelete="canDeleteCards"
               mode="fighter"
-              @changed="cardsStore.loadFighterCards(fighterId)"
+              :tournamentMarshalsByTournamentId="tournamentMarshalsByTournamentId"
+              @changed="
+                async () => {
+                  await cardsStore.loadFighterCards(fighterId)
+                  await loadCardTournamentMarshals()
+                }
+              "
             />
           </section>
         </div>

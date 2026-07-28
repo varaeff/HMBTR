@@ -5,7 +5,7 @@ import { tData } from '@/lib/utils'
 import { useCompetitionStore } from '@/stores/competition'
 import { Button } from '@/components/ui/button'
 import { CardStatusIcon } from '@/widgets/DisciplinaryCards'
-import type { DisciplinaryCardType, Fighter } from '@/model'
+import type { DisciplinaryCardStatus, Fighter } from '@/model'
 
 const props = defineProps<{
   competitors: Fighter[]
@@ -13,7 +13,9 @@ const props = defineProps<{
   isOpen: boolean
   hasBlocks: boolean
   hasAccess: boolean
-  activeCardTypes?: Partial<Record<number, DisciplinaryCardType>>
+  canCloseRegistration?: boolean
+  closeRegistrationHint?: string
+  activeCardTypes?: Partial<Record<number, DisciplinaryCardStatus>>
 }>()
 
 const emit = defineEmits<{
@@ -40,6 +42,9 @@ const handleClose = async () => {
 const showCloseBtn = computed(() => {
   return props.competitors.length > 2 && props.hasAccess && props.isOpen
 })
+const isCloseRegistrationDisabled = computed(
+  () => isPending.value || props.canCloseRegistration === false
+)
 
 const removeCompetitor = async (fighterId: number) => {
   const competitor = competitionStore.tournamentCompetitors.find(
@@ -85,16 +90,20 @@ const removeCompetitor = async (fighterId: number) => {
   </div>
 
   <div class="flex justify-end">
-    <Button
+    <span
       v-if="showCloseBtn"
-      :disabled="isPending"
-      @click="handleClose"
-      variant="destructive"
-      size="sm"
-      class="mt-4"
+      class="mt-4 inline-flex"
+      :title="props.canCloseRegistration === false ? props.closeRegistrationHint : undefined"
     >
-      {{ $t('tournamentPageCloseRegistrationButton') }}
-    </Button>
+      <Button
+        :disabled="isCloseRegistrationDisabled"
+        @click="handleClose"
+        variant="destructive"
+        size="sm"
+      >
+        {{ $t('tournamentPageCloseRegistrationButton') }}
+      </Button>
+    </span>
   </div>
   <div v-if="!props.isOpen && !props.hasBlocks" class="flex justify-center mt-4">
     {{ $t('tournamentPageRegistrationClosed') }}

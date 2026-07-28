@@ -22,6 +22,7 @@ import { RatingsModule } from '../ratings/ratings.module';
 import { MarshalsModule } from '../marshals/marshals.module';
 import { AuthModule } from '../auth/auth.module';
 import { UsersModule } from '../users/users.module';
+import { SettingsModule } from '../settings/settings.module';
 import { JwtAuthGuardGlobal } from '../auth/guards/jwt-auth-global.guard';
 import { EmailService } from '../common/services/email.service';
 
@@ -44,6 +45,7 @@ import { EmailService } from '../common/services/email.service';
     DisciplinaryCardsModule,
     RatingsModule,
     MarshalsModule,
+    SettingsModule,
   ],
   controllers: [AppController],
   providers: [

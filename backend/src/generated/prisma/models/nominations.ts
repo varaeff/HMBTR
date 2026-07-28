@@ -253,6 +253,8 @@ export type nominationsOrderByWithRelationInput = {
 
 export type nominationsWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  name_ru_is_male?: Prisma.nominationsName_ruIs_maleCompoundUniqueInput
+  name_en_is_male?: Prisma.nominationsName_enIs_maleCompoundUniqueInput
   AND?: Prisma.nominationsWhereInput | Prisma.nominationsWhereInput[]
   OR?: Prisma.nominationsWhereInput[]
   NOT?: Prisma.nominationsWhereInput | Prisma.nominationsWhereInput[]
@@ -267,7 +269,7 @@ export type nominationsWhereUniqueInput = Prisma.AtLeast<{
   fights?: Prisma.FightsListRelationFilter
   fighter_ratings?: Prisma.Fighter_nomination_ratingsListRelationFilter
   fighter_rating_history?: Prisma.Fighter_nomination_rating_historyListRelationFilter
-}, "id">
+}, "id" | "name_ru_is_male" | "name_en_is_male">
 
 export type nominationsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -377,6 +379,16 @@ export type nominationsUncheckedUpdateManyInput = {
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
+}
+
+export type nominationsName_ruIs_maleCompoundUniqueInput = {
+  name_ru: string
+  is_male: boolean
+}
+
+export type nominationsName_enIs_maleCompoundUniqueInput = {
+  name_en: string
+  is_male: boolean
 }
 
 export type nominationsCountOrderByAggregateInput = {

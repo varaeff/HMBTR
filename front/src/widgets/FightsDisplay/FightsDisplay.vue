@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { useCompetitionStore } from '@/stores/competition'
 import { FightCard } from '@/components/ui/fightCard'
-import type { BlockData, DisciplinaryCardType } from '@/model'
+import type { BlockData, DisciplinaryCardStatus, TournamentMarshal } from '@/model'
 import type { FightWarning, RoundScore } from '@shared/fightScoring'
 
 const props = defineProps<{
@@ -11,7 +11,8 @@ const props = defineProps<{
   canIssueCards?: boolean
   tournamentId?: number
   cardDate?: string
-  activeCardTypes?: Partial<Record<number, DisciplinaryCardType>>
+  activeCardTypes?: Partial<Record<number, DisciplinaryCardStatus>>
+  tournamentMarshals?: TournamentMarshal[]
   blockId?: number
   blocksData?: BlockData[]
 }>()
@@ -73,6 +74,7 @@ const handleScoreUpdate = (
           :tournamentId="tournamentId"
           :cardDate="cardDate"
           :activeCardTypes="activeCardTypes"
+          :tournamentMarshals="tournamentMarshals"
           @update:score="(scores) => handleScoreUpdate(fight.id, fight.number, scores)"
           @card-issued="emit('card-issued')"
         />

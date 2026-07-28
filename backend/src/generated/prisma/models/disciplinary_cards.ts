@@ -31,6 +31,7 @@ export type Disciplinary_cardsAvgAggregateOutputType = {
   fighter_id: number | null
   tournament_id: number | null
   fight_id: number | null
+  marshal_id: number | null
 }
 
 export type Disciplinary_cardsSumAggregateOutputType = {
@@ -38,6 +39,7 @@ export type Disciplinary_cardsSumAggregateOutputType = {
   fighter_id: number | null
   tournament_id: number | null
   fight_id: number | null
+  marshal_id: number | null
 }
 
 export type Disciplinary_cardsMinAggregateOutputType = {
@@ -45,11 +47,13 @@ export type Disciplinary_cardsMinAggregateOutputType = {
   fighter_id: number | null
   tournament_id: number | null
   fight_id: number | null
+  marshal_id: number | null
   type: string | null
   source: string | null
   received_at: Date | null
   reason: string | null
   expires_at: Date | null
+  active: boolean | null
   created_at: Date | null
   updated_at: Date | null
 }
@@ -59,11 +63,13 @@ export type Disciplinary_cardsMaxAggregateOutputType = {
   fighter_id: number | null
   tournament_id: number | null
   fight_id: number | null
+  marshal_id: number | null
   type: string | null
   source: string | null
   received_at: Date | null
   reason: string | null
   expires_at: Date | null
+  active: boolean | null
   created_at: Date | null
   updated_at: Date | null
 }
@@ -73,11 +79,13 @@ export type Disciplinary_cardsCountAggregateOutputType = {
   fighter_id: number
   tournament_id: number
   fight_id: number
+  marshal_id: number
   type: number
   source: number
   received_at: number
   reason: number
   expires_at: number
+  active: number
   created_at: number
   updated_at: number
   _all: number
@@ -89,6 +97,7 @@ export type Disciplinary_cardsAvgAggregateInputType = {
   fighter_id?: true
   tournament_id?: true
   fight_id?: true
+  marshal_id?: true
 }
 
 export type Disciplinary_cardsSumAggregateInputType = {
@@ -96,6 +105,7 @@ export type Disciplinary_cardsSumAggregateInputType = {
   fighter_id?: true
   tournament_id?: true
   fight_id?: true
+  marshal_id?: true
 }
 
 export type Disciplinary_cardsMinAggregateInputType = {
@@ -103,11 +113,13 @@ export type Disciplinary_cardsMinAggregateInputType = {
   fighter_id?: true
   tournament_id?: true
   fight_id?: true
+  marshal_id?: true
   type?: true
   source?: true
   received_at?: true
   reason?: true
   expires_at?: true
+  active?: true
   created_at?: true
   updated_at?: true
 }
@@ -117,11 +129,13 @@ export type Disciplinary_cardsMaxAggregateInputType = {
   fighter_id?: true
   tournament_id?: true
   fight_id?: true
+  marshal_id?: true
   type?: true
   source?: true
   received_at?: true
   reason?: true
   expires_at?: true
+  active?: true
   created_at?: true
   updated_at?: true
 }
@@ -131,11 +145,13 @@ export type Disciplinary_cardsCountAggregateInputType = {
   fighter_id?: true
   tournament_id?: true
   fight_id?: true
+  marshal_id?: true
   type?: true
   source?: true
   received_at?: true
   reason?: true
   expires_at?: true
+  active?: true
   created_at?: true
   updated_at?: true
   _all?: true
@@ -232,11 +248,13 @@ export type Disciplinary_cardsGroupByOutputType = {
   fighter_id: number
   tournament_id: number
   fight_id: number
+  marshal_id: number
   type: string
   source: string
   received_at: Date
   reason: string
   expires_at: Date
+  active: boolean
   created_at: Date
   updated_at: Date
   _count: Disciplinary_cardsCountAggregateOutputType | null
@@ -269,16 +287,21 @@ export type disciplinary_cardsWhereInput = {
   fighter_id?: Prisma.IntFilter<"disciplinary_cards"> | number
   tournament_id?: Prisma.IntFilter<"disciplinary_cards"> | number
   fight_id?: Prisma.IntFilter<"disciplinary_cards"> | number
+  marshal_id?: Prisma.IntFilter<"disciplinary_cards"> | number
   type?: Prisma.StringFilter<"disciplinary_cards"> | string
   source?: Prisma.StringFilter<"disciplinary_cards"> | string
   received_at?: Prisma.DateTimeFilter<"disciplinary_cards"> | Date | string
   reason?: Prisma.StringFilter<"disciplinary_cards"> | string
   expires_at?: Prisma.DateTimeFilter<"disciplinary_cards"> | Date | string
+  active?: Prisma.BoolFilter<"disciplinary_cards"> | boolean
   created_at?: Prisma.DateTimeFilter<"disciplinary_cards"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"disciplinary_cards"> | Date | string
   fighter?: Prisma.XOR<Prisma.FightersScalarRelationFilter, Prisma.fightersWhereInput>
   tournament?: Prisma.XOR<Prisma.TournamentsScalarRelationFilter, Prisma.tournamentsWhereInput>
   fight?: Prisma.XOR<Prisma.FightsScalarRelationFilter, Prisma.fightsWhereInput>
+  marshal?: Prisma.XOR<Prisma.MarshalsScalarRelationFilter, Prisma.marshalsWhereInput>
+  red_card_yellow_sources_as_red?: Prisma.Red_card_yellow_sourcesListRelationFilter
+  red_card_yellow_sources_as_yellow?: Prisma.Red_card_yellow_sourcesListRelationFilter
 }
 
 export type disciplinary_cardsOrderByWithRelationInput = {
@@ -286,16 +309,21 @@ export type disciplinary_cardsOrderByWithRelationInput = {
   fighter_id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   fight_id?: Prisma.SortOrder
+  marshal_id?: Prisma.SortOrder
   type?: Prisma.SortOrder
   source?: Prisma.SortOrder
   received_at?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   expires_at?: Prisma.SortOrder
+  active?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   fighter?: Prisma.fightersOrderByWithRelationInput
   tournament?: Prisma.tournamentsOrderByWithRelationInput
   fight?: Prisma.fightsOrderByWithRelationInput
+  marshal?: Prisma.marshalsOrderByWithRelationInput
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesOrderByRelationAggregateInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesOrderByRelationAggregateInput
 }
 
 export type disciplinary_cardsWhereUniqueInput = Prisma.AtLeast<{
@@ -306,16 +334,21 @@ export type disciplinary_cardsWhereUniqueInput = Prisma.AtLeast<{
   fighter_id?: Prisma.IntFilter<"disciplinary_cards"> | number
   tournament_id?: Prisma.IntFilter<"disciplinary_cards"> | number
   fight_id?: Prisma.IntFilter<"disciplinary_cards"> | number
+  marshal_id?: Prisma.IntFilter<"disciplinary_cards"> | number
   type?: Prisma.StringFilter<"disciplinary_cards"> | string
   source?: Prisma.StringFilter<"disciplinary_cards"> | string
   received_at?: Prisma.DateTimeFilter<"disciplinary_cards"> | Date | string
   reason?: Prisma.StringFilter<"disciplinary_cards"> | string
   expires_at?: Prisma.DateTimeFilter<"disciplinary_cards"> | Date | string
+  active?: Prisma.BoolFilter<"disciplinary_cards"> | boolean
   created_at?: Prisma.DateTimeFilter<"disciplinary_cards"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"disciplinary_cards"> | Date | string
   fighter?: Prisma.XOR<Prisma.FightersScalarRelationFilter, Prisma.fightersWhereInput>
   tournament?: Prisma.XOR<Prisma.TournamentsScalarRelationFilter, Prisma.tournamentsWhereInput>
   fight?: Prisma.XOR<Prisma.FightsScalarRelationFilter, Prisma.fightsWhereInput>
+  marshal?: Prisma.XOR<Prisma.MarshalsScalarRelationFilter, Prisma.marshalsWhereInput>
+  red_card_yellow_sources_as_red?: Prisma.Red_card_yellow_sourcesListRelationFilter
+  red_card_yellow_sources_as_yellow?: Prisma.Red_card_yellow_sourcesListRelationFilter
 }, "id">
 
 export type disciplinary_cardsOrderByWithAggregationInput = {
@@ -323,11 +356,13 @@ export type disciplinary_cardsOrderByWithAggregationInput = {
   fighter_id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   fight_id?: Prisma.SortOrder
+  marshal_id?: Prisma.SortOrder
   type?: Prisma.SortOrder
   source?: Prisma.SortOrder
   received_at?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   expires_at?: Prisma.SortOrder
+  active?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   _count?: Prisma.disciplinary_cardsCountOrderByAggregateInput
@@ -345,11 +380,13 @@ export type disciplinary_cardsScalarWhereWithAggregatesInput = {
   fighter_id?: Prisma.IntWithAggregatesFilter<"disciplinary_cards"> | number
   tournament_id?: Prisma.IntWithAggregatesFilter<"disciplinary_cards"> | number
   fight_id?: Prisma.IntWithAggregatesFilter<"disciplinary_cards"> | number
+  marshal_id?: Prisma.IntWithAggregatesFilter<"disciplinary_cards"> | number
   type?: Prisma.StringWithAggregatesFilter<"disciplinary_cards"> | string
   source?: Prisma.StringWithAggregatesFilter<"disciplinary_cards"> | string
   received_at?: Prisma.DateTimeWithAggregatesFilter<"disciplinary_cards"> | Date | string
   reason?: Prisma.StringWithAggregatesFilter<"disciplinary_cards"> | string
   expires_at?: Prisma.DateTimeWithAggregatesFilter<"disciplinary_cards"> | Date | string
+  active?: Prisma.BoolWithAggregatesFilter<"disciplinary_cards"> | boolean
   created_at?: Prisma.DateTimeWithAggregatesFilter<"disciplinary_cards"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"disciplinary_cards"> | Date | string
 }
@@ -360,11 +397,15 @@ export type disciplinary_cardsCreateInput = {
   received_at: Date | string
   reason: string
   expires_at: Date | string
+  active?: boolean
   created_at?: Date | string
   updated_at?: Date | string
   fighter: Prisma.fightersCreateNestedOneWithoutDisciplinary_cardsInput
   tournament: Prisma.tournamentsCreateNestedOneWithoutDisciplinary_cardsInput
   fight: Prisma.fightsCreateNestedOneWithoutDisciplinary_cardsInput
+  marshal: Prisma.marshalsCreateNestedOneWithoutDisciplinary_cardsInput
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesCreateNestedManyWithoutRed_cardInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesCreateNestedManyWithoutYellow_cardInput
 }
 
 export type disciplinary_cardsUncheckedCreateInput = {
@@ -372,13 +413,17 @@ export type disciplinary_cardsUncheckedCreateInput = {
   fighter_id: number
   tournament_id: number
   fight_id: number
+  marshal_id: number
   type: string
   source?: string
   received_at: Date | string
   reason: string
   expires_at: Date | string
+  active?: boolean
   created_at?: Date | string
   updated_at?: Date | string
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesUncheckedCreateNestedManyWithoutRed_cardInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesUncheckedCreateNestedManyWithoutYellow_cardInput
 }
 
 export type disciplinary_cardsUpdateInput = {
@@ -387,11 +432,15 @@ export type disciplinary_cardsUpdateInput = {
   received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   expires_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fighter?: Prisma.fightersUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
   tournament?: Prisma.tournamentsUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
   fight?: Prisma.fightsUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
+  marshal?: Prisma.marshalsUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesUpdateManyWithoutRed_cardNestedInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesUpdateManyWithoutYellow_cardNestedInput
 }
 
 export type disciplinary_cardsUncheckedUpdateInput = {
@@ -399,13 +448,17 @@ export type disciplinary_cardsUncheckedUpdateInput = {
   fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
   tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
   fight_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marshal_id?: Prisma.IntFieldUpdateOperationsInput | number
   type?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.StringFieldUpdateOperationsInput | string
   received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   expires_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesUncheckedUpdateManyWithoutRed_cardNestedInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesUncheckedUpdateManyWithoutYellow_cardNestedInput
 }
 
 export type disciplinary_cardsCreateManyInput = {
@@ -413,11 +466,13 @@ export type disciplinary_cardsCreateManyInput = {
   fighter_id: number
   tournament_id: number
   fight_id: number
+  marshal_id: number
   type: string
   source?: string
   received_at: Date | string
   reason: string
   expires_at: Date | string
+  active?: boolean
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -428,6 +483,7 @@ export type disciplinary_cardsUpdateManyMutationInput = {
   received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   expires_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -437,11 +493,13 @@ export type disciplinary_cardsUncheckedUpdateManyInput = {
   fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
   tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
   fight_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marshal_id?: Prisma.IntFieldUpdateOperationsInput | number
   type?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.StringFieldUpdateOperationsInput | string
   received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   expires_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -461,11 +519,13 @@ export type disciplinary_cardsCountOrderByAggregateInput = {
   fighter_id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   fight_id?: Prisma.SortOrder
+  marshal_id?: Prisma.SortOrder
   type?: Prisma.SortOrder
   source?: Prisma.SortOrder
   received_at?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   expires_at?: Prisma.SortOrder
+  active?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -475,6 +535,7 @@ export type disciplinary_cardsAvgOrderByAggregateInput = {
   fighter_id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   fight_id?: Prisma.SortOrder
+  marshal_id?: Prisma.SortOrder
 }
 
 export type disciplinary_cardsMaxOrderByAggregateInput = {
@@ -482,11 +543,13 @@ export type disciplinary_cardsMaxOrderByAggregateInput = {
   fighter_id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   fight_id?: Prisma.SortOrder
+  marshal_id?: Prisma.SortOrder
   type?: Prisma.SortOrder
   source?: Prisma.SortOrder
   received_at?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   expires_at?: Prisma.SortOrder
+  active?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -496,11 +559,13 @@ export type disciplinary_cardsMinOrderByAggregateInput = {
   fighter_id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   fight_id?: Prisma.SortOrder
+  marshal_id?: Prisma.SortOrder
   type?: Prisma.SortOrder
   source?: Prisma.SortOrder
   received_at?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   expires_at?: Prisma.SortOrder
+  active?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -510,6 +575,12 @@ export type disciplinary_cardsSumOrderByAggregateInput = {
   fighter_id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   fight_id?: Prisma.SortOrder
+  marshal_id?: Prisma.SortOrder
+}
+
+export type Disciplinary_cardsScalarRelationFilter = {
+  is?: Prisma.disciplinary_cardsWhereInput
+  isNot?: Prisma.disciplinary_cardsWhereInput
 }
 
 export type disciplinary_cardsCreateNestedManyWithoutFighterInput = {
@@ -551,6 +622,48 @@ export type disciplinary_cardsUncheckedUpdateManyWithoutFighterNestedInput = {
   connect?: Prisma.disciplinary_cardsWhereUniqueInput | Prisma.disciplinary_cardsWhereUniqueInput[]
   update?: Prisma.disciplinary_cardsUpdateWithWhereUniqueWithoutFighterInput | Prisma.disciplinary_cardsUpdateWithWhereUniqueWithoutFighterInput[]
   updateMany?: Prisma.disciplinary_cardsUpdateManyWithWhereWithoutFighterInput | Prisma.disciplinary_cardsUpdateManyWithWhereWithoutFighterInput[]
+  deleteMany?: Prisma.disciplinary_cardsScalarWhereInput | Prisma.disciplinary_cardsScalarWhereInput[]
+}
+
+export type disciplinary_cardsCreateNestedManyWithoutMarshalInput = {
+  create?: Prisma.XOR<Prisma.disciplinary_cardsCreateWithoutMarshalInput, Prisma.disciplinary_cardsUncheckedCreateWithoutMarshalInput> | Prisma.disciplinary_cardsCreateWithoutMarshalInput[] | Prisma.disciplinary_cardsUncheckedCreateWithoutMarshalInput[]
+  connectOrCreate?: Prisma.disciplinary_cardsCreateOrConnectWithoutMarshalInput | Prisma.disciplinary_cardsCreateOrConnectWithoutMarshalInput[]
+  createMany?: Prisma.disciplinary_cardsCreateManyMarshalInputEnvelope
+  connect?: Prisma.disciplinary_cardsWhereUniqueInput | Prisma.disciplinary_cardsWhereUniqueInput[]
+}
+
+export type disciplinary_cardsUncheckedCreateNestedManyWithoutMarshalInput = {
+  create?: Prisma.XOR<Prisma.disciplinary_cardsCreateWithoutMarshalInput, Prisma.disciplinary_cardsUncheckedCreateWithoutMarshalInput> | Prisma.disciplinary_cardsCreateWithoutMarshalInput[] | Prisma.disciplinary_cardsUncheckedCreateWithoutMarshalInput[]
+  connectOrCreate?: Prisma.disciplinary_cardsCreateOrConnectWithoutMarshalInput | Prisma.disciplinary_cardsCreateOrConnectWithoutMarshalInput[]
+  createMany?: Prisma.disciplinary_cardsCreateManyMarshalInputEnvelope
+  connect?: Prisma.disciplinary_cardsWhereUniqueInput | Prisma.disciplinary_cardsWhereUniqueInput[]
+}
+
+export type disciplinary_cardsUpdateManyWithoutMarshalNestedInput = {
+  create?: Prisma.XOR<Prisma.disciplinary_cardsCreateWithoutMarshalInput, Prisma.disciplinary_cardsUncheckedCreateWithoutMarshalInput> | Prisma.disciplinary_cardsCreateWithoutMarshalInput[] | Prisma.disciplinary_cardsUncheckedCreateWithoutMarshalInput[]
+  connectOrCreate?: Prisma.disciplinary_cardsCreateOrConnectWithoutMarshalInput | Prisma.disciplinary_cardsCreateOrConnectWithoutMarshalInput[]
+  upsert?: Prisma.disciplinary_cardsUpsertWithWhereUniqueWithoutMarshalInput | Prisma.disciplinary_cardsUpsertWithWhereUniqueWithoutMarshalInput[]
+  createMany?: Prisma.disciplinary_cardsCreateManyMarshalInputEnvelope
+  set?: Prisma.disciplinary_cardsWhereUniqueInput | Prisma.disciplinary_cardsWhereUniqueInput[]
+  disconnect?: Prisma.disciplinary_cardsWhereUniqueInput | Prisma.disciplinary_cardsWhereUniqueInput[]
+  delete?: Prisma.disciplinary_cardsWhereUniqueInput | Prisma.disciplinary_cardsWhereUniqueInput[]
+  connect?: Prisma.disciplinary_cardsWhereUniqueInput | Prisma.disciplinary_cardsWhereUniqueInput[]
+  update?: Prisma.disciplinary_cardsUpdateWithWhereUniqueWithoutMarshalInput | Prisma.disciplinary_cardsUpdateWithWhereUniqueWithoutMarshalInput[]
+  updateMany?: Prisma.disciplinary_cardsUpdateManyWithWhereWithoutMarshalInput | Prisma.disciplinary_cardsUpdateManyWithWhereWithoutMarshalInput[]
+  deleteMany?: Prisma.disciplinary_cardsScalarWhereInput | Prisma.disciplinary_cardsScalarWhereInput[]
+}
+
+export type disciplinary_cardsUncheckedUpdateManyWithoutMarshalNestedInput = {
+  create?: Prisma.XOR<Prisma.disciplinary_cardsCreateWithoutMarshalInput, Prisma.disciplinary_cardsUncheckedCreateWithoutMarshalInput> | Prisma.disciplinary_cardsCreateWithoutMarshalInput[] | Prisma.disciplinary_cardsUncheckedCreateWithoutMarshalInput[]
+  connectOrCreate?: Prisma.disciplinary_cardsCreateOrConnectWithoutMarshalInput | Prisma.disciplinary_cardsCreateOrConnectWithoutMarshalInput[]
+  upsert?: Prisma.disciplinary_cardsUpsertWithWhereUniqueWithoutMarshalInput | Prisma.disciplinary_cardsUpsertWithWhereUniqueWithoutMarshalInput[]
+  createMany?: Prisma.disciplinary_cardsCreateManyMarshalInputEnvelope
+  set?: Prisma.disciplinary_cardsWhereUniqueInput | Prisma.disciplinary_cardsWhereUniqueInput[]
+  disconnect?: Prisma.disciplinary_cardsWhereUniqueInput | Prisma.disciplinary_cardsWhereUniqueInput[]
+  delete?: Prisma.disciplinary_cardsWhereUniqueInput | Prisma.disciplinary_cardsWhereUniqueInput[]
+  connect?: Prisma.disciplinary_cardsWhereUniqueInput | Prisma.disciplinary_cardsWhereUniqueInput[]
+  update?: Prisma.disciplinary_cardsUpdateWithWhereUniqueWithoutMarshalInput | Prisma.disciplinary_cardsUpdateWithWhereUniqueWithoutMarshalInput[]
+  updateMany?: Prisma.disciplinary_cardsUpdateManyWithWhereWithoutMarshalInput | Prisma.disciplinary_cardsUpdateManyWithWhereWithoutMarshalInput[]
   deleteMany?: Prisma.disciplinary_cardsScalarWhereInput | Prisma.disciplinary_cardsScalarWhereInput[]
 }
 
@@ -638,29 +751,65 @@ export type disciplinary_cardsUncheckedUpdateManyWithoutFightNestedInput = {
   deleteMany?: Prisma.disciplinary_cardsScalarWhereInput | Prisma.disciplinary_cardsScalarWhereInput[]
 }
 
+export type disciplinary_cardsCreateNestedOneWithoutRed_card_yellow_sources_as_redInput = {
+  create?: Prisma.XOR<Prisma.disciplinary_cardsCreateWithoutRed_card_yellow_sources_as_redInput, Prisma.disciplinary_cardsUncheckedCreateWithoutRed_card_yellow_sources_as_redInput>
+  connectOrCreate?: Prisma.disciplinary_cardsCreateOrConnectWithoutRed_card_yellow_sources_as_redInput
+  connect?: Prisma.disciplinary_cardsWhereUniqueInput
+}
+
+export type disciplinary_cardsCreateNestedOneWithoutRed_card_yellow_sources_as_yellowInput = {
+  create?: Prisma.XOR<Prisma.disciplinary_cardsCreateWithoutRed_card_yellow_sources_as_yellowInput, Prisma.disciplinary_cardsUncheckedCreateWithoutRed_card_yellow_sources_as_yellowInput>
+  connectOrCreate?: Prisma.disciplinary_cardsCreateOrConnectWithoutRed_card_yellow_sources_as_yellowInput
+  connect?: Prisma.disciplinary_cardsWhereUniqueInput
+}
+
+export type disciplinary_cardsUpdateOneRequiredWithoutRed_card_yellow_sources_as_redNestedInput = {
+  create?: Prisma.XOR<Prisma.disciplinary_cardsCreateWithoutRed_card_yellow_sources_as_redInput, Prisma.disciplinary_cardsUncheckedCreateWithoutRed_card_yellow_sources_as_redInput>
+  connectOrCreate?: Prisma.disciplinary_cardsCreateOrConnectWithoutRed_card_yellow_sources_as_redInput
+  upsert?: Prisma.disciplinary_cardsUpsertWithoutRed_card_yellow_sources_as_redInput
+  connect?: Prisma.disciplinary_cardsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.disciplinary_cardsUpdateToOneWithWhereWithoutRed_card_yellow_sources_as_redInput, Prisma.disciplinary_cardsUpdateWithoutRed_card_yellow_sources_as_redInput>, Prisma.disciplinary_cardsUncheckedUpdateWithoutRed_card_yellow_sources_as_redInput>
+}
+
+export type disciplinary_cardsUpdateOneRequiredWithoutRed_card_yellow_sources_as_yellowNestedInput = {
+  create?: Prisma.XOR<Prisma.disciplinary_cardsCreateWithoutRed_card_yellow_sources_as_yellowInput, Prisma.disciplinary_cardsUncheckedCreateWithoutRed_card_yellow_sources_as_yellowInput>
+  connectOrCreate?: Prisma.disciplinary_cardsCreateOrConnectWithoutRed_card_yellow_sources_as_yellowInput
+  upsert?: Prisma.disciplinary_cardsUpsertWithoutRed_card_yellow_sources_as_yellowInput
+  connect?: Prisma.disciplinary_cardsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.disciplinary_cardsUpdateToOneWithWhereWithoutRed_card_yellow_sources_as_yellowInput, Prisma.disciplinary_cardsUpdateWithoutRed_card_yellow_sources_as_yellowInput>, Prisma.disciplinary_cardsUncheckedUpdateWithoutRed_card_yellow_sources_as_yellowInput>
+}
+
 export type disciplinary_cardsCreateWithoutFighterInput = {
   type: string
   source?: string
   received_at: Date | string
   reason: string
   expires_at: Date | string
+  active?: boolean
   created_at?: Date | string
   updated_at?: Date | string
   tournament: Prisma.tournamentsCreateNestedOneWithoutDisciplinary_cardsInput
   fight: Prisma.fightsCreateNestedOneWithoutDisciplinary_cardsInput
+  marshal: Prisma.marshalsCreateNestedOneWithoutDisciplinary_cardsInput
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesCreateNestedManyWithoutRed_cardInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesCreateNestedManyWithoutYellow_cardInput
 }
 
 export type disciplinary_cardsUncheckedCreateWithoutFighterInput = {
   id?: number
   tournament_id: number
   fight_id: number
+  marshal_id: number
   type: string
   source?: string
   received_at: Date | string
   reason: string
   expires_at: Date | string
+  active?: boolean
   created_at?: Date | string
   updated_at?: Date | string
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesUncheckedCreateNestedManyWithoutRed_cardInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesUncheckedCreateNestedManyWithoutYellow_cardInput
 }
 
 export type disciplinary_cardsCreateOrConnectWithoutFighterInput = {
@@ -697,13 +846,74 @@ export type disciplinary_cardsScalarWhereInput = {
   fighter_id?: Prisma.IntFilter<"disciplinary_cards"> | number
   tournament_id?: Prisma.IntFilter<"disciplinary_cards"> | number
   fight_id?: Prisma.IntFilter<"disciplinary_cards"> | number
+  marshal_id?: Prisma.IntFilter<"disciplinary_cards"> | number
   type?: Prisma.StringFilter<"disciplinary_cards"> | string
   source?: Prisma.StringFilter<"disciplinary_cards"> | string
   received_at?: Prisma.DateTimeFilter<"disciplinary_cards"> | Date | string
   reason?: Prisma.StringFilter<"disciplinary_cards"> | string
   expires_at?: Prisma.DateTimeFilter<"disciplinary_cards"> | Date | string
+  active?: Prisma.BoolFilter<"disciplinary_cards"> | boolean
   created_at?: Prisma.DateTimeFilter<"disciplinary_cards"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"disciplinary_cards"> | Date | string
+}
+
+export type disciplinary_cardsCreateWithoutMarshalInput = {
+  type: string
+  source?: string
+  received_at: Date | string
+  reason: string
+  expires_at: Date | string
+  active?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  fighter: Prisma.fightersCreateNestedOneWithoutDisciplinary_cardsInput
+  tournament: Prisma.tournamentsCreateNestedOneWithoutDisciplinary_cardsInput
+  fight: Prisma.fightsCreateNestedOneWithoutDisciplinary_cardsInput
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesCreateNestedManyWithoutRed_cardInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesCreateNestedManyWithoutYellow_cardInput
+}
+
+export type disciplinary_cardsUncheckedCreateWithoutMarshalInput = {
+  id?: number
+  fighter_id: number
+  tournament_id: number
+  fight_id: number
+  type: string
+  source?: string
+  received_at: Date | string
+  reason: string
+  expires_at: Date | string
+  active?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesUncheckedCreateNestedManyWithoutRed_cardInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesUncheckedCreateNestedManyWithoutYellow_cardInput
+}
+
+export type disciplinary_cardsCreateOrConnectWithoutMarshalInput = {
+  where: Prisma.disciplinary_cardsWhereUniqueInput
+  create: Prisma.XOR<Prisma.disciplinary_cardsCreateWithoutMarshalInput, Prisma.disciplinary_cardsUncheckedCreateWithoutMarshalInput>
+}
+
+export type disciplinary_cardsCreateManyMarshalInputEnvelope = {
+  data: Prisma.disciplinary_cardsCreateManyMarshalInput | Prisma.disciplinary_cardsCreateManyMarshalInput[]
+  skipDuplicates?: boolean
+}
+
+export type disciplinary_cardsUpsertWithWhereUniqueWithoutMarshalInput = {
+  where: Prisma.disciplinary_cardsWhereUniqueInput
+  update: Prisma.XOR<Prisma.disciplinary_cardsUpdateWithoutMarshalInput, Prisma.disciplinary_cardsUncheckedUpdateWithoutMarshalInput>
+  create: Prisma.XOR<Prisma.disciplinary_cardsCreateWithoutMarshalInput, Prisma.disciplinary_cardsUncheckedCreateWithoutMarshalInput>
+}
+
+export type disciplinary_cardsUpdateWithWhereUniqueWithoutMarshalInput = {
+  where: Prisma.disciplinary_cardsWhereUniqueInput
+  data: Prisma.XOR<Prisma.disciplinary_cardsUpdateWithoutMarshalInput, Prisma.disciplinary_cardsUncheckedUpdateWithoutMarshalInput>
+}
+
+export type disciplinary_cardsUpdateManyWithWhereWithoutMarshalInput = {
+  where: Prisma.disciplinary_cardsScalarWhereInput
+  data: Prisma.XOR<Prisma.disciplinary_cardsUpdateManyMutationInput, Prisma.disciplinary_cardsUncheckedUpdateManyWithoutMarshalInput>
 }
 
 export type disciplinary_cardsCreateWithoutTournamentInput = {
@@ -712,23 +922,31 @@ export type disciplinary_cardsCreateWithoutTournamentInput = {
   received_at: Date | string
   reason: string
   expires_at: Date | string
+  active?: boolean
   created_at?: Date | string
   updated_at?: Date | string
   fighter: Prisma.fightersCreateNestedOneWithoutDisciplinary_cardsInput
   fight: Prisma.fightsCreateNestedOneWithoutDisciplinary_cardsInput
+  marshal: Prisma.marshalsCreateNestedOneWithoutDisciplinary_cardsInput
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesCreateNestedManyWithoutRed_cardInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesCreateNestedManyWithoutYellow_cardInput
 }
 
 export type disciplinary_cardsUncheckedCreateWithoutTournamentInput = {
   id?: number
   fighter_id: number
   fight_id: number
+  marshal_id: number
   type: string
   source?: string
   received_at: Date | string
   reason: string
   expires_at: Date | string
+  active?: boolean
   created_at?: Date | string
   updated_at?: Date | string
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesUncheckedCreateNestedManyWithoutRed_cardInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesUncheckedCreateNestedManyWithoutYellow_cardInput
 }
 
 export type disciplinary_cardsCreateOrConnectWithoutTournamentInput = {
@@ -763,23 +981,31 @@ export type disciplinary_cardsCreateWithoutFightInput = {
   received_at: Date | string
   reason: string
   expires_at: Date | string
+  active?: boolean
   created_at?: Date | string
   updated_at?: Date | string
   fighter: Prisma.fightersCreateNestedOneWithoutDisciplinary_cardsInput
   tournament: Prisma.tournamentsCreateNestedOneWithoutDisciplinary_cardsInput
+  marshal: Prisma.marshalsCreateNestedOneWithoutDisciplinary_cardsInput
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesCreateNestedManyWithoutRed_cardInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesCreateNestedManyWithoutYellow_cardInput
 }
 
 export type disciplinary_cardsUncheckedCreateWithoutFightInput = {
   id?: number
   fighter_id: number
   tournament_id: number
+  marshal_id: number
   type: string
   source?: string
   received_at: Date | string
   reason: string
   expires_at: Date | string
+  active?: boolean
   created_at?: Date | string
   updated_at?: Date | string
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesUncheckedCreateNestedManyWithoutRed_cardInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesUncheckedCreateNestedManyWithoutYellow_cardInput
 }
 
 export type disciplinary_cardsCreateOrConnectWithoutFightInput = {
@@ -808,15 +1034,181 @@ export type disciplinary_cardsUpdateManyWithWhereWithoutFightInput = {
   data: Prisma.XOR<Prisma.disciplinary_cardsUpdateManyMutationInput, Prisma.disciplinary_cardsUncheckedUpdateManyWithoutFightInput>
 }
 
-export type disciplinary_cardsCreateManyFighterInput = {
-  id?: number
-  tournament_id: number
-  fight_id: number
+export type disciplinary_cardsCreateWithoutRed_card_yellow_sources_as_redInput = {
   type: string
   source?: string
   received_at: Date | string
   reason: string
   expires_at: Date | string
+  active?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  fighter: Prisma.fightersCreateNestedOneWithoutDisciplinary_cardsInput
+  tournament: Prisma.tournamentsCreateNestedOneWithoutDisciplinary_cardsInput
+  fight: Prisma.fightsCreateNestedOneWithoutDisciplinary_cardsInput
+  marshal: Prisma.marshalsCreateNestedOneWithoutDisciplinary_cardsInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesCreateNestedManyWithoutYellow_cardInput
+}
+
+export type disciplinary_cardsUncheckedCreateWithoutRed_card_yellow_sources_as_redInput = {
+  id?: number
+  fighter_id: number
+  tournament_id: number
+  fight_id: number
+  marshal_id: number
+  type: string
+  source?: string
+  received_at: Date | string
+  reason: string
+  expires_at: Date | string
+  active?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesUncheckedCreateNestedManyWithoutYellow_cardInput
+}
+
+export type disciplinary_cardsCreateOrConnectWithoutRed_card_yellow_sources_as_redInput = {
+  where: Prisma.disciplinary_cardsWhereUniqueInput
+  create: Prisma.XOR<Prisma.disciplinary_cardsCreateWithoutRed_card_yellow_sources_as_redInput, Prisma.disciplinary_cardsUncheckedCreateWithoutRed_card_yellow_sources_as_redInput>
+}
+
+export type disciplinary_cardsCreateWithoutRed_card_yellow_sources_as_yellowInput = {
+  type: string
+  source?: string
+  received_at: Date | string
+  reason: string
+  expires_at: Date | string
+  active?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  fighter: Prisma.fightersCreateNestedOneWithoutDisciplinary_cardsInput
+  tournament: Prisma.tournamentsCreateNestedOneWithoutDisciplinary_cardsInput
+  fight: Prisma.fightsCreateNestedOneWithoutDisciplinary_cardsInput
+  marshal: Prisma.marshalsCreateNestedOneWithoutDisciplinary_cardsInput
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesCreateNestedManyWithoutRed_cardInput
+}
+
+export type disciplinary_cardsUncheckedCreateWithoutRed_card_yellow_sources_as_yellowInput = {
+  id?: number
+  fighter_id: number
+  tournament_id: number
+  fight_id: number
+  marshal_id: number
+  type: string
+  source?: string
+  received_at: Date | string
+  reason: string
+  expires_at: Date | string
+  active?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesUncheckedCreateNestedManyWithoutRed_cardInput
+}
+
+export type disciplinary_cardsCreateOrConnectWithoutRed_card_yellow_sources_as_yellowInput = {
+  where: Prisma.disciplinary_cardsWhereUniqueInput
+  create: Prisma.XOR<Prisma.disciplinary_cardsCreateWithoutRed_card_yellow_sources_as_yellowInput, Prisma.disciplinary_cardsUncheckedCreateWithoutRed_card_yellow_sources_as_yellowInput>
+}
+
+export type disciplinary_cardsUpsertWithoutRed_card_yellow_sources_as_redInput = {
+  update: Prisma.XOR<Prisma.disciplinary_cardsUpdateWithoutRed_card_yellow_sources_as_redInput, Prisma.disciplinary_cardsUncheckedUpdateWithoutRed_card_yellow_sources_as_redInput>
+  create: Prisma.XOR<Prisma.disciplinary_cardsCreateWithoutRed_card_yellow_sources_as_redInput, Prisma.disciplinary_cardsUncheckedCreateWithoutRed_card_yellow_sources_as_redInput>
+  where?: Prisma.disciplinary_cardsWhereInput
+}
+
+export type disciplinary_cardsUpdateToOneWithWhereWithoutRed_card_yellow_sources_as_redInput = {
+  where?: Prisma.disciplinary_cardsWhereInput
+  data: Prisma.XOR<Prisma.disciplinary_cardsUpdateWithoutRed_card_yellow_sources_as_redInput, Prisma.disciplinary_cardsUncheckedUpdateWithoutRed_card_yellow_sources_as_redInput>
+}
+
+export type disciplinary_cardsUpdateWithoutRed_card_yellow_sources_as_redInput = {
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reason?: Prisma.StringFieldUpdateOperationsInput | string
+  expires_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fighter?: Prisma.fightersUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
+  tournament?: Prisma.tournamentsUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
+  fight?: Prisma.fightsUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
+  marshal?: Prisma.marshalsUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesUpdateManyWithoutYellow_cardNestedInput
+}
+
+export type disciplinary_cardsUncheckedUpdateWithoutRed_card_yellow_sources_as_redInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  fight_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marshal_id?: Prisma.IntFieldUpdateOperationsInput | number
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reason?: Prisma.StringFieldUpdateOperationsInput | string
+  expires_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesUncheckedUpdateManyWithoutYellow_cardNestedInput
+}
+
+export type disciplinary_cardsUpsertWithoutRed_card_yellow_sources_as_yellowInput = {
+  update: Prisma.XOR<Prisma.disciplinary_cardsUpdateWithoutRed_card_yellow_sources_as_yellowInput, Prisma.disciplinary_cardsUncheckedUpdateWithoutRed_card_yellow_sources_as_yellowInput>
+  create: Prisma.XOR<Prisma.disciplinary_cardsCreateWithoutRed_card_yellow_sources_as_yellowInput, Prisma.disciplinary_cardsUncheckedCreateWithoutRed_card_yellow_sources_as_yellowInput>
+  where?: Prisma.disciplinary_cardsWhereInput
+}
+
+export type disciplinary_cardsUpdateToOneWithWhereWithoutRed_card_yellow_sources_as_yellowInput = {
+  where?: Prisma.disciplinary_cardsWhereInput
+  data: Prisma.XOR<Prisma.disciplinary_cardsUpdateWithoutRed_card_yellow_sources_as_yellowInput, Prisma.disciplinary_cardsUncheckedUpdateWithoutRed_card_yellow_sources_as_yellowInput>
+}
+
+export type disciplinary_cardsUpdateWithoutRed_card_yellow_sources_as_yellowInput = {
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reason?: Prisma.StringFieldUpdateOperationsInput | string
+  expires_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fighter?: Prisma.fightersUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
+  tournament?: Prisma.tournamentsUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
+  fight?: Prisma.fightsUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
+  marshal?: Prisma.marshalsUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesUpdateManyWithoutRed_cardNestedInput
+}
+
+export type disciplinary_cardsUncheckedUpdateWithoutRed_card_yellow_sources_as_yellowInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  fight_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marshal_id?: Prisma.IntFieldUpdateOperationsInput | number
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reason?: Prisma.StringFieldUpdateOperationsInput | string
+  expires_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesUncheckedUpdateManyWithoutRed_cardNestedInput
+}
+
+export type disciplinary_cardsCreateManyFighterInput = {
+  id?: number
+  tournament_id: number
+  fight_id: number
+  marshal_id: number
+  type: string
+  source?: string
+  received_at: Date | string
+  reason: string
+  expires_at: Date | string
+  active?: boolean
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -827,27 +1219,82 @@ export type disciplinary_cardsUpdateWithoutFighterInput = {
   received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   expires_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tournament?: Prisma.tournamentsUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
   fight?: Prisma.fightsUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
+  marshal?: Prisma.marshalsUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesUpdateManyWithoutRed_cardNestedInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesUpdateManyWithoutYellow_cardNestedInput
 }
 
 export type disciplinary_cardsUncheckedUpdateWithoutFighterInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
   fight_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marshal_id?: Prisma.IntFieldUpdateOperationsInput | number
   type?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.StringFieldUpdateOperationsInput | string
   received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   expires_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesUncheckedUpdateManyWithoutRed_cardNestedInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesUncheckedUpdateManyWithoutYellow_cardNestedInput
 }
 
 export type disciplinary_cardsUncheckedUpdateManyWithoutFighterInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  fight_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marshal_id?: Prisma.IntFieldUpdateOperationsInput | number
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reason?: Prisma.StringFieldUpdateOperationsInput | string
+  expires_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type disciplinary_cardsCreateManyMarshalInput = {
+  id?: number
+  fighter_id: number
+  tournament_id: number
+  fight_id: number
+  type: string
+  source?: string
+  received_at: Date | string
+  reason: string
+  expires_at: Date | string
+  active?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+}
+
+export type disciplinary_cardsUpdateWithoutMarshalInput = {
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reason?: Prisma.StringFieldUpdateOperationsInput | string
+  expires_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fighter?: Prisma.fightersUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
+  tournament?: Prisma.tournamentsUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
+  fight?: Prisma.fightsUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesUpdateManyWithoutRed_cardNestedInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesUpdateManyWithoutYellow_cardNestedInput
+}
+
+export type disciplinary_cardsUncheckedUpdateWithoutMarshalInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
   tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
   fight_id?: Prisma.IntFieldUpdateOperationsInput | number
   type?: Prisma.StringFieldUpdateOperationsInput | string
@@ -855,6 +1302,24 @@ export type disciplinary_cardsUncheckedUpdateManyWithoutFighterInput = {
   received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   expires_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesUncheckedUpdateManyWithoutRed_cardNestedInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesUncheckedUpdateManyWithoutYellow_cardNestedInput
+}
+
+export type disciplinary_cardsUncheckedUpdateManyWithoutMarshalInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  fight_id?: Prisma.IntFieldUpdateOperationsInput | number
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reason?: Prisma.StringFieldUpdateOperationsInput | string
+  expires_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -863,11 +1328,13 @@ export type disciplinary_cardsCreateManyTournamentInput = {
   id?: number
   fighter_id: number
   fight_id: number
+  marshal_id: number
   type: string
   source?: string
   received_at: Date | string
   reason: string
   expires_at: Date | string
+  active?: boolean
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -878,34 +1345,44 @@ export type disciplinary_cardsUpdateWithoutTournamentInput = {
   received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   expires_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fighter?: Prisma.fightersUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
   fight?: Prisma.fightsUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
+  marshal?: Prisma.marshalsUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesUpdateManyWithoutRed_cardNestedInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesUpdateManyWithoutYellow_cardNestedInput
 }
 
 export type disciplinary_cardsUncheckedUpdateWithoutTournamentInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
   fight_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marshal_id?: Prisma.IntFieldUpdateOperationsInput | number
   type?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.StringFieldUpdateOperationsInput | string
   received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   expires_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesUncheckedUpdateManyWithoutRed_cardNestedInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesUncheckedUpdateManyWithoutYellow_cardNestedInput
 }
 
 export type disciplinary_cardsUncheckedUpdateManyWithoutTournamentInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
   fight_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marshal_id?: Prisma.IntFieldUpdateOperationsInput | number
   type?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.StringFieldUpdateOperationsInput | string
   received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   expires_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -914,11 +1391,13 @@ export type disciplinary_cardsCreateManyFightInput = {
   id?: number
   fighter_id: number
   tournament_id: number
+  marshal_id: number
   type: string
   source?: string
   received_at: Date | string
   reason: string
   expires_at: Date | string
+  active?: boolean
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -929,38 +1408,86 @@ export type disciplinary_cardsUpdateWithoutFightInput = {
   received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   expires_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fighter?: Prisma.fightersUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
   tournament?: Prisma.tournamentsUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
+  marshal?: Prisma.marshalsUpdateOneRequiredWithoutDisciplinary_cardsNestedInput
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesUpdateManyWithoutRed_cardNestedInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesUpdateManyWithoutYellow_cardNestedInput
 }
 
 export type disciplinary_cardsUncheckedUpdateWithoutFightInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
   tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marshal_id?: Prisma.IntFieldUpdateOperationsInput | number
   type?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.StringFieldUpdateOperationsInput | string
   received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   expires_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  red_card_yellow_sources_as_red?: Prisma.red_card_yellow_sourcesUncheckedUpdateManyWithoutRed_cardNestedInput
+  red_card_yellow_sources_as_yellow?: Prisma.red_card_yellow_sourcesUncheckedUpdateManyWithoutYellow_cardNestedInput
 }
 
 export type disciplinary_cardsUncheckedUpdateManyWithoutFightInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
   tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marshal_id?: Prisma.IntFieldUpdateOperationsInput | number
   type?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.StringFieldUpdateOperationsInput | string
   received_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   expires_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+
+/**
+ * Count Type Disciplinary_cardsCountOutputType
+ */
+
+export type Disciplinary_cardsCountOutputType = {
+  red_card_yellow_sources_as_red: number
+  red_card_yellow_sources_as_yellow: number
+}
+
+export type Disciplinary_cardsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  red_card_yellow_sources_as_red?: boolean | Disciplinary_cardsCountOutputTypeCountRed_card_yellow_sources_as_redArgs
+  red_card_yellow_sources_as_yellow?: boolean | Disciplinary_cardsCountOutputTypeCountRed_card_yellow_sources_as_yellowArgs
+}
+
+/**
+ * Disciplinary_cardsCountOutputType without action
+ */
+export type Disciplinary_cardsCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Disciplinary_cardsCountOutputType
+   */
+  select?: Prisma.Disciplinary_cardsCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * Disciplinary_cardsCountOutputType without action
+ */
+export type Disciplinary_cardsCountOutputTypeCountRed_card_yellow_sources_as_redArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.red_card_yellow_sourcesWhereInput
+}
+
+/**
+ * Disciplinary_cardsCountOutputType without action
+ */
+export type Disciplinary_cardsCountOutputTypeCountRed_card_yellow_sources_as_yellowArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.red_card_yellow_sourcesWhereInput
+}
 
 
 export type disciplinary_cardsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -968,16 +1495,22 @@ export type disciplinary_cardsSelect<ExtArgs extends runtime.Types.Extensions.In
   fighter_id?: boolean
   tournament_id?: boolean
   fight_id?: boolean
+  marshal_id?: boolean
   type?: boolean
   source?: boolean
   received_at?: boolean
   reason?: boolean
   expires_at?: boolean
+  active?: boolean
   created_at?: boolean
   updated_at?: boolean
   fighter?: boolean | Prisma.fightersDefaultArgs<ExtArgs>
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   fight?: boolean | Prisma.fightsDefaultArgs<ExtArgs>
+  marshal?: boolean | Prisma.marshalsDefaultArgs<ExtArgs>
+  red_card_yellow_sources_as_red?: boolean | Prisma.disciplinary_cards$red_card_yellow_sources_as_redArgs<ExtArgs>
+  red_card_yellow_sources_as_yellow?: boolean | Prisma.disciplinary_cards$red_card_yellow_sources_as_yellowArgs<ExtArgs>
+  _count?: boolean | Prisma.Disciplinary_cardsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["disciplinary_cards"]>
 
 export type disciplinary_cardsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -985,16 +1518,19 @@ export type disciplinary_cardsSelectCreateManyAndReturn<ExtArgs extends runtime.
   fighter_id?: boolean
   tournament_id?: boolean
   fight_id?: boolean
+  marshal_id?: boolean
   type?: boolean
   source?: boolean
   received_at?: boolean
   reason?: boolean
   expires_at?: boolean
+  active?: boolean
   created_at?: boolean
   updated_at?: boolean
   fighter?: boolean | Prisma.fightersDefaultArgs<ExtArgs>
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   fight?: boolean | Prisma.fightsDefaultArgs<ExtArgs>
+  marshal?: boolean | Prisma.marshalsDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["disciplinary_cards"]>
 
 export type disciplinary_cardsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1002,16 +1538,19 @@ export type disciplinary_cardsSelectUpdateManyAndReturn<ExtArgs extends runtime.
   fighter_id?: boolean
   tournament_id?: boolean
   fight_id?: boolean
+  marshal_id?: boolean
   type?: boolean
   source?: boolean
   received_at?: boolean
   reason?: boolean
   expires_at?: boolean
+  active?: boolean
   created_at?: boolean
   updated_at?: boolean
   fighter?: boolean | Prisma.fightersDefaultArgs<ExtArgs>
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   fight?: boolean | Prisma.fightsDefaultArgs<ExtArgs>
+  marshal?: boolean | Prisma.marshalsDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["disciplinary_cards"]>
 
 export type disciplinary_cardsSelectScalar = {
@@ -1019,30 +1558,38 @@ export type disciplinary_cardsSelectScalar = {
   fighter_id?: boolean
   tournament_id?: boolean
   fight_id?: boolean
+  marshal_id?: boolean
   type?: boolean
   source?: boolean
   received_at?: boolean
   reason?: boolean
   expires_at?: boolean
+  active?: boolean
   created_at?: boolean
   updated_at?: boolean
 }
 
-export type disciplinary_cardsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fighter_id" | "tournament_id" | "fight_id" | "type" | "source" | "received_at" | "reason" | "expires_at" | "created_at" | "updated_at", ExtArgs["result"]["disciplinary_cards"]>
+export type disciplinary_cardsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fighter_id" | "tournament_id" | "fight_id" | "marshal_id" | "type" | "source" | "received_at" | "reason" | "expires_at" | "active" | "created_at" | "updated_at", ExtArgs["result"]["disciplinary_cards"]>
 export type disciplinary_cardsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   fighter?: boolean | Prisma.fightersDefaultArgs<ExtArgs>
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   fight?: boolean | Prisma.fightsDefaultArgs<ExtArgs>
+  marshal?: boolean | Prisma.marshalsDefaultArgs<ExtArgs>
+  red_card_yellow_sources_as_red?: boolean | Prisma.disciplinary_cards$red_card_yellow_sources_as_redArgs<ExtArgs>
+  red_card_yellow_sources_as_yellow?: boolean | Prisma.disciplinary_cards$red_card_yellow_sources_as_yellowArgs<ExtArgs>
+  _count?: boolean | Prisma.Disciplinary_cardsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type disciplinary_cardsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   fighter?: boolean | Prisma.fightersDefaultArgs<ExtArgs>
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   fight?: boolean | Prisma.fightsDefaultArgs<ExtArgs>
+  marshal?: boolean | Prisma.marshalsDefaultArgs<ExtArgs>
 }
 export type disciplinary_cardsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   fighter?: boolean | Prisma.fightersDefaultArgs<ExtArgs>
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   fight?: boolean | Prisma.fightsDefaultArgs<ExtArgs>
+  marshal?: boolean | Prisma.marshalsDefaultArgs<ExtArgs>
 }
 
 export type $disciplinary_cardsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1051,17 +1598,22 @@ export type $disciplinary_cardsPayload<ExtArgs extends runtime.Types.Extensions.
     fighter: Prisma.$fightersPayload<ExtArgs>
     tournament: Prisma.$tournamentsPayload<ExtArgs>
     fight: Prisma.$fightsPayload<ExtArgs>
+    marshal: Prisma.$marshalsPayload<ExtArgs>
+    red_card_yellow_sources_as_red: Prisma.$red_card_yellow_sourcesPayload<ExtArgs>[]
+    red_card_yellow_sources_as_yellow: Prisma.$red_card_yellow_sourcesPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     fighter_id: number
     tournament_id: number
     fight_id: number
+    marshal_id: number
     type: string
     source: string
     received_at: Date
     reason: string
     expires_at: Date
+    active: boolean
     created_at: Date
     updated_at: Date
   }, ExtArgs["result"]["disciplinary_cards"]>
@@ -1461,6 +2013,9 @@ export interface Prisma__disciplinary_cardsClient<T, Null = never, ExtArgs exten
   fighter<T extends Prisma.fightersDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.fightersDefaultArgs<ExtArgs>>): Prisma.Prisma__fightersClient<runtime.Types.Result.GetResult<Prisma.$fightersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   tournament<T extends Prisma.tournamentsDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournamentsDefaultArgs<ExtArgs>>): Prisma.Prisma__tournamentsClient<runtime.Types.Result.GetResult<Prisma.$tournamentsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   fight<T extends Prisma.fightsDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.fightsDefaultArgs<ExtArgs>>): Prisma.Prisma__fightsClient<runtime.Types.Result.GetResult<Prisma.$fightsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  marshal<T extends Prisma.marshalsDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.marshalsDefaultArgs<ExtArgs>>): Prisma.Prisma__marshalsClient<runtime.Types.Result.GetResult<Prisma.$marshalsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  red_card_yellow_sources_as_red<T extends Prisma.disciplinary_cards$red_card_yellow_sources_as_redArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.disciplinary_cards$red_card_yellow_sources_as_redArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$red_card_yellow_sourcesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  red_card_yellow_sources_as_yellow<T extends Prisma.disciplinary_cards$red_card_yellow_sources_as_yellowArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.disciplinary_cards$red_card_yellow_sources_as_yellowArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$red_card_yellow_sourcesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1494,11 +2049,13 @@ export interface disciplinary_cardsFieldRefs {
   readonly fighter_id: Prisma.FieldRef<"disciplinary_cards", 'Int'>
   readonly tournament_id: Prisma.FieldRef<"disciplinary_cards", 'Int'>
   readonly fight_id: Prisma.FieldRef<"disciplinary_cards", 'Int'>
+  readonly marshal_id: Prisma.FieldRef<"disciplinary_cards", 'Int'>
   readonly type: Prisma.FieldRef<"disciplinary_cards", 'String'>
   readonly source: Prisma.FieldRef<"disciplinary_cards", 'String'>
   readonly received_at: Prisma.FieldRef<"disciplinary_cards", 'DateTime'>
   readonly reason: Prisma.FieldRef<"disciplinary_cards", 'String'>
   readonly expires_at: Prisma.FieldRef<"disciplinary_cards", 'DateTime'>
+  readonly active: Prisma.FieldRef<"disciplinary_cards", 'Boolean'>
   readonly created_at: Prisma.FieldRef<"disciplinary_cards", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"disciplinary_cards", 'DateTime'>
 }
@@ -1894,6 +2451,54 @@ export type disciplinary_cardsDeleteManyArgs<ExtArgs extends runtime.Types.Exten
    * Limit how many disciplinary_cards to delete.
    */
   limit?: number
+}
+
+/**
+ * disciplinary_cards.red_card_yellow_sources_as_red
+ */
+export type disciplinary_cards$red_card_yellow_sources_as_redArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the red_card_yellow_sources
+   */
+  select?: Prisma.red_card_yellow_sourcesSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the red_card_yellow_sources
+   */
+  omit?: Prisma.red_card_yellow_sourcesOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.red_card_yellow_sourcesInclude<ExtArgs> | null
+  where?: Prisma.red_card_yellow_sourcesWhereInput
+  orderBy?: Prisma.red_card_yellow_sourcesOrderByWithRelationInput | Prisma.red_card_yellow_sourcesOrderByWithRelationInput[]
+  cursor?: Prisma.red_card_yellow_sourcesWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Red_card_yellow_sourcesScalarFieldEnum | Prisma.Red_card_yellow_sourcesScalarFieldEnum[]
+}
+
+/**
+ * disciplinary_cards.red_card_yellow_sources_as_yellow
+ */
+export type disciplinary_cards$red_card_yellow_sources_as_yellowArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the red_card_yellow_sources
+   */
+  select?: Prisma.red_card_yellow_sourcesSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the red_card_yellow_sources
+   */
+  omit?: Prisma.red_card_yellow_sourcesOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.red_card_yellow_sourcesInclude<ExtArgs> | null
+  where?: Prisma.red_card_yellow_sourcesWhereInput
+  orderBy?: Prisma.red_card_yellow_sourcesOrderByWithRelationInput | Prisma.red_card_yellow_sourcesOrderByWithRelationInput[]
+  cursor?: Prisma.red_card_yellow_sourcesWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Red_card_yellow_sourcesScalarFieldEnum | Prisma.Red_card_yellow_sourcesScalarFieldEnum[]
 }
 
 /**

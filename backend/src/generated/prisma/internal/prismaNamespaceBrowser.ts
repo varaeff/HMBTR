@@ -68,6 +68,8 @@ export const ModelName = {
   fight_round_scores: 'fight_round_scores',
   fight_warnings: 'fight_warnings',
   disciplinary_cards: 'disciplinary_cards',
+  red_card_yellow_sources: 'red_card_yellow_sources',
+  disciplinary_card_settings: 'disciplinary_card_settings',
   fighter_nomination_ratings: 'fighter_nomination_ratings',
   fighter_nomination_rating_history: 'fighter_nomination_rating_history',
   competition_blocks: 'competition_blocks',
@@ -265,7 +267,9 @@ export const FightsScalarFieldEnum = {
   bracket_position: 'bracket_position',
   is_bronze: 'is_bronze',
   is_finished: 'is_finished',
-  forfeit_card_id: 'forfeit_card_id'
+  forfeit_card_id: 'forfeit_card_id',
+  rounds: 'rounds',
+  round_win: 'round_win'
 } as const
 
 export type FightsScalarFieldEnum = (typeof FightsScalarFieldEnum)[keyof typeof FightsScalarFieldEnum]
@@ -299,16 +303,46 @@ export const Disciplinary_cardsScalarFieldEnum = {
   fighter_id: 'fighter_id',
   tournament_id: 'tournament_id',
   fight_id: 'fight_id',
+  marshal_id: 'marshal_id',
   type: 'type',
   source: 'source',
   received_at: 'received_at',
   reason: 'reason',
   expires_at: 'expires_at',
+  active: 'active',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const
 
 export type Disciplinary_cardsScalarFieldEnum = (typeof Disciplinary_cardsScalarFieldEnum)[keyof typeof Disciplinary_cardsScalarFieldEnum]
+
+
+export const Red_card_yellow_sourcesScalarFieldEnum = {
+  id: 'id',
+  red_card_id: 'red_card_id',
+  yellow_card_id: 'yellow_card_id',
+  yellow_expires_at_before_close: 'yellow_expires_at_before_close',
+  yellow_active_before_close: 'yellow_active_before_close',
+  closed_at: 'closed_at',
+  created_at: 'created_at'
+} as const
+
+export type Red_card_yellow_sourcesScalarFieldEnum = (typeof Red_card_yellow_sourcesScalarFieldEnum)[keyof typeof Red_card_yellow_sourcesScalarFieldEnum]
+
+
+export const Disciplinary_card_settingsScalarFieldEnum = {
+  id: 'id',
+  yellow_expiration_mode: 'yellow_expiration_mode',
+  yellow_expiration_month: 'yellow_expiration_month',
+  yellow_expiration_days: 'yellow_expiration_days',
+  red_auto_yellow_days: 'red_auto_yellow_days',
+  red_manual_days: 'red_manual_days',
+  red_manual_with_one_yellow_days: 'red_manual_with_one_yellow_days',
+  red_manual_with_two_or_more_yellows_days: 'red_manual_with_two_or_more_yellows_days',
+  updated_at: 'updated_at'
+} as const
+
+export type Disciplinary_card_settingsScalarFieldEnum = (typeof Disciplinary_card_settingsScalarFieldEnum)[keyof typeof Disciplinary_card_settingsScalarFieldEnum]
 
 
 export const Fighter_nomination_ratingsScalarFieldEnum = {

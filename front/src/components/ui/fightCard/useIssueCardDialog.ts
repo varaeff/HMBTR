@@ -31,6 +31,7 @@ export const useIssueCardDialog = ({
   const issueType = ref<DisciplinaryCardType>('YELLOW')
   const issueDate = ref(new Date().toISOString().slice(0, 10))
   const issueReason = ref('')
+  const issueMarshalId = ref<number | null>(null)
   const isIssuing = ref(false)
 
   const openIssueDialog = (fighter: Fighter) => {
@@ -38,12 +39,14 @@ export const useIssueCardDialog = ({
     issueType.value = 'YELLOW'
     issueDate.value = cardDate.value
     issueReason.value = ''
+    issueMarshalId.value = null
     issueDialogOpen.value = true
   }
 
   const issueCard = async () => {
     const tournamentId = getTournamentId()
-    if (!issueFighter.value || !tournamentId || !issueReason.value.trim()) return
+    if (!issueFighter.value || !tournamentId || !issueReason.value.trim() || !issueMarshalId.value)
+      return
 
     try {
       isIssuing.value = true
@@ -51,6 +54,7 @@ export const useIssueCardDialog = ({
         fighter_id: issueFighter.value.id,
         tournament_id: tournamentId,
         fight_id: getFight().id,
+        marshal_id: issueMarshalId.value,
         type: issueType.value,
         received_at: issueDate.value,
         reason: issueReason.value.trim()
@@ -70,6 +74,7 @@ export const useIssueCardDialog = ({
     issueType,
     issueDate,
     issueReason,
+    issueMarshalId,
     isIssuing,
     openIssueDialog,
     issueCard

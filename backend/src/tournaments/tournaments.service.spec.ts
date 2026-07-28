@@ -77,6 +77,7 @@ describe('TournamentsService', () => {
       nomination_id: 5,
       is_open: false,
     });
+    prisma.tournament_marshals.findFirst.mockResolvedValue({ id: 7 });
 
     await expect(
       service.updateNomination({
@@ -93,6 +94,27 @@ describe('TournamentsService', () => {
       where: { id: 42 },
       data: { is_open: false },
     });
+  });
+
+  it('rejects closing fighter registration before any marshal is registered', async () => {
+    const { prisma, service } = createService();
+    prisma.tournament_nominations.findFirst.mockResolvedValue({
+      id: 42,
+      tournament_id: 31,
+      nomination_id: 5,
+      is_open: true,
+    });
+    prisma.tournament_marshals.findFirst.mockResolvedValue(null);
+
+    await expect(
+      service.updateNomination({
+        tournament_id: 31,
+        nomination_id: 5,
+        is_open: false,
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+
+    expect(prisma.tournament_nominations.update).not.toHaveBeenCalled();
   });
 
   it('throws when the tournament nomination pair does not exist', async () => {
@@ -114,6 +136,7 @@ describe('TournamentsService', () => {
       id: 31,
       is_marshals_registration_closed: false,
       nominations: [{ is_open: true }],
+      marshals: [],
     });
     prisma.marshals.findUnique.mockResolvedValue({ id: 9 });
     prisma.tournament_marshals.findFirst.mockResolvedValue(null);
@@ -134,6 +157,7 @@ describe('TournamentsService', () => {
       id: 31,
       is_marshals_registration_closed: true,
       nominations: [{ is_open: true }],
+      marshals: [{ id: 4 }],
     });
 
     await expect(
@@ -141,12 +165,40 @@ describe('TournamentsService', () => {
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
+  it('allows marshal registration recovery when registration was finished with no marshals', async () => {
+    const { prisma, service } = createService();
+    prisma.tournaments.findUnique.mockResolvedValue({
+      id: 31,
+      is_marshals_registration_closed: true,
+      nominations: [{ is_open: true }],
+      marshals: [],
+    });
+    prisma.marshals.findUnique.mockResolvedValue({ id: 9 });
+    prisma.tournament_marshals.findFirst.mockResolvedValue(null);
+    prisma.tournament_marshals.create.mockResolvedValue({
+      id: 4,
+      tournament_id: 31,
+      marshal_id: 9,
+    });
+
+    await expect(
+      service.addTournamentMarshal({ tournament_id: 31, marshal_id: 9 }),
+    ).resolves.toMatchObject({ id: 4, marshal_id: 9 });
+
+    expect(prisma.tournaments.update).toHaveBeenCalledWith({
+      where: { id: 31 },
+      data: { is_marshals_registration_closed: false },
+    });
+  });
+
+
   it('rejects marshal registration when no fighter nominations are open', async () => {
     const { prisma, service } = createService();
     prisma.tournaments.findUnique.mockResolvedValue({
       id: 31,
       is_marshals_registration_closed: false,
       nominations: [{ is_open: false }],
+      marshals: [],
     });
 
     await expect(
@@ -157,6 +209,7 @@ describe('TournamentsService', () => {
   it('finishes marshal registration permanently', async () => {
     const { prisma, service } = createService();
     prisma.tournaments.findUnique.mockResolvedValue({ id: 31 });
+    prisma.tournament_marshals.findFirst.mockResolvedValue({ id: 4 });
     prisma.tournaments.update.mockResolvedValue({
       id: 31,
       is_marshals_registration_closed: true,
@@ -170,6 +223,18 @@ describe('TournamentsService', () => {
       where: { id: 31 },
       data: { is_marshals_registration_closed: true },
     });
+  });
+
+  it('rejects finishing marshal registration without registered marshals', async () => {
+    const { prisma, service } = createService();
+    prisma.tournaments.findUnique.mockResolvedValue({ id: 31 });
+    prisma.tournament_marshals.findFirst.mockResolvedValue(null);
+
+    await expect(
+      service.finishTournamentMarshalRegistration(31),
+    ).rejects.toBeInstanceOf(BadRequestException);
+
+    expect(prisma.tournaments.update).not.toHaveBeenCalled();
   });
 
   it('includes marshals and disciplinary cards in generated tournament reports', async () => {
@@ -245,10 +310,33 @@ describe('TournamentsService', () => {
                   competitor2_id: 102,
                   competitor1_score: 5,
                   competitor2_score: 3,
+                  competitor1_round1_score: 5,
+                  competitor2_round1_score: 3,
+                  competitor1_round2_score: 0,
+                  competitor2_round2_score: 0,
+                  competitor1_round3_score: 0,
+                  competitor2_round3_score: 0,
+                  competitor1_round4_score: 0,
+                  competitor2_round4_score: 0,
+                  winner_id: 101,
+                  forfeit_card_id: null,
                   bracket_round: null,
                   bracket_position: null,
                   is_bronze: false,
                   is_finished: true,
+                  nomination: {
+                    name_en: 'Adults',
+                    name_ru: 'Р’Р·СЂРѕСЃР»С‹Рµ',
+                    rounds: 1,
+                    round_win: false,
+                  },
+                  warnings: [],
+                  round_scores: [
+                    {
+                      competitor1_score: 5,
+                      competitor2_score: 3,
+                    },
+                  ],
                   competitor1: {
                     fighter: {
                       name: 'Alex',

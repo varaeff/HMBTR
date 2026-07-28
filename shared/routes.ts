@@ -14,6 +14,12 @@ export const API_ROUTES = {
   },
   NOMINATIONS: {
     ROOT: "nominations",
+    BY_ID_PATH: ":id",
+    BY_ID: (id: string | number) => `/nominations/${id}`,
+  },
+  SETTINGS: {
+    ROOT: "settings",
+    DISCIPLINARY_CARDS: "disciplinary-cards",
   },
   TOURNAMENTS: {
     ROOT: "tournaments",
