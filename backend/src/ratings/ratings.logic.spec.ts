@@ -5,11 +5,7 @@ import {
 } from './ratings.logic';
 
 describe('ratings logic', () => {
-  const participants = [
-    { fighterId: 1 },
-    { fighterId: 2 },
-    { fighterId: 3 },
-  ];
+  const participants = [{ fighterId: 1 }, { fighterId: 2 }, { fighterId: 3 }];
 
   it('applies Elo in fight order with rounded ratings', () => {
     const fights: RatingFight[] = [
