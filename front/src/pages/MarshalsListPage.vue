@@ -3,7 +3,7 @@ import { ref, watch, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMarshalsListStore } from '@/stores/marshalsList'
 import { hasMarshalManageAccess } from '@/lib/checkAccess'
-import { FighterCard } from '@/components/ui/fighterCard'
+import { FighterCard } from '@/widgets/FighterCard'
 import { SearchWidget } from '@/widgets/SearchWidget'
 import type { Marshal } from '@/model'
 

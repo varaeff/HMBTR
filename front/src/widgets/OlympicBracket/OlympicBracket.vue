@@ -5,7 +5,7 @@ import { useTranslation } from 'i18next-vue'
 import { useCompetitionStore } from '@/stores/competition'
 
 import { Button } from '@/components/ui/button'
-import { FightCard } from '@/components/ui/fightCard'
+import { FightCard } from '@/widgets/FightCard'
 
 import { tData } from '@/lib/utils'
 

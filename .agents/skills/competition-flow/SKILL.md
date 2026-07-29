@@ -32,8 +32,11 @@ Keep domain rules in backend logic helpers, not in Vue components. The frontend 
 3. Extend the DTO with explicit optional fields when the UI needs to request a variant.
 4. In `competition.service.ts`, load the active block inside the transaction, recompute rankings, validate constraints, then create/lock blocks.
 5. In `competition.ts` Pinia store, pass only the new explicit API flag and continue applying returned state with `applyCompetitionState`.
-6. In `TournamentPage.vue`, gate action visibility from current loaded state, but do not construct bracket slots or final participant lists client-side.
-7. Add i18n keys for all visible action labels.
+6. Keep `front/src/pages/TournamentPage.vue` as a route shell: parse route props, call `useTournamentPage`, and compose `widgets/Tournament*`.
+7. Keep tournament page orchestration in `front/src/composables/useTournamentPage.ts`; preserve competition refresh ordering there.
+8. Keep tournament feature UI in `front/src/widgets/Tournament*` modules that receive props and emit actions. Do not create new stores or call `http` from those widgets, except inside pre-existing nested widgets with established store usage.
+9. Gate action visibility from current loaded state, but do not construct bracket slots or final participant lists client-side.
+10. Add i18n keys for all visible action labels.
 
 ## Olympic Third-Place Pattern
 
@@ -159,6 +162,8 @@ Keep domain rules in backend logic helpers, not in Vue components. The frontend 
 ## Related Files
 
 - `front/src/pages/TournamentPage.vue`
+- `front/src/composables/useTournamentPage.ts`
+- `front/src/widgets/Tournament*`
 - `front/src/stores/competition.ts`
 - `front/src/i18n/locales/en.json`
 - `front/src/i18n/locales/ru.json`
