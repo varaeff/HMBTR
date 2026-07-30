@@ -6,7 +6,7 @@ import { hasAccess } from '@/lib/checkAccess'
 import { FighterCard } from '@/widgets/FighterCard'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
-import { SearchWidget } from '@/widgets/SearchWidget'
+import { SearchWidget } from '@/features/search'
 import type { Fighter } from '@/model'
 
 const router = useRouter()

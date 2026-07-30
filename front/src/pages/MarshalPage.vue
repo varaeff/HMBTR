@@ -17,8 +17,8 @@ import {
   TableRow
 } from '@/components/ui/table'
 import { AlertWidget } from '@/widgets/AlertWidget'
-import { FullNameWidget } from '@/widgets/FullNameWidget'
-import { SelectLocationBlock } from '@/widgets/SelectLocationBlock'
+import { SelectLocationBlock } from '@/features/location-select'
+import { FullNameWidget } from '@/features/person-name-form'
 import { useRequiredFields } from '@/composables/useRequiredFields'
 import { useAddEntityAlert } from '@/composables/useAddEntityAlert'
 import { hasMarshalManageAccess } from '@/lib/checkAccess'

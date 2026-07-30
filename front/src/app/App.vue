@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia'
 import { useApiUiStore } from '@/stores/apiUi'
 import { useTheme } from '@/composables/useTheme'
 import { MainMenu } from '@/widgets/MainMenu'
-import { Loader } from '@/widgets/Loader'
+import { Loader } from '@/components/ui/loader'
 import { AlertWidget } from '@/widgets/AlertWidget'
 
 const ui = useApiUiStore()

@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
-import { DynamicLabeledInput } from '@/widgets/DynamicLabeledInput'
+import { DynamicLabeledInput } from '@/components/ui/dynamic-labeled-input'
 
 defineProps(['autocompleteType', 'username', 'password'])
 defineEmits(['update:username', 'update:password'])

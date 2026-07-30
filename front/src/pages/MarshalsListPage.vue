@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 import { useMarshalsListStore } from '@/stores/marshalsList'
 import { hasMarshalManageAccess } from '@/lib/checkAccess'
 import { FighterCard } from '@/widgets/FighterCard'
-import { SearchWidget } from '@/widgets/SearchWidget'
+import { SearchWidget } from '@/features/search'
 import type { Marshal } from '@/model'
 
 const router = useRouter()

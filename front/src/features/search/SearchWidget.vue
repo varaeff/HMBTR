@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { cn, parseInput } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { DynamicLabeledInput } from '@/widgets/DynamicLabeledInput'
+import { DynamicLabeledInput } from '@/components/ui/dynamic-labeled-input'
 
 interface SearchStore {
   setSearchString: (searchString: string) => void

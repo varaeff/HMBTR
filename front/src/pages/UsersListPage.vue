@@ -2,7 +2,7 @@
 import { ref, watch, computed, onMounted } from 'vue'
 import type { User } from '@/model'
 import { useUsersListStore } from '@/stores/usersList'
-import { SearchWidget } from '@/widgets/SearchWidget'
+import { SearchWidget } from '@/features/search'
 import { UsersTabs } from '@/widgets/usersTabs'
 import { USERS_TYPES, type UserType } from '@/model'
 

@@ -83,7 +83,7 @@ const setupInterceptors = (pinia: Pinia) => {
         try {
           // Try to refresh token
           if (auth.refreshToken) {
-            const { useAuthService } = await import('@/composables/useAuthService')
+            const { useAuthService } = await import('@/features/auth/useAuthService')
             const authService = useAuthService()
 
             await authService.refresh(auth.refreshToken)

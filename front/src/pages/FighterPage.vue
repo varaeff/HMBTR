@@ -22,8 +22,8 @@ import {
   TableRow
 } from '@/components/ui/table'
 import { AlertWidget } from '@/widgets/AlertWidget'
-import { FullNameWidget } from '@/widgets/FullNameWidget'
-import { SelectLocationBlock } from '@/widgets/SelectLocationBlock'
+import { SelectLocationBlock } from '@/features/location-select'
+import { FullNameWidget } from '@/features/person-name-form'
 import { TournamentCardsTable } from '@/widgets/DisciplinaryCards'
 import { FighterRatingChart } from '@/widgets/FighterRatingChart'
 import { useRequiredFields } from '@/composables/useRequiredFields'

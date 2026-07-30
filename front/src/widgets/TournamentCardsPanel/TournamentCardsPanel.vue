@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CollapsibleSection } from '@/widgets/CollapsibleSection'
+import { CollapsibleSection } from '@/components/ui/collapsible-section'
 import { TournamentCardsTable } from '@/widgets/DisciplinaryCards'
 import type { DisciplinaryCard, Tournament, TournamentMarshal } from '@/model'
 

@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/sheet'
 import { Switch } from '@/components/ui/switch'
 import { LangSelect } from '@/widgets/LangSelect'
-import { LoginWidget } from '@/widgets/LoginWidget'
+import { LoginWidget } from '@/features/auth'
 import { UserMenu } from '@/widgets/UserMenu'
 
 const { isDark, toggleTheme } = useTheme()

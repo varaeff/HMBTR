@@ -1,5 +1,5 @@
 import { useAuthStore } from '@/stores/auth'
-import { useAuthService } from './useAuthService'
+import { useAuthService } from '@/features/auth/useAuthService'
 import { ref } from 'vue'
 
 export const useAuthInit = () => {

@@ -13,10 +13,10 @@ import {
   SheetTrigger
 } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { DynamicLabeledInput } from '@/widgets/DynamicLabeledInput'
-import { UsernamePwdWidget } from '@/widgets/UsernamePwdWidget'
-import { FullNameWidget } from '@/widgets/FullNameWidget'
-import { useAuthService } from '@/composables/useAuthService'
+import { DynamicLabeledInput } from '@/components/ui/dynamic-labeled-input'
+import UsernamePwdWidget from './UsernamePwdWidget.vue'
+import { FullNameWidget } from '@/features/person-name-form'
+import { useAuthService } from './useAuthService'
 import { useApiUiStore } from '@/stores/apiUi'
 
 interface ApiErrorResponse {

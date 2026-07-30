@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Button } from '@/components/ui/button'
-import { CollapsibleSection } from '@/widgets/CollapsibleSection'
+import { CollapsibleSection } from '@/components/ui/collapsible-section'
 import { FightsDisplay } from '@/widgets/FightsDisplay'
 import { NominationGroups } from '@/widgets/NominationGroups'
 import { OlympicBracket } from '@/widgets/OlympicBracket'

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DynamicLabeledInput } from '@/widgets/DynamicLabeledInput'
+import { DynamicLabeledInput } from '@/components/ui/dynamic-labeled-input'
 
 const surname = defineModel<string>('surname')
 const name = defineModel<string>('name')
