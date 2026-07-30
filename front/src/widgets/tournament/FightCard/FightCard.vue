@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
-import { useDisciplinaryCardsStore } from '@/stores/disciplinaryCards'
 import { tData } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,6 +13,7 @@ import {
 } from '@/components/ui/dialog'
 import type { DisciplinaryCardStatus, FightData, Fighter, TournamentMarshal } from '@/model'
 import type { FightWarning, RoundScore } from '@shared/fightScoring'
+import type { CreateDisciplinaryCardAction } from '@/widgets/tournament/types'
 import FightParticipantLabel from './FightParticipantLabel.vue'
 import FightResultDisplay from './FightResultDisplay.vue'
 import FightScoreEditor from './FightScoreEditor.vue'
@@ -30,6 +30,7 @@ const props = defineProps<{
   cardDate?: string
   activeCardTypes?: Partial<Record<number, DisciplinaryCardStatus>>
   tournamentMarshals?: TournamentMarshal[]
+  createDisciplinaryCard?: CreateDisciplinaryCardAction
 }>()
 
 const emit = defineEmits<{
@@ -44,7 +45,6 @@ const emit = defineEmits<{
 }>()
 
 const { i18next } = useTranslation()
-const cardsStore = useDisciplinaryCardsStore()
 const fightRef = computed(() => props.fight)
 const hasAccessRef = computed(() => props.hasAccess)
 const canIssueCardsRef = computed(() => props.canIssueCards)
@@ -99,7 +99,13 @@ const {
   openIssueDialog: openIssueCardDialog,
   issueCard
 } = useIssueCardDialog({
-  cardsStore,
+  createCard: async (payload) => {
+    if (!props.createDisciplinaryCard) {
+      throw new Error('Disciplinary card creation action is not provided')
+    }
+
+    return props.createDisciplinaryCard(payload)
+  },
   getFight: () => props.fight,
   getTournamentId: () => props.tournamentId,
   cardDate,
@@ -107,7 +113,7 @@ const {
 })
 
 const openIssueDialog = (fighter: Fighter) => {
-  if (!props.canIssueCards) return
+  if (!props.canIssueCards || !props.createDisciplinaryCard) return
 
   openIssueCardDialog(fighter)
 }

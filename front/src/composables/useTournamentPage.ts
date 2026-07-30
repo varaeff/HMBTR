@@ -1,7 +1,6 @@
 import { computed, onMounted, reactive, ref, watch, type Ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useTranslation } from 'i18next-vue'
-import http from '@/api/http'
 import { useTournamentsListStore } from '@/stores/tournamentsList'
 import { useFightersListStore } from '@/stores/fightersList'
 import { useCommonDataStore } from '@/stores/commonData'
@@ -10,6 +9,15 @@ import { useApiUiStore } from '@/stores/apiUi'
 import { useDisciplinaryCardsStore } from '@/stores/disciplinaryCards'
 import { useTournamentMarshalsStore } from '@/stores/tournamentMarshals'
 import { useCollapsiblePersist } from '@/composables/useCollapsiblePersist'
+import { useTournamentBackwardConfirmation } from '@/composables/useTournamentBackwardConfirmation'
+import { useTournamentBlockOpenState } from '@/composables/useTournamentBlockOpenState'
+import { useTournamentCardsState } from '@/composables/useTournamentCardsState'
+import { useTournamentReportDownload } from '@/composables/useTournamentReportDownload'
+import {
+  type ActiveRedRollbackDetails,
+  type ActiveRedRollbackCompetitor,
+  getActiveRedRollbackDetails
+} from '@/composables/tournamentPageErrors'
 import { tData } from '@/lib/utils'
 import { dateToString } from '@/lib/dateUtils'
 import { hasAccess, hasAdminAccess, hasTournamentMarshalAccess } from '@/lib/checkAccess'
@@ -21,44 +29,18 @@ import {
   areFightResultsReady,
   getIncompleteFightNumbers
 } from '@/lib/fightResult'
-import { API_ROUTES } from '@shared/routes'
 import type {
   CompetitionBlock,
-  DisciplinaryCardStatus,
+  CreateDisciplinaryCardPayload,
+  FightData,
   Group,
   PendingTie,
-  Tournament
+  Tournament,
+  UpdateDisciplinaryCardPayload
 } from '@/model'
 import type { FightWarning, RoundScore } from '@shared/fightScoring'
 
-export interface TournamentBackwardConfirmation {
-  mainText: string
-  action: () => Promise<void>
-}
-
-interface ApiErrorWithResponse {
-  response?: {
-    data?: unknown
-  }
-  message?: string
-}
-
-interface ReportErrorData {
-  details?: string[] | string | ActiveRedRollbackDetails
-  error?: string
-}
-
-interface ActiveRedRollbackCompetitor {
-  name: string
-  surname: string
-  patronymic?: string | null
-}
-
-interface ActiveRedRollbackDetails {
-  code: 'ACTIVE_RED_CARD_COMPETITORS_REQUIRE_ROLLBACK'
-  block_id: number
-  competitors: ActiveRedRollbackCompetitor[]
-}
+export type { TournamentBackwardConfirmation } from './useTournamentBackwardConfirmation'
 
 interface FightScoreUpdatePayload {
   fightId: number
@@ -69,30 +51,22 @@ interface FightScoreUpdatePayload {
   }
 }
 
-const REPORT_DOWNLOAD_TIMEOUT_MS = 120000
-const OLYMPIC_BRACKET_SIZES = [4, 8, 16] as const
-
-const toDateInputValue = (date: Date) => {
-  const parsed = new Date(date)
-  const year = parsed.getUTCFullYear()
-  const month = String(parsed.getUTCMonth() + 1).padStart(2, '0')
-  const day = String(parsed.getUTCDate()).padStart(2, '0')
-
-  return `${year}-${month}-${day}`
+interface OlympicSlotSwapPayload {
+  blockId: number
+  sourcePosition: number
+  targetPosition: number
 }
 
-const isReportErrorData = (value: unknown): value is ReportErrorData =>
-  typeof value === 'object' && value !== null
+interface OlympicRoundPayload {
+  blockId: number
+  round: number
+}
 
-const isActiveRedRollbackDetails = (value: unknown): value is ActiveRedRollbackDetails =>
-  typeof value === 'object' &&
-  value !== null &&
-  'code' in value &&
-  value.code === 'ACTIVE_RED_CARD_COMPETITORS_REQUIRE_ROLLBACK' &&
-  'block_id' in value &&
-  typeof value.block_id === 'number' &&
-  'competitors' in value &&
-  Array.isArray(value.competitors)
+interface OlympicRoundResultsPayload extends OlympicRoundPayload {
+  fights: FightData[]
+}
+
+const OLYMPIC_BRACKET_SIZES = [4, 8, 16] as const
 
 export const useTournamentPage = (tournamentId: Ref<number>) => {
   const tournamentsListStore = useTournamentsListStore()
@@ -110,11 +84,16 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
   const canEdit = hasAccess()
   const canDeleteCards = Boolean(hasAdminAccess())
   const isNominationLoading = ref(false)
-  const isReportDownloading = ref(false)
   const isCardsOpen = ref(true)
   const isMarshalRegistrationOpen = ref(false)
-  const blockOpenStates = reactive<Record<string, boolean>>({})
-  const backwardConfirmation = ref<TournamentBackwardConfirmation | null>(null)
+  const olympicPairsFixingByBlockId = reactive<Record<number, boolean>>({})
+  const {
+    confirmation: backwardConfirmation,
+    close: closeBackwardConfirmation,
+    request: requestBackwardConfirmation,
+    runConfirmed: runConfirmedBackwardAction
+  } = useTournamentBackwardConfirmation()
+  const { getBlockIsOpen, setBlockIsOpen } = useTournamentBlockOpenState(tournamentId, activeTab)
   let nominationLoadRequestId = 0
 
   const currentLanguage = computed(() => i18next.language)
@@ -125,20 +104,16 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
     return `${tData(tournament.value.country, currentLanguage.value)}, ${tData(tournament.value.city, currentLanguage.value)},
       ${dateToString(tournament.value.event_date)}`
   })
-
-  const closeBackwardConfirmation = () => {
-    backwardConfirmation.value = null
-  }
-
-  const requestBackwardConfirmation = (mainText: string, action: () => Promise<void>) => {
-    backwardConfirmation.value = { mainText, action }
-  }
-
-  const runConfirmedBackwardAction = async () => {
-    const action = backwardConfirmation.value?.action
-    closeBackwardConfirmation()
-    await action?.()
-  }
+  const {
+    isDownloading: isReportDownloading,
+    getReportErrorMessage,
+    download: downloadTournamentReport
+  } = useTournamentReportDownload({
+    tournamentId,
+    tournamentName,
+    apiUiStore,
+    hasTournament: () => Boolean(tournament.value)
+  })
 
   const getRouteNominationId = () => {
     const rawNomination = route.query.nomination
@@ -202,6 +177,19 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
   const pendingTie = computed(() => competitionStore.getPendingTie)
   const tournamentCards = computed(() => cardsStore.tournamentCards)
   const tournamentMarshals = computed(() => tournamentMarshalsStore.tournamentMarshals)
+  const {
+    cardIssueDate,
+    activeCardTypes,
+    attachedCardCountByFightId,
+    getRedCardGroupFighterKeys,
+    getBlockDeletionCounts,
+    getOlympicRoundDeletionCounts
+  } = useTournamentCardsState({
+    tournament,
+    activeTab,
+    blocks,
+    cardsStore
+  })
   const hasBlockingGroupAdvancementTie = computed(
     () => Boolean(pendingTie.value) && pendingTie.value?.scope !== 'OLYMPIC_THIRD'
   )
@@ -242,66 +230,6 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
     canShowTournamentMarshalSelector(marshalRegistrationState.value)
   )
 
-  const cardIssueDate = computed(() =>
-    tournament.value?.event_date
-      ? toDateInputValue(tournament.value.event_date)
-      : toDateInputValue(new Date())
-  )
-
-  const tournamentCardCheckDate = computed(() => {
-    if (tournament.value?.event_date) return tournament.value.event_date
-    return new Date()
-  })
-
-  const isCardActive = (receivedAt: string, expiresAt: string) => {
-    const checkDate = new Date(tournamentCardCheckDate.value).setHours(0, 0, 0, 0)
-    const received = new Date(receivedAt).setHours(0, 0, 0, 0)
-    const expires = new Date(expiresAt).setHours(0, 0, 0, 0)
-
-    return received <= checkDate && expires >= checkDate
-  }
-
-  const activeCardTypes = computed<Partial<Record<number, DisciplinaryCardStatus>>>(() => {
-    const statuses: Partial<Record<number, DisciplinaryCardStatus>> = {}
-    const priority = (status: DisciplinaryCardStatus) =>
-      status.type === 'RED' ? (status.active ? 3 : 2) : 1
-
-    for (const card of cardsStore.tournamentCards) {
-      if (!isCardActive(card.received_at, card.expires_at)) continue
-      if (card.type === 'YELLOW' && !card.active) continue
-      const nextStatus: DisciplinaryCardStatus = {
-        type: card.type,
-        active: card.active
-      }
-      const currentStatus = statuses[card.fighter_id]
-      if (!currentStatus || priority(nextStatus) > priority(currentStatus)) {
-        statuses[card.fighter_id] = nextStatus
-      }
-    }
-
-    return statuses
-  })
-
-  const getRedCardGroupFighterKeys = (block: CompetitionBlock) => {
-    const keys = new Set<string>()
-
-    for (const card of cardsStore.tournamentCards) {
-      if (
-        card.type !== 'RED' ||
-        !card.active ||
-        card.nomination_id !== activeTab.value ||
-        card.fight_stage !== block.stage ||
-        !card.group_name ||
-        !isCardActive(card.received_at, card.expires_at)
-      ) {
-        continue
-      }
-      keys.add(`${card.group_name}:${card.fighter_id}`)
-    }
-
-    return keys
-  }
-
   const activeGroupBlockComplete = computed(() => {
     if (!activeBlock.value || activeBlock.value.type !== 'GROUP') return false
     return areFightResultsReady(activeBlock.value.fights)
@@ -311,24 +239,6 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
     return Boolean(activeBlock.value?.type === 'GROUP' && activeBlock.value.fights.length > 0)
   })
 
-  const attachedCardCountByFightId = computed<Record<number, number>>(() => {
-    const counts: Record<number, number> = {}
-    for (const card of cardsStore.tournamentCards) {
-      counts[card.fight_id] = (counts[card.fight_id] ?? 0) + 1
-    }
-    return counts
-  })
-
-  const getBlockDeletionCounts = (blockId: number) => {
-    const fights = blocks.value.find((block) => block.id === blockId)?.fights ?? []
-    return {
-      fights: fights.length,
-      cards: fights.reduce(
-        (total, fight) => total + (attachedCardCountByFightId.value[fight.id] ?? 0),
-        0
-      )
-    }
-  }
 
   const activeOlympicFinalResultsFixed = computed(() => {
     if (!activeBlock.value || activeBlock.value.type !== 'OLYMPIC') return false
@@ -413,6 +323,18 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
     }
   }
 
+  const setActiveTab = (value: number) => {
+    activeTab.value = value
+  }
+
+  const setCompetitorsListOpen = (value: boolean) => {
+    isCompetitorsListOpen.value = value
+  }
+
+  const setCardsOpen = (value: boolean) => {
+    isCardsOpen.value = value
+  }
+
   const removeCompetitor = async (fighterId: number, nominationId: number) => {
     const competitor = competitionStore.tournamentCompetitors.find(
       (item) => item.fighter_id === fighterId && item.nomination_id === nominationId
@@ -448,11 +370,119 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
     await competitionStore.resolveTie(pendingTie, orderedCompetitorIds)
   }
 
-  const getActiveRedRollbackDetails = (error: unknown) => {
-    const responseData = (error as ApiErrorWithResponse).response?.data
+  const swapOlympicSlots = async ({
+    blockId,
+    sourcePosition,
+    targetPosition
+  }: OlympicSlotSwapPayload) => {
+    await competitionStore.swapBracketSlots(blockId, sourcePosition, targetPosition)
+  }
 
-    if (!isReportErrorData(responseData)) return null
-    return isActiveRedRollbackDetails(responseData.details) ? responseData.details : null
+  const setOlympicPairsFixing = (blockId: number, isFixing: boolean) => {
+    if (isFixing) {
+      olympicPairsFixingByBlockId[blockId] = true
+      return
+    }
+
+    delete olympicPairsFixingByBlockId[blockId]
+  }
+
+  const getOlympicPairsFixing = (block: CompetitionBlock) =>
+    Boolean(olympicPairsFixingByBlockId[block.id])
+
+  const fixOlympicPairs = async (blockId: number) => {
+    if (olympicPairsFixingByBlockId[blockId]) return
+
+    setOlympicPairsFixing(blockId, true)
+    try {
+      await competitionStore.generateOlympicFights(blockId)
+    } catch (error: unknown) {
+      const details = getActiveRedRollbackDetails(error)
+      if (details) {
+        requestActiveRedRollback(details)
+        return
+      }
+      throw error
+    } finally {
+      setOlympicPairsFixing(blockId, false)
+      await refreshCardsAndCompetition()
+    }
+  }
+
+  const fixOlympicRoundResults = async ({
+    blockId,
+    round,
+    fights
+  }: OlympicRoundResultsPayload) => {
+    try {
+      await competitionStore.fixResults(blockId, fights, round)
+    } finally {
+      await refreshCardsAndCompetition()
+    }
+  }
+
+  const cancelOlympicRoundResultsFixation = ({ blockId, round }: OlympicRoundPayload) => {
+    requestBackwardConfirmation(i18next.t('tournamentPageConfirmCancelResultsFixation'), async () => {
+      try {
+        await competitionStore.cancelResultsFixation(blockId, round)
+      } finally {
+        await refreshCardsAndCompetition()
+      }
+    })
+  }
+
+  const cancelOlympicPairFixation = ({ blockId, round }: OlympicRoundPayload) => {
+    requestBackwardConfirmation(
+      i18next.t('tournamentPageConfirmCancelPairFixation', getOlympicRoundDeletionCounts(blockId, round)),
+      async () => {
+        try {
+          await competitionStore.cancelFightsFixation(blockId, round)
+        } finally {
+          await refreshCardsAndCompetition()
+        }
+      }
+    )
+  }
+
+  const rollbackOlympicRound = ({ blockId, round }: OlympicRoundPayload) => {
+    requestBackwardConfirmation(
+      i18next.t('tournamentPageConfirmReturnPreviousRound', getOlympicRoundDeletionCounts(blockId, round)),
+      async () => {
+        try {
+          await competitionStore.rollback(blockId, round)
+        } finally {
+          await refreshCardsAndCompetition()
+        }
+      }
+    )
+  }
+
+  const rollbackOlympicPendingPairs = (blockId: number) => {
+    const block = blocks.value.find((item) => item.id === blockId)
+    const latestRoundState = block
+      ? [...block.roundStates].sort((a, b) => b.round - a.round)[0]
+      : undefined
+    const round = latestRoundState?.round ?? 1
+    const confirmationKey =
+      latestRoundState?.round && latestRoundState.round > 1
+        ? 'tournamentPageConfirmReturnPreviousRound'
+        : 'tournamentPageConfirmReturnPreviousStage'
+
+    requestBackwardConfirmation(
+      i18next.t(confirmationKey, getOlympicRoundDeletionCounts(blockId, round)),
+      async () => {
+        try {
+          if (latestRoundState?.round && latestRoundState.round > 1) {
+            await competitionStore.rollback(blockId, latestRoundState.round)
+            return
+          }
+
+          await competitionStore.rollback(blockId)
+        } finally {
+          await refreshCardsAndCompetition()
+        }
+      }
+    )
   }
 
   const activeRedRollbackCompetitorNames = (competitors: ActiveRedRollbackCompetitor[]) =>
@@ -471,6 +501,21 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
     if (activeTab.value) {
       await competitionStore.loadCompetitionState()
     }
+  }
+
+  const createDisciplinaryCard = async (payload: CreateDisciplinaryCardPayload) => {
+    return cardsStore.createCard(payload)
+  }
+
+  const updateDisciplinaryCard = async (
+    id: number,
+    payload: UpdateDisciplinaryCardPayload
+  ) => {
+    return cardsStore.updateCard(id, payload)
+  }
+
+  const deleteDisciplinaryCard = async (id: number) => {
+    await cardsStore.deleteCard(id)
   }
 
   const requestActiveRedRollback = (details: ActiveRedRollbackDetails) => {
@@ -520,39 +565,6 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
     } finally {
       await refreshCardsAndCompetition()
     }
-  }
-
-  const getReportErrorMessage = async (error: unknown) => {
-    const responseData = (error as ApiErrorWithResponse).response?.data
-
-    if (responseData instanceof Blob) {
-      const text = await responseData.text()
-
-      try {
-        const parsed = JSON.parse(text) as ReportErrorData
-        const details = Array.isArray(parsed.details)
-          ? parsed.details.join(', ')
-          : typeof parsed.details === 'string'
-            ? parsed.details
-            : undefined
-
-        return details || parsed.error || text || 'Failed to download tournament report'
-      } catch {
-        return text || 'Failed to download tournament report'
-      }
-    }
-
-    if (isReportErrorData(responseData)) {
-      const details = Array.isArray(responseData.details)
-        ? responseData.details.join(', ')
-        : typeof responseData.details === 'string'
-          ? responseData.details
-          : undefined
-
-      return details || responseData.error || 'Failed to download tournament report'
-    }
-
-    return (error as ApiErrorWithResponse).message || 'Failed to download tournament report'
   }
 
   const fixGroupResults = async (blockId: number) => {
@@ -632,73 +644,12 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
     isMarshalRegistrationOpen.value = false
   }
 
-  const getFileNameFromContentDisposition = (contentDisposition?: string) => {
-    if (!contentDisposition) return `${tournamentName.value || 'tournament'}-results.pdf`
-
-    const encodedMatch = contentDisposition.match(/filename\*=UTF-8''([^;]+)/)
-    if (encodedMatch?.[1]) {
-      return decodeURIComponent(encodedMatch[1])
-    }
-
-    const plainMatch = contentDisposition.match(/filename="([^"]+)"/)
-    return plainMatch?.[1] ?? `${tournamentName.value || 'tournament'}-results.pdf`
-  }
-
-  const downloadTournamentReport = async (language: 'en' | 'ru') => {
-    if (!tournament.value || isReportDownloading.value) return
-
-    isReportDownloading.value = true
-
-    try {
-      const { data, headers } = await http.get(API_ROUTES.TOURNAMENTS.REPORT(tournamentId.value), {
-        params: { lang: language },
-        responseType: 'blob',
-        timeout: REPORT_DOWNLOAD_TIMEOUT_MS
-      })
-      const url = URL.createObjectURL(data)
-      const link = document.createElement('a')
-
-      link.href = url
-      link.download = getFileNameFromContentDisposition(headers['content-disposition'])
-      document.body.appendChild(link)
-      link.click()
-      link.remove()
-      URL.revokeObjectURL(url)
-    } catch (error) {
-      const message = await getReportErrorMessage(error)
-      apiUiStore.setError(message)
-      console.error('Failed to download tournament report:', message, error)
-    } finally {
-      isReportDownloading.value = false
-    }
-  }
-
   const blockTitle = (block: CompetitionBlock) => {
     const type =
       block.type === 'GROUP'
         ? i18next.t('tournamentPageGroupBlosk')
         : i18next.t('tournamentPageOlympicBlosk')
     return block.type === 'GROUP' ? `${type} ${block.stage}` : `${type}`
-  }
-
-  const blockStorageKey = (block: CompetitionBlock) =>
-    `HMBTR-collapsible-competition-block-${tournamentId.value}-${activeTab.value}-${block.id}`
-
-  const getBlockIsOpen = (block: CompetitionBlock) => {
-    const key = blockStorageKey(block)
-
-    if (!(key in blockOpenStates)) {
-      const stored = localStorage.getItem(key)
-      blockOpenStates[key] = stored === null ? true : stored === 'true'
-    }
-
-    return blockOpenStates[key]
-  }
-
-  const setBlockIsOpen = (block: CompetitionBlock, isOpen: boolean) => {
-    const key = blockStorageKey(block)
-    blockOpenStates[key] = isOpen
-    localStorage.setItem(key, String(isOpen))
   }
 
   onMounted(async () => {
@@ -829,6 +780,9 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
       startMarshalRegistration,
       finishMarshalRegistration,
       closeRegistration,
+      setActiveTab,
+      setCompetitorsListOpen,
+      setCardsOpen,
       removeCompetitor,
       openRegistration,
       createGroupBlock,
@@ -836,6 +790,13 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
       updateFightScore,
       updateGroups,
       resolveTie,
+      swapOlympicSlots,
+      fixOlympicPairs,
+      fixOlympicRoundResults,
+      cancelOlympicRoundResultsFixation,
+      cancelOlympicPairFixation,
+      rollbackOlympicRound,
+      rollbackOlympicPendingPairs,
       generateGroupFights,
       finishCompetition,
       fixGroupResults,
@@ -843,11 +804,17 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
       cancelGroupFightsFixation,
       rollbackBlock,
       refreshCardsAndCompetition,
+      createDisciplinaryCard,
+      updateDisciplinaryCard,
+      deleteDisciplinaryCard,
       blockTitle,
       getBlockIsOpen,
+      getOlympicPairsFixing,
       setBlockIsOpen,
       getRedCardGroupFighterKeys,
       downloadTournamentReport
     }
   }
 }
+
+export type TournamentPageState = ReturnType<typeof useTournamentPage>

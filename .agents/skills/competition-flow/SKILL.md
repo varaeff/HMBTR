@@ -37,9 +37,12 @@ Keep domain rules in backend logic helpers, not in Vue components. The frontend 
    in colocated helper modules next to the store rather than inside the facade.
    Mapping helpers should receive store-backed dependencies, such as fighter
    resolution, from the facade instead of calling Pinia stores directly.
-6. Keep `front/src/pages/TournamentPage.vue` as a route shell: parse route props, call `useTournamentPage`, and compose `widgets/Tournament*`.
-7. Keep tournament page orchestration in `front/src/composables/useTournamentPage.ts`; preserve competition refresh ordering there.
-8. Keep tournament feature UI in `front/src/widgets/Tournament*` modules that receive props and emit actions. Do not create new stores or call `http` from those widgets, except inside pre-existing nested widgets with established store usage.
+6. Keep `front/src/pages/TournamentPage.vue` as a route shell: parse route props, call `useTournamentPage`, and compose top-level tournament widgets. Use `widgets/tournament/TournamentCompetitionWorkspace` for the wide competition area instead of wiring every competition prop and event in the route shell.
+7. Keep tournament page orchestration in `front/src/composables/useTournamentPage.ts`; preserve competition refresh ordering there. Keep report download, backward confirmation, card-derived state, and persisted block-open state in narrower internal composables used by the facade.
+8. Keep tournament feature UI in `front/src/widgets/tournament/*` modules that receive props and emit actions. Do not create new stores or call `http` from those widgets, except inside pre-existing nested widgets with established store usage.
+   Olympic bracket lifecycle actions are orchestrated by
+   `useTournamentPage`; Olympic widgets emit typed payloads for pair swaps,
+   pair fixation, round result fixation/cancelation, and rollbacks.
 9. Gate action visibility from current loaded state, but do not construct bracket slots or final participant lists client-side.
 10. Add i18n keys for all visible action labels.
 
@@ -168,7 +171,10 @@ Keep domain rules in backend logic helpers, not in Vue components. The frontend 
 
 - `front/src/pages/TournamentPage.vue`
 - `front/src/composables/useTournamentPage.ts`
-- `front/src/widgets/Tournament*`
+- `front/src/composables/useTournamentCardsState.ts`
+- `front/src/composables/useTournamentReportDownload.ts`
+- `front/src/widgets/tournament/TournamentCompetitionWorkspace`
+- `front/src/widgets/tournament/*`
 - `front/src/stores/competition.ts`
 - `front/src/i18n/locales/en.json`
 - `front/src/i18n/locales/ru.json`

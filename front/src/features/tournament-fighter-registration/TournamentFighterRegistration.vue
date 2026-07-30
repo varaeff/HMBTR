@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { FightersSelect } from '@/widgets/tournament/FightersSelect'
 import type { Nomination, Tournament } from '@/model'
+import FightersSelect from './FightersSelect.vue'
 
 defineProps<{
   tournament: Tournament | null

@@ -2,6 +2,10 @@
 import { CollapsibleSection } from '@/components/ui/collapsible-section'
 import { TournamentCardsTable } from '@/widgets/tournament/DisciplinaryCards'
 import type { DisciplinaryCard, Tournament, TournamentMarshal } from '@/model'
+import type {
+  DeleteDisciplinaryCardAction,
+  UpdateDisciplinaryCardAction
+} from '@/widgets/tournament/types'
 
 defineProps<{
   tournament: Tournament | null
@@ -9,6 +13,8 @@ defineProps<{
   isOpen: boolean
   canManage: boolean
   canDelete: boolean
+  updateCard: UpdateDisciplinaryCardAction
+  deleteCard: DeleteDisciplinaryCardAction
   tournamentMarshals: TournamentMarshal[]
 }>()
 
@@ -29,6 +35,8 @@ const emit = defineEmits<{
       :cards="cards"
       :canManage="canManage"
       :canDelete="canDelete"
+      :updateCard="updateCard"
+      :deleteCard="deleteCard"
       :tournamentMarshals="tournamentMarshals"
       @changed="emit('changed')"
     />

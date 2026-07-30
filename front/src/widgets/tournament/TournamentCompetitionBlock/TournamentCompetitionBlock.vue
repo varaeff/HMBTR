@@ -7,7 +7,14 @@ import { NominationGroups } from '@/widgets/tournament/NominationGroups'
 import { OlympicBracket } from '@/widgets/tournament/OlympicBracket'
 import { areFightResultsReady, canShowGroupFightActions } from '@/lib/fightResult'
 import type { CompetitionBlock, Group, PendingTie, TournamentMarshal } from '@/model'
-import type { ActiveCardTypes, FightScoreUpdatePayload } from '@/widgets/tournament/types'
+import type {
+  ActiveCardTypes,
+  CreateDisciplinaryCardAction,
+  FightScoreUpdatePayload,
+  OlympicRoundPayload,
+  OlympicRoundResultsPayload,
+  OlympicSlotSwapPayload
+} from '@/widgets/tournament/types'
 
 const props = defineProps<{
   block: CompetitionBlock
@@ -25,7 +32,9 @@ const props = defineProps<{
   cardDate: string
   activeCardTypes: ActiveCardTypes
   tournamentMarshals: TournamentMarshal[]
+  createDisciplinaryCard: CreateDisciplinaryCardAction
   attachedCardCountByFightId: Record<number, number>
+  isOlympicPairsFixing: boolean
 }>()
 
 const emit = defineEmits<{
@@ -36,9 +45,15 @@ const emit = defineEmits<{
   (e: 'cancel-group-fights-fixation', blockId: number): void
   (e: 'cancel-group-results-fixation', blockId: number): void
   (e: 'card-issued'): void
-  (e: 'lifecycle-changed'): void
   (e: 'update-score', payload: FightScoreUpdatePayload): void
   (e: 'update-groups', groups: Group[]): void
+  (e: 'swap-olympic-slots', payload: OlympicSlotSwapPayload): void
+  (e: 'fix-olympic-pairs', blockId: number): void
+  (e: 'fix-olympic-round-results', payload: OlympicRoundResultsPayload): void
+  (e: 'cancel-olympic-round-results-fixation', payload: OlympicRoundPayload): void
+  (e: 'cancel-olympic-pair-fixation', payload: OlympicRoundPayload): void
+  (e: 'rollback-olympic-round', payload: OlympicRoundPayload): void
+  (e: 'rollback-olympic-pending-pairs', blockId: number): void
 }>()
 
 const isGroupBlockComplete = computed(
@@ -97,6 +112,7 @@ const isGroupBlockComplete = computed(
           :cardDate="cardDate"
           :activeCardTypes="activeCardTypes"
           :tournamentMarshals="tournamentMarshals"
+          :createDisciplinaryCard="createDisciplinaryCard"
           @update-score="(payload) => emit('update-score', payload)"
           @card-issued="emit('card-issued')"
         />
@@ -146,9 +162,20 @@ const isGroupBlockComplete = computed(
         :cardDate="cardDate"
         :activeCardTypes="activeCardTypes"
         :tournamentMarshals="tournamentMarshals"
+        :createDisciplinaryCard="createDisciplinaryCard"
         :attachedCardCountByFightId="attachedCardCountByFightId"
+        :isFixingPairs="isOlympicPairsFixing"
         @card-issued="emit('card-issued')"
-        @lifecycle-changed="emit('lifecycle-changed')"
+        @update-score="(payload) => emit('update-score', payload)"
+        @swap-slots="(payload) => emit('swap-olympic-slots', payload)"
+        @fix-pairs="(blockId) => emit('fix-olympic-pairs', blockId)"
+        @fix-round-results="(payload) => emit('fix-olympic-round-results', payload)"
+        @cancel-round-results-fixation="
+          (payload) => emit('cancel-olympic-round-results-fixation', payload)
+        "
+        @cancel-pair-fixation="(payload) => emit('cancel-olympic-pair-fixation', payload)"
+        @rollback-round="(payload) => emit('rollback-olympic-round', payload)"
+        @rollback-pending-pairs="(blockId) => emit('rollback-olympic-pending-pairs', blockId)"
       />
     </CollapsibleSection>
   </section>

@@ -3,7 +3,11 @@ import { computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { FightCard } from '@/widgets/tournament/FightCard'
 import type { BlockData, DisciplinaryCardStatus, TournamentMarshal } from '@/model'
-import type { FightScoreDraftUpdate, FightScoreUpdatePayload } from '@/widgets/tournament/types'
+import type {
+  CreateDisciplinaryCardAction,
+  FightScoreDraftUpdate,
+  FightScoreUpdatePayload
+} from '@/widgets/tournament/types'
 
 const props = defineProps<{
   hasAccess: boolean
@@ -12,6 +16,7 @@ const props = defineProps<{
   cardDate?: string
   activeCardTypes?: Partial<Record<number, DisciplinaryCardStatus>>
   tournamentMarshals?: TournamentMarshal[]
+  createDisciplinaryCard?: CreateDisciplinaryCardAction
   blockId?: number
   blocksData: BlockData[]
 }>()
@@ -68,6 +73,7 @@ const handleScoreUpdate = (
           :cardDate="cardDate"
           :activeCardTypes="activeCardTypes"
           :tournamentMarshals="tournamentMarshals"
+          :createDisciplinaryCard="createDisciplinaryCard"
           @update:score="(scores) => handleScoreUpdate(fight.id, fight.number, scores)"
           @card-issued="emit('card-issued')"
         />

@@ -6,7 +6,6 @@ import i18next from 'i18next'
 import I18NextVue from 'i18next-vue'
 import TournamentCardsTable from './TournamentCardsTable.vue'
 import type { DisciplinaryCard, TournamentMarshal } from '@/model'
-import { useDisciplinaryCardsStore } from '@/stores/disciplinaryCards'
 
 const createI18n = async () => {
   const instance = i18next.createInstance()
@@ -165,6 +164,11 @@ const tournamentMarshals: TournamentMarshal[] = [
   }
 ]
 
+const createCardActions = (result: DisciplinaryCard = card) => ({
+  updateCard: vi.fn().mockResolvedValue(result),
+  deleteCard: vi.fn().mockResolvedValue(undefined)
+})
+
 describe('TournamentCardsTable', () => {
   it('shows tournament card columns matching the PDF card summary', async () => {
     const pinia = createPinia()
@@ -175,7 +179,8 @@ describe('TournamentCardsTable', () => {
       props: {
         cards: [card],
         canManage: false,
-        canDelete: false
+        canDelete: false,
+        ...createCardActions()
       },
       global: {
         plugins: [[I18NextVue, { i18next: instance }], pinia],
@@ -221,7 +226,8 @@ describe('TournamentCardsTable', () => {
       props: {
         cards: [{ ...card, can_manage: false, can_delete: false }],
         canManage: true,
-        canDelete: true
+        canDelete: true,
+        ...createCardActions()
       },
       global: {
         plugins: [[I18NextVue, { i18next: instance }], pinia],
@@ -254,6 +260,7 @@ describe('TournamentCardsTable', () => {
         ],
         canManage: false,
         canDelete: false,
+        ...createCardActions(),
         mode: 'fighter'
       },
       global: {
@@ -292,7 +299,8 @@ describe('TournamentCardsTable', () => {
           }
         ],
         canManage: false,
-        canDelete: false
+        canDelete: false,
+        ...createCardActions()
       },
       global: {
         plugins: [[I18NextVue, { i18next: instance }], pinia],
@@ -326,7 +334,8 @@ describe('TournamentCardsTable', () => {
       props: {
         cards: [card],
         canManage: false,
-        canDelete: true
+        canDelete: true,
+        ...createCardActions()
       },
       global: {
         plugins: [[I18NextVue, { i18next: instance }], pinia],
@@ -355,12 +364,14 @@ describe('TournamentCardsTable', () => {
       active: false,
       reason: 'closed yellow'
     }
+    const actions = createCardActions(inactiveYellowCard)
 
     const wrapper = mount(TournamentCardsTable, {
       props: {
         cards: [inactiveYellowCard],
         canManage: true,
         canDelete: false,
+        ...actions,
         mode: 'fighter',
         tournamentMarshalsByTournamentId: { 1: tournamentMarshals }
       },
@@ -373,15 +384,12 @@ describe('TournamentCardsTable', () => {
       }
     })
 
-    const cardsStore = useDisciplinaryCardsStore()
-    const updateCard = vi.spyOn(cardsStore, 'updateCard').mockResolvedValue(inactiveYellowCard)
-
     await wrapper.find('[data-slot="checkbox"]').trigger('click')
     await wrapper.find('button[title="Edit"]').trigger('click')
     await wrapper.find('input[type="text"], input:not([type])').setValue('updated closed yellow')
     await wrapper.find('button[title="Save"]').trigger('click')
 
-    expect(updateCard).toHaveBeenCalledWith(3, {
+    expect(actions.updateCard).toHaveBeenCalledWith(3, {
       type: 'YELLOW',
       reason: 'updated closed yellow',
       marshal_id: 10,
@@ -402,12 +410,14 @@ describe('TournamentCardsTable', () => {
       expires_at_locked: true,
       reason: 'closed by red'
     }
+    const actions = createCardActions(lockedYellowCard)
 
     const wrapper = mount(TournamentCardsTable, {
       props: {
         cards: [lockedYellowCard],
         canManage: true,
         canDelete: false,
+        ...actions,
         mode: 'fighter',
         tournamentMarshalsByTournamentId: { 1: tournamentMarshals }
       },
@@ -420,9 +430,6 @@ describe('TournamentCardsTable', () => {
       }
     })
 
-    const cardsStore = useDisciplinaryCardsStore()
-    const updateCard = vi.spyOn(cardsStore, 'updateCard').mockResolvedValue(lockedYellowCard)
-
     await wrapper.find('[data-slot="checkbox"]').trigger('click')
     await wrapper.find('button[title="Edit"]').trigger('click')
 
@@ -432,7 +439,7 @@ describe('TournamentCardsTable', () => {
     await wrapper.find('input[type="text"], input:not([type])').setValue('updated closed by red')
     await wrapper.find('button[title="Save"]').trigger('click')
 
-    expect(updateCard).toHaveBeenCalledWith(4, {
+    expect(actions.updateCard).toHaveBeenCalledWith(4, {
       type: 'YELLOW',
       reason: 'updated closed by red',
       marshal_id: 10,
@@ -446,12 +453,14 @@ describe('TournamentCardsTable', () => {
     const pinia = createPinia()
     setActivePinia(pinia)
     const instance = await createI18n()
+    const actions = createCardActions()
 
     const wrapper = mount(TournamentCardsTable, {
       props: {
         cards: [card],
         canManage: true,
         canDelete: false,
+        ...actions,
         mode: 'fighter',
         tournamentMarshalsByTournamentId: { 1: tournamentMarshals }
       },
@@ -482,16 +491,13 @@ describe('TournamentCardsTable', () => {
     expect(dateInputs[1].attributes('disabled')).toBeUndefined()
     expect(expiresAtInput.value).toBe('2026-06-19')
 
-    const cardsStore = useDisciplinaryCardsStore()
-    const updateCard = vi.spyOn(cardsStore, 'updateCard').mockResolvedValue(card)
-
     await typeButton.trigger('click')
     const saveButton = wrapper.find('button[title="Save"]')
 
     expect(saveButton.exists()).toBe(true)
     await saveButton.trigger('click')
 
-    expect(updateCard).toHaveBeenCalledWith(1, {
+    expect(actions.updateCard).toHaveBeenCalledWith(1, {
       type: 'RED',
       reason: 'test',
       marshal_id: 10,
@@ -505,12 +511,14 @@ describe('TournamentCardsTable', () => {
     const pinia = createPinia()
     setActivePinia(pinia)
     const instance = await createI18n()
+    const actions = createCardActions()
 
     const wrapper = mount(TournamentCardsTable, {
       props: {
         cards: [card],
         canManage: true,
         canDelete: false,
+        ...actions,
         tournamentMarshals
       },
       global: {
@@ -520,9 +528,6 @@ describe('TournamentCardsTable', () => {
         }
       }
     })
-
-    const cardsStore = useDisciplinaryCardsStore()
-    const updateCard = vi.spyOn(cardsStore, 'updateCard').mockResolvedValue(card)
 
     await wrapper.find('button[title="Edit"]').trigger('click')
     const marshalSelect = wrapper.find<HTMLSelectElement>(
@@ -535,7 +540,7 @@ describe('TournamentCardsTable', () => {
     await marshalSelect.setValue('11')
     await wrapper.find('button[title="Save"]').trigger('click')
 
-    expect(updateCard).toHaveBeenCalledWith(1, {
+    expect(actions.updateCard).toHaveBeenCalledWith(1, {
       type: 'YELLOW',
       reason: 'test',
       marshal_id: 11,
@@ -554,12 +559,14 @@ describe('TournamentCardsTable', () => {
       can_change_result_fields: false,
       can_delete: false
     }
+    const actions = createCardActions(fixedResultCard)
 
     const wrapper = mount(TournamentCardsTable, {
       props: {
         cards: [fixedResultCard],
         canManage: true,
         canDelete: true,
+        ...actions,
         tournamentMarshals
       },
       global: {
@@ -569,9 +576,6 @@ describe('TournamentCardsTable', () => {
         }
       }
     })
-
-    const cardsStore = useDisciplinaryCardsStore()
-    const updateCard = vi.spyOn(cardsStore, 'updateCard').mockResolvedValue(fixedResultCard)
 
     expect(wrapper.find('button[title="Edit"]').exists()).toBe(true)
     expect(wrapper.find('button[title="Delete"]').exists()).toBe(false)
@@ -587,7 +591,7 @@ describe('TournamentCardsTable', () => {
       .setValue('11')
     await wrapper.find('button[title="Save"]').trigger('click')
 
-    expect(updateCard).toHaveBeenCalledWith(1, {
+    expect(actions.updateCard).toHaveBeenCalledWith(1, {
       reason: 'fixed metadata',
       marshal_id: 11
     })
@@ -612,7 +616,8 @@ describe('TournamentCardsTable', () => {
           }
         ],
         canManage: true,
-        canDelete: true
+        canDelete: true,
+        ...createCardActions()
       },
       global: {
         plugins: [[I18NextVue, { i18next: instance }], pinia],
@@ -641,12 +646,14 @@ describe('TournamentCardsTable', () => {
       reason: 'AUTO_RED_TWO_YELLOWS_SAME_TOURNAMENT',
       can_delete: false
     }
+    const actions = createCardActions(automaticCard)
 
     const wrapper = mount(TournamentCardsTable, {
       props: {
         cards: [automaticCard],
         canManage: true,
         canDelete: true,
+        ...actions,
         mode: 'fighter',
         tournamentMarshalsByTournamentId: { 1: tournamentMarshals }
       },
@@ -659,9 +666,6 @@ describe('TournamentCardsTable', () => {
       }
     })
 
-    const cardsStore = useDisciplinaryCardsStore()
-    const updateCard = vi.spyOn(cardsStore, 'updateCard').mockResolvedValue(automaticCard)
-
     expect(wrapper.find('button[title="Delete"]').exists()).toBe(false)
     await wrapper.find('button[title="Edit"]').trigger('click')
 
@@ -673,7 +677,7 @@ describe('TournamentCardsTable', () => {
     await expiresAtInput.setValue('2026-07-19')
     await wrapper.find('button[title="Save"]').trigger('click')
 
-    expect(updateCard).toHaveBeenCalledWith(1, {
+    expect(actions.updateCard).toHaveBeenCalledWith(1, {
       expires_at: '2026-07-19'
     })
 

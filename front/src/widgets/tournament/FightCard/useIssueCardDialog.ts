@@ -1,18 +1,13 @@
 import { ref, type ComputedRef } from 'vue'
 import type {
-  CreateDisciplinaryCardPayload,
-  DisciplinaryCard,
   DisciplinaryCardType,
   FightData,
   Fighter
 } from '@/model'
-
-interface IssueCardStore {
-  createCard: (payload: CreateDisciplinaryCardPayload) => Promise<DisciplinaryCard>
-}
+import type { CreateDisciplinaryCardAction } from '@/widgets/tournament/types'
 
 interface UseIssueCardDialogParams {
-  cardsStore: IssueCardStore
+  createCard: CreateDisciplinaryCardAction
   getFight: () => FightData
   getTournamentId: () => number | undefined
   cardDate: ComputedRef<string>
@@ -20,7 +15,7 @@ interface UseIssueCardDialogParams {
 }
 
 export const useIssueCardDialog = ({
-  cardsStore,
+  createCard,
   getFight,
   getTournamentId,
   cardDate,
@@ -50,7 +45,7 @@ export const useIssueCardDialog = ({
 
     try {
       isIssuing.value = true
-      await cardsStore.createCard({
+      await createCard({
         fighter_id: issueFighter.value.id,
         tournament_id: tournamentId,
         fight_id: getFight().id,

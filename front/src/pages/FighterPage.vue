@@ -34,7 +34,8 @@ import type {
   FighterProfileNomination,
   FighterProfileStats,
   TournamentMarshal,
-  TournamentMarshalDB
+  TournamentMarshalDB,
+  UpdateDisciplinaryCardPayload
 } from '@/model'
 import { tData } from '@/lib/utils'
 import { dateToString } from '@/lib/dateUtils'
@@ -205,6 +206,17 @@ const loadCardTournamentMarshals = async () => {
     ...tournamentMarshalsByTournamentId.value,
     ...Object.fromEntries(entries)
   }
+}
+
+const updateDisciplinaryCard = async (
+  id: number,
+  payload: UpdateDisciplinaryCardPayload
+) => {
+  return cardsStore.updateCard(id, payload)
+}
+
+const deleteDisciplinaryCard = async (id: number) => {
+  await cardsStore.deleteCard(id)
 }
 
 const fillEditForm = () => {
@@ -478,6 +490,8 @@ const saveFighter = async () => {
               :cards="cardsStore.fighterCards"
               :canManage="canManageCards"
               :canDelete="canDeleteCards"
+              :updateCard="updateDisciplinaryCard"
+              :deleteCard="deleteDisciplinaryCard"
               mode="fighter"
               :tournamentMarshalsByTournamentId="tournamentMarshalsByTournamentId"
               @changed="

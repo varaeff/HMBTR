@@ -1,6 +1,10 @@
 import type {
   CompetitionBlock,
+  CreateDisciplinaryCardPayload,
   DisciplinaryCardStatus,
+  DisciplinaryCard,
+  FightData,
+  UpdateDisciplinaryCardPayload,
   TournamentMarshal
 } from '@/model'
 import type { FightWarning, RoundScore } from '@shared/fightScoring'
@@ -8,6 +12,17 @@ import type { FightWarning, RoundScore } from '@shared/fightScoring'
 export type TournamentReportLanguage = 'en' | 'ru'
 
 export type ActiveCardTypes = Partial<Record<number, DisciplinaryCardStatus>>
+
+export type CreateDisciplinaryCardAction = (
+  payload: CreateDisciplinaryCardPayload
+) => Promise<DisciplinaryCard>
+
+export type UpdateDisciplinaryCardAction = (
+  id: number,
+  payload: UpdateDisciplinaryCardPayload
+) => Promise<DisciplinaryCard>
+
+export type DeleteDisciplinaryCardAction = (id: number) => Promise<void>
 
 export interface TournamentBlockDisplayProps {
   canEditCompetition: boolean
@@ -35,4 +50,19 @@ export interface FightScoreUpdatePayload {
   fightId: number
   fightNumber: number
   scores: FightScoreDraftUpdate
+}
+
+export interface OlympicSlotSwapPayload {
+  blockId: number
+  sourcePosition: number
+  targetPosition: number
+}
+
+export interface OlympicRoundPayload {
+  blockId: number
+  round: number
+}
+
+export interface OlympicRoundResultsPayload extends OlympicRoundPayload {
+  fights: FightData[]
 }

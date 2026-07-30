@@ -20,7 +20,11 @@ import type {
 } from '@/model'
 import type {
   ActiveCardTypes,
+  CreateDisciplinaryCardAction,
   FightScoreUpdatePayload,
+  OlympicRoundPayload,
+  OlympicRoundResultsPayload,
+  OlympicSlotSwapPayload,
   TournamentBlockOpenGetter,
   TournamentBlockTitleGetter,
   TournamentRedCardGroupKeyGetter
@@ -58,9 +62,11 @@ const props = defineProps<{
   canOfferOlympicWithThirdPlaces: boolean
   cardIssueDate: string
   tournamentMarshals: TournamentMarshal[]
+  createDisciplinaryCard: CreateDisciplinaryCardAction
   attachedCardCountByFightId: Record<number, number>
   blockTitle: TournamentBlockTitleGetter
   getBlockIsOpen: TournamentBlockOpenGetter
+  getOlympicPairsFixing: TournamentBlockOpenGetter
   getRedCardGroupFighterKeys: TournamentRedCardGroupKeyGetter
 }>()
 
@@ -79,11 +85,17 @@ const emit = defineEmits<{
   (e: 'cancel-group-results-fixation', blockId: number): void
   (e: 'finish-competition'): void
   (e: 'card-issued'): void
-  (e: 'lifecycle-changed'): void
   (e: 'update-block-open', block: CompetitionBlock, isOpen: boolean): void
   (e: 'update-fight-score', payload: FightScoreUpdatePayload): void
   (e: 'update-groups', groups: Group[]): void
   (e: 'resolve-tie', pendingTie: PendingTie, orderedCompetitorIds: number[]): void
+  (e: 'swap-olympic-slots', payload: OlympicSlotSwapPayload): void
+  (e: 'fix-olympic-pairs', blockId: number): void
+  (e: 'fix-olympic-round-results', payload: OlympicRoundResultsPayload): void
+  (e: 'cancel-olympic-round-results-fixation', payload: OlympicRoundPayload): void
+  (e: 'cancel-olympic-pair-fixation', payload: OlympicRoundPayload): void
+  (e: 'rollback-olympic-round', payload: OlympicRoundPayload): void
+  (e: 'rollback-olympic-pending-pairs', blockId: number): void
 }>()
 
 const { i18next } = useTranslation()
@@ -188,7 +200,9 @@ const competitorsListOpenModel = computed({
           :cardDate="cardIssueDate"
           :activeCardTypes="activeCardTypes"
           :tournamentMarshals="tournamentMarshals"
+          :createDisciplinaryCard="createDisciplinaryCard"
           :attachedCardCountByFightId="attachedCardCountByFightId"
+          :isOlympicPairsFixing="getOlympicPairsFixing(block)"
           @update:isOpen="(isOpen) => emit('update-block-open', block, isOpen)"
           @generate-group-fights="(blockId) => emit('generate-group-fights', blockId)"
           @rollback-block="(blockId) => emit('rollback-block', blockId)"
@@ -200,9 +214,21 @@ const competitorsListOpenModel = computed({
             (blockId) => emit('cancel-group-results-fixation', blockId)
           "
           @card-issued="emit('card-issued')"
-          @lifecycle-changed="emit('lifecycle-changed')"
           @update-score="(payload) => emit('update-fight-score', payload)"
           @update-groups="(groups) => emit('update-groups', groups)"
+          @swap-olympic-slots="(payload) => emit('swap-olympic-slots', payload)"
+          @fix-olympic-pairs="(blockId) => emit('fix-olympic-pairs', blockId)"
+          @fix-olympic-round-results="(payload) => emit('fix-olympic-round-results', payload)"
+          @cancel-olympic-round-results-fixation="
+            (payload) => emit('cancel-olympic-round-results-fixation', payload)
+          "
+          @cancel-olympic-pair-fixation="
+            (payload) => emit('cancel-olympic-pair-fixation', payload)
+          "
+          @rollback-olympic-round="(payload) => emit('rollback-olympic-round', payload)"
+          @rollback-olympic-pending-pairs="
+            (blockId) => emit('rollback-olympic-pending-pairs', blockId)
+          "
         />
 
         <TieResolver

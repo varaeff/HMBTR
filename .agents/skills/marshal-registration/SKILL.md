@@ -62,7 +62,7 @@ Use marshal naming in code and URLs. Visible UI text may say judges where the wo
 - `front/src/stores/marshalsList.ts`
 - `front/src/stores/tournamentMarshals.ts`
 - `front/src/pages/MarshalPage.vue`
-- `front/src/widgets/TournamentMarshals/TournamentMarshals.vue`
+- `front/src/widgets/marshal/TournamentMarshals/TournamentMarshals.vue`
 - Tournament PDF reports include registered marshals; keep report data and copy in sync when marshal assignment fields change.
 
 ## Maintenance

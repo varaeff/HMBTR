@@ -43,3 +43,5 @@ Ver 1.3
 - Неактивная красная сейчас не активируется
 
 Build оставил только существующие предупреждения Vite про browserslist/chunk size/dynamic import.
+
+Остались стандартные build warnings: устаревший Browserslist DB, Rollup PURE comment warning из @vueuse/core, и chunk size warning.

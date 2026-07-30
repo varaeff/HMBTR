@@ -13,7 +13,7 @@ Disciplinary cards are server-authoritative. The frontend may hide unavailable a
 
 Card changes commonly cross multiple layers:
 
-- `front/src/widgets/DisciplinaryCards/TournamentCardsTable.vue` for tournament and fighter card tables.
+- `front/src/widgets/tournament/DisciplinaryCards/TournamentCardsTable.vue` for tournament and fighter card tables.
 - `front/src/stores/disciplinaryCards.ts` for API calls and refresh behavior.
 - `front/src/model/index.ts` for shared frontend card payloads.
 - `backend/src/disciplinary-cards/dto/` for validated create/update payloads.
@@ -30,11 +30,16 @@ Keep card domain rules in the backend. Send explicit server-derived flags, such 
 2. Use DTOs to expose only fields that are intended to be editable.
 3. For list-only UI decisions, add explicit response fields from the backend instead of duplicating full lock rules in Vue.
 4. In `TournamentCardsTable.vue`, use the same component for tournament and fighter card views; branch only on display mode.
+   The table stays store-free: it receives `updateCard` and `deleteCard`
+   action props from the owning page or tournament orchestration.
 5. Refresh card state after create, update, or delete, and refresh competition state when red-card consequences can affect fights.
    - Card deletion must not eagerly reload a card collection inside the Pinia delete action. Deleting the last visible card can unmount the table before its `changed` event reaches the owning page. Let the page-level handler reload its card collection and any affected competition state.
 6. Add focused component tests for visible card actions and edit-field availability.
 7. Tournament-page card summaries should mirror the PDF card columns: type, fighter, nomination, fight number, and reason.
 8. Fight rows open a context menu on fighter right-click; the menu action opens the card issuance dialog.
+   `FightCard` and nested tournament fight widgets stay store-free for card
+   issuance; they receive a typed `createDisciplinaryCard` action and emit
+   `card-issued` so the owner can refresh cards and competition state.
 9. Fighter registration eligibility is server-derived in bulk. It combines open tournament nominations, gender compatibility, existing registrations, and active red cards evaluated on the tournament check date.
 10. Applying or updating an active red card uses the full red-card consequence path: forfeit formed unfinished fights, progress any Olympic block made ready by those forfeits, then reapply forfeits to newly created final or bronze fights.
 11. Group-stage red cards preserve earlier fights, forfeit the attached fight
@@ -112,15 +117,15 @@ Keep card domain rules in the backend. Send explicit server-derived flags, such 
 
 ## Related Files
 
-- `front/src/widgets/DisciplinaryCards/TournamentCardsTable.vue`
-- `front/src/widgets/DisciplinaryCards/TournamentCardsTable.spec.ts`
+- `front/src/widgets/tournament/DisciplinaryCards/TournamentCardsTable.vue`
+- `front/src/widgets/tournament/DisciplinaryCards/TournamentCardsTable.spec.ts`
 - `front/src/stores/disciplinaryCards.ts`
 - `front/src/model/index.ts`
 - `backend/src/disciplinary-cards/dto/create-disciplinary-card.dto.ts`
 - `backend/src/disciplinary-cards/dto/update-disciplinary-card.dto.ts`
 - `backend/src/disciplinary-cards/disciplinary-cards.service.ts`
 - `backend/src/competitors/competitors.service.ts`
-- `front/src/widgets/FightersSelect/FightersSelect.vue`
+- `front/src/features/tournament-fighter-registration/FightersSelect.vue`
 - `backend/src/competition/competition.service.ts`
 - `backend/src/tournaments/tournaments.service.ts` for tournament PDF report card summaries.
 

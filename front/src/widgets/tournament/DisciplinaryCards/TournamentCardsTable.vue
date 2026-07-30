@@ -3,18 +3,23 @@ import { computed, reactive, ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { RouterLink } from 'vue-router'
 import { Save, SquarePen, SquareX, Trash2 } from 'lucide-vue-next'
-import { useDisciplinaryCardsStore } from '@/stores/disciplinaryCards'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Table, TableHeader, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import { tData } from '@/lib/utils'
 import type { DisciplinaryCard, DisciplinaryCardType, TournamentMarshal } from '@/model'
+import type {
+  DeleteDisciplinaryCardAction,
+  UpdateDisciplinaryCardAction
+} from '@/widgets/tournament/types'
 import CardStatusIcon from './CardStatusIcon.vue'
 
 const props = defineProps<{
   cards: DisciplinaryCard[]
   canManage: boolean
   canDelete: boolean
+  updateCard: UpdateDisciplinaryCardAction
+  deleteCard: DeleteDisciplinaryCardAction
   mode?: 'tournament' | 'fighter'
   tournamentMarshals?: TournamentMarshal[]
   tournamentMarshalsByTournamentId?: Record<number, TournamentMarshal[]>
@@ -33,7 +38,6 @@ interface CardDraft {
   active: boolean
 }
 
-const cardsStore = useDisciplinaryCardsStore()
 const { i18next } = useTranslation()
 const editingId = ref<number | null>(null)
 const draft = reactive<CardDraft>({
@@ -141,7 +145,7 @@ const cancelEdit = () => {
 
 const saveEdit = async (card: DisciplinaryCard) => {
   if (isAutomaticCard(card)) {
-    await cardsStore.updateCard(
+    await props.updateCard(
       card.id,
       canEditExpiration(card) && draft.expires_at !== draft.initial_expires_at
         ? { expires_at: draft.expires_at }
@@ -153,7 +157,7 @@ const saveEdit = async (card: DisciplinaryCard) => {
   }
 
   const reasonPayload = isAutomaticCard(card) ? {} : { reason: draft.reason }
-  await cardsStore.updateCard(
+  await props.updateCard(
     card.id,
     isFighterMode.value
       ? {
@@ -175,7 +179,7 @@ const saveEdit = async (card: DisciplinaryCard) => {
 }
 
 const deleteCard = async (card: DisciplinaryCard) => {
-  await cardsStore.deleteCard(card.id)
+  await props.deleteCard(card.id)
   emit('changed')
 }
 </script>

@@ -33,6 +33,28 @@ Tournament widgets that only display or edit already-loaded competition data
 should receive that data through props and emit typed action payloads upward.
 Keep `useCompetitionStore` calls in `useTournamentPage` orchestration unless a
 widget is an explicitly accepted nested flow that already owns store usage.
+The same rule applies to disciplinary-card operations inside tournament
+widgets: card list/edit/delete/issue UI may own draft state and payload
+construction, but Pinia store calls belong to page/composable orchestration and
+are passed down as typed action props.
+When the route shell would need to pass a very wide competition prop/event
+contract, introduce a domain workspace widget such as
+`widgets/tournament/TournamentCompetitionWorkspace`. The workspace may adapt the
+grouped `useTournamentPage` return object to existing child widgets, but must
+not create stores or call `http`.
+Keep `useTournamentPage` as a facade over narrower internal composables for
+confirmation, report download, card-derived state, persisted block-open state,
+and lifecycle orchestration. This keeps the external page contract stable while
+improving locality inside the orchestration implementation.
+Large tournament widgets such as `OlympicBracket` should keep pure view
+derivation in colocated helpers and split repeated template regions into
+presentational subcomponents before lifting lifecycle actions upward.
+Tournament fighter registration is a feature flow, not a tournament display
+widget. Keep it under `features/tournament-fighter-registration`, with private
+select UI and feature-level store/router orchestration in a colocated composable.
+If the feature caches registration eligibility locally, keep it synchronized
+with external mutations of `competitionStore.tournamentCompetitors`, because
+competitor removal is orchestrated outside the feature.
 
 ## Constraints
 
