@@ -27,6 +27,13 @@ Group domain widgets by feature area:
 
 Keep widget public exports via local `index.ts` files. Import grouped widgets through their group path, for example `@/widgets/tournament/FightCard` or `@/widgets/fighter/FighterCard`.
 
+For complex widgets, keep the `.vue` file as a composition shell when possible. Move local UI state machines into colocated composables named after the domain behavior, for example `widgets/tournament/FightCard/useFightScoreDraft.ts`. The composable should own mutation, derived state, and focused tests; the Vue shell should wire props, emits, dialogs, and presentational child modules.
+
+Tournament widgets that only display or edit already-loaded competition data
+should receive that data through props and emit typed action payloads upward.
+Keep `useCompetitionStore` calls in `useTournamentPage` orchestration unless a
+widget is an explicitly accepted nested flow that already owns store usage.
+
 ## Constraints
 
 - Do not introduce `any`.

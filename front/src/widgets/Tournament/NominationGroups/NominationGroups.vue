@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
-import { useCompetitionStore } from '@/stores/competition'
 import { tData } from '@/lib/utils'
 import { Table, TableHeader, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import { CardStatusIcon } from '@/widgets/tournament/DisciplinaryCards'
@@ -9,15 +8,19 @@ import type { DisciplinaryCardStatus, GroupFighter, Group } from '@/model'
 
 const props = defineProps<{
   isFixed: boolean
-  groups?: Group[]
+  groups: Group[]
   activeCardTypes?: Partial<Record<number, DisciplinaryCardStatus>>
   redCardGroupFighterKeys?: Set<string>
   highlightedAdvancerCompetitorIds?: Set<number>
 }>()
-const competitionStore = useCompetitionStore()
+
+const emit = defineEmits<{
+  (e: 'update-groups', groups: Group[]): void
+}>()
+
 const { i18next } = useTranslation()
 const languageKey = computed(() => i18next.language)
-const displayGroups = computed(() => props.groups ?? competitionStore.getGroups)
+const displayGroups = computed(() => props.groups)
 
 const activeDrag = ref<{ fighter: GroupFighter; groupIdx: number; fighterIdx: number } | null>(null)
 
@@ -75,7 +78,7 @@ const moveFighter = (targetGroupIdx: number | 'new', targetFighterIdx?: number) 
       letter: getGroupLetter(startIndex + idx)
     }))
 
-  competitionStore.setGroups(updatedGroups)
+  emit('update-groups', updatedGroups)
 }
 
 const handleDrop = (e: DragEvent, gIdx: number | 'new', fIdx?: number) => {

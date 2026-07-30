@@ -12,6 +12,7 @@ import type {
   CompetitionBlock,
   CompetitionPlacement,
   Fighter,
+  Group,
   Nomination,
   PendingTie,
   Tournament,
@@ -19,6 +20,7 @@ import type {
 } from '@/model'
 import type {
   ActiveCardTypes,
+  FightScoreUpdatePayload,
   TournamentBlockOpenGetter,
   TournamentBlockTitleGetter,
   TournamentRedCardGroupKeyGetter
@@ -66,6 +68,7 @@ const emit = defineEmits<{
   (e: 'update:activeTab', value: number): void
   (e: 'update:isCompetitorsListOpen', value: boolean): void
   (e: 'close-registration'): void
+  (e: 'remove-competitor', fighterId: number, nominationId: number): void
   (e: 'open-registration'): void
   (e: 'create-group-block'): void
   (e: 'create-olympic-block', includeThirdPlaces?: boolean): void
@@ -78,6 +81,9 @@ const emit = defineEmits<{
   (e: 'card-issued'): void
   (e: 'lifecycle-changed'): void
   (e: 'update-block-open', block: CompetitionBlock, isOpen: boolean): void
+  (e: 'update-fight-score', payload: FightScoreUpdatePayload): void
+  (e: 'update-groups', groups: Group[]): void
+  (e: 'resolve-tie', pendingTie: PendingTie, orderedCompetitorIds: number[]): void
 }>()
 
 const { i18next } = useTranslation()
@@ -132,6 +138,7 @@ const competitorsListOpenModel = computed({
             :canCloseRegistration="hasTournamentMarshals"
             :closeRegistrationHint="$t('tournamentPageAddJudgesHint')"
             @close="emit('close-registration')"
+            @remove-competitor="(fighterId) => emit('remove-competitor', fighterId, activeTab)"
           />
         </CollapsibleSection>
 
@@ -194,9 +201,18 @@ const competitorsListOpenModel = computed({
           "
           @card-issued="emit('card-issued')"
           @lifecycle-changed="emit('lifecycle-changed')"
+          @update-score="(payload) => emit('update-fight-score', payload)"
+          @update-groups="(groups) => emit('update-groups', groups)"
         />
 
-        <TieResolver v-if="canEditCompetition" />
+        <TieResolver
+          v-if="canEditCompetition"
+          :pendingTie="pendingTie"
+          :blocks="blocks"
+          @resolve-tie="
+            (tie, orderedCompetitorIds) => emit('resolve-tie', tie, orderedCompetitorIds)
+          "
+        />
 
         <div
           v-if="canEditCompetition && activeOlympicFinalResultsFixed"

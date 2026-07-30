@@ -2,7 +2,6 @@
 import { computed, ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { tData } from '@/lib/utils'
-import { useCompetitionStore } from '@/stores/competition'
 import { Button } from '@/components/ui/button'
 import { CardStatusIcon } from '@/widgets/tournament/DisciplinaryCards'
 import type { DisciplinaryCardStatus, Fighter } from '@/model'
@@ -20,9 +19,9 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'close'): Promise<void> | void
+  (e: 'remove-competitor', fighterId: number): Promise<void> | void
 }>()
 
-const competitionStore = useCompetitionStore()
 const { i18next } = useTranslation()
 
 const isPending = ref(false)
@@ -47,12 +46,11 @@ const isCloseRegistrationDisabled = computed(
 )
 
 const removeCompetitor = async (fighterId: number) => {
-  const competitor = competitionStore.tournamentCompetitors.find(
-    (c) => c.fighter_id === fighterId && c.nomination_id === props.activeTab
-  )
-
-  if (competitor) {
-    await competitionStore.deleteCompetitor(competitor.id)
+  try {
+    isPending.value = true
+    await emit('remove-competitor', fighterId)
+  } finally {
+    isPending.value = false
   }
 }
 </script>

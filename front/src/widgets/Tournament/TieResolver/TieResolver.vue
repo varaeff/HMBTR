@@ -1,16 +1,24 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { Button } from '@/components/ui/button'
-import { useCompetitionStore } from '@/stores/competition'
 import { tData } from '@/lib/utils'
+import type { CompetitionBlock, GroupFighter, PendingTie } from '@/model'
 
-const competitionStore = useCompetitionStore()
-const pendingTie = computed(() => competitionStore.getPendingTie)
+const props = defineProps<{
+  pendingTie: PendingTie | null
+  blocks: CompetitionBlock[]
+}>()
+
+const emit = defineEmits<{
+  (e: 'resolve-tie', pendingTie: PendingTie, orderedCompetitorIds: number[]): void
+}>()
+
+const pendingTie = computed(() => props.pendingTie)
 const tiedFighters = computed(() => {
   const ids = new Set(pendingTie.value?.competitorIds ?? [])
   const groupId = pendingTie.value?.groupId
   const blockId = pendingTie.value?.blockId
-  const groups = competitionStore.getBlocks
+  const groups = props.blocks
     .filter((block) => blockId === undefined || block.id === blockId)
     .flatMap((block) => block.groups)
   const group = groupId === null ? null : groups.find((group) => group.id === groupId)
@@ -50,9 +58,18 @@ const move = (index: number, direction: -1 | 1) => {
 const fighterByCompetitorId = (competitorId: number) =>
   tiedFighters.value.find((fighter) => fighter.competitorId === competitorId)
 
+const orderedFighters = computed(() =>
+  order.value
+    .map((competitorId) => {
+      const fighter = fighterByCompetitorId(competitorId)
+      return fighter ? { competitorId, fighter } : null
+    })
+    .filter((item): item is { competitorId: number; fighter: GroupFighter } => item !== null)
+)
+
 const save = () => {
   if (!pendingTie.value) return
-  competitionStore.resolveTie(pendingTie.value, order.value)
+  emit('resolve-tie', pendingTie.value, order.value)
 }
 </script>
 
@@ -61,16 +78,14 @@ const save = () => {
     <h3 class="mb-3 text-center text-base font-semibold">{{ $t('tieResolverResolveTie') }}</h3>
     <div class="space-y-2">
       <div
-        v-for="(competitorId, index) in order"
+        v-for="({ competitorId, fighter }, index) in orderedFighters"
         :key="competitorId"
         class="flex items-center justify-between gap-3 rounded border px-3 py-2"
       >
         <div class="text-sm font-medium">
           {{ index + 1 }}.
-          <template v-if="fighterByCompetitorId(competitorId)">
-            {{ tData(fighterByCompetitorId(competitorId)!.surname) }}
-            {{ tData(fighterByCompetitorId(competitorId)!.name) }}
-          </template>
+          {{ tData(fighter.surname) }}
+          {{ tData(fighter.name) }}
         </div>
         <div class="flex gap-2">
           <Button variant="outline" size="sm" :disabled="index === 0" @click="move(index, -1)">

@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
-import { useCompetitionStore } from '@/stores/competition'
 import { FightCard } from '@/widgets/tournament/FightCard'
 import type { BlockData, DisciplinaryCardStatus, TournamentMarshal } from '@/model'
-import type { FightWarning, RoundScore } from '@shared/fightScoring'
+import type { FightScoreDraftUpdate, FightScoreUpdatePayload } from '@/widgets/tournament/types'
 
 const props = defineProps<{
   hasAccess: boolean
@@ -14,17 +13,15 @@ const props = defineProps<{
   activeCardTypes?: Partial<Record<number, DisciplinaryCardStatus>>
   tournamentMarshals?: TournamentMarshal[]
   blockId?: number
-  blocksData?: BlockData[]
+  blocksData: BlockData[]
 }>()
 
 const emit = defineEmits<{
   (e: 'card-issued'): void
+  (e: 'update-score', payload: FightScoreUpdatePayload): void
 }>()
 
-const competitionStore = useCompetitionStore()
-const blocks = computed(() =>
-  (props.blocksData ?? competitionStore.getFightsBlocks).filter((block) => block.fights.length > 0)
-)
+const blocks = computed(() => props.blocksData.filter((block) => block.fights.length > 0))
 
 const getGroupLabel = (letters: string[]) => {
   return letters.join(', ')
@@ -42,16 +39,12 @@ const languageKey = computed(() => i18next.language)
 const handleScoreUpdate = (
   fightId: number,
   fightNumber: number,
-  scores: {
-    roundScores?: RoundScore[]
-    warnings?: FightWarning[]
-  }
+  scores: FightScoreDraftUpdate
 ) => {
-  competitionStore.updateGlobalScore({
+  emit('update-score', {
     fightId,
     fightNumber,
-    roundScores: scores.roundScores,
-    warnings: scores.warnings
+    scores
   })
 }
 

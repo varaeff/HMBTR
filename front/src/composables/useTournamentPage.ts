@@ -25,8 +25,11 @@ import { API_ROUTES } from '@shared/routes'
 import type {
   CompetitionBlock,
   DisciplinaryCardStatus,
+  Group,
+  PendingTie,
   Tournament
 } from '@/model'
+import type { FightWarning, RoundScore } from '@shared/fightScoring'
 
 export interface TournamentBackwardConfirmation {
   mainText: string
@@ -55,6 +58,15 @@ interface ActiveRedRollbackDetails {
   code: 'ACTIVE_RED_CARD_COMPETITORS_REQUIRE_ROLLBACK'
   block_id: number
   competitors: ActiveRedRollbackCompetitor[]
+}
+
+interface FightScoreUpdatePayload {
+  fightId: number
+  fightNumber: number
+  scores: {
+    roundScores?: RoundScore[]
+    warnings?: FightWarning[]
+  }
 }
 
 const REPORT_DOWNLOAD_TIMEOUT_MS = 120000
@@ -401,12 +413,39 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
     }
   }
 
+  const removeCompetitor = async (fighterId: number, nominationId: number) => {
+    const competitor = competitionStore.tournamentCompetitors.find(
+      (item) => item.fighter_id === fighterId && item.nomination_id === nominationId
+    )
+
+    if (competitor) {
+      await competitionStore.deleteCompetitor(competitor.id)
+    }
+  }
+
   const createGroupBlock = () => {
     competitionStore.createGroupBlock()
   }
 
   const createOlympicBlock = (includeThirdPlaces = false) => {
     competitionStore.createOlympicBlock(includeThirdPlaces)
+  }
+
+  const updateFightScore = ({ fightId, fightNumber, scores }: FightScoreUpdatePayload) => {
+    competitionStore.updateGlobalScore({
+      fightId,
+      fightNumber,
+      roundScores: scores.roundScores,
+      warnings: scores.warnings
+    })
+  }
+
+  const updateGroups = (groups: Group[]) => {
+    competitionStore.setGroups(groups)
+  }
+
+  const resolveTie = async (pendingTie: PendingTie, orderedCompetitorIds: number[]) => {
+    await competitionStore.resolveTie(pendingTie, orderedCompetitorIds)
   }
 
   const getActiveRedRollbackDetails = (error: unknown) => {
@@ -790,9 +829,13 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
       startMarshalRegistration,
       finishMarshalRegistration,
       closeRegistration,
+      removeCompetitor,
       openRegistration,
       createGroupBlock,
       createOlympicBlock,
+      updateFightScore,
+      updateGroups,
+      resolveTie,
       generateGroupFights,
       finishCompetition,
       fixGroupResults,

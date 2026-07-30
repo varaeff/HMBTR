@@ -1,17 +1,9 @@
 import { describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { createPinia, setActivePinia } from 'pinia'
 import i18next from 'i18next'
 import I18NextVue from 'i18next-vue'
 import NominationGroups from './NominationGroups.vue'
 import type { DisciplinaryCardStatus, Group } from '@/model'
-
-vi.mock('@/stores/competition', () => ({
-  useCompetitionStore: () => ({
-    getGroups: [],
-    setGroups: vi.fn()
-  })
-}))
 
 const groups: Group[] = [
   {
@@ -60,8 +52,6 @@ const groups: Group[] = [
 
 describe('NominationGroups', () => {
   it('uses a translucent red row only in the subgroup where the red card was received', async () => {
-    const pinia = createPinia()
-    setActivePinia(pinia)
     const instance = i18next.createInstance()
     await instance.init({
       lng: 'en',
@@ -85,7 +75,7 @@ describe('NominationGroups', () => {
         redCardGroupFighterKeys: new Set(['A:1'])
       },
       global: {
-        plugins: [[I18NextVue, { i18next: instance }], pinia],
+        plugins: [[I18NextVue, { i18next: instance }]],
         stubs: {
           CardStatusIcon: true
         }

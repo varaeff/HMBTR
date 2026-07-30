@@ -32,6 +32,11 @@ Keep domain rules in backend logic helpers, not in Vue components. The frontend 
 3. Extend the DTO with explicit optional fields when the UI needs to request a variant.
 4. In `competition.service.ts`, load the active block inside the transaction, recompute rankings, validate constraints, then create/lock blocks.
 5. In `competition.ts` Pinia store, pass only the new explicit API flag and continue applying returned state with `applyCompetitionState`.
+   Keep `competition.ts` as the public Pinia facade. Raw backend-state mapping,
+   local result-draft persistence, and frontend fight-score recalculation live
+   in colocated helper modules next to the store rather than inside the facade.
+   Mapping helpers should receive store-backed dependencies, such as fighter
+   resolution, from the facade instead of calling Pinia stores directly.
 6. Keep `front/src/pages/TournamentPage.vue` as a route shell: parse route props, call `useTournamentPage`, and compose `widgets/Tournament*`.
 7. Keep tournament page orchestration in `front/src/composables/useTournamentPage.ts`; preserve competition refresh ordering there.
 8. Keep tournament feature UI in `front/src/widgets/Tournament*` modules that receive props and emit actions. Do not create new stores or call `http` from those widgets, except inside pre-existing nested widgets with established store usage.

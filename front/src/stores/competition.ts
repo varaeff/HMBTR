@@ -2,30 +2,22 @@ import { defineStore } from 'pinia'
 import http from '@/api/http'
 import type {
   BlockData,
-  BracketSlot,
   CompetitionBlock,
   CompetitionPlacement,
   Competitor,
   FightData,
-  Fighter,
   FighterRegistrationEligibility,
   Group,
-  GroupFighter,
   PendingTie
 } from '@/model'
 import { API_ROUTES } from '@shared/routes'
 import { useFightersListStore } from '@/stores/fightersList'
 import { updateGroupsStatistics } from '@/lib/groupsStatistic'
 import { buildSubmittedFightResult } from '@/lib/fightResult'
-import {
-  applyFightWarningBonuses,
-  evaluateFightScore,
-  getInitialRoundScores,
-  legacyRoundScoresFromColumns,
-  type FightScoringRules,
-  type FightWarning,
-  type RoundScore
-} from '@shared/fightScoring'
+import type { FightScoringRules, FightWarning, RoundScore } from '@shared/fightScoring'
+import { applyFightScoreDraft } from './competitionFightScoring'
+import { mapCompetitionState, type RawCompetitionState } from './competitionMapper'
+import { readFightResultDrafts, writeFightResultDrafts } from './competitionResultDrafts'
 
 interface CompetitionState {
   tournamentCompetitors: Competitor[]
@@ -45,439 +37,6 @@ interface UpdateGlobalScoreParams {
   fightNumber: number
   roundScores?: RoundScore[]
   warnings?: FightWarning[]
-}
-
-interface FightResultDraft {
-  blockId: number
-  roundScores?: RoundScore[]
-  warnings?: FightWarning[]
-}
-
-interface RawFighter {
-  id?: number
-  name?: string
-  surname?: string
-  patronymic?: string | null
-  birthday?: string | Date | null
-  city_id?: number | null
-  club_id?: number | null
-  pic?: string
-}
-
-interface RawCompetitor {
-  id: number
-  fighter_id: number
-  fighter?: RawFighter | null
-}
-
-interface RawFight {
-  id: number
-  fight_number: number
-  group_id?: number
-  competitor1: RawCompetitor
-  competitor2: RawCompetitor
-  competitor1_id?: number
-  competitor2_id?: number
-  competitor1_score: number
-  competitor2_score: number
-  competitor1_round1_score: number
-  competitor2_round1_score: number
-  competitor1_round2_score: number
-  competitor2_round2_score: number
-  competitor1_round3_score: number
-  competitor2_round3_score: number
-  competitor1_round4_score: number
-  competitor2_round4_score: number
-  winner_id?: number | null
-  forfeit_card_id?: number | null
-  bracket_round?: number
-  bracket_position?: number
-  is_bronze?: boolean
-  is_finished?: boolean
-  rounds?: 1 | 2 | 3
-  round_win?: boolean
-  warnings?: Array<{
-    competitor_id: number
-    round: number
-    reason: string
-  }>
-  round_scores?: Array<{
-    competitor1_score: number
-    competitor2_score: number
-  }>
-}
-
-interface RawGroupPlacement {
-  place: number
-  competitor_id: number
-}
-
-interface RawGroupCompetitor {
-  competitor: RawCompetitor
-}
-
-interface RawGroup {
-  id?: number
-  name: string
-  fighters?: RawGroupCompetitor[]
-  placements?: RawGroupPlacement[]
-}
-
-interface RawBracketSlot {
-  id: number
-  competitor_id: number
-  seed_position: number
-  slot_position: number
-  competitor: RawCompetitor
-}
-
-interface RawCompetitionBlock {
-  id: number
-  type: CompetitionBlock['type']
-  stage: number
-  status: CompetitionBlock['status']
-  lifecycle_state: CompetitionBlock['lifecycleState']
-  groups?: RawGroup[]
-  fights?: RawFight[]
-  bracket_slots?: RawBracketSlot[]
-  round_states?: Array<{
-    round: number
-    pairs_fixed: boolean
-    results_fixed: boolean
-  }>
-}
-
-interface RawCompetitionPlacement {
-  place: number
-  competitor_id: number
-  competitor: RawCompetitor
-}
-
-interface RawCompetitionState {
-  tournamentNomination?: {
-    is_open: boolean
-    nomination?: {
-      rounds: number
-      round_win: boolean
-    }
-  }
-  blocks?: RawCompetitionBlock[]
-  placements?: RawCompetitionPlacement[]
-  activeBlockId?: number | null
-  pendingTie?: PendingTie | null
-  isFinished?: boolean
-}
-
-const getFightResultDraftsKey = (tournamentId: number, nominationId: number) =>
-  `HMBTR-competition-result-drafts-${tournamentId}-${nominationId}`
-
-const readFightResultDrafts = (
-  tournamentId: number,
-  nominationId: number
-): Record<string, FightResultDraft> => {
-  const rawDrafts = localStorage.getItem(getFightResultDraftsKey(tournamentId, nominationId))
-  if (!rawDrafts) return {}
-
-  try {
-    return JSON.parse(rawDrafts)
-  } catch {
-    return {}
-  }
-}
-
-const writeFightResultDrafts = (
-  tournamentId: number,
-  nominationId: number,
-  drafts: Record<string, FightResultDraft>
-) => {
-  const key = getFightResultDraftsKey(tournamentId, nominationId)
-
-  if (!Object.keys(drafts).length) {
-    localStorage.removeItem(key)
-    return
-  }
-
-  localStorage.setItem(key, JSON.stringify(drafts))
-}
-
-const createFallbackFighter = (rawFighter?: RawFighter | null): Fighter => ({
-  id: rawFighter?.id ?? 0,
-  name: rawFighter?.name ?? '',
-  surname: rawFighter?.surname ?? '',
-  patronymic: rawFighter?.patronymic ?? undefined,
-  birthday: rawFighter?.birthday ? new Date(rawFighter.birthday) : null,
-  country: '',
-  city: rawFighter?.city_id ? String(rawFighter.city_id) : '',
-  club: rawFighter?.club_id ? String(rawFighter.club_id) : undefined,
-  pic: rawFighter?.pic
-})
-
-const evaluateFightWithWarnings = (
-  rules: FightScoringRules,
-  fight: {
-    competitor1Id?: number
-    competitor2Id?: number
-    fighter1Score: number
-    fighter2Score: number
-    roundScores: RoundScore[]
-    warnings?: FightWarning[]
-    forfeitCardId?: number | null
-  }
-) => {
-  if (fight.forfeitCardId) {
-    const evaluation = evaluateFightScore(
-      rules,
-      fight.roundScores.length
-        ? fight.roundScores
-        : [
-            {
-              competitor1Score: fight.fighter1Score,
-              competitor2Score: fight.fighter2Score
-            }
-          ]
-    )
-
-    return {
-      evaluation,
-      fighter1EffectiveScore: fight.fighter1Score,
-      fighter2EffectiveScore: fight.fighter2Score
-    }
-  }
-
-  const adjusted = applyFightWarningBonuses(
-    rules,
-    {
-      competitor1Id: fight.competitor1Id ?? 0,
-      competitor2Id: fight.competitor2Id ?? 0,
-      warnings: fight.warnings ?? []
-    },
-    fight.roundScores
-  )
-  const evaluation = evaluateFightScore(
-    rules,
-    adjusted.roundScores
-  )
-
-  return {
-    evaluation: adjusted.technicalLoserSide
-      ? {
-          ...evaluation,
-          winnerSide: adjusted.technicalLoserSide === 1 ? 2 : 1,
-          isValidResult: true,
-          error: null
-        }
-      : evaluation,
-    fighter1EffectiveScore: adjusted.aggregateScore.competitor1Score,
-    fighter2EffectiveScore: adjusted.aggregateScore.competitor2Score
-  }
-}
-
-const groupFighterFromCompetitor = (competitor: RawCompetitor): GroupFighter => {
-  const fightersStore = useFightersListStore()
-  const fighter =
-    fightersStore.getFighterById(competitor.fighter_id) ?? createFallbackFighter(competitor.fighter)
-
-  return {
-    ...fighter,
-    competitorId: competitor.id,
-    wins: 0,
-    diff: 0
-  }
-}
-
-const mapFight = (fight: RawFight, rules: FightScoringRules): FightData => {
-  const fightRules: FightScoringRules = {
-    rounds: fight.rounds ?? rules.rounds,
-    roundWin: fight.round_win ?? rules.roundWin
-  }
-  const warnings =
-    fight.warnings?.map((warning) => ({
-      competitorId: warning.competitor_id,
-      round: warning.round,
-      reason: warning.reason
-    })) ?? []
-  const relationRounds =
-    fight.round_scores?.map((score) => ({
-      competitor1Score: score.competitor1_score,
-      competitor2Score: score.competitor2_score
-    })) ?? []
-  const legacyRounds = legacyRoundScoresFromColumns(
-    fightRules,
-    {
-      competitor1Round1Score:
-        fightRules.rounds === 1 ? fight.competitor1_score : fight.competitor1_round1_score,
-      competitor2Round1Score:
-        fightRules.rounds === 1 ? fight.competitor2_score : fight.competitor2_round1_score,
-      competitor1Round2Score: fight.competitor1_round2_score,
-      competitor2Round2Score: fight.competitor2_round2_score,
-      competitor1Round3Score: fight.competitor1_round3_score,
-      competitor2Round3Score: fight.competitor2_round3_score,
-      competitor1Round4Score: fight.competitor1_round4_score,
-      competitor2Round4Score: fight.competitor2_round4_score
-    },
-    warnings
-  )
-  const storedRounds = relationRounds.length ? relationRounds : legacyRounds
-  const editableRounds = storedRounds.length ? storedRounds : getInitialRoundScores(fightRules)
-  const scored = evaluateFightWithWarnings(fightRules, {
-    competitor1Id: fight.competitor1_id,
-    competitor2Id: fight.competitor2_id,
-    fighter1Score: fight.competitor1_score,
-    fighter2Score: fight.competitor2_score,
-    roundScores: editableRounds,
-    warnings,
-    forfeitCardId: fight.forfeit_card_id
-  })
-
-  return {
-    id: fight.id,
-    number: fight.fight_number,
-    groupId: fight.group_id,
-    fighter1: groupFighterFromCompetitor(fight.competitor1),
-    fighter2: groupFighterFromCompetitor(fight.competitor2),
-    competitor1Id: fight.competitor1_id,
-    competitor2Id: fight.competitor2_id,
-    fighter1Score: fight.competitor1_score,
-    fighter2Score: fight.competitor2_score,
-    fighter1EffectiveScore: scored.fighter1EffectiveScore,
-    fighter2EffectiveScore: scored.fighter2EffectiveScore,
-    roundScores: editableRounds,
-    warnings,
-    rounds: fightRules.rounds,
-    roundWin: fightRules.roundWin,
-    isResultValid: Boolean(fight.forfeit_card_id) || scored.evaluation.isValidResult,
-    winnerId: fight.winner_id,
-    forfeitCardId: fight.forfeit_card_id,
-    bracketRound: fight.bracket_round,
-    bracketPosition: fight.bracket_position,
-    isBronze: fight.is_bronze,
-    isFinished: fight.is_finished
-  }
-}
-
-const buildGroupFightBlocks = (groups: Group[], fights: FightData[]): BlockData[] => {
-  const blocks: BlockData[] = []
-
-  for (let i = 0; i < groups.length; i += 2) {
-    const group1 = groups[i]
-    const group2 = groups[i + 1]
-    const letters = group2 ? [group1.letter, group2.letter] : [group1.letter]
-    const groupIds = new Set(
-      [group1.id, group2?.id].filter((groupId): groupId is number => groupId !== undefined)
-    )
-    const pairedGroups = group2 ? [group1, group2] : [group1]
-    const groupFighterIds = new Set(
-      pairedGroups.flatMap((group) => group.fighters.map((fighter) => fighter.id))
-    )
-
-    blocks.push({
-      letters,
-      fights: fights.filter((fight) => {
-        if (fight.groupId && groupIds.has(fight.groupId)) return true
-        return groupFighterIds.has(fight.fighter1.id) && groupFighterIds.has(fight.fighter2.id)
-      })
-    })
-  }
-
-  return blocks
-}
-
-const mapCompetitionState = (
-  payload: RawCompetitionState,
-  drafts: Record<string, FightResultDraft> = {}
-) => {
-  const scoringRules: FightScoringRules = {
-    rounds: (payload.tournamentNomination?.nomination?.rounds ?? 1) as FightScoringRules['rounds'],
-    roundWin: payload.tournamentNomination?.nomination?.round_win ?? false
-  }
-  const blocks: CompetitionBlock[] = (payload.blocks ?? []).map((block) => {
-    const groups: Group[] = (block.groups ?? []).map((group) => ({
-      id: group.id,
-      letter: group.name,
-      fighters: (group.fighters ?? []).map((gf) => groupFighterFromCompetitor(gf.competitor)),
-      placements: (group.placements ?? []).map((placement) => ({
-        place: placement.place,
-        competitorId: placement.competitor_id
-      }))
-    }))
-    const fights = (block.fights ?? []).map((rawFight) => {
-      const fight = mapFight(rawFight, scoringRules)
-      const draft = drafts[String(fight.id)]
-
-      if (draft && !fight.isFinished) {
-        const roundScores = draft.roundScores ?? fight.roundScores
-        const warnings = draft.warnings ?? fight.warnings ?? []
-        const scored = evaluateFightWithWarnings({ rounds: fight.rounds, roundWin: fight.roundWin }, {
-          competitor1Id: fight.competitor1Id,
-          competitor2Id: fight.competitor2Id,
-          fighter1Score: fight.fighter1Score,
-          fighter2Score: fight.fighter2Score,
-          roundScores,
-          warnings,
-          forfeitCardId: fight.forfeitCardId
-        })
-        fight.roundScores = roundScores
-        fight.warnings = warnings
-        fight.fighter1Score = scored.evaluation.competitor1Total
-        fight.fighter2Score = scored.evaluation.competitor2Total
-        fight.fighter1EffectiveScore = scored.fighter1EffectiveScore
-        fight.fighter2EffectiveScore = scored.fighter2EffectiveScore
-        fight.isResultValid = scored.evaluation.isValidResult
-        fight.winnerId =
-          scored.evaluation.winnerSide === 1
-            ? fight.competitor1Id
-            : scored.evaluation.winnerSide === 2
-              ? fight.competitor2Id
-              : null
-      }
-
-      return fight
-    })
-    const bracketSlots: BracketSlot[] = (block.bracket_slots ?? []).map((slot) => ({
-      id: slot.id,
-      competitorId: slot.competitor_id,
-      seedPosition: slot.seed_position,
-      slotPosition: slot.slot_position,
-      fighter: groupFighterFromCompetitor(slot.competitor)
-    }))
-
-    if (block.type === 'GROUP') {
-      updateGroupsStatistics(groups, [{ letters: [], fights }])
-    }
-
-    return {
-      id: block.id,
-      type: block.type,
-      stage: block.stage,
-      status: block.status,
-      lifecycleState: block.lifecycle_state,
-      groups,
-      fights,
-      fightsBlocks: buildGroupFightBlocks(groups, fights),
-      bracketSlots,
-      roundStates: (block.round_states ?? []).map((state) => ({
-        round: state.round,
-        pairsFixed: state.pairs_fixed,
-        resultsFixed: state.results_fixed
-      }))
-    }
-  })
-
-  const placements: CompetitionPlacement[] = (payload.placements ?? []).map((placement) => ({
-    place: placement.place,
-    competitorId: placement.competitor_id,
-    fighter: groupFighterFromCompetitor(placement.competitor)
-  }))
-
-  return {
-    blocks,
-    placements,
-    activeBlockId: payload.activeBlockId ?? null,
-    pendingTie: payload.pendingTie ?? null,
-    isFinished: Boolean(payload.isFinished),
-    isRegistrationOpen: payload.tournamentNomination?.is_open ?? null,
-    scoringRules
-  }
 }
 
 export const useCompetitionStore = defineStore({
@@ -517,7 +76,10 @@ export const useCompetitionStore = defineStore({
 
     applyCompetitionState(payload: RawCompetitionState) {
       const drafts = readFightResultDrafts(this.tournamentId, this.nominationId)
-      const mapped = mapCompetitionState(payload, drafts)
+      const fightersStore = useFightersListStore()
+      const mapped = mapCompetitionState(payload, drafts, {
+        resolveFighterById: fightersStore.getFighterById
+      })
       const unfinishedFightIds = new Set(
         mapped.blocks.flatMap((block) =>
           block.fights.filter((fight) => !fight.isFinished).map((fight) => String(fight.id))
@@ -640,31 +202,11 @@ export const useCompetitionStore = defineStore({
           const previousDraft = drafts[String(fight.id)]
           const nextWarnings = warnings ?? previousDraft?.warnings ?? fight.warnings ?? []
           const nextRoundScores = roundScores ?? fight.roundScores
-          const scored = evaluateFightWithWarnings(
-            { rounds: fight.rounds, roundWin: fight.roundWin },
-            {
-              competitor1Id: fight.competitor1Id,
-              competitor2Id: fight.competitor2Id,
-              fighter1Score: fight.fighter1Score,
-              fighter2Score: fight.fighter2Score,
-              roundScores: nextRoundScores,
-              warnings: nextWarnings,
-              forfeitCardId: fight.forfeitCardId
-            }
-          )
-          fight.roundScores = nextRoundScores
-          fight.warnings = nextWarnings
-          fight.fighter1Score = scored.evaluation.competitor1Total
-          fight.fighter2Score = scored.evaluation.competitor2Total
-          fight.fighter1EffectiveScore = scored.fighter1EffectiveScore
-          fight.fighter2EffectiveScore = scored.fighter2EffectiveScore
-          fight.isResultValid = scored.evaluation.isValidResult
-          fight.winnerId =
-            scored.evaluation.winnerSide === 1
-              ? fight.competitor1Id
-              : scored.evaluation.winnerSide === 2
-                ? fight.competitor2Id
-                : null
+
+          applyFightScoreDraft(fight, {
+            roundScores: nextRoundScores,
+            warnings: nextWarnings
+          })
           fight.isFinished = false
           targetBlock = block
 

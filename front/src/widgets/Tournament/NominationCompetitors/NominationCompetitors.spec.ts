@@ -1,18 +1,10 @@
 import { describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { createPinia, setActivePinia } from 'pinia'
 import { nextTick } from 'vue'
 import i18next from 'i18next'
 import I18NextVue from 'i18next-vue'
 import NominationCompetitors from './NominationCompetitors.vue'
 import type { Fighter } from '@/model'
-
-vi.mock('@/stores/competition', () => ({
-  useCompetitionStore: () => ({
-    tournamentCompetitors: [],
-    deleteCompetitor: vi.fn()
-  })
-}))
 
 const createI18n = async () => {
   const instance = i18next.createInstance()
@@ -55,8 +47,6 @@ const competitor: Fighter = {
 
 describe('NominationCompetitors', () => {
   it('transliterates registered fighter names when the language changes to English', async () => {
-    const pinia = createPinia()
-    setActivePinia(pinia)
     const instance = await createI18n()
 
     const wrapper = mount(NominationCompetitors, {
@@ -68,7 +58,7 @@ describe('NominationCompetitors', () => {
         hasAccess: false
       },
       global: {
-        plugins: [[I18NextVue, { i18next: instance }], pinia],
+        plugins: [[I18NextVue, { i18next: instance }]],
         stubs: {
           Button: { template: '<button><slot /></button>' },
           CardStatusIcon: true
@@ -93,8 +83,6 @@ describe('NominationCompetitors', () => {
   })
 
   it('shows a hint on disabled close-registration action when no judges are registered', async () => {
-    const pinia = createPinia()
-    setActivePinia(pinia)
     const instance = await createI18n()
     const competitors = [
       competitor,
@@ -113,7 +101,7 @@ describe('NominationCompetitors', () => {
         closeRegistrationHint: '\u0417\u0430\u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0438\u0440\u0443\u0439\u0442\u0435 \u0441\u0443\u0434\u0435\u0439 \u043d\u0430 \u0442\u0443\u0440\u043d\u0438\u0440'
       },
       global: {
-        plugins: [[I18NextVue, { i18next: instance }], pinia],
+        plugins: [[I18NextVue, { i18next: instance }]],
         stubs: {
           Button: { template: '<button v-bind="$attrs"><slot /></button>' },
           CardStatusIcon: true
@@ -128,6 +116,33 @@ describe('NominationCompetitors', () => {
       '\u0417\u0430\u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0438\u0440\u0443\u0439\u0442\u0435 \u0441\u0443\u0434\u0435\u0439 \u043d\u0430 \u0442\u0443\u0440\u043d\u0438\u0440'
     )
     expect(closeButton.element.disabled).toBe(true)
+
+    wrapper.unmount()
+  })
+
+  it('emits fighter id when remove action is clicked', async () => {
+    const instance = await createI18n()
+
+    const wrapper = mount(NominationCompetitors, {
+      props: {
+        competitors: [competitor],
+        activeTab: 1,
+        isOpen: true,
+        hasBlocks: false,
+        hasAccess: true
+      },
+      global: {
+        plugins: [[I18NextVue, { i18next: instance }]],
+        stubs: {
+          Button: { template: '<button v-bind="$attrs"><slot /></button>' },
+          CardStatusIcon: true
+        }
+      }
+    })
+
+    await wrapper.find('button').trigger('click')
+
+    expect(wrapper.emitted('remove-competitor')).toEqual([[competitor.id]])
 
     wrapper.unmount()
   })

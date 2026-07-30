@@ -3,6 +3,7 @@ import type {
   DisciplinaryCardStatus,
   TournamentMarshal
 } from '@/model'
+import type { FightWarning, RoundScore } from '@shared/fightScoring'
 
 export type TournamentReportLanguage = 'en' | 'ru'
 
@@ -24,3 +25,14 @@ export type TournamentBlockTitleGetter = (block: CompetitionBlock) => string
 export type TournamentBlockOpenGetter = (block: CompetitionBlock) => boolean
 export type TournamentBlockOpenSetter = (block: CompetitionBlock, isOpen: boolean) => void
 export type TournamentRedCardGroupKeyGetter = (block: CompetitionBlock) => Set<string>
+
+export interface FightScoreDraftUpdate {
+  roundScores?: RoundScore[]
+  warnings?: FightWarning[]
+}
+
+export interface FightScoreUpdatePayload {
+  fightId: number
+  fightNumber: number
+  scores: FightScoreDraftUpdate
+}

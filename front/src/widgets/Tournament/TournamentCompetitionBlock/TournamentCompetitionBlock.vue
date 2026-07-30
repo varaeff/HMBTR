@@ -6,8 +6,8 @@ import { FightsDisplay } from '@/widgets/tournament/FightsDisplay'
 import { NominationGroups } from '@/widgets/tournament/NominationGroups'
 import { OlympicBracket } from '@/widgets/tournament/OlympicBracket'
 import { areFightResultsReady, canShowGroupFightActions } from '@/lib/fightResult'
-import type { CompetitionBlock, PendingTie, TournamentMarshal } from '@/model'
-import type { ActiveCardTypes } from '@/widgets/tournament/types'
+import type { CompetitionBlock, Group, PendingTie, TournamentMarshal } from '@/model'
+import type { ActiveCardTypes, FightScoreUpdatePayload } from '@/widgets/tournament/types'
 
 const props = defineProps<{
   block: CompetitionBlock
@@ -37,6 +37,8 @@ const emit = defineEmits<{
   (e: 'cancel-group-results-fixation', blockId: number): void
   (e: 'card-issued'): void
   (e: 'lifecycle-changed'): void
+  (e: 'update-score', payload: FightScoreUpdatePayload): void
+  (e: 'update-groups', groups: Group[]): void
 }>()
 
 const isGroupBlockComplete = computed(
@@ -58,6 +60,7 @@ const isGroupBlockComplete = computed(
           :redCardGroupFighterKeys="redCardGroupFighterKeys"
           :highlightedAdvancerCompetitorIds="olympicCompetitorIds"
           :isFixed="!canEditCompetition || block.status !== 'ACTIVE' || block.fights.length > 0"
+          @update-groups="(groups) => emit('update-groups', groups)"
         />
         <div class="mb-3 text-center text-sm text-muted-foreground">
           {{ $t(`tournamentPageLifecycle${block.lifecycleState}`) }}
@@ -94,6 +97,7 @@ const isGroupBlockComplete = computed(
           :cardDate="cardDate"
           :activeCardTypes="activeCardTypes"
           :tournamentMarshals="tournamentMarshals"
+          @update-score="(payload) => emit('update-score', payload)"
           @card-issued="emit('card-issued')"
         />
         <div

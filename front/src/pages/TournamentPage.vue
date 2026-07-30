@@ -94,6 +94,7 @@ const page = useTournamentPage(tournamentId)
     :getBlockIsOpen="page.actions.getBlockIsOpen"
     :getRedCardGroupFighterKeys="page.actions.getRedCardGroupFighterKeys"
     @close-registration="page.actions.closeRegistration"
+    @remove-competitor="page.actions.removeCompetitor"
     @open-registration="page.actions.openRegistration"
     @create-group-block="page.actions.createGroupBlock"
     @create-olympic-block="page.actions.createOlympicBlock"
@@ -106,5 +107,8 @@ const page = useTournamentPage(tournamentId)
     @card-issued="page.actions.refreshCardsAndCompetition"
     @lifecycle-changed="page.actions.refreshCardsAndCompetition"
     @update-block-open="page.actions.setBlockIsOpen"
+    @update-fight-score="page.actions.updateFightScore"
+    @update-groups="page.actions.updateGroups"
+    @resolve-tie="page.actions.resolveTie"
   />
 </template>
