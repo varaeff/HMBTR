@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FightersSelect } from '@/widgets/FightersSelect'
+import { FightersSelect } from '@/widgets/tournament/FightersSelect'
 import type { Nomination, Tournament } from '@/model'
 
 defineProps<{

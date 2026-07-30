@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { useCompetitionStore } from '@/stores/competition'
-import { FightCard } from '@/widgets/FightCard'
+import { FightCard } from '@/widgets/tournament/FightCard'
 import type { BlockData, DisciplinaryCardStatus, TournamentMarshal } from '@/model'
 import type { FightWarning, RoundScore } from '@shared/fightScoring'
 

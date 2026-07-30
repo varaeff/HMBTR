@@ -5,7 +5,7 @@ import { useTranslation } from 'i18next-vue'
 import { useCompetitionStore } from '@/stores/competition'
 
 import { Button } from '@/components/ui/button'
-import { FightCard } from '@/widgets/FightCard'
+import { FightCard } from '@/widgets/tournament/FightCard'
 
 import { tData } from '@/lib/utils'
 
@@ -17,7 +17,7 @@ import type {
   TournamentMarshal
 } from '@/model'
 import type { FightWarning, RoundScore } from '@shared/fightScoring'
-import { CardStatusIcon } from '@/widgets/DisciplinaryCards'
+import { CardStatusIcon } from '@/widgets/tournament/DisciplinaryCards'
 import { AlertWidget } from '@/widgets/AlertWidget'
 
 const props = defineProps<{

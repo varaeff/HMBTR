@@ -6,7 +6,7 @@ import {
   ContextMenuItem,
   ContextMenuTrigger
 } from '@/components/ui/context-menu'
-import { CardStatusIcon } from '@/widgets/DisciplinaryCards'
+import { CardStatusIcon } from '@/widgets/tournament/DisciplinaryCards'
 import type { DisciplinaryCardStatus, Fighter } from '@/model'
 import type { FightWarningMarker } from './types'
 

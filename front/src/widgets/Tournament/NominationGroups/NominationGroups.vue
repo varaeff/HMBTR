@@ -4,7 +4,7 @@ import { useTranslation } from 'i18next-vue'
 import { useCompetitionStore } from '@/stores/competition'
 import { tData } from '@/lib/utils'
 import { Table, TableHeader, TableBody, TableCell, TableRow } from '@/components/ui/table'
-import { CardStatusIcon } from '@/widgets/DisciplinaryCards'
+import { CardStatusIcon } from '@/widgets/tournament/DisciplinaryCards'
 import type { DisciplinaryCardStatus, GroupFighter, Group } from '@/model'
 
 const props = defineProps<{

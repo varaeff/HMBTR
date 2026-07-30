@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 import { useTournamentsListStore } from '@/stores/tournamentsList'
 import { hasAccess } from '@/lib/checkAccess'
 import { SearchWidget } from '@/features/search'
-import { TournamentCard } from '@/widgets/TournamentCard'
+import { TournamentCard } from '@/widgets/tournament/TournamentCard'
 import { useTranslation } from 'i18next-vue'
 import type { Tournament } from '@/model'
 

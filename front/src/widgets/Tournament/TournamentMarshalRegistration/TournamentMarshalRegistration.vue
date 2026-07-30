@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TournamentMarshals } from '@/widgets/TournamentMarshals'
+import { TournamentMarshals } from '@/widgets/marshal/TournamentMarshals'
 import type { Tournament } from '@/model'
 
 defineProps<{

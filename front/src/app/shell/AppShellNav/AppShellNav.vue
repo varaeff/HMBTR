@@ -20,9 +20,9 @@ import {
   SheetTrigger
 } from '@/components/ui/sheet'
 import { Switch } from '@/components/ui/switch'
-import { LangSelect } from '@/widgets/LangSelect'
+import { LanguageSwitch } from '@/app/shell/LanguageSwitch'
 import { LoginWidget } from '@/features/auth'
-import { UserMenu } from '@/widgets/UserMenu'
+import { UserMenu } from '@/app/shell/UserMenu'
 
 const { isDark, toggleTheme } = useTheme()
 const authStore = useAuthStore()
@@ -127,7 +127,7 @@ const links = [
         <UserMenu v-if="isAuthenticated" />
         <LoginWidget v-else />
       </div>
-      <LangSelect />
+      <LanguageSwitch />
       <Switch id="theme-switch" :model-value="isDark" @update:model-value="toggleTheme" />
     </div>
   </nav>

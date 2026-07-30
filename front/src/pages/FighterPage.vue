@@ -24,8 +24,8 @@ import {
 import { AlertWidget } from '@/widgets/AlertWidget'
 import { SelectLocationBlock } from '@/features/location-select'
 import { FullNameWidget } from '@/features/person-name-form'
-import { TournamentCardsTable } from '@/widgets/DisciplinaryCards'
-import { FighterRatingChart } from '@/widgets/FighterRatingChart'
+import { TournamentCardsTable } from '@/widgets/tournament/DisciplinaryCards'
+import { FighterRatingChart } from '@/widgets/rating/FighterRatingChart'
 import { useRequiredFields } from '@/composables/useRequiredFields'
 import { useAddEntityAlert } from '@/composables/useAddEntityAlert'
 import type {

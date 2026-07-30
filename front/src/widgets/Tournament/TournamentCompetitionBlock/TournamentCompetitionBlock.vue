@@ -2,12 +2,12 @@
 import { computed } from 'vue'
 import { Button } from '@/components/ui/button'
 import { CollapsibleSection } from '@/components/ui/collapsible-section'
-import { FightsDisplay } from '@/widgets/FightsDisplay'
-import { NominationGroups } from '@/widgets/NominationGroups'
-import { OlympicBracket } from '@/widgets/OlympicBracket'
+import { FightsDisplay } from '@/widgets/tournament/FightsDisplay'
+import { NominationGroups } from '@/widgets/tournament/NominationGroups'
+import { OlympicBracket } from '@/widgets/tournament/OlympicBracket'
 import { areFightResultsReady, canShowGroupFightActions } from '@/lib/fightResult'
 import type { CompetitionBlock, PendingTie, TournamentMarshal } from '@/model'
-import type { ActiveCardTypes } from '@/widgets/Tournament/types'
+import type { ActiveCardTypes } from '@/widgets/tournament/types'
 
 const props = defineProps<{
   block: CompetitionBlock

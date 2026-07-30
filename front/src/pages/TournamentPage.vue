@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useTournamentPage } from '@/composables/useTournamentPage'
-import { TournamentBackwardConfirmation } from '@/widgets/TournamentBackwardConfirmation'
-import { TournamentCardsPanel } from '@/widgets/TournamentCardsPanel'
-import { TournamentFighterRegistration } from '@/widgets/TournamentFighterRegistration'
-import { TournamentHeader } from '@/widgets/TournamentHeader'
-import { TournamentMarshalRegistration } from '@/widgets/TournamentMarshalRegistration'
-import { TournamentNominationTabs } from '@/widgets/TournamentNominationTabs'
+import { TournamentBackwardConfirmation } from '@/widgets/tournament/TournamentBackwardConfirmation'
+import { TournamentCardsPanel } from '@/widgets/tournament/TournamentCardsPanel'
+import { TournamentFighterRegistration } from '@/widgets/tournament/TournamentFighterRegistration'
+import { TournamentHeader } from '@/widgets/tournament/TournamentHeader'
+import { TournamentMarshalRegistration } from '@/widgets/tournament/TournamentMarshalRegistration'
+import { TournamentNominationTabs } from '@/widgets/tournament/TournamentNominationTabs'
 
 const props = defineProps<{
   id: string

@@ -4,10 +4,10 @@ import { useTranslation } from 'i18next-vue'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { CollapsibleSection } from '@/components/ui/collapsible-section'
-import { CompetitionPodium } from '@/widgets/CompetitionPodium'
-import { NominationCompetitors } from '@/widgets/NominationCompetitors'
-import { TieResolver } from '@/widgets/TieResolver'
-import { TournamentCompetitionBlock } from '@/widgets/TournamentCompetitionBlock'
+import { CompetitionPodium } from '@/widgets/tournament/CompetitionPodium'
+import { NominationCompetitors } from '@/widgets/tournament/NominationCompetitors'
+import { TieResolver } from '@/widgets/tournament/TieResolver'
+import { TournamentCompetitionBlock } from '@/widgets/tournament/TournamentCompetitionBlock'
 import type {
   CompetitionBlock,
   CompetitionPlacement,
@@ -22,7 +22,7 @@ import type {
   TournamentBlockOpenGetter,
   TournamentBlockTitleGetter,
   TournamentRedCardGroupKeyGetter
-} from '@/widgets/Tournament/types'
+} from '@/widgets/tournament/types'
 
 interface TournamentNominations {
   all: Nomination[]

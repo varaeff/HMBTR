@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { CollapsibleSection } from '@/components/ui/collapsible-section'
-import { TournamentCardsTable } from '@/widgets/DisciplinaryCards'
+import { TournamentCardsTable } from '@/widgets/tournament/DisciplinaryCards'
 import type { DisciplinaryCard, Tournament, TournamentMarshal } from '@/model'
 
 defineProps<{
