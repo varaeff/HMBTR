@@ -1,57 +1,46 @@
-import http from '@/api/http'
+import {
+  fetchAuthProfile,
+  loginAuth,
+  logoutAuth,
+  refreshAuth,
+  registerAuth,
+  type AuthResponse,
+  type LoginRequest,
+  type RegisterRequest
+} from '@/api/auth'
 import { useAuthStore } from '@/stores/auth'
 import type { User } from '@/model/index'
-
-interface LoginRequest {
-  username: string
-  password: string
-}
-
-interface RegisterRequest {
-  username: string
-  password: string
-  name: string
-  surname: string
-  patronymic?: string
-  email?: string
-}
-
-interface AuthResponse {
-  access_token: string
-  refresh_token: string
-  user: User
-}
 
 export const useAuthService = () => {
   const authStore = useAuthStore()
 
   const register = async (data: RegisterRequest): Promise<AuthResponse> => {
-    const response = await http.post<AuthResponse>('/auth/register', data)
-    const { user, access_token, refresh_token } = response.data
+    const authResponse = await registerAuth(data)
+    const { user, access_token, refresh_token } = authResponse
 
     authStore.register(user, {
       access_token,
       refresh_token
     })
 
-    return response.data
+    return authResponse
   }
 
   const login = async (data: LoginRequest): Promise<AuthResponse> => {
-    const response = await http.post<AuthResponse>('/auth/login', data)
-    const { user, access_token, refresh_token } = response.data
+    const authResponse = await loginAuth(data)
+    const { user, access_token, refresh_token } = authResponse
 
     authStore.login(user, {
       access_token,
       refresh_token
     })
 
-    return response.data
+    return authResponse
   }
 
   const logout = async (): Promise<void> => {
     try {
-      await http.post('/auth/logout')
+      await logoutAuth()
       authStore.logout()
     } catch (error) {
       authStore.logout()
@@ -61,11 +50,8 @@ export const useAuthService = () => {
 
   const refresh = async (refreshToken: string): Promise<AuthResponse> => {
     try {
-      const response = await http.post<AuthResponse>('/auth/refresh', {
-        refreshToken
-      })
-
-      const { user, access_token, refresh_token } = response.data
+      const authResponse = await refreshAuth(refreshToken)
+      const { user, access_token, refresh_token } = authResponse
 
       authStore.updateTokens({
         access_token,
@@ -74,7 +60,7 @@ export const useAuthService = () => {
 
       authStore.setUser(user)
 
-      return response.data
+      return authResponse
     } catch (error) {
       console.error('Failed to refresh token:', error)
       authStore.logout()
@@ -83,8 +69,7 @@ export const useAuthService = () => {
   }
 
   const profile = async (): Promise<User> => {
-    const response = await http.post<User>('/auth/profile')
-    const user = response.data
+    const user = await fetchAuthProfile()
 
     authStore.setUser(user)
 

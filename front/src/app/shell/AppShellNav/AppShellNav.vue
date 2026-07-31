@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { defineAsyncComponent } from 'vue'
 import { useTheme } from '@/composables/useTheme'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
@@ -21,8 +22,9 @@ import {
 } from '@/components/ui/sheet'
 import { Switch } from '@/components/ui/switch'
 import { LanguageSwitch } from '@/app/shell/LanguageSwitch'
-import { LoginWidget } from '@/features/auth'
 import { UserMenu } from '@/app/shell/UserMenu'
+
+const LoginWidget = defineAsyncComponent(() => import('@/features/auth/LoginWidget.vue'))
 
 const { isDark, toggleTheme } = useTheme()
 const authStore = useAuthStore()
