@@ -12,12 +12,9 @@ import { useCollapsiblePersist } from '@/composables/useCollapsiblePersist'
 import { useTournamentBackwardConfirmation } from '@/composables/useTournamentBackwardConfirmation'
 import { useTournamentBlockOpenState } from '@/composables/useTournamentBlockOpenState'
 import { useTournamentCardsState } from '@/composables/useTournamentCardsState'
+import { useTournamentCompetitionActions } from '@/composables/useTournamentCompetitionActions'
+import { useTournamentCompetitionState } from '@/composables/useTournamentCompetitionState'
 import { useTournamentReportDownload } from '@/composables/useTournamentReportDownload'
-import {
-  type ActiveRedRollbackDetails,
-  type ActiveRedRollbackCompetitor,
-  getActiveRedRollbackDetails
-} from '@/composables/tournamentPageErrors'
 import { tData } from '@/lib/utils'
 import { dateToString } from '@/lib/dateUtils'
 import { hasAccess, hasAdminAccess, hasTournamentMarshalAccess } from '@/lib/checkAccess'
@@ -25,48 +22,9 @@ import {
   canShowAddJudgesButton as getCanShowAddJudgesButton,
   canShowTournamentMarshalSelector
 } from '@/lib/tournamentMarshalRegistration'
-import {
-  areFightResultsReady,
-  getIncompleteFightNumbers
-} from '@/lib/fightResult'
-import type {
-  CompetitionBlock,
-  CreateDisciplinaryCardPayload,
-  FightData,
-  Group,
-  PendingTie,
-  Tournament,
-  UpdateDisciplinaryCardPayload
-} from '@/model'
-import type { FightWarning, RoundScore } from '@shared/fightScoring'
+import type { Tournament } from '@/model'
 
 export type { TournamentBackwardConfirmation } from './useTournamentBackwardConfirmation'
-
-interface FightScoreUpdatePayload {
-  fightId: number
-  fightNumber: number
-  scores: {
-    roundScores?: RoundScore[]
-    warnings?: FightWarning[]
-  }
-}
-
-interface OlympicSlotSwapPayload {
-  blockId: number
-  sourcePosition: number
-  targetPosition: number
-}
-
-interface OlympicRoundPayload {
-  blockId: number
-  round: number
-}
-
-interface OlympicRoundResultsPayload extends OlympicRoundPayload {
-  fights: FightData[]
-}
-
-const OLYMPIC_BRACKET_SIZES = [4, 8, 16] as const
 
 export const useTournamentPage = (tournamentId: Ref<number>) => {
   const tournamentsListStore = useTournamentsListStore()
@@ -86,7 +44,6 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
   const isNominationLoading = ref(false)
   const isCardsOpen = ref(true)
   const isMarshalRegistrationOpen = ref(false)
-  const olympicPairsFixingByBlockId = reactive<Record<number, boolean>>({})
   const {
     confirmation: backwardConfirmation,
     close: closeBackwardConfirmation,
@@ -170,11 +127,25 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
       : competitionStore.getIsRegistrationOpen
   )
 
-  const nominationCompetitors = computed(() => competitionStore.getNominationFighters)
-  const blocks = computed(() => competitionStore.getBlocks)
-  const activeBlock = computed(() => competitionStore.getActiveBlock)
-  const placements = computed(() => competitionStore.getPlacements)
-  const pendingTie = computed(() => competitionStore.getPendingTie)
+  const {
+    nominationCompetitors,
+    blocks,
+    activeBlock,
+    placements,
+    pendingTie,
+    hasBlockingGroupAdvancementTie,
+    olympicCompetitorIds,
+    nominationFinished,
+    allTournamentNominationsFinished,
+    activeOlympicFinalResultsFixed,
+    canGenerateGroupFights,
+    canOfferOlympic,
+    canOfferOlympicWithThirdPlaces
+  } = useTournamentCompetitionState({
+    tournament,
+    currentTournamentNomination,
+    competitionStore
+  })
   const tournamentCards = computed(() => cardsStore.tournamentCards)
   const tournamentMarshals = computed(() => tournamentMarshalsStore.tournamentMarshals)
   const {
@@ -190,25 +161,6 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
     blocks,
     cardsStore
   })
-  const hasBlockingGroupAdvancementTie = computed(
-    () => Boolean(pendingTie.value) && pendingTie.value?.scope !== 'OLYMPIC_THIRD'
-  )
-  const olympicCompetitorIds = computed(
-    () =>
-      new Set(
-        blocks.value
-          .filter((block) => block.type === 'OLYMPIC')
-          .flatMap((block) => block.bracketSlots.map((slot) => slot.competitorId))
-      )
-  )
-  const nominationFinished = computed(
-    () => competitionStore.getIsFinished || Boolean(currentTournamentNomination.value?.is_finished)
-  )
-  const allTournamentNominationsFinished = computed(
-    () =>
-      Boolean(tournament.value?.nominations.length) &&
-      tournament.value!.nominations.every((nomination) => nomination.is_finished)
-  )
 
   const canEditCompetition = computed(() => canEdit && !nominationFinished.value)
   const canUseCompetitionBackwardActions = computed(() => canEdit)
@@ -230,99 +182,6 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
     canShowTournamentMarshalSelector(marshalRegistrationState.value)
   )
 
-  const activeGroupBlockComplete = computed(() => {
-    if (!activeBlock.value || activeBlock.value.type !== 'GROUP') return false
-    return areFightResultsReady(activeBlock.value.fights)
-  })
-
-  const activeGroupFightsGenerated = computed(() => {
-    return Boolean(activeBlock.value?.type === 'GROUP' && activeBlock.value.fights.length > 0)
-  })
-
-
-  const activeOlympicFinalResultsFixed = computed(() => {
-    if (!activeBlock.value || activeBlock.value.type !== 'OLYMPIC') return false
-    const finalRound = Math.log2(activeBlock.value.bracketSlots.length)
-    return Boolean(
-      activeBlock.value.roundStates.find((state) => state.round === finalRound)?.resultsFixed
-    )
-  })
-
-  const canGenerateGroupFights = computed(() => {
-    if (!activeBlock.value || activeBlock.value.type !== 'GROUP' || activeGroupFightsGenerated.value)
-      return false
-    return (
-      activeBlock.value.groups.length > 0 &&
-      activeBlock.value.groups.every((group) => group.fighters.length > 2)
-    )
-  })
-
-  const activeAdvancerCount = computed(() => {
-    if (!activeBlock.value || activeBlock.value.type !== 'GROUP') return 0
-    if (!activeGroupBlockComplete.value || hasBlockingGroupAdvancementTie.value) return 0
-    return activeBlock.value.groups.length === 1
-      ? activeBlock.value.groups[0].fighters.length
-      : activeBlock.value.groups.length * 2
-  })
-
-  const canOfferOlympic = computed(() =>
-    [4, 8, 16].includes(activeAdvancerCount.value || nominationCompetitors.value.length)
-  )
-
-  const nextOlympicBracketSize = computed(() => {
-    const competitorCount = activeAdvancerCount.value
-    if (!competitorCount) return null
-
-    return OLYMPIC_BRACKET_SIZES.find((size) => size >= competitorCount) ?? null
-  })
-
-  const olympicBracketShortfall = computed(() => {
-    const targetSize = nextOlympicBracketSize.value
-    if (!targetSize || targetSize === activeAdvancerCount.value) return 0
-
-    return targetSize - activeAdvancerCount.value
-  })
-
-  const activeThirdPlaceCount = computed(() => {
-    if (!activeBlock.value || activeBlock.value.type !== 'GROUP') return 0
-    if (!activeGroupBlockComplete.value || hasBlockingGroupAdvancementTie.value) return 0
-    if (activeBlock.value.groups.length < 2) return 0
-
-    return activeBlock.value.groups.filter((group) => group.fighters.length >= 3).length
-  })
-
-  const canOfferOlympicWithThirdPlaces = computed(
-    () =>
-      !canOfferOlympic.value &&
-      pendingTie.value?.scope !== 'OLYMPIC_THIRD' &&
-      olympicBracketShortfall.value > 0 &&
-      activeThirdPlaceCount.value >= olympicBracketShortfall.value
-  )
-
-  const closeRegistration = async () => {
-    if (!hasTournamentMarshals.value) {
-      apiUiStore.setError(i18next.t('tournamentPageAddJudgesHint'))
-      return
-    }
-    await tournamentsListStore.updateTournamentNomination(tournamentId.value, activeTab.value, false)
-    competitionStore.setRegistrationOpen(false)
-    const targetNom = tournament.value?.nominations.find((n) => n.nomination_id === activeTab.value)
-
-    if (targetNom) {
-      targetNom.is_open = false
-    }
-  }
-
-  const openRegistration = async () => {
-    await tournamentsListStore.updateTournamentNomination(tournamentId.value, activeTab.value, true)
-    competitionStore.setRegistrationOpen(true)
-    const targetNom = tournament.value?.nominations.find((n) => n.nomination_id === activeTab.value)
-
-    if (targetNom) {
-      targetNom.is_open = true
-    }
-  }
-
   const setActiveTab = (value: number) => {
     activeTab.value = value
   }
@@ -335,303 +194,23 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
     isCardsOpen.value = value
   }
 
-  const removeCompetitor = async (fighterId: number, nominationId: number) => {
-    const competitor = competitionStore.tournamentCompetitors.find(
-      (item) => item.fighter_id === fighterId && item.nomination_id === nominationId
-    )
-
-    if (competitor) {
-      await competitionStore.deleteCompetitor(competitor.id)
-    }
-  }
-
-  const createGroupBlock = () => {
-    competitionStore.createGroupBlock()
-  }
-
-  const createOlympicBlock = (includeThirdPlaces = false) => {
-    competitionStore.createOlympicBlock(includeThirdPlaces)
-  }
-
-  const updateFightScore = ({ fightId, fightNumber, scores }: FightScoreUpdatePayload) => {
-    competitionStore.updateGlobalScore({
-      fightId,
-      fightNumber,
-      roundScores: scores.roundScores,
-      warnings: scores.warnings
-    })
-  }
-
-  const updateGroups = (groups: Group[]) => {
-    competitionStore.setGroups(groups)
-  }
-
-  const resolveTie = async (pendingTie: PendingTie, orderedCompetitorIds: number[]) => {
-    await competitionStore.resolveTie(pendingTie, orderedCompetitorIds)
-  }
-
-  const swapOlympicSlots = async ({
-    blockId,
-    sourcePosition,
-    targetPosition
-  }: OlympicSlotSwapPayload) => {
-    await competitionStore.swapBracketSlots(blockId, sourcePosition, targetPosition)
-  }
-
-  const setOlympicPairsFixing = (blockId: number, isFixing: boolean) => {
-    if (isFixing) {
-      olympicPairsFixingByBlockId[blockId] = true
-      return
-    }
-
-    delete olympicPairsFixingByBlockId[blockId]
-  }
-
-  const getOlympicPairsFixing = (block: CompetitionBlock) =>
-    Boolean(olympicPairsFixingByBlockId[block.id])
-
-  const fixOlympicPairs = async (blockId: number) => {
-    if (olympicPairsFixingByBlockId[blockId]) return
-
-    setOlympicPairsFixing(blockId, true)
-    try {
-      await competitionStore.generateOlympicFights(blockId)
-    } catch (error: unknown) {
-      const details = getActiveRedRollbackDetails(error)
-      if (details) {
-        requestActiveRedRollback(details)
-        return
-      }
-      throw error
-    } finally {
-      setOlympicPairsFixing(blockId, false)
-      await refreshCardsAndCompetition()
-    }
-  }
-
-  const fixOlympicRoundResults = async ({
-    blockId,
-    round,
-    fights
-  }: OlympicRoundResultsPayload) => {
-    try {
-      await competitionStore.fixResults(blockId, fights, round)
-    } finally {
-      await refreshCardsAndCompetition()
-    }
-  }
-
-  const cancelOlympicRoundResultsFixation = ({ blockId, round }: OlympicRoundPayload) => {
-    requestBackwardConfirmation(i18next.t('tournamentPageConfirmCancelResultsFixation'), async () => {
-      try {
-        await competitionStore.cancelResultsFixation(blockId, round)
-      } finally {
-        await refreshCardsAndCompetition()
-      }
-    })
-  }
-
-  const cancelOlympicPairFixation = ({ blockId, round }: OlympicRoundPayload) => {
-    requestBackwardConfirmation(
-      i18next.t('tournamentPageConfirmCancelPairFixation', getOlympicRoundDeletionCounts(blockId, round)),
-      async () => {
-        try {
-          await competitionStore.cancelFightsFixation(blockId, round)
-        } finally {
-          await refreshCardsAndCompetition()
-        }
-      }
-    )
-  }
-
-  const rollbackOlympicRound = ({ blockId, round }: OlympicRoundPayload) => {
-    requestBackwardConfirmation(
-      i18next.t('tournamentPageConfirmReturnPreviousRound', getOlympicRoundDeletionCounts(blockId, round)),
-      async () => {
-        try {
-          await competitionStore.rollback(blockId, round)
-        } finally {
-          await refreshCardsAndCompetition()
-        }
-      }
-    )
-  }
-
-  const rollbackOlympicPendingPairs = (blockId: number) => {
-    const block = blocks.value.find((item) => item.id === blockId)
-    const latestRoundState = block
-      ? [...block.roundStates].sort((a, b) => b.round - a.round)[0]
-      : undefined
-    const round = latestRoundState?.round ?? 1
-    const confirmationKey =
-      latestRoundState?.round && latestRoundState.round > 1
-        ? 'tournamentPageConfirmReturnPreviousRound'
-        : 'tournamentPageConfirmReturnPreviousStage'
-
-    requestBackwardConfirmation(
-      i18next.t(confirmationKey, getOlympicRoundDeletionCounts(blockId, round)),
-      async () => {
-        try {
-          if (latestRoundState?.round && latestRoundState.round > 1) {
-            await competitionStore.rollback(blockId, latestRoundState.round)
-            return
-          }
-
-          await competitionStore.rollback(blockId)
-        } finally {
-          await refreshCardsAndCompetition()
-        }
-      }
-    )
-  }
-
-  const activeRedRollbackCompetitorNames = (competitors: ActiveRedRollbackCompetitor[]) =>
-    competitors
-      .map((fighter) =>
-        [fighter.surname, fighter.name, fighter.patronymic]
-          .filter((part): part is string => Boolean(part))
-          .map((part) => tData(part, currentLanguage.value))
-          .join(' ')
-      )
-      .join(', ')
-
-  const refreshCardsAndCompetition = async () => {
-    await cardsStore.loadTournamentCards(tournamentId.value)
-    await competitionStore.setCompetitors()
-    if (activeTab.value) {
-      await competitionStore.loadCompetitionState()
-    }
-  }
-
-  const createDisciplinaryCard = async (payload: CreateDisciplinaryCardPayload) => {
-    return cardsStore.createCard(payload)
-  }
-
-  const updateDisciplinaryCard = async (
-    id: number,
-    payload: UpdateDisciplinaryCardPayload
-  ) => {
-    return cardsStore.updateCard(id, payload)
-  }
-
-  const deleteDisciplinaryCard = async (id: number) => {
-    await cardsStore.deleteCard(id)
-  }
-
-  const requestActiveRedRollback = (details: ActiveRedRollbackDetails) => {
-    requestBackwardConfirmation(
-      i18next.t('tournamentPageActiveRedRollbackWarning', {
-        fighters: activeRedRollbackCompetitorNames(details.competitors)
-      }),
-      async () => {
-        try {
-          await competitionStore.rollback(details.block_id, undefined, true)
-          const targetNom = tournament.value?.nominations.find(
-            (n) => n.nomination_id === activeTab.value
-          )
-          if (targetNom && !competitionStore.getBlocks.length) {
-            targetNom.is_open = true
-          }
-        } finally {
-          await refreshCardsAndCompetition()
-        }
-      }
-    )
-  }
-
-  const generateGroupFights = async (blockId: number) => {
-    try {
-      await competitionStore.generateGroupFights(blockId)
-    } catch (error: unknown) {
-      const details = getActiveRedRollbackDetails(error)
-      if (details) {
-        requestActiveRedRollback(details)
-        return
-      }
-      throw error
-    } finally {
-      await refreshCardsAndCompetition()
-    }
-  }
-
-  const finishCompetition = async () => {
-    try {
-      await competitionStore.finishCompetition()
-      const targetNom = tournament.value?.nominations.find((n) => n.nomination_id === activeTab.value)
-      if (targetNom) {
-        targetNom.is_finished = true
-        targetNom.is_open = false
-      }
-    } finally {
-      await refreshCardsAndCompetition()
-    }
-  }
-
-  const fixGroupResults = async (blockId: number) => {
-    const block = blocks.value.find((item) => item.id === blockId)
-    if (!block) return
-    const incompleteFightNumbers = getIncompleteFightNumbers(block.fights)
-    if (incompleteFightNumbers.length) {
-      apiUiStore.setError(
-        i18next.t('tournamentPageIncompleteFightResults', {
-          fights: incompleteFightNumbers.join(', ')
-        })
-      )
-      return
-    }
-
-    try {
-      await competitionStore.fixResults(blockId, block.fights)
-    } catch (error) {
-      const message = await getReportErrorMessage(error)
-      apiUiStore.setError(message)
-      console.error('Failed to fix group results:', message, error)
-    } finally {
-      await refreshCardsAndCompetition()
-    }
-  }
-
-  const cancelGroupResultsFixation = async (blockId: number) => {
-    requestBackwardConfirmation(i18next.t('tournamentPageConfirmCancelResultsFixation'), async () => {
-      try {
-        await competitionStore.cancelResultsFixation(blockId)
-      } finally {
-        await refreshCardsAndCompetition()
-      }
-    })
-  }
-
-  const cancelGroupFightsFixation = async (blockId: number) => {
-    requestBackwardConfirmation(
-      i18next.t('tournamentPageConfirmCancelGroupFixation', getBlockDeletionCounts(blockId)),
-      async () => {
-        try {
-          await competitionStore.cancelFightsFixation(blockId)
-        } finally {
-          await refreshCardsAndCompetition()
-        }
-      }
-    )
-  }
-
-  const rollbackBlock = async (blockId: number) => {
-    requestBackwardConfirmation(
-      i18next.t('tournamentPageConfirmReturnPreviousStage', getBlockDeletionCounts(blockId)),
-      async () => {
-        try {
-          await competitionStore.rollback(blockId)
-          const targetNom = tournament.value?.nominations.find(
-            (n) => n.nomination_id === activeTab.value
-          )
-          if (targetNom && !competitionStore.getBlocks.length) {
-            targetNom.is_open = true
-          }
-        } finally {
-          await refreshCardsAndCompetition()
-        }
-      }
-    )
-  }
+  const competitionActions = useTournamentCompetitionActions({
+    tournamentId,
+    tournament,
+    activeTab,
+    blocks,
+    currentLanguage,
+    hasTournamentMarshals,
+    tournamentsListStore,
+    competitionStore,
+    apiUiStore,
+    cardsStore,
+    translate: i18next.t.bind(i18next),
+    requestBackwardConfirmation,
+    getReportErrorMessage,
+    getBlockDeletionCounts,
+    getOlympicRoundDeletionCounts
+  })
 
   const startMarshalRegistration = () => {
     isMarshalRegistrationOpen.value = true
@@ -642,14 +221,6 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
       tournament.value.is_marshals_registration_closed = true
     }
     isMarshalRegistrationOpen.value = false
-  }
-
-  const blockTitle = (block: CompetitionBlock) => {
-    const type =
-      block.type === 'GROUP'
-        ? i18next.t('tournamentPageGroupBlosk')
-        : i18next.t('tournamentPageOlympicBlosk')
-    return block.type === 'GROUP' ? `${type} ${block.stage}` : `${type}`
   }
 
   onMounted(async () => {
@@ -779,37 +350,11 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
       runConfirmedBackwardAction,
       startMarshalRegistration,
       finishMarshalRegistration,
-      closeRegistration,
       setActiveTab,
       setCompetitorsListOpen,
       setCardsOpen,
-      removeCompetitor,
-      openRegistration,
-      createGroupBlock,
-      createOlympicBlock,
-      updateFightScore,
-      updateGroups,
-      resolveTie,
-      swapOlympicSlots,
-      fixOlympicPairs,
-      fixOlympicRoundResults,
-      cancelOlympicRoundResultsFixation,
-      cancelOlympicPairFixation,
-      rollbackOlympicRound,
-      rollbackOlympicPendingPairs,
-      generateGroupFights,
-      finishCompetition,
-      fixGroupResults,
-      cancelGroupResultsFixation,
-      cancelGroupFightsFixation,
-      rollbackBlock,
-      refreshCardsAndCompetition,
-      createDisciplinaryCard,
-      updateDisciplinaryCard,
-      deleteDisciplinaryCard,
-      blockTitle,
+      ...competitionActions,
       getBlockIsOpen,
-      getOlympicPairsFixing,
       setBlockIsOpen,
       getRedCardGroupFighterKeys,
       downloadTournamentReport

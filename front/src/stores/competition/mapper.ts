@@ -15,8 +15,8 @@ import {
   legacyRoundScoresFromColumns,
   type FightScoringRules
 } from '@shared/fightScoring'
-import { applyFightScoreDraft, evaluateFightWithWarnings } from './competitionFightScoring'
-import type { FightResultDrafts } from './competitionResultDrafts'
+import { applyFightScoreDraft, evaluateFightWithWarnings } from './fightScoring'
+import type { FightResultDrafts } from './resultDrafts'
 
 type ResolveFighterById = (fighterId: number) => Fighter | undefined
 

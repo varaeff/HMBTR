@@ -1,23 +1,23 @@
 import { defineStore } from 'pinia'
-import http from '@/api/http'
 import type {
   BlockData,
   CompetitionBlock,
   CompetitionPlacement,
   Competitor,
   FightData,
-  FighterRegistrationEligibility,
   Group,
   PendingTie
 } from '@/model'
-import { API_ROUTES } from '@shared/routes'
 import { useFightersListStore } from '@/stores/fightersList'
 import { updateGroupsStatistics } from '@/lib/groupsStatistic'
-import { buildSubmittedFightResult } from '@/lib/fightResult'
 import type { FightScoringRules, FightWarning, RoundScore } from '@shared/fightScoring'
-import { applyFightScoreDraft } from './competitionFightScoring'
-import { mapCompetitionState, type RawCompetitionState } from './competitionMapper'
-import { readFightResultDrafts, writeFightResultDrafts } from './competitionResultDrafts'
+import * as competitionCommands from './commands'
+import type { RawCompetitionState } from './mapper'
+import {
+  clearFightResultDrafts,
+  updateCompetitionFightScoreDraft
+} from './scoreDrafts'
+import { mapAndPersistCompetitionState } from './stateApplication'
 
 interface CompetitionState {
   tournamentCompetitors: Competitor[]
@@ -75,21 +75,14 @@ export const useCompetitionStore = defineStore({
     },
 
     applyCompetitionState(payload: RawCompetitionState) {
-      const drafts = readFightResultDrafts(this.tournamentId, this.nominationId)
       const fightersStore = useFightersListStore()
-      const mapped = mapCompetitionState(payload, drafts, {
+      const mapped = mapAndPersistCompetitionState({
+        payload,
+        tournamentId: this.tournamentId,
+        nominationId: this.nominationId,
         resolveFighterById: fightersStore.getFighterById
       })
-      const unfinishedFightIds = new Set(
-        mapped.blocks.flatMap((block) =>
-          block.fights.filter((fight) => !fight.isFinished).map((fight) => String(fight.id))
-        )
-      )
-      const remainingDrafts = Object.fromEntries(
-        Object.entries(drafts).filter(([fightId]) => unfinishedFightIds.has(fightId))
-      )
 
-      writeFightResultDrafts(this.tournamentId, this.nominationId, remainingDrafts)
       this.blocks = mapped.blocks
       this.activeBlockId = mapped.activeBlockId
       this.placements = mapped.placements
@@ -102,8 +95,9 @@ export const useCompetitionStore = defineStore({
     async loadCompetitionState() {
       const currentTournamentId = this.tournamentId
       const currentNomId = this.nominationId
-      const { data } = await http.get(
-        API_ROUTES.COMPETITION.STATE(this.tournamentId, this.nominationId)
+      const data = await competitionCommands.fetchCompetitionState(
+        this.tournamentId,
+        this.nominationId
       )
 
       if (this.tournamentId === currentTournamentId && this.nominationId === currentNomId) {
@@ -113,8 +107,7 @@ export const useCompetitionStore = defineStore({
 
     async setCompetitors() {
       const currentNomId = this.nominationId
-      const url = API_ROUTES.COMPETITORS.BY_TOURNAMENT(this.tournamentId)
-      const { data } = await http.get(url)
+      const data = await competitionCommands.fetchTournamentCompetitors(this.tournamentId)
 
       if (this.nominationId === currentNomId) {
         this.tournamentCompetitors = data
@@ -122,25 +115,20 @@ export const useCompetitionStore = defineStore({
     },
 
     async getRegistrationEligibility() {
-      const { data } = await http.get<FighterRegistrationEligibility[]>(
-        API_ROUTES.COMPETITORS.ELIGIBILITY(this.tournamentId)
-      )
-      return data
+      return competitionCommands.fetchRegistrationEligibility(this.tournamentId)
     },
 
     async registerFighter(fighterId: number, nominationId: number) {
-      const url = API_ROUTES.COMPETITORS.ROOT
-      const { data } = await http.post(url, {
-        fighter_id: fighterId,
-        tournament_id: this.tournamentId,
-        nomination_id: nominationId
-      })
-      this.tournamentCompetitors.push(data)
+      const competitor = await competitionCommands.registerFighter(
+        this.tournamentId,
+        fighterId,
+        nominationId
+      )
+      this.tournamentCompetitors.push(competitor)
     },
 
     async deleteCompetitor(competitorId: number) {
-      const url = `${API_ROUTES.COMPETITORS.ROOT}/${competitorId}`
-      await http.delete(url)
+      await competitionCommands.deleteCompetitor(competitorId)
       const index = this.tournamentCompetitors.findIndex((c) => c.id === competitorId)
       if (index !== -1) {
         this.tournamentCompetitors.splice(index, 1)
@@ -148,10 +136,7 @@ export const useCompetitionStore = defineStore({
     },
 
     async createGroupBlock() {
-      const { data } = await http.post(API_ROUTES.COMPETITION.GROUP_BLOCK, {
-        tournament_id: this.tournamentId,
-        nomination_id: this.nominationId
-      })
+      const data = await competitionCommands.createGroupBlock(this.tournamentId, this.nominationId)
       this.applyCompetitionState(data)
     },
 
@@ -159,29 +144,21 @@ export const useCompetitionStore = defineStore({
       const activeBlock = this.blocks.find((block) => block.id === blockId)
       if (!activeBlock || activeBlock.type !== 'GROUP') return
 
-      const { data } = await http.post(API_ROUTES.COMPETITION.GROUP_FIGHTS, {
-        block_id: blockId,
-        groups: activeBlock.groups.map((group) => ({
-          letter: group.letter,
-          competitor_ids: group.fighters.map((fighter) => fighter.competitorId).filter(Boolean)
-        }))
-      })
+      const data = await competitionCommands.generateGroupFights(blockId, activeBlock.groups)
       this.applyCompetitionState(data)
     },
 
     async createOlympicBlock(includeThirdPlaces = false) {
-      const { data } = await http.post(API_ROUTES.COMPETITION.OLYMPIC_BLOCK, {
-        tournament_id: this.tournamentId,
-        nomination_id: this.nominationId,
-        include_third_places: includeThirdPlaces
-      })
+      const data = await competitionCommands.createOlympicBlock(
+        this.tournamentId,
+        this.nominationId,
+        includeThirdPlaces
+      )
       this.applyCompetitionState(data)
     },
 
     async generateOlympicFights(blockId: number) {
-      const { data } = await http.post(API_ROUTES.COMPETITION.OLYMPIC_FIGHTS, {
-        block_id: blockId
-      })
+      const data = await competitionCommands.generateOlympicFights(blockId)
       this.applyCompetitionState(data)
     },
 
@@ -191,103 +168,59 @@ export const useCompetitionStore = defineStore({
       roundScores,
       warnings
     }: UpdateGlobalScoreParams) {
-      let targetBlock: CompetitionBlock | undefined
-
-      for (const block of this.blocks) {
-        const fight = block.fights.find((f) =>
-          fightId > 0 ? f.id === fightId : f.number === fightNumber
-        )
-        if (fight) {
-          const drafts = readFightResultDrafts(this.tournamentId, this.nominationId)
-          const previousDraft = drafts[String(fight.id)]
-          const nextWarnings = warnings ?? previousDraft?.warnings ?? fight.warnings ?? []
-          const nextRoundScores = roundScores ?? fight.roundScores
-
-          applyFightScoreDraft(fight, {
-            roundScores: nextRoundScores,
-            warnings: nextWarnings
-          })
-          fight.isFinished = false
-          targetBlock = block
-
-          drafts[String(fight.id)] = {
-            blockId: block.id,
-            roundScores: nextRoundScores,
-            warnings: nextWarnings
-          }
-          writeFightResultDrafts(this.tournamentId, this.nominationId, drafts)
-          break
-        }
-      }
-
-      if (targetBlock?.type === 'GROUP') {
-        updateGroupsStatistics(targetBlock.groups, targetBlock.fightsBlocks)
-      }
+      updateCompetitionFightScoreDraft({
+        blocks: this.blocks,
+        tournamentId: this.tournamentId,
+        nominationId: this.nominationId,
+        fightId,
+        fightNumber,
+        roundScores,
+        warnings
+      })
     },
 
     async swapBracketSlots(blockId: number, sourcePosition: number, targetPosition: number) {
-      const { data } = await http.patch(API_ROUTES.COMPETITION.SWAP_BRACKET_SLOTS, {
-        block_id: blockId,
-        source_position: sourcePosition,
-        target_position: targetPosition
-      })
+      const data = await competitionCommands.swapBracketSlots(
+        blockId,
+        sourcePosition,
+        targetPosition
+      )
       this.applyCompetitionState(data)
     },
 
     async resolveTie(pendingTie: PendingTie, orderedCompetitorIds: number[]) {
-      const { data } = await http.post(API_ROUTES.COMPETITION.RESOLVE_TIES, {
-        tournament_id: this.tournamentId,
-        nomination_id: this.nominationId,
-        group_id: pendingTie.groupId ?? undefined,
-        block_id: pendingTie.blockId,
-        tie_scope: pendingTie.scope ?? 'GROUP',
-        ordered_competitor_ids: orderedCompetitorIds
-      })
+      const data = await competitionCommands.resolveTie(
+        this.tournamentId,
+        this.nominationId,
+        pendingTie,
+        orderedCompetitorIds
+      )
       this.applyCompetitionState(data)
     },
 
     async finishCompetition() {
-      const { data } = await http.post(API_ROUTES.COMPETITION.FINISH, {
-        tournament_id: this.tournamentId,
-        nomination_id: this.nominationId
-      })
+      const data = await competitionCommands.finishCompetition(this.tournamentId, this.nominationId)
       this.applyCompetitionState(data)
     },
 
     async fixResults(blockId: number, fights: FightData[], round?: number) {
-      const { data } = await http.post(API_ROUTES.COMPETITION.FIX_RESULTS, {
-        block_id: blockId,
-        round,
-        fights: fights.map(buildSubmittedFightResult)
-      })
-      const drafts = readFightResultDrafts(this.tournamentId, this.nominationId)
-      fights.forEach((fight) => delete drafts[String(fight.id)])
-      writeFightResultDrafts(this.tournamentId, this.nominationId, drafts)
+      const data = await competitionCommands.fixResults(blockId, fights, round)
+      clearFightResultDrafts(this.tournamentId, this.nominationId, fights)
       this.applyCompetitionState(data)
     },
 
     async cancelResultsFixation(blockId: number, round?: number) {
-      const { data } = await http.post(API_ROUTES.COMPETITION.CANCEL_RESULTS_FIXATION, {
-        block_id: blockId,
-        round
-      })
+      const data = await competitionCommands.cancelResultsFixation(blockId, round)
       this.applyCompetitionState(data)
     },
 
     async cancelFightsFixation(blockId: number, round?: number) {
-      const { data } = await http.post(API_ROUTES.COMPETITION.CANCEL_FIGHTS_FIXATION, {
-        block_id: blockId,
-        round
-      })
+      const data = await competitionCommands.cancelFightsFixation(blockId, round)
       this.applyCompetitionState(data)
     },
 
     async rollback(blockId: number, round?: number, removeActiveRedCompetitors = false) {
-      const { data } = await http.post(API_ROUTES.COMPETITION.ROLLBACK, {
-        block_id: blockId,
-        round,
-        remove_active_red_competitors: removeActiveRedCompetitors || undefined
-      })
+      const data = await competitionCommands.rollback(blockId, round, removeActiveRedCompetitors)
       this.applyCompetitionState(data)
     },
 

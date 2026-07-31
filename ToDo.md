@@ -42,6 +42,4 @@ Ver 1.3
 - активные желтые с других турниров должны показываться
 - Неактивная красная сейчас не активируется
 
-Build оставил только существующие предупреждения Vite про browserslist/chunk size/dynamic import.
-
-Остались стандартные build warnings: устаревший Browserslist DB, Rollup PURE comment warning из @vueuse/core, и chunk size warning.
+Build warnings остались прежние: browserslist, крупный chunk, dynamic/static import useAuthService.

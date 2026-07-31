@@ -1,0 +1,1 @@
+export { useCompetitionStore } from './store'

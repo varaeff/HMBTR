@@ -37,6 +37,9 @@ Keep fighter statistics server-derived. The frontend should not reconstruct comp
 7. Render profile data in `FighterPage.vue` with a centered heading, location line, compact avatar, grouped completed-tournament table, fight/win totals, nomination breakdown, ratings selector, rating summary, delegated rating chart widget, and unchanged card table behavior.
 8. Keep rating chart geometry, point hover/focus state, tooltip rendering, and axis-label density rules inside `front/src/widgets/FighterRatingChart/`.
 9. Keep date of birth out of the fighter page display and edit payload unless the requested change explicitly reintroduces it.
+10. Fighter profile edit-mode lifecycle uses
+    `front/src/composables/useEditableEntityForm.ts`; keep fighter-specific
+    draft mapping and `FighterDB` payload construction as page-level adapters.
 
 ## Constraints
 

@@ -1,11 +1,93 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { TournamentCardsPanel } from '@/widgets/tournament/TournamentCardsPanel'
 import { TournamentNominationTabs } from '@/widgets/tournament/TournamentNominationTabs'
 import type { TournamentPageState } from '@/composables/useTournamentPage'
+import type {
+  TournamentNominationTabsActions,
+  TournamentNominationTabsCards,
+  TournamentNominationTabsCompetitionOptions,
+  TournamentNominationTabsPermissions,
+  TournamentNominationTabsState
+} from '@/widgets/tournament/types'
 
-defineProps<{
+const props = defineProps<{
   page: TournamentPageState
 }>()
+
+const nominationTabsState = computed<TournamentNominationTabsState>(() => ({
+  tournament: props.page.tournament.data,
+  tournamentId: props.page.tournament.id,
+  activeTab: props.page.nomination.activeTab,
+  tournamentNominations: props.page.nomination.tournamentNominations,
+  isNominationLoading: props.page.nomination.isNominationLoading,
+  placements: props.page.competition.placements,
+  nominationCompetitors: props.page.nomination.nominationCompetitors,
+  isCompetitorsListOpen: props.page.nomination.isCompetitorsListOpen,
+  isCurrentNominationOpen: props.page.nomination.isCurrentNominationOpen,
+  hasTournamentMarshals: props.page.marshalRegistration.hasTournamentMarshals,
+  blocks: props.page.competition.blocks,
+  activeBlock: props.page.competition.activeBlock,
+  pendingTie: props.page.competition.pendingTie,
+  activeOlympicFinalResultsFixed: props.page.competition.activeOlympicFinalResultsFixed,
+  nominationFinished: props.page.nomination.nominationFinished
+}))
+
+const nominationTabsPermissions = computed<TournamentNominationTabsPermissions>(() => ({
+  canEditCompetition: props.page.permissions.canEditCompetition,
+  canUseCompetitionBackwardActions: props.page.permissions.canUseCompetitionBackwardActions,
+  canManageCards: props.page.permissions.canManageCards
+}))
+
+const nominationTabsCompetitionOptions = computed<TournamentNominationTabsCompetitionOptions>(
+  () => ({
+    canGenerateGroupFights: props.page.competition.canGenerateGroupFights,
+    hasBlockingGroupAdvancementTie: props.page.competition.hasBlockingGroupAdvancementTie,
+    olympicCompetitorIds: props.page.competition.olympicCompetitorIds,
+    canOfferOlympic: props.page.competition.canOfferOlympic,
+    canOfferOlympicWithThirdPlaces: props.page.competition.canOfferOlympicWithThirdPlaces
+  })
+)
+
+const nominationTabsCards = computed<TournamentNominationTabsCards>(() => ({
+  activeCardTypes: props.page.cards.activeCardTypes,
+  cardIssueDate: props.page.cards.cardIssueDate,
+  tournamentMarshals: props.page.marshalRegistration.tournamentMarshals,
+  createDisciplinaryCard: props.page.actions.createDisciplinaryCard,
+  attachedCardCountByFightId: props.page.cards.attachedCardCountByFightId
+}))
+
+const nominationTabsActions = computed<TournamentNominationTabsActions>(() => ({
+  setActiveTab: props.page.actions.setActiveTab,
+  setCompetitorsListOpen: props.page.actions.setCompetitorsListOpen,
+  closeRegistration: props.page.actions.closeRegistration,
+  removeCompetitor: props.page.actions.removeCompetitor,
+  openRegistration: props.page.actions.openRegistration,
+  createGroupBlock: props.page.actions.createGroupBlock,
+  createOlympicBlock: props.page.actions.createOlympicBlock,
+  generateGroupFights: props.page.actions.generateGroupFights,
+  rollbackBlock: props.page.actions.rollbackBlock,
+  fixGroupResults: props.page.actions.fixGroupResults,
+  cancelGroupFightsFixation: props.page.actions.cancelGroupFightsFixation,
+  cancelGroupResultsFixation: props.page.actions.cancelGroupResultsFixation,
+  finishCompetition: props.page.actions.finishCompetition,
+  refreshCardsAndCompetition: props.page.actions.refreshCardsAndCompetition,
+  setBlockIsOpen: props.page.actions.setBlockIsOpen,
+  updateFightScore: props.page.actions.updateFightScore,
+  updateGroups: props.page.actions.updateGroups,
+  resolveTie: props.page.actions.resolveTie,
+  swapOlympicSlots: props.page.actions.swapOlympicSlots,
+  fixOlympicPairs: props.page.actions.fixOlympicPairs,
+  fixOlympicRoundResults: props.page.actions.fixOlympicRoundResults,
+  cancelOlympicRoundResultsFixation: props.page.actions.cancelOlympicRoundResultsFixation,
+  cancelOlympicPairFixation: props.page.actions.cancelOlympicPairFixation,
+  rollbackOlympicRound: props.page.actions.rollbackOlympicRound,
+  rollbackOlympicPendingPairs: props.page.actions.rollbackOlympicPendingPairs,
+  blockTitle: props.page.actions.blockTitle,
+  getBlockIsOpen: props.page.actions.getBlockIsOpen,
+  getOlympicPairsFixing: props.page.actions.getOlympicPairsFixing,
+  getRedCardGroupFighterKeys: props.page.actions.getRedCardGroupFighterKeys
+}))
 </script>
 
 <template>
@@ -23,62 +105,10 @@ defineProps<{
   />
 
   <TournamentNominationTabs
-    :activeTab="page.nomination.activeTab"
-    :isCompetitorsListOpen="page.nomination.isCompetitorsListOpen"
-    :tournament="page.tournament.data"
-    :tournamentId="page.tournament.id"
-    :tournamentNominations="page.nomination.tournamentNominations"
-    :isNominationLoading="page.nomination.isNominationLoading"
-    :placements="page.competition.placements"
-    :nominationCompetitors="page.nomination.nominationCompetitors"
-    :activeCardTypes="page.cards.activeCardTypes"
-    :isCurrentNominationOpen="page.nomination.isCurrentNominationOpen"
-    :hasTournamentMarshals="page.marshalRegistration.hasTournamentMarshals"
-    :blocks="page.competition.blocks"
-    :activeBlock="page.competition.activeBlock"
-    :pendingTie="page.competition.pendingTie"
-    :canEditCompetition="page.permissions.canEditCompetition"
-    :canUseCompetitionBackwardActions="page.permissions.canUseCompetitionBackwardActions"
-    :canManageCards="page.permissions.canManageCards"
-    :canGenerateGroupFights="page.competition.canGenerateGroupFights"
-    :hasBlockingGroupAdvancementTie="page.competition.hasBlockingGroupAdvancementTie"
-    :olympicCompetitorIds="page.competition.olympicCompetitorIds"
-    :activeOlympicFinalResultsFixed="page.competition.activeOlympicFinalResultsFixed"
-    :nominationFinished="page.nomination.nominationFinished"
-    :canOfferOlympic="page.competition.canOfferOlympic"
-    :canOfferOlympicWithThirdPlaces="page.competition.canOfferOlympicWithThirdPlaces"
-    :cardIssueDate="page.cards.cardIssueDate"
-    :tournamentMarshals="page.marshalRegistration.tournamentMarshals"
-    :createDisciplinaryCard="page.actions.createDisciplinaryCard"
-    :attachedCardCountByFightId="page.cards.attachedCardCountByFightId"
-    :blockTitle="page.actions.blockTitle"
-    :getBlockIsOpen="page.actions.getBlockIsOpen"
-    :getOlympicPairsFixing="page.actions.getOlympicPairsFixing"
-    :getRedCardGroupFighterKeys="page.actions.getRedCardGroupFighterKeys"
-    @update:activeTab="page.actions.setActiveTab"
-    @update:isCompetitorsListOpen="page.actions.setCompetitorsListOpen"
-    @close-registration="page.actions.closeRegistration"
-    @remove-competitor="page.actions.removeCompetitor"
-    @open-registration="page.actions.openRegistration"
-    @create-group-block="page.actions.createGroupBlock"
-    @create-olympic-block="page.actions.createOlympicBlock"
-    @generate-group-fights="page.actions.generateGroupFights"
-    @rollback-block="page.actions.rollbackBlock"
-    @fix-group-results="page.actions.fixGroupResults"
-    @cancel-group-fights-fixation="page.actions.cancelGroupFightsFixation"
-    @cancel-group-results-fixation="page.actions.cancelGroupResultsFixation"
-    @finish-competition="page.actions.finishCompetition"
-    @card-issued="page.actions.refreshCardsAndCompetition"
-    @update-block-open="page.actions.setBlockIsOpen"
-    @update-fight-score="page.actions.updateFightScore"
-    @update-groups="page.actions.updateGroups"
-    @resolve-tie="page.actions.resolveTie"
-    @swap-olympic-slots="page.actions.swapOlympicSlots"
-    @fix-olympic-pairs="page.actions.fixOlympicPairs"
-    @fix-olympic-round-results="page.actions.fixOlympicRoundResults"
-    @cancel-olympic-round-results-fixation="page.actions.cancelOlympicRoundResultsFixation"
-    @cancel-olympic-pair-fixation="page.actions.cancelOlympicPairFixation"
-    @rollback-olympic-round="page.actions.rollbackOlympicRound"
-    @rollback-olympic-pending-pairs="page.actions.rollbackOlympicPendingPairs"
+    :state="nominationTabsState"
+    :permissions="nominationTabsPermissions"
+    :competitionOptions="nominationTabsCompetitionOptions"
+    :cards="nominationTabsCards"
+    :actions="nominationTabsActions"
   />
 </template>

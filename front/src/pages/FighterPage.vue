@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, onMounted, computed, watchEffect, onUnmounted } from 'vue'
+import { ref, onMounted, computed, watchEffect, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useTranslation } from 'i18next-vue'
 import { useFightersListStore } from '@/stores/fightersList'
@@ -26,8 +26,8 @@ import { SelectLocationBlock } from '@/features/location-select'
 import { FullNameWidget } from '@/features/person-name-form'
 import { TournamentCardsTable } from '@/widgets/tournament/DisciplinaryCards'
 import { FighterRatingChart } from '@/widgets/rating/FighterRatingChart'
-import { useRequiredFields } from '@/composables/useRequiredFields'
 import { useAddEntityAlert } from '@/composables/useAddEntityAlert'
+import { useEditableEntityForm } from '@/composables/useEditableEntityForm'
 import type {
   Fighter,
   FighterDB,
@@ -50,6 +50,20 @@ interface CompletedTournamentRow {
   nominations: FighterProfileNomination[]
 }
 
+interface FighterEditDraft extends Record<string, unknown> {
+  surname: string
+  name: string
+  patronymic: string
+  country: string
+  city: string
+  club: string
+  country_id: number
+  city_id: number
+  club_id: number
+  pic: string
+  is_male: boolean
+}
+
 const props = defineProps<{
   id: string
 }>()
@@ -62,7 +76,6 @@ const FightersListStore = useFightersListStore()
 const authStore = useAuthStore()
 const cardsStore = useDisciplinaryCardsStore()
 const fighterId = computed(() => +props.id)
-const isEditing = ref(false)
 const isStatsLoading = ref(false)
 const statsError = ref('')
 const selectedRatingNominationId = ref('')
@@ -70,7 +83,7 @@ const tournamentMarshalsByTournamentId = ref<Record<number, TournamentMarshal[]>
 const { showAlert, alertData, handleRequestAdd } = useAddEntityAlert()
 const initialDocumentTitle = document.title
 
-const editFighter = reactive({
+const createFighterEditDraft = (): FighterEditDraft => ({
   surname: '',
   name: '',
   patronymic: '',
@@ -84,8 +97,40 @@ const editFighter = reactive({
   is_male: true
 })
 
-const buttonDisabled = useRequiredFields(editFighter, ['surname', 'name', 'country', 'city'])
 const canEdit = computed(() => authStore.isAdmin || authStore.isOrganizer)
+const fighterEditForm = useEditableEntityForm<Fighter, FighterEditDraft, FighterDB>({
+  createDraft: createFighterEditDraft,
+  requiredFields: ['surname', 'name', 'country', 'city'],
+  fillDraft: (draft, source) => {
+    draft.surname = source.surname
+    draft.name = source.name
+    draft.patronymic = source.patronymic ?? ''
+    draft.country = source.country
+    draft.city = source.city
+    draft.club = source.club ?? ''
+    draft.country_id = source.country_id ?? 0
+    draft.city_id = source.city_id ?? 0
+    draft.club_id = source.club_id ?? 0
+    draft.pic = source.pic ?? ''
+    draft.is_male = source.is_male ?? true
+  },
+  buildPayload: (draft, source) => ({
+    id: source.id,
+    surname: draft.surname,
+    name: draft.name,
+    patronymic: draft.patronymic,
+    country_id: draft.country_id,
+    city_id: draft.city_id,
+    club_id: draft.club_id || null,
+    pic: draft.pic,
+    is_male: draft.is_male
+  }),
+  save: (source, payload) => FightersListStore.updateFighter(source.id, payload),
+  canSave: () => canEdit.value
+})
+const editFighter = fighterEditForm.draft
+const isEditing = fighterEditForm.isEditing
+const buttonDisabled = fighterEditForm.buttonDisabled
 const canManageCards = computed(() => hasAccess())
 const canDeleteCards = computed(() => Boolean(hasAdminAccess()))
 const currentLanguage = computed<Language>(() => (i18next.language === 'en' ? 'en' : 'ru'))
@@ -219,49 +264,19 @@ const deleteDisciplinaryCard = async (id: number) => {
   await cardsStore.deleteCard(id)
 }
 
-const fillEditForm = () => {
-  if (!fighter.value) return
-
-  editFighter.surname = fighter.value.surname
-  editFighter.name = fighter.value.name
-  editFighter.patronymic = fighter.value.patronymic ?? ''
-  editFighter.country = fighter.value.country
-  editFighter.city = fighter.value.city
-  editFighter.club = fighter.value.club ?? ''
-  editFighter.country_id = fighter.value.country_id ?? 0
-  editFighter.city_id = fighter.value.city_id ?? 0
-  editFighter.club_id = fighter.value.club_id ?? 0
-  editFighter.pic = fighter.value.pic ?? ''
-  editFighter.is_male = fighter.value.is_male ?? true
-}
-
 const startEditing = () => {
-  fillEditForm()
-  isEditing.value = true
+  fighterEditForm.startEditing(fighter.value)
 }
 
 const cancelEditing = () => {
-  fillEditForm()
-  isEditing.value = false
+  fighterEditForm.cancelEditing(fighter.value)
 }
 
 const saveFighter = async () => {
-  if (!fighter.value || !canEdit.value) return
-
-  const saveData: FighterDB = {
-    id: fighter.value.id,
-    surname: editFighter.surname,
-    name: editFighter.name,
-    patronymic: editFighter.patronymic,
-    country_id: editFighter.country_id,
-    city_id: editFighter.city_id,
-    club_id: editFighter.club_id || null,
-    pic: editFighter.pic,
-    is_male: editFighter.is_male
+  const savedFighter = await fighterEditForm.saveEntity(fighter.value)
+  if (savedFighter) {
+    fighter.value = savedFighter
   }
-
-  fighter.value = await FightersListStore.updateFighter(fighter.value.id, saveData)
-  isEditing.value = false
 }
 </script>
 

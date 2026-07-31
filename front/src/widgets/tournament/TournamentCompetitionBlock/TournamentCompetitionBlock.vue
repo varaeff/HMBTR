@@ -6,147 +6,124 @@ import { FightsDisplay } from '@/widgets/tournament/FightsDisplay'
 import { NominationGroups } from '@/widgets/tournament/NominationGroups'
 import { OlympicBracket } from '@/widgets/tournament/OlympicBracket'
 import { areFightResultsReady, canShowGroupFightActions } from '@/lib/fightResult'
-import type { CompetitionBlock, Group, PendingTie, TournamentMarshal } from '@/model'
 import type {
-  ActiveCardTypes,
-  CreateDisciplinaryCardAction,
-  FightScoreUpdatePayload,
-  OlympicRoundPayload,
-  OlympicRoundResultsPayload,
-  OlympicSlotSwapPayload
+  TournamentCompetitionBlockActions,
+  TournamentCompetitionBlockCards,
+  TournamentCompetitionBlockOptions,
+  TournamentCompetitionBlockPermissions,
+  TournamentCompetitionBlockState
 } from '@/widgets/tournament/types'
 
 const props = defineProps<{
-  block: CompetitionBlock
-  title: string
-  isOpen: boolean
-  canEditCompetition: boolean
-  canUseCompetitionBackwardActions: boolean
-  canManageCards: boolean
-  canGenerateGroupFights: boolean
-  hasBlockingGroupAdvancementTie: boolean
-  pendingTie: PendingTie | null
-  olympicCompetitorIds: Set<number>
-  redCardGroupFighterKeys: Set<string>
-  tournamentId: number
-  cardDate: string
-  activeCardTypes: ActiveCardTypes
-  tournamentMarshals: TournamentMarshal[]
-  createDisciplinaryCard: CreateDisciplinaryCardAction
-  attachedCardCountByFightId: Record<number, number>
-  isOlympicPairsFixing: boolean
-}>()
-
-const emit = defineEmits<{
-  (e: 'update:isOpen', value: boolean): void
-  (e: 'generate-group-fights', blockId: number): void
-  (e: 'rollback-block', blockId: number): void
-  (e: 'fix-group-results', blockId: number): void
-  (e: 'cancel-group-fights-fixation', blockId: number): void
-  (e: 'cancel-group-results-fixation', blockId: number): void
-  (e: 'card-issued'): void
-  (e: 'update-score', payload: FightScoreUpdatePayload): void
-  (e: 'update-groups', groups: Group[]): void
-  (e: 'swap-olympic-slots', payload: OlympicSlotSwapPayload): void
-  (e: 'fix-olympic-pairs', blockId: number): void
-  (e: 'fix-olympic-round-results', payload: OlympicRoundResultsPayload): void
-  (e: 'cancel-olympic-round-results-fixation', payload: OlympicRoundPayload): void
-  (e: 'cancel-olympic-pair-fixation', payload: OlympicRoundPayload): void
-  (e: 'rollback-olympic-round', payload: OlympicRoundPayload): void
-  (e: 'rollback-olympic-pending-pairs', blockId: number): void
+  state: TournamentCompetitionBlockState
+  permissions: TournamentCompetitionBlockPermissions
+  options: TournamentCompetitionBlockOptions
+  cards: TournamentCompetitionBlockCards
+  actions: TournamentCompetitionBlockActions
 }>()
 
 const isGroupBlockComplete = computed(
-  () => props.block.type === 'GROUP' && areFightResultsReady(props.block.fights)
+  () => props.state.block.type === 'GROUP' && areFightResultsReady(props.state.block.fights)
 )
 </script>
 
 <template>
   <section class="my-6">
     <CollapsibleSection
-      :title="title"
-      :isOpen="isOpen"
-      @update:isOpen="(value) => emit('update:isOpen', value)"
+      :title="state.title"
+      :isOpen="state.isOpen"
+      @update:isOpen="actions.setOpen"
     >
-      <template v-if="block.type === 'GROUP'">
+      <template v-if="state.block.type === 'GROUP'">
         <NominationGroups
-          :groups="block.groups"
-          :activeCardTypes="activeCardTypes"
-          :redCardGroupFighterKeys="redCardGroupFighterKeys"
-          :highlightedAdvancerCompetitorIds="olympicCompetitorIds"
-          :isFixed="!canEditCompetition || block.status !== 'ACTIVE' || block.fights.length > 0"
-          @update-groups="(groups) => emit('update-groups', groups)"
+          :groups="state.block.groups"
+          :activeCardTypes="cards.activeCardTypes"
+          :redCardGroupFighterKeys="state.redCardGroupFighterKeys"
+          :highlightedAdvancerCompetitorIds="options.olympicCompetitorIds"
+          :isFixed="
+            !permissions.canEditCompetition ||
+            state.block.status !== 'ACTIVE' ||
+            state.block.fights.length > 0
+          "
+          @update-groups="actions.updateGroups"
         />
         <div class="mb-3 text-center text-sm text-muted-foreground">
-          {{ $t(`tournamentPageLifecycle${block.lifecycleState}`) }}
+          {{ $t(`tournamentPageLifecycle${state.block.lifecycleState}`) }}
         </div>
         <div
           class="flex flex-wrap justify-center gap-3 my-5"
-          v-if="canEditCompetition && block.status === 'ACTIVE' && block.fights.length === 0"
+          v-if="
+            permissions.canEditCompetition &&
+            state.block.status === 'ACTIVE' &&
+            state.block.fights.length === 0
+          "
         >
           <Button
-            :disabled="!canGenerateGroupFights"
-            @click="emit('generate-group-fights', block.id)"
+            :disabled="!options.canGenerateGroupFights"
+            @click="actions.generateGroupFights(state.block.id)"
           >
             {{ $t('tournamentPageGenerateFights') }}
           </Button>
-          <Button variant="destructive" @click="emit('rollback-block', block.id)">
+          <Button variant="destructive" @click="actions.rollbackBlock(state.block.id)">
             {{ $t('tournamentPageReturnPreviousStage') }}
           </Button>
         </div>
         <FightsDisplay
-          v-if="block.fightsBlocks.length"
-          :blockId="block.id"
-          :blocksData="block.fightsBlocks"
+          v-if="state.block.fightsBlocks.length"
+          :blockId="state.block.id"
+          :blocksData="state.block.fightsBlocks"
           :hasAccess="
-            canEditCompetition &&
-            block.status === 'ACTIVE' &&
-            block.lifecycleState === 'FIGHTS_EDITABLE'
+            permissions.canEditCompetition &&
+            state.block.status === 'ACTIVE' &&
+            state.block.lifecycleState === 'FIGHTS_EDITABLE'
           "
           :canIssueCards="
-            canManageCards &&
-            block.status === 'ACTIVE' &&
-            block.lifecycleState === 'FIGHTS_EDITABLE'
+            permissions.canManageCards &&
+            state.block.status === 'ACTIVE' &&
+            state.block.lifecycleState === 'FIGHTS_EDITABLE'
           "
-          :tournamentId="tournamentId"
-          :cardDate="cardDate"
-          :activeCardTypes="activeCardTypes"
-          :tournamentMarshals="tournamentMarshals"
-          :createDisciplinaryCard="createDisciplinaryCard"
-          @update-score="(payload) => emit('update-score', payload)"
-          @card-issued="emit('card-issued')"
+          :tournamentId="state.tournamentId"
+          :cardDate="cards.cardIssueDate"
+          :activeCardTypes="cards.activeCardTypes"
+          :tournamentMarshals="cards.tournamentMarshals"
+          :createDisciplinaryCard="cards.createDisciplinaryCard"
+          @update-score="actions.updateFightScore"
+          @card-issued="actions.refreshCardsAndCompetition"
         />
         <div
           v-if="
-            (canEditCompetition || canUseCompetitionBackwardActions) &&
-            canShowGroupFightActions(block, pendingTie)
+            (permissions.canEditCompetition || permissions.canUseCompetitionBackwardActions) &&
+            canShowGroupFightActions(state.block, state.pendingTie)
           "
           class="flex flex-wrap justify-center gap-3 my-5"
         >
           <Button
-            v-if="canEditCompetition"
-            :disabled="!isGroupBlockComplete || hasBlockingGroupAdvancementTie"
-            @click="emit('fix-group-results', block.id)"
+            v-if="permissions.canEditCompetition"
+            :disabled="!isGroupBlockComplete || options.hasBlockingGroupAdvancementTie"
+            @click="actions.fixGroupResults(state.block.id)"
           >
             {{ $t('tournamentPageFixResults') }}
           </Button>
           <Button
-            v-if="canUseCompetitionBackwardActions"
+            v-if="permissions.canUseCompetitionBackwardActions"
             variant="destructive"
-            @click="emit('cancel-group-fights-fixation', block.id)"
+            @click="actions.cancelGroupFightsFixation(state.block.id)"
           >
             {{ $t('tournamentPageCancelGroupFixation') }}
           </Button>
         </div>
         <div
           v-if="
-            canUseCompetitionBackwardActions &&
-            block.status === 'ACTIVE' &&
-            block.lifecycleState === 'RESULTS_FIXED'
+            permissions.canUseCompetitionBackwardActions &&
+            state.block.status === 'ACTIVE' &&
+            state.block.lifecycleState === 'RESULTS_FIXED'
           "
           class="flex justify-center my-5"
         >
-          <Button variant="destructive" @click="emit('cancel-group-results-fixation', block.id)">
+          <Button
+            variant="destructive"
+            @click="actions.cancelGroupResultsFixation(state.block.id)"
+          >
             {{ $t('tournamentPageCancelResultsFixation') }}
           </Button>
         </div>
@@ -154,28 +131,28 @@ const isGroupBlockComplete = computed(
 
       <OlympicBracket
         v-else
-        :block="block"
-        :hasAccess="canEditCompetition && block.status === 'ACTIVE'"
-        :canUseBackwardActions="canUseCompetitionBackwardActions && block.status === 'ACTIVE'"
-        :canIssueCards="canManageCards"
-        :tournamentId="tournamentId"
-        :cardDate="cardDate"
-        :activeCardTypes="activeCardTypes"
-        :tournamentMarshals="tournamentMarshals"
-        :createDisciplinaryCard="createDisciplinaryCard"
-        :attachedCardCountByFightId="attachedCardCountByFightId"
-        :isFixingPairs="isOlympicPairsFixing"
-        @card-issued="emit('card-issued')"
-        @update-score="(payload) => emit('update-score', payload)"
-        @swap-slots="(payload) => emit('swap-olympic-slots', payload)"
-        @fix-pairs="(blockId) => emit('fix-olympic-pairs', blockId)"
-        @fix-round-results="(payload) => emit('fix-olympic-round-results', payload)"
-        @cancel-round-results-fixation="
-          (payload) => emit('cancel-olympic-round-results-fixation', payload)
+        :block="state.block"
+        :hasAccess="permissions.canEditCompetition && state.block.status === 'ACTIVE'"
+        :canUseBackwardActions="
+          permissions.canUseCompetitionBackwardActions && state.block.status === 'ACTIVE'
         "
-        @cancel-pair-fixation="(payload) => emit('cancel-olympic-pair-fixation', payload)"
-        @rollback-round="(payload) => emit('rollback-olympic-round', payload)"
-        @rollback-pending-pairs="(blockId) => emit('rollback-olympic-pending-pairs', blockId)"
+        :canIssueCards="permissions.canManageCards"
+        :tournamentId="state.tournamentId"
+        :cardDate="cards.cardIssueDate"
+        :activeCardTypes="cards.activeCardTypes"
+        :tournamentMarshals="cards.tournamentMarshals"
+        :createDisciplinaryCard="cards.createDisciplinaryCard"
+        :attachedCardCountByFightId="cards.attachedCardCountByFightId"
+        :isFixingPairs="state.isOlympicPairsFixing"
+        @card-issued="actions.refreshCardsAndCompetition"
+        @update-score="actions.updateFightScore"
+        @swap-slots="actions.swapOlympicSlots"
+        @fix-pairs="actions.fixOlympicPairs"
+        @fix-round-results="actions.fixOlympicRoundResults"
+        @cancel-round-results-fixation="actions.cancelOlympicRoundResultsFixation"
+        @cancel-pair-fixation="actions.cancelOlympicPairFixation"
+        @rollback-round="actions.rollbackOlympicRound"
+        @rollback-pending-pairs="actions.rollbackOlympicPendingPairs"
       />
     </CollapsibleSection>
   </section>

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { readFightResultDrafts, writeFightResultDrafts } from './competitionResultDrafts'
+import { readFightResultDrafts, writeFightResultDrafts } from './resultDrafts'
 
 const draftsKey = (tournamentId: number, nominationId: number) =>
   `HMBTR-competition-result-drafts-${tournamentId}-${nominationId}`

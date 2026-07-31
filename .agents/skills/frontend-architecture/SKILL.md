@@ -46,6 +46,12 @@ Keep `useTournamentPage` as a facade over narrower internal composables for
 confirmation, report download, card-derived state, persisted block-open state,
 and lifecycle orchestration. This keeps the external page contract stable while
 improving locality inside the orchestration implementation.
+For stores that grow private helper modules, prefer a slice folder with a
+public `index.ts` over a flat mix in `stores/`. Example:
+`stores/competition/index.ts` re-exports the Pinia facade from `store.ts`,
+while `commands.ts`, `mapper.ts`, draft persistence, score helpers, and focused
+specs stay private to `stores/competition/`. Callers should keep importing from
+`@/stores/competition`, not from private files.
 Large tournament widgets such as `OlympicBracket` should keep pure view
 derivation in colocated helpers and split repeated template regions into
 presentational subcomponents before lifting lifecycle actions upward.
@@ -55,6 +61,11 @@ select UI and feature-level store/router orchestration in a colocated composable
 If the feature caches registration eligibility locally, keep it synchronized
 with external mutations of `competitionStore.tournamentCompetitors`, because
 competitor removal is orchestrated outside the feature.
+For profile edit pages that share the same edit-mode lifecycle, use
+`composables/useEditableEntityForm.ts`. Pages provide domain adapters for
+draft creation, source-to-draft mapping, payload construction, permissions, and
+store save calls; the composable owns `draft`, `isEditing`, required-field
+disabled state, start/cancel, and save lifecycle.
 
 ## Constraints
 
