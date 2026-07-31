@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import { DynamicLabeledInput } from '@/widgets/DynamicLabeledInput'
+import { DynamicLabeledInput } from '@/components/ui/dynamic-labeled-input'
 import { CircleX } from 'lucide-vue-next'
 import { CircleAlert } from 'lucide-vue-next'
 import type { ButtonVariants } from '@/components/ui/button'

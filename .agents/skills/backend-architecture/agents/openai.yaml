@@ -1,0 +1,4 @@
+﻿interface:
+  display_name: "Backend Architecture"
+  short_description: "Backend module architecture and refactoring rules"
+  default_prompt: "Use $backend-architecture to refactor backend code without supermodules, mixed responsibilities, duplication, or overengineering."

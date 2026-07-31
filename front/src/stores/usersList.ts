@@ -1,6 +1,15 @@
 import { defineStore } from 'pinia'
 import type { User } from '@/model'
 import http from '@/api/http'
+import {
+  clearListSearch,
+  filterBySearch,
+  hasLoadedRemoteList,
+  mergeMissingById,
+  replaceById,
+  setListSearch,
+  withFallback
+} from '@/stores/shared/listStorePolicy'
 import { API_ROUTES } from '@shared/routes'
 
 interface UsersListState {
@@ -47,15 +56,13 @@ export const useUsersListStore = defineStore({
         await http.get(API_ROUTES.USERS.ROOT + '/' + API_ROUTES.USERS.COUNT)
       ).data
 
-      if (usersCount === this.users.length - 1) return
+      if (hasLoadedRemoteList(this.users, usersCount, (user) => user.id !== 0)) return
 
       const data: Array<User> = (await http.get(API_ROUTES.USERS.ROOT)).data
 
       const users: Array<User> = await Promise.all(data.map(async (user) => parseUser(user)))
 
-      const existingIds = new Set(this.users.map((u) => u.id))
-
-      this.users.push(...users.filter((user) => !existingIds.has(user.id)))
+      mergeMissingById(this.users, users)
     },
 
     async updateUser(this: UsersListState, updatedUser: User) {
@@ -66,33 +73,27 @@ export const useUsersListStore = defineStore({
         updatedUser
       )
       const updatedUserData: User = await parseUser(response.data)
-      const userIndex = this.users.findIndex((u) => u.id === updatedUser.id)
-      if (userIndex !== -1) {
-        this.users[userIndex] = updatedUserData
-      }
+      replaceById(this.users, updatedUserData)
     },
 
     clearSearchString() {
-      this.searchString = ''
+      clearListSearch(this)
     },
 
     setSearchString(searchString: string) {
-      this.searchString = searchString
+      setListSearch(this, searchString)
     }
   },
 
   getters: {
     filteredUsersList(state) {
-      const filtered = state.users
-        .filter((user) => user.id !== 0)
-        .filter(
-        (user) =>
-          user.username.toLowerCase().includes(state.searchString.toLowerCase()) ||
-          user.name.toLowerCase().includes(state.searchString.toLowerCase()) ||
-            user.surname.toLowerCase().includes(state.searchString.toLowerCase())
-        )
+      const filtered = filterBySearch(
+        state.users.filter((user) => user.id !== 0),
+        state.searchString,
+        [(user) => user.username, (user) => user.name, (user) => user.surname]
+      )
 
-      return filtered.length > 0 ? filtered : [state.users[0]]
+      return withFallback(filtered, state.users[0])
     },
 
     getSearchString(state) {

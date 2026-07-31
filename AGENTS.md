@@ -72,6 +72,7 @@ If no suitable pattern exists:
 
 Before finalizing:
 
+- choose the smallest sufficient validation set from `docs/validation-policy.md`,
 - verify consistency with neighboring modules,
 - check naming, typing, imports, architecture, and structure,
 - avoid duplicated logic,

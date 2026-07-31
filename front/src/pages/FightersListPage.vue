@@ -3,10 +3,10 @@ import { ref, watch, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useFightersListStore } from '@/stores/fightersList'
 import { hasAccess } from '@/lib/checkAccess'
-import { FighterCard } from '@/components/ui/fighterCard'
+import { FighterCard } from '@/widgets/fighter/FighterCard'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
-import { SearchWidget } from '@/widgets/SearchWidget'
+import { SearchWidget } from '@/features/search'
 import type { Fighter } from '@/model'
 
 const router = useRouter()

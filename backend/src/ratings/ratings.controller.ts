@@ -15,9 +15,7 @@ export class RatingsController {
 
   @Public()
   @Get('nomination/:nominationId')
-  findByNomination(
-    @Param('nominationId', ParseIntPipe) nominationId: number,
-  ) {
+  findByNomination(@Param('nominationId', ParseIntPipe) nominationId: number) {
     return this.ratingsService.findByNomination(nominationId);
   }
 

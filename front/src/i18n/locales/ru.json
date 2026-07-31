@@ -169,6 +169,7 @@
 
   "fightersSelectPlaceholder": "Выберите бойца...",
   "fightersSelectEmpty": "Боeц не найден",
+  "fightersSelectAddFighter": "Добавить бойца",
   "fightersSelectRegister": "Зарегистрировать на турнир",
 
   "userMenuAdmin": "Администратор",

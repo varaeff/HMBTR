@@ -6,9 +6,30 @@ jest.mock('../ratings/ratings.service', () => ({
   RatingsService: class RatingsService {},
 }));
 
-import { CompetitionService } from './competition.service';
+import { CompetitionOlympicService } from './olympic/competition-olympic.service';
+import { CompetitionRedCardService } from './competition-red-card.service';
+import { CompetitionScoringService } from './scoring/competition-scoring.service';
+import { CompetitionStateReader } from './state/competition-state.reader';
+import { CompetitionRankingsService } from './rankings/competition-rankings.service';
+import { AdvancementService } from './rankings/advancement.service';
+import { GroupRankingReader } from './rankings/group-ranking.reader';
+import { PendingTieService } from './rankings/pending-tie.service';
+import { TieResolutionService } from './rankings/tie-resolution.service';
+import { CompetitionOlympicProgressService } from './olympic/competition-olympic-progress.service';
+import { CompetitionLifecycleService } from './lifecycle/competition-lifecycle.service';
+import { CompetitionResultService } from './results/competition-result.service';
+import { CompetitionFightService } from './fights/competition-fight.service';
+import { CompetitionFinishService } from './finish/competition-finish.service';
+import { FightResultEvaluationService } from './results/fight-result-evaluation.service';
+import { FightResultPersistenceService } from './results/fight-result-persistence.service';
+import { ResultFixationService } from './results/result-fixation.service';
+import { ResultSubmissionValidator } from './results/result-submission.validator';
+import type { ResultBlock } from './results/result-types';
+import { RedCardConsequencesService } from './red-cards/red-card-consequences.service';
+import { RedCardForfeitService } from './red-cards/red-card-forfeit.service';
+import { RedCardRegistrationService } from './red-cards/red-card-registration.service';
+import { RedCardStorageService } from './red-cards/red-card-storage.service';
 import type { PrismaService } from '../prisma/prisma.service';
-import type { RatingsService } from '../ratings/ratings.service';
 
 type CreatedFight = {
   competitor1_id: number;
@@ -18,48 +39,136 @@ type CreatedFight = {
   is_bronze?: boolean;
 };
 
-describe('CompetitionService', () => {
+type FightUpdateParams = {
+  where: { id: number };
+  data: {
+    competitor1_score?: number;
+    competitor2_score?: number;
+    competitor1_round1_score?: number;
+    competitor2_round1_score?: number;
+    competitor1_round2_score?: number;
+    competitor2_round2_score?: number;
+    competitor1_round3_score?: number;
+    competitor2_round3_score?: number;
+    competitor1_round4_score?: number;
+    competitor2_round4_score?: number;
+    winner_id?: number | null;
+    is_finished?: boolean;
+    forfeit_card_id?: number | null;
+  };
+};
+
+const createResultService = (
+  prisma: PrismaService,
+  olympicService: CompetitionOlympicService = new CompetitionOlympicService(),
+) => {
+  const rankingsService = {
+    getPendingTieTx: jest.fn().mockResolvedValue(null),
+  } as unknown as CompetitionRankingsService;
+  const redCardService = {
+    applyRedCardForfeits: jest.fn().mockResolvedValue(undefined),
+  } as unknown as CompetitionRedCardService;
+  const scoringService = new CompetitionScoringService(prisma);
+
+  return {
+    service: new CompetitionResultService(
+      prisma,
+      {
+        getState: jest.fn().mockResolvedValue({ blocks: [] }),
+      } as unknown as CompetitionStateReader,
+      scoringService,
+      redCardService,
+      new ResultSubmissionValidator(),
+      new FightResultEvaluationService(),
+      new FightResultPersistenceService(scoringService),
+      new ResultFixationService(prisma, rankingsService, olympicService),
+    ),
+    rankingsService,
+    redCardService,
+  };
+};
+
+const createValidatorBlock = (
+  overrides: Partial<ResultBlock> = {},
+): ResultBlock => ({
+  id: 90,
+  tournament_id: 31,
+  nomination_id: 5,
+  type: 'GROUP',
+  status: 'ACTIVE',
+  lifecycle_state: 'FIGHTS_EDITABLE',
+  fights: [
+    {
+      id: 636,
+      competitor1_id: 101,
+      competitor2_id: 102,
+      rounds: 1,
+      round_win: false,
+      forfeit_card_id: null,
+    },
+    {
+      id: 637,
+      competitor1_id: 103,
+      competitor2_id: 104,
+      rounds: 1,
+      round_win: false,
+      forfeit_card_id: null,
+    },
+  ],
+  groups: [{ id: 1 }, { id: 2 }],
+  tournament_nomination: {
+    is_finished: false,
+    nomination: { rounds: 1, round_win: false },
+  },
+  round_states: [],
+  ...overrides,
+});
+
+describe('competition use-case services', () => {
   it('returns fight warning reasons in competition state', async () => {
     const prisma = {
+      tournament_nominations: {
+        findFirst: jest.fn().mockResolvedValue({
+          id: 15,
+          is_finished: false,
+        }),
+      },
       competition_blocks: {
-        findMany: jest.fn().mockResolvedValue([
-          {
-            id: 90,
-            status: 'ACTIVE',
-            type: 'GROUP',
-            groups: [],
-            fights: [
-              {
-                id: 637,
-                warnings: [{ competitor_id: 104, round: 1, reason: 'Holding' }],
-              },
-            ],
-            bracket_slots: [],
-            round_states: [],
-          },
-        ]),
+        findMany: jest
+          .fn()
+          .mockResolvedValueOnce([])
+          .mockResolvedValueOnce([
+            {
+              id: 90,
+              status: 'ACTIVE',
+              type: 'GROUP',
+              groups: [],
+              fights: [
+                {
+                  id: 637,
+                  warnings: [
+                    { competitor_id: 104, round: 1, reason: 'Holding' },
+                  ],
+                },
+              ],
+              bracket_slots: [],
+              round_states: [],
+            },
+          ]),
       },
       competition_placements: {
         findMany: jest.fn().mockResolvedValue([]),
       },
     };
-    const service = new CompetitionService(
+    const rankingsService = {
+      getPendingTie: jest.fn().mockResolvedValue(null),
+      getPendingOlympicThirdPlaceTieTx: jest.fn().mockResolvedValue(null),
+    } as unknown as CompetitionRankingsService;
+    const service = new CompetitionStateReader(
       prisma as unknown as PrismaService,
-      {} as RatingsService,
+      new CompetitionOlympicService(),
+      rankingsService,
     );
-    const serviceInternals = service as unknown as {
-      getTournamentNomination: jest.Mock;
-      normalizeBronzeFinalFightNumbers: jest.Mock;
-      getPendingTie: jest.Mock;
-    };
-    serviceInternals.getTournamentNomination = jest.fn().mockResolvedValue({
-      id: 15,
-      is_finished: false,
-    });
-    serviceInternals.normalizeBronzeFinalFightNumbers = jest
-      .fn()
-      .mockResolvedValue(undefined);
-    serviceInternals.getPendingTie = jest.fn().mockResolvedValue(null);
 
     const state = await service.getState(31, 5);
 
@@ -122,7 +231,7 @@ describe('CompetitionService', () => {
       bracket_slots: {
         findMany: jest.fn().mockResolvedValue(slots),
         update: jest.fn(
-          async (params: {
+          (params: {
             where: { id: number };
             data: { slot_position: number };
           }) => {
@@ -137,9 +246,8 @@ describe('CompetitionService', () => {
         aggregate: jest.fn().mockResolvedValue({
           _max: { fight_number: 10 },
         }),
-        findMany: jest.fn(
-          async (params: { where: { bracket_round: number } }) =>
-            params.where.bracket_round === 1 ? firstRound : [],
+        findMany: jest.fn((params: { where: { bracket_round: number } }) =>
+          params.where.bracket_round === 1 ? firstRound : [],
         ),
         count: jest.fn().mockResolvedValue(0),
         findFirst: jest.fn().mockResolvedValue(null),
@@ -149,6 +257,12 @@ describe('CompetitionService', () => {
       competition_round_states: {
         upsert: jest.fn(),
       },
+      nominations: {
+        findUnique: jest.fn().mockResolvedValue({
+          rounds: 3,
+          round_win: false,
+        }),
+      },
     };
     const prisma = {
       $transaction: jest.fn(
@@ -156,9 +270,9 @@ describe('CompetitionService', () => {
           callback(tx),
       ),
     };
-    const service = new CompetitionService(
+    const service = new CompetitionOlympicProgressService(
       prisma as unknown as PrismaService,
-      {} as RatingsService,
+      new CompetitionOlympicService(),
     );
 
     await service.progressOlympicBlock(9);
@@ -212,24 +326,22 @@ describe('CompetitionService', () => {
         }),
         findMany: jest.fn().mockResolvedValue(semifinals),
         count: jest.fn().mockResolvedValue(0),
-        findFirst: jest.fn(
-          async (params: { where: { is_bronze?: boolean } }) => {
-            const fight = params.where.is_bronze
-              ? createdFights.find((createdFight) => createdFight.is_bronze)
-              : createdFights.find((createdFight) => !createdFight.is_bronze);
+        findFirst: jest.fn((params: { where: { is_bronze?: boolean } }) => {
+          const fight = params.where.is_bronze
+            ? createdFights.find((createdFight) => createdFight.is_bronze)
+            : createdFights.find((createdFight) => !createdFight.is_bronze);
 
-            if (!fight) return null;
+          if (!fight) return null;
 
-            return {
-              id: fight.is_bronze ? 12 : 13,
-              ...fight,
-              is_finished: false,
-              winner_id: null,
-            };
-          },
-        ),
+          return {
+            id: fight.is_bronze ? 12 : 13,
+            ...fight,
+            is_finished: false,
+            winner_id: null,
+          };
+        }),
         create: jest.fn(
-          async (params: {
+          (params: {
             data: {
               competitor1_id: number;
               competitor2_id: number;
@@ -247,6 +359,12 @@ describe('CompetitionService', () => {
       competition_round_states: {
         upsert: jest.fn(),
       },
+      nominations: {
+        findUnique: jest.fn().mockResolvedValue({
+          rounds: 3,
+          round_win: false,
+        }),
+      },
     };
     const prisma = {
       $transaction: jest.fn(
@@ -254,9 +372,9 @@ describe('CompetitionService', () => {
           callback(tx),
       ),
     };
-    const service = new CompetitionService(
+    const service = new CompetitionOlympicProgressService(
       prisma as unknown as PrismaService,
-      {} as RatingsService,
+      new CompetitionOlympicService(),
     );
 
     await service.progressOlympicBlock(9);
@@ -274,43 +392,19 @@ describe('CompetitionService', () => {
   });
 
   it('progresses Olympic blocks and reapplies forfeits after a red card', async () => {
-    const prisma = {
-      competition_blocks: {
-        findMany: jest.fn().mockResolvedValue([{ id: 9 }]),
-      },
-    };
-    const service = new CompetitionService(
-      prisma as unknown as PrismaService,
-      {} as RatingsService,
+    const applyRedCardConsequences = jest.fn().mockResolvedValue(undefined);
+    const redCardService = {
+      applyRedCardConsequences,
+    } as unknown as RedCardConsequencesService;
+    const service = new CompetitionRedCardService(
+      redCardService,
+      {} as RedCardForfeitService,
+      {} as RedCardRegistrationService,
     );
-    const serviceInternals = service as unknown as {
-      disciplinaryCardStorageExists: jest.Mock;
-      getTournamentCheckDate: jest.Mock;
-      applyRedCardForfeitsPass: jest.Mock;
-    };
-    const checkDate = new Date('2026-06-12T00:00:00.000Z');
-    serviceInternals.disciplinaryCardStorageExists = jest
-      .fn()
-      .mockResolvedValue(true);
-    serviceInternals.getTournamentCheckDate = jest
-      .fn()
-      .mockResolvedValue(checkDate);
-    serviceInternals.applyRedCardForfeitsPass = jest.fn().mockResolvedValue();
-    jest.spyOn(service, 'progressOlympicBlock').mockResolvedValue();
 
     await service.applyRedCardConsequences(31);
 
-    expect(serviceInternals.applyRedCardForfeitsPass).toHaveBeenNthCalledWith(
-      1,
-      31,
-      checkDate,
-    );
-    expect(service.progressOlympicBlock).toHaveBeenCalledWith(9);
-    expect(serviceInternals.applyRedCardForfeitsPass).toHaveBeenNthCalledWith(
-      2,
-      31,
-      checkDate,
-    );
+    expect(applyRedCardConsequences).toHaveBeenCalledWith(31);
   });
 
   it('forfeits the current and following group fights after a red card', async () => {
@@ -335,11 +429,10 @@ describe('CompetitionService', () => {
       competitor1: { fighter_id: 1 },
       competitor2: { fighter_id: 2 },
       nomination: { rounds: 1, round_win: false },
+      rounds: 1,
+      round_win: false,
     };
     const prisma = {
-      $transaction: jest.fn(async (callback: (tx: unknown) => Promise<unknown>) =>
-        callback(prisma),
-      ),
       fights: {
         findMany: jest.fn().mockResolvedValue([
           {
@@ -366,18 +459,23 @@ describe('CompetitionService', () => {
         createMany: jest.fn(),
       },
     };
-    const service = new CompetitionService(
-      prisma as unknown as PrismaService,
-      {} as RatingsService,
-    );
-    const serviceInternals = service as unknown as {
-      applyRedCardForfeitsPass: (
-        tournamentId: number,
-        checkDate: Date,
-      ) => Promise<void>;
-      getActiveRedCards: jest.Mock;
+    const prismaWithTransaction = {
+      ...prisma,
+      $transaction: jest.fn(
+        (callback: (tx: typeof prisma) => Promise<unknown>) => callback(prisma),
+      ),
     };
-    serviceInternals.getActiveRedCards = jest.fn().mockResolvedValue([
+    const redCardStorageService = new RedCardStorageService(
+      prismaWithTransaction as unknown as PrismaService,
+    );
+    const redCardForfeitService = new RedCardForfeitService(
+      prismaWithTransaction as unknown as PrismaService,
+      new CompetitionScoringService(
+        prismaWithTransaction as unknown as PrismaService,
+      ),
+      redCardStorageService,
+    );
+    jest.spyOn(redCardStorageService, 'getActiveRedCards').mockResolvedValue([
       {
         id: 72,
         fighter_id: 1,
@@ -391,36 +489,35 @@ describe('CompetitionService', () => {
       },
     ]);
 
-    await serviceInternals.applyRedCardForfeitsPass(
+    await redCardForfeitService.applyRedCardForfeitsPass(
       31,
       new Date('2026-06-12T00:00:00.000Z'),
     );
 
     expect(prisma.fights.update).toHaveBeenCalledTimes(2);
-    expect(prisma.fights.update).not.toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: { id: 40 },
-      }),
-    );
-    expect(prisma.fights.update).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: { id: 41 },
-        data: expect.objectContaining({ forfeit_card_id: 72 }),
-      }),
-    );
-    expect(prisma.fights.update).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: { id: 42 },
-        data: expect.objectContaining({ forfeit_card_id: 72 }),
-      }),
-    );
+    const updateCalls = prisma.fights.update.mock.calls as Array<
+      [FightUpdateParams]
+    >;
+    const forfeitUpdates = updateCalls.map(([params]) => ({
+      fightId: params.where.id,
+      forfeitCardId: params.data.forfeit_card_id,
+    }));
+    expect(forfeitUpdates).not.toContainEqual({
+      fightId: 40,
+      forfeitCardId: 72,
+    });
+    expect(forfeitUpdates).toContainEqual({
+      fightId: 41,
+      forfeitCardId: 72,
+    });
+    expect(forfeitUpdates).toContainEqual({
+      fightId: 42,
+      forfeitCardId: 72,
+    });
   });
 
   it('records round-win red-card forfeits as X:0 with 5:0 in each round', async () => {
     const prisma = {
-      $transaction: jest.fn(async (callback: (tx: unknown) => Promise<unknown>) =>
-        callback(prisma),
-      ),
       fights: {
         findMany: jest.fn().mockResolvedValue([
           {
@@ -443,6 +540,8 @@ describe('CompetitionService', () => {
             competitor1: { fighter_id: 1 },
             competitor2: { fighter_id: 2 },
             nomination: { rounds: 3, round_win: true },
+            rounds: 3,
+            round_win: true,
           },
         ]),
         update: jest.fn(),
@@ -452,18 +551,23 @@ describe('CompetitionService', () => {
         createMany: jest.fn(),
       },
     };
-    const service = new CompetitionService(
-      prisma as unknown as PrismaService,
-      {} as RatingsService,
-    );
-    const serviceInternals = service as unknown as {
-      applyRedCardForfeitsPass: (
-        tournamentId: number,
-        checkDate: Date,
-      ) => Promise<void>;
-      getActiveRedCards: jest.Mock;
+    const prismaWithTransaction = {
+      ...prisma,
+      $transaction: jest.fn(
+        (callback: (tx: typeof prisma) => Promise<unknown>) => callback(prisma),
+      ),
     };
-    serviceInternals.getActiveRedCards = jest.fn().mockResolvedValue([
+    const redCardStorageService = new RedCardStorageService(
+      prismaWithTransaction as unknown as PrismaService,
+    );
+    const redCardForfeitService = new RedCardForfeitService(
+      prismaWithTransaction as unknown as PrismaService,
+      new CompetitionScoringService(
+        prismaWithTransaction as unknown as PrismaService,
+      ),
+      redCardStorageService,
+    );
+    jest.spyOn(redCardStorageService, 'getActiveRedCards').mockResolvedValue([
       {
         id: 71,
         fighter_id: 1,
@@ -477,14 +581,18 @@ describe('CompetitionService', () => {
       },
     ]);
 
-    await serviceInternals.applyRedCardForfeitsPass(
+    await redCardForfeitService.applyRedCardForfeitsPass(
       31,
       new Date('2026-06-12T00:00:00.000Z'),
     );
 
-    expect(prisma.fights.update).toHaveBeenCalledWith({
+    const updateCalls = prisma.fights.update.mock.calls as Array<
+      [FightUpdateParams]
+    >;
+    const updateCall = updateCalls[0]?.[0];
+    expect(updateCall).toMatchObject({
       where: { id: 41 },
-      data: expect.objectContaining({
+      data: {
         competitor1_score: 0,
         competitor2_score: 3,
         competitor1_round1_score: 0,
@@ -498,7 +606,7 @@ describe('CompetitionService', () => {
         winner_id: 102,
         is_finished: true,
         forfeit_card_id: 71,
-      }),
+      },
     });
   });
 
@@ -523,33 +631,40 @@ describe('CompetitionService', () => {
         ]),
       },
     };
-    const service = new CompetitionService(
-      {} as PrismaService,
-      {} as RatingsService,
+    const redCardService = {
+      getActiveRedCompetitorIdsTx: jest.fn().mockResolvedValue(new Set([101])),
+      excludeActiveRedCompetitors: <T extends { competitorId: number }>(
+        ranked: T[],
+        activeRedCompetitorIds: Set<number>,
+      ) =>
+        ranked.filter(
+          (competitor) => !activeRedCompetitorIds.has(competitor.competitorId),
+        ),
+    } as unknown as CompetitionRedCardService;
+    const pendingTieService = {
+      getPendingTieTx: jest.fn().mockResolvedValue(null),
+      getOlympicThirdPlaceManualOrderTx: jest.fn().mockResolvedValue([]),
+      getPendingOlympicThirdPlaceTieFromRankedTx: jest
+        .fn()
+        .mockResolvedValue(null),
+    } as unknown as PendingTieService;
+    const groupRankingReader = {
+      getGroupRankingsTx: jest.fn().mockResolvedValue({
+        stats: [
+          { competitorId: 101, wins: 3, diff: 30 },
+          { competitorId: 102, wins: 2, diff: 20 },
+          { competitorId: 103, wins: 1, diff: 10 },
+        ],
+        manualOrder: [],
+      }),
+    } as unknown as GroupRankingReader;
+    const service = new AdvancementService(
+      pendingTieService,
+      groupRankingReader,
+      redCardService,
     );
-    const serviceInternals = service as unknown as {
-      getAdvancingCompetitorsTx: (
-        transaction: typeof tx,
-        blockId: number,
-      ) => Promise<Array<{ id: number }>>;
-      getPendingTieTx: jest.Mock;
-      getActiveRedCompetitorIdsTx: jest.Mock;
-      getGroupRankingsTx: jest.Mock;
-    };
-    serviceInternals.getPendingTieTx = jest.fn().mockResolvedValue(null);
-    serviceInternals.getActiveRedCompetitorIdsTx = jest
-      .fn()
-      .mockResolvedValue(new Set([101]));
-    serviceInternals.getGroupRankingsTx = jest.fn().mockResolvedValue({
-      stats: [
-        { competitorId: 101, wins: 3, diff: 30 },
-        { competitorId: 102, wins: 2, diff: 20 },
-        { competitorId: 103, wins: 1, diff: 10 },
-      ],
-      manualOrder: [],
-    });
 
-    const advancers = await serviceInternals.getAdvancingCompetitorsTx(tx, 9);
+    const advancers = await service.getAdvancingCompetitorsTx(tx, 9);
 
     expect(advancers.map((competitor) => competitor.id)).toEqual([102, 103]);
     expect(tx.competitors.findMany).toHaveBeenCalledWith(
@@ -574,35 +689,287 @@ describe('CompetitionService', () => {
         findMany: jest.fn().mockResolvedValue([{ id: 3, name: 'A' }]),
       },
     };
-    const service = new CompetitionService(
+    const redCardService = {
+      getActiveRedCompetitorIdsTx: jest.fn().mockResolvedValue(new Set([101])),
+      excludeActiveRedCompetitors: <T extends { competitorId: number }>(
+        ranked: T[],
+        activeRedCompetitorIds: Set<number>,
+      ) =>
+        ranked.filter(
+          (competitor) => !activeRedCompetitorIds.has(competitor.competitorId),
+        ),
+    } as unknown as CompetitionRedCardService;
+    const groupRankingReader = {
+      getGroupRankingsTx: jest.fn().mockResolvedValue({
+        stats: [
+          { competitorId: 101, wins: 3, diff: 30 },
+          { competitorId: 102, wins: 3, diff: 30 },
+          { competitorId: 103, wins: 2, diff: 20 },
+          { competitorId: 104, wins: 1, diff: 10 },
+        ],
+        manualOrder: [],
+      }),
+    } as unknown as GroupRankingReader;
+    const service = new PendingTieService(
       {} as PrismaService,
-      {} as RatingsService,
+      groupRankingReader,
+      redCardService,
     );
-    const serviceInternals = service as unknown as {
-      getPendingTieTx: (
-        transaction: typeof tx,
-        blockId: number,
-        places: number,
-      ) => Promise<unknown>;
-      getActiveRedCompetitorIdsTx: jest.Mock;
-      getGroupRankingsTx: jest.Mock;
-    };
-    serviceInternals.getActiveRedCompetitorIdsTx = jest
-      .fn()
-      .mockResolvedValue(new Set([101]));
-    serviceInternals.getGroupRankingsTx = jest.fn().mockResolvedValue({
-      stats: [
-        { competitorId: 101, wins: 3, diff: 30 },
-        { competitorId: 102, wins: 3, diff: 30 },
-        { competitorId: 103, wins: 2, diff: 20 },
-        { competitorId: 104, wins: 1, diff: 10 },
-      ],
-      manualOrder: [],
-    });
 
-    const pendingTie = await serviceInternals.getPendingTieTx(tx, 9, 2);
+    const pendingTie = await service.getPendingTieTx(tx, 9, 2);
 
     expect(pendingTie).toBeNull();
+  });
+
+  it('calculates group ranking diff from warning-adjusted effective scores', async () => {
+    const tx = {
+      group_competitors: {
+        findMany: jest
+          .fn()
+          .mockResolvedValue([{ competitor_id: 101 }, { competitor_id: 102 }]),
+      },
+      fights: {
+        findMany: jest.fn().mockResolvedValue([
+          {
+            competitor1_id: 101,
+            competitor2_id: 102,
+            competitor1_score: 0,
+            competitor2_score: 0,
+            competitor1_round1_score: 0,
+            competitor2_round1_score: 0,
+            competitor1_round2_score: 0,
+            competitor2_round2_score: 0,
+            competitor1_round3_score: 0,
+            competitor2_round3_score: 0,
+            competitor1_round4_score: 0,
+            competitor2_round4_score: 0,
+            forfeit_card_id: null,
+            winner_id: 101,
+            is_finished: true,
+            rounds: 1,
+            round_win: false,
+            warnings: [{ competitor_id: 102, round: 1, reason: 'Holding' }],
+            nomination: { rounds: 1, round_win: false },
+            round_scores: [
+              {
+                competitor1_score: 0,
+                competitor2_score: 0,
+              },
+            ],
+          },
+        ]),
+      },
+      competition_placements: {
+        findMany: jest.fn().mockResolvedValue([]),
+      },
+    };
+    const reader = new GroupRankingReader(
+      new CompetitionScoringService({} as PrismaService),
+    );
+
+    const rankings = await reader.getGroupRankingsTx(
+      tx as unknown as Parameters<GroupRankingReader['getGroupRankingsTx']>[0],
+      9,
+      3,
+    );
+
+    expect(rankings.stats).toEqual([
+      { competitorId: 101, wins: 1, diff: 3 },
+      { competitorId: 102, wins: 0, diff: -3 },
+    ]);
+  });
+
+  it('returns a group pending tie for unresolved placement ties', async () => {
+    const tx = {
+      competition_blocks: {
+        findUnique: jest.fn().mockResolvedValue({ id: 9, type: 'GROUP' }),
+      },
+      fights: {
+        count: jest.fn().mockResolvedValue(1),
+      },
+      groups: {
+        findMany: jest.fn().mockResolvedValue([{ id: 3, name: 'A' }]),
+      },
+    };
+    const groupRankingReader = {
+      getGroupRankingsTx: jest.fn().mockResolvedValue({
+        stats: [
+          { competitorId: 101, wins: 2, diff: 10 },
+          { competitorId: 102, wins: 2, diff: 10 },
+          { competitorId: 103, wins: 0, diff: -20 },
+        ],
+        manualOrder: [],
+      }),
+    } as unknown as GroupRankingReader;
+    const redCardService = {
+      getActiveRedCompetitorIdsTx: jest.fn().mockResolvedValue(new Set()),
+      excludeActiveRedCompetitors: <T extends { competitorId: number }>(
+        ranked: T[],
+      ) => ranked,
+    } as unknown as CompetitionRedCardService;
+    const service = new PendingTieService(
+      {} as PrismaService,
+      groupRankingReader,
+      redCardService,
+    );
+
+    const pendingTie = await service.getPendingTieTx(
+      tx as unknown as Parameters<PendingTieService['getPendingTieTx']>[0],
+      9,
+      2,
+    );
+
+    expect(pendingTie).toEqual({
+      blockId: 9,
+      groupId: 3,
+      competitorIds: [101, 102],
+      scope: 'GROUP',
+    });
+  });
+
+  it('returns an Olympic third-place pending tie at the cutoff', async () => {
+    const tx = {
+      groups: {
+        findMany: jest.fn().mockResolvedValue([
+          { id: 1, name: 'A' },
+          { id: 2, name: 'B' },
+          { id: 3, name: 'C' },
+        ]),
+      },
+    };
+    const redCardService = {
+      excludeActiveRedCompetitors: <T extends { competitorId: number }>(
+        ranked: T[],
+      ) => ranked,
+    } as unknown as CompetitionRedCardService;
+    const service = new PendingTieService(
+      {} as PrismaService,
+      {} as GroupRankingReader,
+      redCardService,
+    );
+    const rankedGroups = [
+      {
+        name: 'A',
+        ranked: [
+          { competitorId: 101, wins: 3, diff: 30 },
+          { competitorId: 102, wins: 2, diff: 20 },
+          { competitorId: 103, wins: 1, diff: 0 },
+        ],
+      },
+      {
+        name: 'B',
+        ranked: [
+          { competitorId: 201, wins: 3, diff: 30 },
+          { competitorId: 202, wins: 2, diff: 20 },
+          { competitorId: 203, wins: 1, diff: 0 },
+        ],
+      },
+      {
+        name: 'C',
+        ranked: [
+          { competitorId: 301, wins: 3, diff: 30 },
+          { competitorId: 302, wins: 2, diff: 20 },
+          { competitorId: 303, wins: 1, diff: 0 },
+        ],
+      },
+    ];
+    const cachedRankings = new Map(
+      rankedGroups.map((group) => [
+        group.name,
+        { stats: group.ranked, manualOrder: [] },
+      ]),
+    );
+
+    const pendingTie = await service.getPendingOlympicThirdPlaceTieFromRankedTx(
+      tx as unknown as Parameters<
+        PendingTieService['getPendingOlympicThirdPlaceTieFromRankedTx']
+      >[0],
+      9,
+      rankedGroups,
+      [],
+      cachedRankings,
+      new Set(),
+    );
+
+    expect(pendingTie).toEqual({
+      blockId: 9,
+      groupId: null,
+      competitorIds: [103, 203, 303],
+      scope: 'OLYMPIC_THIRD',
+    });
+  });
+
+  it('prioritizes unresolved in-group third-place ties over cross-group third-place ties', async () => {
+    const tx = {
+      groups: {
+        findMany: jest.fn().mockResolvedValue([
+          { id: 1, name: 'A' },
+          { id: 2, name: 'B' },
+          { id: 3, name: 'C' },
+        ]),
+      },
+    };
+    const redCardService = {
+      excludeActiveRedCompetitors: <T extends { competitorId: number }>(
+        ranked: T[],
+      ) => ranked,
+    } as unknown as CompetitionRedCardService;
+    const service = new PendingTieService(
+      {} as PrismaService,
+      {} as GroupRankingReader,
+      redCardService,
+    );
+    const rankedGroups = [
+      {
+        name: 'A',
+        ranked: [
+          { competitorId: 101, wins: 3, diff: 30 },
+          { competitorId: 102, wins: 2, diff: 20 },
+          { competitorId: 103, wins: 1, diff: 0 },
+          { competitorId: 104, wins: 1, diff: 0 },
+        ],
+      },
+      {
+        name: 'B',
+        ranked: [
+          { competitorId: 201, wins: 3, diff: 30 },
+          { competitorId: 202, wins: 2, diff: 20 },
+          { competitorId: 203, wins: 1, diff: 0 },
+        ],
+      },
+      {
+        name: 'C',
+        ranked: [
+          { competitorId: 301, wins: 3, diff: 30 },
+          { competitorId: 302, wins: 2, diff: 20 },
+          { competitorId: 303, wins: 1, diff: 0 },
+        ],
+      },
+    ];
+    const cachedRankings = new Map(
+      rankedGroups.map((group) => [
+        group.name,
+        { stats: group.ranked, manualOrder: [] },
+      ]),
+    );
+
+    const pendingTie = await service.getPendingOlympicThirdPlaceTieFromRankedTx(
+      tx as unknown as Parameters<
+        PendingTieService['getPendingOlympicThirdPlaceTieFromRankedTx']
+      >[0],
+      9,
+      rankedGroups,
+      [],
+      cachedRankings,
+      new Set(),
+    );
+
+    expect(pendingTie).toEqual({
+      blockId: 9,
+      groupId: 1,
+      competitorIds: [103, 104],
+      scope: 'GROUP',
+    });
   });
 
   it('unfixes previous Olympic results when rolling back a pending next round', async () => {
@@ -642,20 +1009,23 @@ describe('CompetitionService', () => {
           callback(tx),
       ),
     };
-    const service = new CompetitionService(
+    const redCardService = {
+      resetForfeitsForDeletedFightsTx: jest.fn().mockResolvedValue(undefined),
+      applyRedCardForfeits: jest.fn().mockResolvedValue(undefined),
+    } as unknown as CompetitionRedCardService;
+    const service = new CompetitionLifecycleService(
       prisma as unknown as PrismaService,
-      {} as RatingsService,
+      {
+        getState: jest.fn().mockResolvedValue({ blocks: [] }),
+      } as unknown as CompetitionStateReader,
+      {
+        renumberNominationFights: jest.fn().mockResolvedValue(undefined),
+      } as unknown as CompetitionFightService,
+      {
+        resetRatingState: jest.fn().mockResolvedValue(undefined),
+      } as unknown as CompetitionFinishService,
+      redCardService,
     );
-    const serviceInternals = service as unknown as {
-      renumberNominationFights: jest.Mock;
-      resetRatingState: jest.Mock;
-    };
-    serviceInternals.renumberNominationFights = jest.fn();
-    serviceInternals.resetRatingState = jest.fn();
-    jest.spyOn(service, 'applyRedCardForfeits').mockResolvedValue();
-    jest.spyOn(service, 'getState').mockResolvedValue({
-      blocks: [],
-    } as never);
 
     await service.rollback({ block_id: 9, round: 2 });
 
@@ -704,17 +1074,22 @@ describe('CompetitionService', () => {
           callback(tx),
       ),
     };
-    const service = new CompetitionService(
+    const service = new CompetitionLifecycleService(
       prisma as unknown as PrismaService,
-      {} as RatingsService,
+      {
+        getState: jest.fn().mockResolvedValue({ blocks: [] }),
+      } as unknown as CompetitionStateReader,
+      {
+        renumberNominationFights: jest.fn().mockResolvedValue(undefined),
+      } as unknown as CompetitionFightService,
+      {
+        resetRatingState: jest.fn().mockResolvedValue(undefined),
+      } as unknown as CompetitionFinishService,
+      {
+        resetForfeitsForDeletedFightsTx: jest.fn().mockResolvedValue(undefined),
+        applyRedCardForfeits: jest.fn().mockResolvedValue(undefined),
+      } as unknown as CompetitionRedCardService,
     );
-    const serviceInternals = service as unknown as {
-      resetRatingState: jest.Mock;
-    };
-    serviceInternals.resetRatingState = jest.fn();
-    jest.spyOn(service, 'getState').mockResolvedValue({
-      blocks: [],
-    } as never);
 
     await service.cancelResultsFixation({ block_id: 9 });
 
@@ -748,17 +1123,22 @@ describe('CompetitionService', () => {
         updateMany: jest.fn(),
       },
     };
-    const service = new CompetitionService(
+    const service = new CompetitionLifecycleService(
       prisma as unknown as PrismaService,
-      {} as RatingsService,
+      {
+        getState: jest.fn().mockResolvedValue({ blocks: [] }),
+      } as unknown as CompetitionStateReader,
+      {
+        renumberNominationFights: jest.fn().mockResolvedValue(undefined),
+      } as unknown as CompetitionFightService,
+      {
+        resetRatingState: jest.fn().mockResolvedValue(undefined),
+      } as unknown as CompetitionFinishService,
+      {
+        resetForfeitsForDeletedFightsTx: jest.fn().mockResolvedValue(undefined),
+        applyRedCardForfeits: jest.fn().mockResolvedValue(undefined),
+      } as unknown as CompetitionRedCardService,
     );
-    const serviceInternals = service as unknown as {
-      resetRatingState: jest.Mock;
-    };
-    serviceInternals.resetRatingState = jest.fn();
-    jest.spyOn(service, 'getState').mockResolvedValue({
-      blocks: [],
-    } as never);
 
     await service.cancelResultsFixation({ block_id: 10, round: 1 });
 
@@ -803,17 +1183,14 @@ describe('CompetitionService', () => {
           callback(tx),
       ),
     };
-    const service = new CompetitionService(
+    const getPendingTieTx = jest.fn().mockResolvedValue(null);
+    const pendingTieService = {
+      getPendingTieTx,
+    } as unknown as PendingTieService;
+    const service = new TieResolutionService(
       prisma as unknown as PrismaService,
-      {} as RatingsService,
+      pendingTieService,
     );
-    const serviceInternals = service as unknown as {
-      getPendingTieTx: jest.Mock;
-    };
-    serviceInternals.getPendingTieTx = jest.fn().mockResolvedValue(null);
-    jest.spyOn(service, 'getState').mockResolvedValue({
-      blocks: [],
-    } as never);
 
     await service.resolveTies({
       tournament_id: 31,
@@ -824,7 +1201,7 @@ describe('CompetitionService', () => {
       ordered_competitor_ids: [101, 102],
     });
 
-    expect(serviceInternals.getPendingTieTx).toHaveBeenCalledWith(tx, 9, 2);
+    expect(getPendingTieTx).toHaveBeenCalledWith(tx, 9, 2);
     expect(tx.fights.count).toHaveBeenCalledWith({
       where: { block_id: 9, is_finished: false },
     });
@@ -836,6 +1213,98 @@ describe('CompetitionService', () => {
       },
       data: { lifecycle_state: 'RESULTS_FIXED' },
     });
+  });
+
+  it('rejects duplicate result submissions', () => {
+    const validator = new ResultSubmissionValidator();
+    const block = createValidatorBlock();
+
+    expect(() =>
+      validator.assertSaveAllowed(block, [
+        {
+          fight_id: 636,
+          round_scores: [{ competitor1_score: 1, competitor2_score: 0 }],
+        },
+        {
+          fight_id: 636,
+          round_scores: [{ competitor1_score: 0, competitor2_score: 1 }],
+        },
+      ]),
+    ).toThrow('Fight results contain duplicates');
+  });
+
+  it('rejects result submissions for fights outside the block', () => {
+    const validator = new ResultSubmissionValidator();
+    const block = createValidatorBlock();
+
+    expect(() =>
+      validator.assertSaveAllowed(block, [
+        {
+          fight_id: 999,
+          round_scores: [{ competitor1_score: 1, competitor2_score: 0 }],
+        },
+      ]),
+    ).toThrow('Fight does not belong to the block');
+  });
+
+  it('rejects incomplete group result fixation', () => {
+    const validator = new ResultSubmissionValidator();
+    const block = createValidatorBlock();
+
+    expect(() =>
+      validator.assertGroupFixAllowed(block, [
+        {
+          fight_id: 636,
+          round_scores: [{ competitor1_score: 1, competitor2_score: 0 }],
+        },
+      ]),
+    ).toThrow('All group fight results must be recorded together');
+  });
+
+  it('rejects incomplete Olympic round result fixation', () => {
+    const validator = new ResultSubmissionValidator();
+    const block = createValidatorBlock({
+      type: 'OLYMPIC',
+      fights: [
+        {
+          id: 701,
+          competitor1_id: 201,
+          competitor2_id: 202,
+          rounds: 1,
+          round_win: false,
+          forfeit_card_id: null,
+          bracket_round: 1,
+          is_bronze: false,
+        },
+        {
+          id: 702,
+          competitor1_id: 203,
+          competitor2_id: 204,
+          rounds: 1,
+          round_win: false,
+          forfeit_card_id: null,
+          bracket_round: 1,
+          is_bronze: false,
+        },
+      ],
+      round_states: [
+        { id: 77, round: 1, pairs_fixed: true, results_fixed: false },
+      ],
+    });
+
+    expect(() =>
+      validator.createOlympicRoundPlan(
+        block,
+        1,
+        [
+          {
+            fight_id: 701,
+            round_scores: [{ competitor1_score: 1, competitor2_score: 0 }],
+          },
+        ],
+        1,
+      ),
+    ).toThrow('All Olympic round fight results must be recorded together');
   });
 
   it('preserves server-generated forfeits when fixing group results', async () => {
@@ -892,17 +1361,7 @@ describe('CompetitionService', () => {
           callback(tx),
       ),
     };
-    const service = new CompetitionService(
-      prisma as unknown as PrismaService,
-      {} as RatingsService,
-    );
-    const serviceInternals = service as unknown as {
-      getPendingTieTx: jest.Mock;
-    };
-    serviceInternals.getPendingTieTx = jest.fn().mockResolvedValue(null);
-    jest.spyOn(service, 'getState').mockResolvedValue({
-      blocks: [],
-    } as never);
+    const { service } = createResultService(prisma as unknown as PrismaService);
 
     await service.fixResults({
       block_id: 90,
@@ -987,17 +1446,7 @@ describe('CompetitionService', () => {
           callback(tx),
       ),
     };
-    const service = new CompetitionService(
-      prisma as unknown as PrismaService,
-      {} as RatingsService,
-    );
-    const serviceInternals = service as unknown as {
-      getPendingTieTx: jest.Mock;
-    };
-    serviceInternals.getPendingTieTx = jest.fn().mockResolvedValue(null);
-    jest.spyOn(service, 'getState').mockResolvedValue({
-      blocks: [],
-    } as never);
+    const { service } = createResultService(prisma as unknown as PrismaService);
 
     await service.fixResults({
       block_id: 91,
@@ -1010,14 +1459,18 @@ describe('CompetitionService', () => {
       ],
     });
 
-    expect(tx.fights.update).toHaveBeenCalledWith({
+    const updateCalls = tx.fights.update.mock.calls as Array<
+      [FightUpdateParams]
+    >;
+    const updateCall = updateCalls[0]?.[0];
+    expect(updateCall).toMatchObject({
       where: { id: 638 },
-      data: expect.objectContaining({
+      data: {
         competitor1_score: 0,
         competitor2_score: 0,
         winner_id: 102,
         is_finished: true,
-      }),
+      },
     });
     expect(tx.fight_round_scores.createMany).toHaveBeenCalledWith({
       data: [
@@ -1090,18 +1543,13 @@ describe('CompetitionService', () => {
           callback(tx),
       ),
     };
-    const service = new CompetitionService(
+    const olympicService = {
+      progressOlympicBlockTx: jest.fn().mockResolvedValue(undefined),
+    } as unknown as CompetitionOlympicService;
+    const { service } = createResultService(
       prisma as unknown as PrismaService,
-      {} as RatingsService,
+      olympicService,
     );
-    const serviceInternals = service as unknown as {
-      progressOlympicBlockTx: jest.Mock;
-    };
-    serviceInternals.progressOlympicBlockTx = jest.fn().mockResolvedValue(undefined);
-    jest.spyOn(service, 'getState').mockResolvedValue({
-      blocks: [],
-    } as never);
-    jest.spyOn(service, 'applyRedCardForfeits').mockResolvedValue(undefined);
 
     await service.fixResults({
       block_id: 92,
@@ -1115,14 +1563,18 @@ describe('CompetitionService', () => {
       ],
     });
 
-    expect(tx.fights.update).toHaveBeenCalledWith({
+    const updateCalls = tx.fights.update.mock.calls as Array<
+      [FightUpdateParams]
+    >;
+    const updateCall = updateCalls[0]?.[0];
+    expect(updateCall).toMatchObject({
       where: { id: 639 },
-      data: expect.objectContaining({
+      data: {
         competitor1_score: 1,
         competitor2_score: 1,
         winner_id: 201,
         is_finished: true,
-      }),
+      },
     });
     expect(tx.competition_round_states.updateMany).toHaveBeenCalledWith({
       where: { id: 77, pairs_fixed: true, results_fixed: false },

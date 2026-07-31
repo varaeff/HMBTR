@@ -7,7 +7,16 @@
     "docker": "cd backend && docker-compose up -d",
     "dev:backnest": "cd backend && npm run start:dev",
     "dev:front": "cd front && npm run dev",
-    "dev": "concurrently \"npm run docker\" \"npm run dev:front\" \"npm run dev:backnest\""
+    "dev": "concurrently \"npm run docker\" \"npm run dev:front\" \"npm run dev:backnest\"",
+    "check:no-any": "node scripts/check-no-explicit-any.mjs",
+    "check:front:type": "npm --prefix front run check:type",
+    "check:front:unit": "npm --prefix front run check:unit",
+    "check:front:build": "npm --prefix front run check:build",
+    "check:backend:build": "npm --prefix backend run check:build",
+    "check:backend:unit": "npm --prefix backend run check:unit",
+    "check:backend:integration": "npm --prefix backend run check:integration",
+    "check:quick": "npm run check:no-any && npm run check:front:type && npm run check:backend:build",
+    "check:full": "npm run check:no-any && npm run check:front:type && npm run check:front:unit && npm run check:front:build && npm run check:backend:unit && npm run check:backend:build"
   },
   "author": "Sergei Varaev",
   "license": "ISC",

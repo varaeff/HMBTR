@@ -18,14 +18,9 @@ type MarkdownPdfServerInstance = {
 let markdownPdfServer: MarkdownPdfServerInstance | null = null;
 
 const loadMarkdownPdfServerClass = async () => {
-  const dynamicImport = new Function(
-    'specifier',
-    'return import(specifier)',
-  ) as (
-    specifier: string,
-  ) => Promise<{ MarkdownPdfServer: new () => MarkdownPdfServerInstance }>;
+  const markdownPdfModule = await import('markdown2pdf-mcp');
 
-  return (await dynamicImport('markdown2pdf-mcp')).MarkdownPdfServer;
+  return markdownPdfModule.MarkdownPdfServer;
 };
 
 const getMarkdownPdfServer = async () => {

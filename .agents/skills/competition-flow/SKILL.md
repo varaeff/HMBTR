@@ -14,7 +14,7 @@ Competition state is server-authoritative. The frontend exposes allowed actions,
 Tournament flow changes often touch multiple layers:
 
 - `front/src/pages/TournamentPage.vue` for action visibility.
-- `front/src/stores/competition.ts` for API payloads and state refresh.
+- `front/src/stores/competition/` for the Pinia facade, API payloads, state refresh, and local drafts.
 - `backend/src/competition/dto/` for validated request flags.
 - `backend/src/competition/competition.service.ts` for persisted block creation.
 - `backend/src/competition/competition.logic.ts` for deterministic ranking and selection rules.
@@ -31,9 +31,21 @@ Keep domain rules in backend logic helpers, not in Vue components. The frontend 
 2. Cover those helpers in `competition.logic.spec.ts` before relying on them from the service.
 3. Extend the DTO with explicit optional fields when the UI needs to request a variant.
 4. In `competition.service.ts`, load the active block inside the transaction, recompute rankings, validate constraints, then create/lock blocks.
-5. In `competition.ts` Pinia store, pass only the new explicit API flag and continue applying returned state with `applyCompetitionState`.
-6. In `TournamentPage.vue`, gate action visibility from current loaded state, but do not construct bracket slots or final participant lists client-side.
-7. Add i18n keys for all visible action labels.
+5. In `front/src/stores/competition/store.ts`, pass only the new explicit API flag and continue applying returned state with `applyCompetitionState`.
+   Keep `store.ts` as the public Pinia facade and re-export it from
+   `front/src/stores/competition/index.ts`. Raw backend-state mapping,
+   local result-draft persistence, HTTP commands, and frontend fight-score recalculation live
+   in colocated helper modules inside `front/src/stores/competition/` rather than inside the facade.
+   Mapping helpers should receive store-backed dependencies, such as fighter
+   resolution, from the facade instead of calling Pinia stores directly.
+6. Keep `front/src/pages/TournamentPage.vue` as a route shell: parse route props, call `useTournamentPage`, and compose top-level tournament widgets. Use `widgets/tournament/TournamentCompetitionWorkspace` for the wide competition area instead of wiring every competition prop and event in the route shell.
+7. Keep tournament page orchestration in `front/src/composables/useTournamentPage.ts`; preserve competition refresh ordering there. Keep report download, backward confirmation, card-derived state, and persisted block-open state in narrower internal composables used by the facade.
+8. Keep tournament feature UI in `front/src/widgets/tournament/*` modules that receive props and emit actions. Do not create new stores or call `http` from those widgets, except inside pre-existing nested widgets with established store usage.
+   Olympic bracket lifecycle actions are orchestrated by
+   `useTournamentPage`; Olympic widgets emit typed payloads for pair swaps,
+   pair fixation, round result fixation/cancelation, and rollbacks.
+9. Gate action visibility from current loaded state, but do not construct bracket slots or final participant lists client-side.
+10. Add i18n keys for all visible action labels.
 
 ## Olympic Third-Place Pattern
 
@@ -159,7 +171,12 @@ Keep domain rules in backend logic helpers, not in Vue components. The frontend 
 ## Related Files
 
 - `front/src/pages/TournamentPage.vue`
-- `front/src/stores/competition.ts`
+- `front/src/composables/useTournamentPage.ts`
+- `front/src/composables/useTournamentCardsState.ts`
+- `front/src/composables/useTournamentReportDownload.ts`
+- `front/src/widgets/tournament/TournamentCompetitionWorkspace`
+- `front/src/widgets/tournament/*`
+- `front/src/stores/competition/`
 - `front/src/i18n/locales/en.json`
 - `front/src/i18n/locales/ru.json`
 - `backend/src/competition/dto/create-competition-block.dto.ts`

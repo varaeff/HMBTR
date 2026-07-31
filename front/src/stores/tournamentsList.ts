@@ -2,6 +2,15 @@ import { defineStore } from 'pinia'
 import http from '@/api/http'
 import type { Tournament, TournamentDB } from '@/model'
 import { useCommonDataStore } from '@/stores/commonData'
+import {
+  clearListSearch,
+  filterBySearch,
+  getNextListId,
+  hasLoadedRemoteList,
+  mergeMissingById,
+  setListSearch,
+  sortByDateDesc
+} from '@/stores/shared/listStorePolicy'
 import { API_ROUTES } from '@shared/routes'
 
 interface TournamentsListState {
@@ -54,7 +63,7 @@ export const useTournamentsListStore = defineStore({
         await http.get(API_ROUTES.TOURNAMENTS.ROOT + '/' + API_ROUTES.TOURNAMENTS.COUNT)
       ).data
 
-      if (tournamentsCount === this.tournaments.length) return
+      if (hasLoadedRemoteList(this.tournaments, tournamentsCount)) return
 
       const data: Array<TournamentDB> = (await http.get(API_ROUTES.TOURNAMENTS.ROOT)).data
 
@@ -79,9 +88,7 @@ export const useTournamentsListStore = defineStore({
         }))
       )
 
-      const existingIds = new Set(this.tournaments.map((t) => t.id))
-
-      this.tournaments.push(...tournaments.filter((tournament) => !existingIds.has(tournament.id)))
+      mergeMissingById(this.tournaments, tournaments)
     },
 
     async addNewTournament(tournament: TournamentDB) {
@@ -134,36 +141,28 @@ export const useTournamentsListStore = defineStore({
     },
 
     clearSearchString() {
-      this.searchString = ''
+      clearListSearch(this)
     },
 
     setSearchString(searchString: string) {
-      this.searchString = searchString
+      setListSearch(this, searchString)
     }
   },
 
   getters: {
     filteredTournamentsList(state) {
-      const filtered = state.tournaments
-        .filter((tournament) => tournament.id !== 0)
-        .filter(
-          (tournament) =>
-            tournament.name.toLowerCase().includes(state.searchString.toLowerCase()) ||
-            tournament.city.toLowerCase().includes(state.searchString.toLowerCase())
-        )
-        .sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime())
-
-      return filtered.length > 0
-        ? filtered.sort((a, b) => b.event_date.getTime() - a.event_date.getTime())
-        : []
+      return sortByDateDesc(
+        filterBySearch(
+          state.tournaments.filter((tournament) => tournament.id !== 0),
+          state.searchString,
+          [(tournament) => tournament.name, (tournament) => tournament.city]
+        ),
+        (tournament) => tournament.event_date
+      )
     },
 
     getMaxId(state) {
-      return (
-        state.tournaments.reduce((maxId, tournament) => {
-          return Math.max(maxId, tournament.id)
-        }, 0) + 1
-      )
+      return getNextListId(state.tournaments)
     },
 
     getSearchString(state) {

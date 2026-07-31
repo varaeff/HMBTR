@@ -47,7 +47,7 @@ describe('DisciplinaryCardsController', () => {
   it('allows organizers to create cards', () => {
     const { controller, service } = createController();
 
-    controller.create(createDto, { user: { is_organizer: true } });
+    void controller.create(createDto, { user: { is_organizer: true } });
 
     expect(service.create).toHaveBeenCalledWith(createDto);
   });
@@ -63,12 +63,12 @@ describe('DisciplinaryCardsController', () => {
   it('allows card managers to delete cards', () => {
     const { controller, service } = createController();
 
-    controller.delete(7, { user: { is_secretary: true } });
+    void controller.delete(7, { user: { is_secretary: true } });
 
     expect(service.delete).toHaveBeenCalledWith(7);
-    expect(() =>
-      controller.delete(7, { user: {} }),
-    ).toThrow(ForbiddenException);
+    expect(() => controller.delete(7, { user: {} })).toThrow(
+      ForbiddenException,
+    );
   });
 
   it('allows card managers to update card marshal', () => {
@@ -77,7 +77,7 @@ describe('DisciplinaryCardsController', () => {
       marshal_id: 8,
     };
 
-    controller.update(7, updateDto, { user: { is_secretary: true } });
+    void controller.update(7, updateDto, { user: { is_secretary: true } });
 
     expect(service.update).toHaveBeenCalledWith(7, updateDto);
   });

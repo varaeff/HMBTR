@@ -1,0 +1,4 @@
+export const STATUS_PENDING = 'PENDING';
+export const STATUS_PROCESSING = 'PROCESSING';
+export const STATUS_CALCULATED = 'CALCULATED';
+export const STATUS_FAILED = 'FAILED';

@@ -3,8 +3,8 @@ import { RouterView } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useApiUiStore } from '@/stores/apiUi'
 import { useTheme } from '@/composables/useTheme'
-import { MainMenu } from '@/widgets/MainMenu'
-import { Loader } from '@/widgets/Loader'
+import { AppShellNav } from '@/app/shell/AppShellNav'
+import { Loader } from '@/components/ui/loader'
 import { AlertWidget } from '@/widgets/AlertWidget'
 
 const ui = useApiUiStore()
@@ -15,7 +15,7 @@ initTheme()
 </script>
 
 <template>
-  <MainMenu />
+  <AppShellNav />
   <div class="box-border min-h-screen w-full pt-14 md:pt-12">
     <Loader v-if="isLoading" />
     <Teleport to="body">

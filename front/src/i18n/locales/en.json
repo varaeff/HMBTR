@@ -191,6 +191,7 @@
 
   "fightersSelectPlaceholder": "Select a fighter...",
   "fightersSelectEmpty": "Fighter not found",
+  "fightersSelectAddFighter": "Add fighter",
   "fightersSelectRegister": "Register for the tournament",
   "marshalsSelectPlaceholder": "Select a marshal...",
   "marshalsSelectEmpty": "Marshal not found",

@@ -17,7 +17,16 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:integration:db:up": "docker compose -f docker-compose.test.yml up -d",
+    "test:integration:db:down": "docker compose -f docker-compose.test.yml down -v",
+    "test:integration:prepare": "node test/prepare-integration-db.js",
+    "test:integration": "npm run test:integration:prepare && node --experimental-vm-modules ./node_modules/jest/bin/jest.js --config ./test/jest-integration.json --runInBand",
+    "test:integration:full": "node test/run-integration.js",
+    "check:build": "npm run build",
+    "check:unit": "jest --runInBand",
+    "check:integration": "npm run test:integration:full",
+    "check:lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --ignore-pattern \"src/generated/**\""
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

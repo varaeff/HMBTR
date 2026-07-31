@@ -2,26 +2,22 @@ import { Injectable, Inject } from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import * as nodemailer from 'nodemailer';
+import SMTPTransport from 'nodemailer/lib/smtp-transport';
+
+type EmailTransportOptions = SMTPTransport.Options;
 
 @Injectable()
 export class EmailService {
-  private transporter: nodemailer.Transporter;
+  private readonly transporter: nodemailer.Transporter;
 
-  constructor(@Inject(WINSTON_MODULE_PROVIDER) private logger: Logger) {
-    // Configure transporter - adjust settings according to your email provider
-    this.transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.EMAIL_PORT || '587'),
-      secure: process.env.EMAIL_SECURE === 'true', // true for 465, false for other ports
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
+  constructor(
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+  ) {
+    const transportOptions = this.createTransportOptions();
+    this.transporter = nodemailer.createTransport(transportOptions);
 
-    this.logger.info('[EmailService] Initialized');
     this.logger.info(
-      `[EmailService] SMTP Config: Host=${process.env.EMAIL_HOST || 'smtp.gmail.com'}, Port=${process.env.EMAIL_PORT || '587'}, User=${process.env.EMAIL_USER || 'NOT SET'}, Secure=${process.env.EMAIL_SECURE === 'true'}`,
+      `[EmailService] Initialized: host=${transportOptions.host}, port=${transportOptions.port}, secure=${transportOptions.secure}`,
     );
   }
 
@@ -34,28 +30,20 @@ export class EmailService {
     const recipients = Array.isArray(to) ? to.join(', ') : to;
 
     try {
-      this.logger.info('[SendMail] Attempting to send email...');
-      this.logger.info(`[SendMail] To: ${recipients}`);
-      this.logger.info(`[SendMail] Subject: ${subject}`);
-      this.logger.info(
-        `[SendMail] SMTP Config - Host: ${process.env.EMAIL_HOST}, Port: ${process.env.EMAIL_PORT}, User: ${process.env.EMAIL_USER}`,
-      );
-
       const emailFrom: string =
         process.env.EMAIL_FROM || process.env.EMAIL_USER || '';
 
-      const result = (await this.transporter.sendMail({
+      await this.transporter.sendMail({
         from: emailFrom,
         to,
         subject,
         html,
         text,
-      })) as unknown;
+      });
 
       this.logger.info(
-        `[SendMail] SUCCESS: Email sent to ${recipients} with subject "${subject}"`,
+        `[SendMail] Sent email to ${recipients} with subject "${subject}"`,
       );
-      this.logger.info(`[SendMail] Response: ${JSON.stringify(result)}`);
     } catch (error) {
       this.logger.error(
         `[SendMail] FAILED: Could not send email to ${recipients}`,
@@ -69,14 +57,12 @@ export class EmailService {
     adminEmails: string[],
     userName: string,
     userEmail: string,
-    text?: string,
+    customText?: string,
   ): Promise<void> {
-    this.logger.info(
-      `[NewUserNotification] Starting - Recipients: ${adminEmails.join(', ')}, New user: ${userName}`,
-    );
-
     const subject = `[Admin Notification] New User: ${userName}`;
-    text = `New registration on the platform.\nName: ${userName}\nEmail: ${userEmail}`;
+    const text =
+      customText ??
+      `New registration on the platform.\nName: ${userName}\nEmail: ${userEmail}`;
     const html = `
     <div style="font-family: sans-serif; color: #333;">
       <h2>New User Registration</h2>
@@ -91,8 +77,18 @@ export class EmailService {
     </div>
   `;
 
-    this.logger.info(`[NewUserNotification] About to call sendMail...`);
     await this.sendMail(adminEmails, subject, html, text);
-    this.logger.info(`[NewUserNotification] Completed successfully`);
+  }
+
+  private createTransportOptions(): EmailTransportOptions {
+    return {
+      host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+      port: parseInt(process.env.EMAIL_PORT || '587', 10),
+      secure: process.env.EMAIL_SECURE === 'true',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    };
   }
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, reactive, ref, watchEffect } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { useTranslation } from 'i18next-vue'
 import { useMarshalsListStore } from '@/stores/marshalsList'
@@ -17,10 +17,10 @@ import {
   TableRow
 } from '@/components/ui/table'
 import { AlertWidget } from '@/widgets/AlertWidget'
-import { FullNameWidget } from '@/widgets/FullNameWidget'
-import { SelectLocationBlock } from '@/widgets/SelectLocationBlock'
-import { useRequiredFields } from '@/composables/useRequiredFields'
+import { SelectLocationBlock } from '@/features/location-select'
+import { FullNameWidget } from '@/features/person-name-form'
 import { useAddEntityAlert } from '@/composables/useAddEntityAlert'
+import { useEditableEntityForm } from '@/composables/useEditableEntityForm'
 import { hasMarshalManageAccess } from '@/lib/checkAccess'
 import { dateToString } from '@/lib/dateUtils'
 import { tData } from '@/lib/utils'
@@ -30,18 +30,29 @@ const props = defineProps<{
   id: string
 }>()
 
+interface MarshalEditDraft extends Record<string, unknown> {
+  surname: string
+  name: string
+  patronymic: string
+  country: string
+  city: string
+  country_id: number
+  city_id: number
+  category_id: number
+  pic: string
+}
+
 const router = useRouter()
 const { i18next } = useTranslation()
 const marshalsListStore = useMarshalsListStore()
 const marshal = ref<Marshal | null>(null)
 const judgedTournaments = ref<MarshalProfileTournament[]>([])
-const isEditing = ref(false)
 const isLoading = ref(false)
 const loadError = ref('')
 const initialDocumentTitle = document.title
 const { showAlert, alertData, handleRequestAdd } = useAddEntityAlert()
 
-const editMarshal = reactive({
+const createMarshalEditDraft = (): MarshalEditDraft => ({
   surname: '',
   name: '',
   patronymic: '',
@@ -55,14 +66,37 @@ const editMarshal = reactive({
 
 const marshalId = computed(() => +props.id)
 const canEdit = computed(() => hasMarshalManageAccess())
+const marshalEditForm = useEditableEntityForm<Marshal, MarshalEditDraft, MarshalDB>({
+  createDraft: createMarshalEditDraft,
+  requiredFields: ['surname', 'name', 'country', 'city', 'category_id'],
+  fillDraft: (draft, source) => {
+    draft.surname = source.surname
+    draft.name = source.name
+    draft.patronymic = source.patronymic ?? ''
+    draft.country = source.country
+    draft.city = source.city
+    draft.country_id = source.country_id ?? 0
+    draft.city_id = source.city_id ?? 0
+    draft.category_id = source.category_id
+    draft.pic = source.pic ?? ''
+  },
+  buildPayload: (draft, source) => ({
+    id: source.id,
+    surname: draft.surname,
+    name: draft.name,
+    patronymic: draft.patronymic,
+    country_id: draft.country_id,
+    city_id: draft.city_id,
+    category_id: draft.category_id,
+    pic: draft.pic
+  }),
+  save: (source, payload) => marshalsListStore.updateMarshal(source.id, payload),
+  canSave: () => canEdit.value
+})
+const editMarshal = marshalEditForm.draft
+const isEditing = marshalEditForm.isEditing
+const buttonDisabled = marshalEditForm.buttonDisabled
 const currentLanguage = computed(() => (i18next.language === 'en' ? 'en' : 'ru'))
-const buttonDisabled = useRequiredFields(editMarshal, [
-  'surname',
-  'name',
-  'country',
-  'city',
-  'category_id'
-])
 
 const fullName = computed(() => {
   if (!marshal.value) return ''
@@ -103,46 +137,19 @@ const loadMarshal = async () => {
   }
 }
 
-const fillEditForm = () => {
-  if (!marshal.value) return
-
-  editMarshal.surname = marshal.value.surname
-  editMarshal.name = marshal.value.name
-  editMarshal.patronymic = marshal.value.patronymic ?? ''
-  editMarshal.country = marshal.value.country
-  editMarshal.city = marshal.value.city
-  editMarshal.country_id = marshal.value.country_id ?? 0
-  editMarshal.city_id = marshal.value.city_id ?? 0
-  editMarshal.category_id = marshal.value.category_id
-  editMarshal.pic = marshal.value.pic ?? ''
-}
-
 const startEditing = () => {
-  fillEditForm()
-  isEditing.value = true
+  marshalEditForm.startEditing(marshal.value)
 }
 
 const cancelEditing = () => {
-  fillEditForm()
-  isEditing.value = false
+  marshalEditForm.cancelEditing(marshal.value)
 }
 
 const saveMarshal = async () => {
-  if (!marshal.value || !canEdit.value) return
-
-  const saveData: MarshalDB = {
-    id: marshal.value.id,
-    surname: editMarshal.surname,
-    name: editMarshal.name,
-    patronymic: editMarshal.patronymic,
-    country_id: editMarshal.country_id,
-    city_id: editMarshal.city_id,
-    category_id: editMarshal.category_id,
-    pic: editMarshal.pic
+  const savedMarshal = await marshalEditForm.saveEntity(marshal.value)
+  if (savedMarshal) {
+    marshal.value = savedMarshal
   }
-
-  marshal.value = await marshalsListStore.updateMarshal(marshal.value.id, saveData)
-  isEditing.value = false
 }
 
 watchEffect(() => {
