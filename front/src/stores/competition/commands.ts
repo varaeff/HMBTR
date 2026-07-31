@@ -5,7 +5,7 @@ import type {
   FighterRegistrationEligibility,
   Group,
   PendingTie
-} from '@/model'
+} from '@/model/competition'
 import { buildSubmittedFightResult } from '@/lib/fightResult'
 import { API_ROUTES } from '@shared/routes'
 import type { RawCompetitionState } from './mapper'

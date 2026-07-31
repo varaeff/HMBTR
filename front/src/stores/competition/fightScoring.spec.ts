@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import type { FightData, Fighter } from '@/model'
+import type { FightData } from '@/model/competition'
+import type { Fighter } from '@/model/fighter'
 import { applyFightScoreDraft, evaluateFightWithWarnings } from './fightScoring'
 
 const fighter = (id: number): Fighter => ({

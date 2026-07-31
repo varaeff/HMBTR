@@ -2,6 +2,15 @@ import { defineStore } from 'pinia'
 import type { Fighter, FighterDB } from '@/model'
 import http from '@/api/http'
 import { useCommonDataStore } from '@/stores/commonData'
+import {
+  clearListSearch,
+  filterBySearch,
+  getNextListId,
+  hasLoadedRemoteList,
+  mergeMissingById,
+  setListSearch,
+  upsertById
+} from '@/stores/shared/listStorePolicy'
 import { API_ROUTES } from '@shared/routes'
 
 interface FightersListState {
@@ -66,7 +75,7 @@ export const useFightersListStore = defineStore({
         await http.get(API_ROUTES.FIGHTERS.ROOT + '/' + API_ROUTES.FIGHTERS.COUNT)
       ).data
 
-      if (fightersCount === this.fighters.length) return
+      if (hasLoadedRemoteList(this.fighters, fightersCount)) return
 
       const data: Array<FighterDB> = (await http.get(API_ROUTES.FIGHTERS.ROOT)).data
 
@@ -74,9 +83,7 @@ export const useFightersListStore = defineStore({
         data.map(async (fighterDB) => parseFighter(fighterDB))
       )
 
-      const existingIds = new Set(this.fighters.map((f) => f.id))
-
-      this.fighters.push(...fighters.filter((fighter) => !existingIds.has(fighter.id)))
+      mergeMissingById(this.fighters, fighters)
     },
 
     async addNewFighter(this: FightersListState, fighterDB: FighterDB, fighter: Fighter) {
@@ -87,37 +94,28 @@ export const useFightersListStore = defineStore({
     async updateFighter(this: FightersListState, id: number, fighterDB: FighterDB) {
       const response = await http.put(API_ROUTES.FIGHTERS.BY_ID(id), fighterDB)
       const updatedFighter = await parseFighter(response.data as FighterDB)
-      const fighterIndex = this.fighters.findIndex((fighter) => fighter.id === id)
-
-      if (fighterIndex >= 0) {
-        this.fighters[fighterIndex] = updatedFighter
-      } else {
-        this.fighters.push(updatedFighter)
-      }
+      upsertById(this.fighters, updatedFighter)
 
       return updatedFighter
     },
 
     clearSearchString() {
-      this.searchString = ''
+      clearListSearch(this)
     },
 
     setSearchString(searchString: string) {
-      this.searchString = searchString
+      setListSearch(this, searchString)
     }
   },
 
   getters: {
     filteredFightersList(state) {
-      const filtered = state.fighters.filter(
-        (fighter) =>
-          fighter.name.toLowerCase().includes(state.searchString.toLowerCase()) ||
-          fighter.surname.toLowerCase().includes(state.searchString.toLowerCase()) ||
-          fighter.city.toLowerCase().includes(state.searchString.toLowerCase()) ||
-          (fighter.club && fighter.club.toLowerCase().includes(state.searchString.toLowerCase()))
-      )
-
-      return filtered.length > 0 ? filtered : []
+      return filterBySearch(state.fighters, state.searchString, [
+        (fighter) => fighter.name,
+        (fighter) => fighter.surname,
+        (fighter) => fighter.city,
+        (fighter) => fighter.club
+      ])
     },
 
     fightersList(state) {
@@ -125,11 +123,7 @@ export const useFightersListStore = defineStore({
     },
 
     getMaxId(state) {
-      return (
-        state.fighters.reduce((maxId, fighter) => {
-          return Math.max(maxId, fighter.id)
-        }, 0) + 1
-      )
+      return getNextListId(state.fighters)
     },
 
     getFighterById: (state) => (id: number) => {

@@ -4,11 +4,11 @@ import type {
   CompetitionBlock,
   CompetitionPlacement,
   FightData,
-  Fighter,
   Group,
   GroupFighter,
   PendingTie
-} from '@/model'
+} from '@/model/competition'
+import type { Fighter } from '@/model/fighter'
 import { updateGroupsStatistics } from '@/lib/groupsStatistic'
 import {
   getInitialRoundScores,

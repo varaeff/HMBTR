@@ -9,6 +9,15 @@ import type {
 } from '@/model'
 import http from '@/api/http'
 import { useCommonDataStore } from '@/stores/commonData'
+import {
+  clearListSearch,
+  filterBySearch,
+  getNextListId,
+  hasLoadedRemoteList,
+  mergeMissingById,
+  setListSearch,
+  upsertById
+} from '@/stores/shared/listStorePolicy'
 import { API_ROUTES } from '@shared/routes'
 
 interface MarshalsListState {
@@ -102,14 +111,12 @@ export const useMarshalsListStore = defineStore({
         await http.get(API_ROUTES.MARSHALS.ROOT + '/' + API_ROUTES.MARSHALS.COUNT)
       ).data
 
-      if (marshalsCount === this.marshals.length) return
+      if (hasLoadedRemoteList(this.marshals, marshalsCount)) return
 
       const data = (await http.get(API_ROUTES.MARSHALS.ROOT)).data as MarshalDB[]
 
       const marshals = await Promise.all(data.map(async (marshalDB) => parseMarshal(marshalDB)))
-      const existingIds = new Set(this.marshals.map((marshal) => marshal.id))
-
-      this.marshals.push(...marshals.filter((marshal) => !existingIds.has(marshal.id)))
+      mergeMissingById(this.marshals, marshals)
     },
 
     async addNewMarshal(marshalDB: MarshalDB, marshal: Marshal) {
@@ -122,39 +129,29 @@ export const useMarshalsListStore = defineStore({
     async updateMarshal(id: number, marshalDB: MarshalDB) {
       const response = await http.put(API_ROUTES.MARSHALS.BY_ID(id), marshalDB)
       const updatedMarshal = await parseMarshal(response.data as MarshalDB)
-      const marshalIndex = this.marshals.findIndex((marshal) => marshal.id === id)
-
-      if (marshalIndex >= 0) {
-        this.marshals[marshalIndex] = updatedMarshal
-      } else {
-        this.marshals.push(updatedMarshal)
-      }
+      upsertById(this.marshals, updatedMarshal)
 
       return updatedMarshal
     },
 
     clearSearchString() {
-      this.searchString = ''
+      clearListSearch(this)
     },
 
     setSearchString(searchString: string) {
-      this.searchString = searchString
+      setListSearch(this, searchString)
     }
   },
 
   getters: {
     filteredMarshalsList(state) {
-      const filtered = state.marshals.filter(
-        (marshal) =>
-          marshal.name.toLowerCase().includes(state.searchString.toLowerCase()) ||
-          marshal.surname.toLowerCase().includes(state.searchString.toLowerCase()) ||
-          marshal.city.toLowerCase().includes(state.searchString.toLowerCase()) ||
-          (marshal.category &&
-            (marshal.category.name_ru.toLowerCase().includes(state.searchString.toLowerCase()) ||
-              marshal.category.name_en.toLowerCase().includes(state.searchString.toLowerCase())))
-      )
-
-      return filtered.length > 0 ? filtered : []
+      return filterBySearch(state.marshals, state.searchString, [
+        (marshal) => marshal.name,
+        (marshal) => marshal.surname,
+        (marshal) => marshal.city,
+        (marshal) => marshal.category?.name_ru,
+        (marshal) => marshal.category?.name_en
+      ])
     },
 
     marshalsList(state) {
@@ -162,11 +159,7 @@ export const useMarshalsListStore = defineStore({
     },
 
     getMaxId(state) {
-      return (
-        state.marshals.reduce((maxId, marshal) => {
-          return Math.max(maxId, marshal.id)
-        }, 0) + 1
-      )
+      return getNextListId(state.marshals)
     },
 
     getSearchString(state) {

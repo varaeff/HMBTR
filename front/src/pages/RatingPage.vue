@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
-import http from '@/api/http'
-import { API_ROUTES } from '@shared/routes'
 import type { FighterNominationRating, Nomination } from '@/model'
 import { tData } from '@/lib/utils'
+import { useRatingPageData } from '@/composables/useRatingPageData'
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select'
 import {
   Table,
@@ -18,14 +17,16 @@ import {
 type Language = 'ru' | 'en'
 
 const { i18next } = useTranslation()
-const nominations = ref<Nomination[]>([])
-const selectedNominationId = ref('')
-const ratings = ref<FighterNominationRating[]>([])
-const isLoading = ref(false)
-const errorMessage = ref('')
 const currentLanguage = ref<Language>(i18next.language === 'en' ? 'en' : 'ru')
-
-const hasNominations = computed(() => nominations.value.length > 0)
+const {
+  nominations,
+  selectedNominationId,
+  ratings,
+  isLoading,
+  errorMessage,
+  hasNominations,
+  loadNominations
+} = useRatingPageData()
 
 const isPresentString = (value: string | null | undefined): value is string => Boolean(value)
 
@@ -51,49 +52,15 @@ const updateLanguage = (language: string) => {
   currentLanguage.value = language === 'en' ? 'en' : 'ru'
 }
 
-const fetchNominations = async () => {
-  const response = await http.get(API_ROUTES.RATINGS.ROOT)
-  nominations.value = response.data as Nomination[]
-  selectedNominationId.value = nominations.value[0] ? String(nominations.value[0].id) : ''
-}
-
-const fetchRatings = async () => {
-  if (!selectedNominationId.value) {
-    ratings.value = []
-    return
-  }
-
-  isLoading.value = true
-  errorMessage.value = ''
-
-  try {
-    const response = await http.get(API_ROUTES.RATINGS.BY_NOMINATION(selectedNominationId.value))
-    ratings.value = response.data as FighterNominationRating[]
-  } catch (error: unknown) {
-    errorMessage.value = error instanceof Error ? error.message : i18next.t('ratingPageLoadError')
-    ratings.value = []
-  } finally {
-    isLoading.value = false
-  }
-}
-
 onMounted(async () => {
   i18next.on('languageChanged', updateLanguage)
-
-  try {
-    await fetchNominations()
-  } catch (error: unknown) {
-    errorMessage.value = error instanceof Error ? error.message : i18next.t('ratingPageLoadError')
-  }
+  await loadNominations()
 })
 
 onUnmounted(() => {
   i18next.off('languageChanged', updateLanguage)
 })
 
-watch(selectedNominationId, () => {
-  void fetchRatings()
-})
 </script>
 
 <template>

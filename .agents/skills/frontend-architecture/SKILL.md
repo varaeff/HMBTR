@@ -66,6 +66,21 @@ For profile edit pages that share the same edit-mode lifecycle, use
 draft creation, source-to-draft mapping, payload construction, permissions, and
 store save calls; the composable owns `draft`, `isEditing`, required-field
 disabled state, start/cancel, and save lifecycle.
+Route pages should not import `http` or shared API routes directly. Keep
+request functions in typed `front/src/api/*` modules and page-specific loading,
+error, selection, and derived collection state in composables. Pages may still
+coordinate stores and render UI, but direct data access belongs below the page
+layer.
+Keep frontend domain types in focused `front/src/model/*` modules. Use
+`model/index.ts` only as a backward-compatible barrel for older imports; new or
+heavily refactored modules should import from the narrow domain entrypoint, for
+example `@/model/competition`, `@/model/fighter`, `@/model/rating`, or
+`@/model/disciplinaryCards`.
+List stores that expose cached arrays with search state should reuse
+`front/src/stores/shared/listStorePolicy.ts` for search mutation, case-insensitive
+field matching, remote-count guards, id-based merge/replace/upsert, next-id
+calculation, sorting, and sentinel fallback rows. Keep store-specific parsing
+and HTTP calls inside the owning store or API adapter.
 
 ## Constraints
 

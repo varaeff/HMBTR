@@ -1,4 +1,4 @@
-import type { FightData } from '@/model'
+import type { FightData } from '@/model/competition'
 import {
   applyFightWarningBonuses,
   evaluateFightScore,

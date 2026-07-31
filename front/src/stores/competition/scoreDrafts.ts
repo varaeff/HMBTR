@@ -1,4 +1,4 @@
-import type { CompetitionBlock, FightData } from '@/model'
+import type { CompetitionBlock, FightData } from '@/model/competition'
 import { updateGroupsStatistics } from '@/lib/groupsStatistic'
 import type { FightWarning, RoundScore } from '@shared/fightScoring'
 import { applyFightScoreDraft } from './fightScoring'

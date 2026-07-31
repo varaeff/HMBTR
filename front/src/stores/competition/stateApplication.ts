@@ -1,4 +1,4 @@
-import type { Fighter } from '@/model'
+import type { Fighter } from '@/model/fighter'
 import { mapCompetitionState, type RawCompetitionState } from './mapper'
 import { readFightResultDrafts, writeFightResultDrafts } from './resultDrafts'
 

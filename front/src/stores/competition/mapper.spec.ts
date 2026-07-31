@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { Fighter } from '@/model'
+import type { Fighter } from '@/model/fighter'
 import { mapCompetitionState, type RawCompetitionState } from './mapper'
 
 const resolvedFighter: Fighter = {

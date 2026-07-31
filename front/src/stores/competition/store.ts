@@ -7,7 +7,7 @@ import type {
   FightData,
   Group,
   PendingTie
-} from '@/model'
+} from '@/model/competition'
 import { useFightersListStore } from '@/stores/fightersList'
 import { updateGroupsStatistics } from '@/lib/groupsStatistic'
 import type { FightScoringRules, FightWarning, RoundScore } from '@shared/fightScoring'

@@ -5,10 +5,7 @@ import { useTranslation } from 'i18next-vue'
 import { useFightersListStore } from '@/stores/fightersList'
 import { useAuthStore } from '@/stores/auth'
 import { useDisciplinaryCardsStore } from '@/stores/disciplinaryCards'
-import { parseTournamentMarshal } from '@/stores/marshalsList'
 import NoPhoto from '@/entities/NoPhoto.jpg'
-import http from '@/api/http'
-import { API_ROUTES } from '@shared/routes'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { ImageUpload } from '@/components/ui/imageUpload'
@@ -28,13 +25,15 @@ import { TournamentCardsTable } from '@/widgets/tournament/DisciplinaryCards'
 import { FighterRatingChart } from '@/widgets/rating/FighterRatingChart'
 import { useAddEntityAlert } from '@/composables/useAddEntityAlert'
 import { useEditableEntityForm } from '@/composables/useEditableEntityForm'
+import { useFighterCardMarshals } from '@/composables/useFighterCardMarshals'
+import {
+  useFighterProfileStats,
+  type CompletedTournamentRow
+} from '@/composables/useFighterProfileStats'
 import type {
   Fighter,
   FighterDB,
   FighterProfileNomination,
-  FighterProfileStats,
-  TournamentMarshal,
-  TournamentMarshalDB,
   UpdateDisciplinaryCardPayload
 } from '@/model'
 import { tData } from '@/lib/utils'
@@ -42,13 +41,6 @@ import { dateToString } from '@/lib/dateUtils'
 import { hasAccess, hasAdminAccess } from '@/lib/checkAccess'
 
 type Language = 'ru' | 'en'
-
-interface CompletedTournamentRow {
-  tournament_id: number
-  tournament_name: string
-  event_date: string | null
-  nominations: FighterProfileNomination[]
-}
 
 interface FighterEditDraft extends Record<string, unknown> {
   surname: string
@@ -71,16 +63,22 @@ const props = defineProps<{
 const router = useRouter()
 const { i18next } = useTranslation()
 const fighter = ref<Fighter | null | undefined>(null)
-const fighterStats = ref<FighterProfileStats | null>(null)
 const FightersListStore = useFightersListStore()
 const authStore = useAuthStore()
 const cardsStore = useDisciplinaryCardsStore()
 const fighterId = computed(() => +props.id)
-const isStatsLoading = ref(false)
-const statsError = ref('')
-const selectedRatingNominationId = ref('')
-const tournamentMarshalsByTournamentId = ref<Record<number, TournamentMarshal[]>>({})
 const { showAlert, alertData, handleRequestAdd } = useAddEntityAlert()
+const {
+  fighterStats,
+  isStatsLoading,
+  statsError,
+  selectedRatingNominationId,
+  completedTournamentRows,
+  selectedRating,
+  loadFighterStats
+} = useFighterProfileStats(fighterId)
+const { tournamentMarshalsByTournamentId, loadCardTournamentMarshals } =
+  useFighterCardMarshals()
 const initialDocumentTitle = document.title
 
 const createFighterEditDraft = (): FighterEditDraft => ({
@@ -142,7 +140,7 @@ onMounted(async () => {
     loadFighterStats()
   ])
   fighter.value = fetchedFighter
-  await loadCardTournamentMarshals()
+  await loadCardTournamentMarshals(cardsStore.fighterCards)
 })
 
 const fullName = computed(() => {
@@ -176,82 +174,8 @@ const nominationName = (nomination: FighterProfileNomination) =>
 
 const formatProfileDate = (date: string | null) => dateToString(date ? new Date(date) : null)
 
-const completedTournamentRows = computed<CompletedTournamentRow[]>(() => {
-  if (!fighterStats.value) return []
-
-  const rows = new Map<number, CompletedTournamentRow>()
-
-  for (const item of fighterStats.value.tournaments) {
-    const row = rows.get(item.tournament_id)
-
-    if (row) {
-      if (!row.nominations.some((nomination) => nomination.id === item.nomination.id)) {
-        row.nominations.push(item.nomination)
-      }
-      continue
-    }
-
-    rows.set(item.tournament_id, {
-      tournament_id: item.tournament_id,
-      tournament_name: item.tournament_name,
-      event_date: item.event_date,
-      nominations: [item.nomination]
-    })
-  }
-
-  return [...rows.values()]
-})
-
 const tournamentNominationsText = (row: CompletedTournamentRow) =>
   row.nominations.map((nomination) => nominationName(nomination)).join(', ')
-
-const selectedRating = computed(() => {
-  if (!fighterStats.value) return undefined
-
-  return fighterStats.value.ratings.find(
-    (rating) => String(rating.nomination.id) === selectedRatingNominationId.value
-  )
-})
-
-const loadFighterStats = async () => {
-  isStatsLoading.value = true
-  statsError.value = ''
-
-  try {
-    const response = await http.get(API_ROUTES.RATINGS.BY_FIGHTER_PROFILE(fighterId.value))
-    const data = response.data as FighterProfileStats
-    fighterStats.value = data
-    selectedRatingNominationId.value = data.ratings[0] ? String(data.ratings[0].nomination.id) : ''
-  } catch (error: unknown) {
-    statsError.value =
-      error instanceof Error ? error.message : i18next.t('fighterPageStatsLoadError')
-    fighterStats.value = null
-  } finally {
-    isStatsLoading.value = false
-  }
-}
-
-const loadCardTournamentMarshals = async () => {
-  const tournamentIds = [
-    ...new Set(cardsStore.fighterCards.map((card) => card.tournament_id))
-  ].filter((tournamentId) => !tournamentMarshalsByTournamentId.value[tournamentId])
-
-  const entries = await Promise.all(
-    tournamentIds.map(async (tournamentId) => {
-      const data = (
-        await http.get(API_ROUTES.TOURNAMENTS.MARSHALS_BY_TOURNAMENT(tournamentId))
-      ).data as TournamentMarshalDB[]
-      const marshals = await Promise.all(data.map((item) => parseTournamentMarshal(item)))
-
-      return [tournamentId, marshals] as const
-    })
-  )
-
-  tournamentMarshalsByTournamentId.value = {
-    ...tournamentMarshalsByTournamentId.value,
-    ...Object.fromEntries(entries)
-  }
-}
 
 const updateDisciplinaryCard = async (
   id: number,
@@ -512,7 +436,7 @@ const saveFighter = async () => {
               @changed="
                 async () => {
                   await cardsStore.loadFighterCards(fighterId)
-                  await loadCardTournamentMarshals()
+                  await loadCardTournamentMarshals(cardsStore.fighterCards)
                 }
               "
             />
