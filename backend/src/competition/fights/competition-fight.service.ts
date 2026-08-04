@@ -377,28 +377,6 @@ export class CompetitionFightService {
         data: { fight_number: index + 1 },
       });
     }
-    await this.normalizeBronzeFinalFightNumbers(
-      await this.stateReader.getTournamentNominationId(
-        tournamentId,
-        nominationId,
-      ),
-    );
-  }
-
-  async normalizeBronzeFinalFightNumbers(tournamentNominationId: number) {
-    const blocks = await this.prisma.competition_blocks.findMany({
-      where: {
-        tournament_nomination_id: tournamentNominationId,
-        type: BLOCK_OLYMPIC,
-      },
-      select: { id: true },
-    });
-
-    for (const block of blocks) {
-      await this.prisma.$transaction((tx) =>
-        this.olympicService.normalizeBronzeFinalFightNumbersTx(tx, block.id),
-      );
-    }
   }
 
   private async getGroupStartIndexTx(

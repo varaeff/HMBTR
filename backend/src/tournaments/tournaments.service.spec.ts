@@ -21,7 +21,6 @@ import { createTournamentReportPdf } from './tournament-report.pdf';
 import { TournamentCrudService } from './core/tournament-crud.service';
 import { TournamentMarshalService } from './marshals/tournament-marshal.service';
 import { TournamentNominationService } from './nominations/tournament-nomination.service';
-import { TournamentFightNumberNormalizer } from './reports/tournament-fight-number-normalizer.service';
 import { TournamentReportCompetitionFormatter } from './reports/tournament-report-competition.formatter';
 import { TournamentReportFightScoreFormatter } from './reports/tournament-report-fight-score.formatter';
 import { TournamentReportMarkdownBuilder } from './reports/tournament-report-markdown.builder';
@@ -71,7 +70,6 @@ describe('TournamentsService', () => {
     const marshals = new TournamentMarshalService(prismaService);
     const storage = new TournamentReportStorage(prismaService);
     const reader = new TournamentReportReader(prismaService);
-    const normalizer = new TournamentFightNumberNormalizer(prismaService);
     const fightScoreFormatter = new TournamentReportFightScoreFormatter();
     const competitionFormatter = new TournamentReportCompetitionFormatter(
       fightScoreFormatter,
@@ -81,7 +79,6 @@ describe('TournamentsService', () => {
     );
     const reports = new TournamentReportService(
       storage,
-      normalizer,
       reader,
       markdownBuilder,
     );
@@ -286,7 +283,6 @@ describe('TournamentsService', () => {
     prisma.$queryRawUnsafe
       .mockResolvedValueOnce([{ table_name: 'tournament_reports' }])
       .mockResolvedValueOnce([]);
-    prisma.competition_blocks.findMany.mockResolvedValue([]);
     prisma.tournaments.findUnique.mockResolvedValue({
       id: 31,
       name: 'Open Cup',

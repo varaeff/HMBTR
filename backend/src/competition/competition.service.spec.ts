@@ -134,31 +134,29 @@ describe('competition use-case services', () => {
         }),
       },
       competition_blocks: {
-        findMany: jest
-          .fn()
-          .mockResolvedValueOnce([])
-          .mockResolvedValueOnce([
-            {
-              id: 90,
-              status: 'ACTIVE',
-              type: 'GROUP',
-              groups: [],
-              fights: [
-                {
-                  id: 637,
-                  warnings: [
-                    { competitor_id: 104, round: 1, reason: 'Holding' },
-                  ],
-                },
-              ],
-              bracket_slots: [],
-              round_states: [],
-            },
-          ]),
+        findMany: jest.fn().mockResolvedValue([
+          {
+            id: 90,
+            status: 'ACTIVE',
+            type: 'GROUP',
+            groups: [],
+            fights: [
+              {
+                id: 637,
+                warnings: [
+                  { competitor_id: 104, round: 1, reason: 'Holding' },
+                ],
+              },
+            ],
+            bracket_slots: [],
+            round_states: [],
+          },
+        ]),
       },
       competition_placements: {
         findMany: jest.fn().mockResolvedValue([]),
       },
+      $transaction: jest.fn(),
     };
     const rankingsService = {
       getPendingTie: jest.fn().mockResolvedValue(null),
@@ -166,7 +164,6 @@ describe('competition use-case services', () => {
     } as unknown as CompetitionRankingsService;
     const service = new CompetitionStateReader(
       prisma as unknown as PrismaService,
-      new CompetitionOlympicService(),
       rankingsService,
     );
 
@@ -177,6 +174,7 @@ describe('competition use-case services', () => {
       round: 1,
       reason: 'Holding',
     });
+    expect(prisma.$transaction).not.toHaveBeenCalled();
   });
 
   it('reorders Olympic winners after a non-semifinal round without creating next fights', async () => {

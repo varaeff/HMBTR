@@ -159,6 +159,8 @@ model tournament_nominations {
   blocks         competition_blocks[]
   placements     competition_placements[]
   rating_history fighter_nomination_rating_history[]
+
+  @@index([tournament_id, nomination_id])
 }
 
 model competitors {
@@ -180,6 +182,9 @@ model competitors {
   fights_as_f2   fights[]         @relation("Fighter2")
   fights_won     fights[]         @relation("Winner")
   fight_warnings fight_warnings[]
+
+  @@index([tournament_id, nomination_id])
+  @@index([fighter_id, tournament_id, nomination_id])
 }
 
 model groups {
@@ -250,6 +255,8 @@ model fights {
   round_scores       fight_round_scores[]
 
   @@index([forfeit_card_id])
+  @@index([block_id, fight_number])
+  @@index([tournament_id, nomination_id, is_finished])
 }
 
 model fight_round_scores {
@@ -369,6 +376,7 @@ model fighter_nomination_rating_history {
 
   @@unique([tournament_nomination_id, fighter_id])
   @@index([nomination_id, fighter_id, tournament_id])
+  @@index([fighter_id, created_at])
 }
 
 model competition_blocks {
@@ -388,6 +396,8 @@ model competition_blocks {
   bracket_slots         bracket_slots[]
   placements            competition_placements[]
   round_states          competition_round_states[]
+
+  @@index([tournament_nomination_id, stage])
 }
 
 model competition_round_states {

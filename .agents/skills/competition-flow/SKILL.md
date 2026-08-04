@@ -154,6 +154,7 @@ Keep domain rules in backend logic helpers, not in Vue components. The frontend 
 - If a selected third-place fighter is added to Olympic, highlight that fighter in the original group table using the same visual treatment as first and second places.
 - Fight block headings should render only for blocks with generated fights. Use singular `Group` for one group letter and plural `Groups` for paired group blocks.
 - Olympic bronze fights are displayed and held before the final, so bronze fight numbers must be lower than final fight numbers.
+- Bronze-before-final numbering must be produced when Olympic fights are created. Do not repair bronze/final numbering from competition-state reads or report generation.
 - Olympic block creation persists bracket slots only. The frontend shows draggable pending pairs and calls the explicit fix-pairs endpoint before fights for that round are generated.
 - After each fixed non-semifinal Olympic round, the backend reorders winner slots and stops. The frontend then shows the next draggable pair tables. Fixed semifinal completion creates only the bronze fight and final immediately.
 - A red card removes the fighter from other nominations in the same tournament when those nominations have no competition block yet.

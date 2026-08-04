@@ -8,7 +8,6 @@ import {
   createTournamentReportPdf,
 } from '../tournament-report.pdf';
 import type { TournamentReportResult } from '../tournaments-internal.types';
-import { TournamentFightNumberNormalizer } from './tournament-fight-number-normalizer.service';
 import { TournamentReportMarkdownBuilder } from './tournament-report-markdown.builder';
 import { TournamentReportReader } from './tournament-report-reader.service';
 import { TournamentReportStorage } from './tournament-report-storage.service';
@@ -17,7 +16,6 @@ import { TournamentReportStorage } from './tournament-report-storage.service';
 export class TournamentReportService {
   constructor(
     private readonly storage: TournamentReportStorage,
-    private readonly fightNumberNormalizer: TournamentFightNumberNormalizer,
     private readonly reader: TournamentReportReader,
     private readonly markdownBuilder: TournamentReportMarkdownBuilder,
   ) {}
@@ -36,10 +34,6 @@ export class TournamentReportService {
     );
 
     if (cached) return cached;
-
-    await this.fightNumberNormalizer.normalizeTournamentBronzeFinalFightNumbers(
-      tournamentId,
-    );
 
     const tournament = await this.reader.findReportTournament(tournamentId);
 

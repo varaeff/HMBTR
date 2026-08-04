@@ -242,43 +242,6 @@ export class CompetitionOlympicService {
         update: { pairs_fixed: true },
       });
     }
-
-    await this.normalizeBronzeFinalFightNumbersTx(tx, blockId, mainRounds);
-  }
-
-  async normalizeBronzeFinalFightNumbersTx(
-    tx: PrismaTx,
-    blockId: number,
-    mainRounds?: number,
-  ) {
-    const finalFight = await tx.fights.findFirst({
-      where: {
-        block_id: blockId,
-        bracket_round: mainRounds,
-        is_bronze: false,
-      },
-      orderBy: mainRounds === undefined ? { bracket_round: 'desc' } : undefined,
-    });
-    const bronzeFight = await tx.fights.findFirst({
-      where: { block_id: blockId, is_bronze: true },
-    });
-    if (
-      !finalFight ||
-      !bronzeFight ||
-      bronzeFight.fight_number < finalFight.fight_number
-    ) {
-      return;
-    }
-
-    // Bronze is displayed before the final, so persisted numbers must match UI order.
-    await tx.fights.update({
-      where: { id: bronzeFight.id },
-      data: { fight_number: finalFight.fight_number },
-    });
-    await tx.fights.update({
-      where: { id: finalFight.id },
-      data: { fight_number: bronzeFight.fight_number },
-    });
   }
 
   private async reorderOlympicWinnerSlotsTx(

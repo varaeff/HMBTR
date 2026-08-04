@@ -2,20 +2,17 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import {
   BLOCK_GROUP,
-  BLOCK_OLYMPIC,
   SCOPE_FINAL,
   SCOPE_GROUP,
   STATUS_ACTIVE,
 } from '../competition.constants';
 import type { PrismaTx } from '../competition-internal.types';
-import { CompetitionOlympicService } from '../olympic/competition-olympic.service';
 import { CompetitionRankingsService } from '../rankings/competition-rankings.service';
 
 @Injectable()
 export class CompetitionStateReader {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly olympicService: CompetitionOlympicService,
     private readonly rankingsService: CompetitionRankingsService,
   ) {}
 
@@ -24,7 +21,6 @@ export class CompetitionStateReader {
       tournamentId,
       nominationId,
     );
-    await this.normalizeBronzeFinalFightNumbers(tournamentNomination.id);
     const blocks = await this.prisma.competition_blocks.findMany({
       where: { tournament_nomination_id: tournamentNomination.id },
       orderBy: { stage: 'asc' },
@@ -171,23 +167,5 @@ export class CompetitionStateReader {
 
   async getTournamentNominationId(tournamentId: number, nominationId: number) {
     return (await this.getTournamentNomination(tournamentId, nominationId)).id;
-  }
-
-  private async normalizeBronzeFinalFightNumbers(
-    tournamentNominationId: number,
-  ) {
-    const blocks = await this.prisma.competition_blocks.findMany({
-      where: {
-        tournament_nomination_id: tournamentNominationId,
-        type: BLOCK_OLYMPIC,
-      },
-      select: { id: true },
-    });
-
-    for (const block of blocks) {
-      await this.prisma.$transaction((tx) =>
-        this.olympicService.normalizeBronzeFinalFightNumbersTx(tx, block.id),
-      );
-    }
   }
 }
