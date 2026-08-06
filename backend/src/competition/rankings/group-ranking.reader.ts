@@ -1,23 +1,35 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { WARNING_SCORE_BONUS } from '@shared/fightScoring';
 import { scoringRules } from '../../fights/fight-score-data';
+import type { RankedCompetitor } from '../competition.logic';
 import { SCOPE_GROUP } from '../competition.constants';
 import type { GroupRankings, PrismaTx } from '../competition-internal.types';
 import { CompetitionScoringService } from '../scoring/competition-scoring.service';
+import { TieBreakerService } from './tie-breaker.service';
 
 @Injectable()
 export class GroupRankingReader {
-  constructor(private readonly scoringService: CompetitionScoringService) {}
+  constructor(
+    private readonly scoringService: CompetitionScoringService,
+    private readonly tieBreakerService: TieBreakerService,
+  ) {}
 
   async getGroupRankingsTx(
     tx: PrismaTx,
     blockId: number,
     groupId: number,
   ): Promise<GroupRankings> {
+    const block = await tx.competition_blocks.findUnique({
+      where: { id: blockId },
+      select: { tournament_id: true, nomination_id: true },
+    });
+    if (!block) throw new BadRequestException('Block not found');
+
     const groupCompetitors = await tx.group_competitors.findMany({
       where: { group_id: groupId },
       orderBy: { competitor_id: 'asc' },
     });
-    const stats = groupCompetitors.map((gc) => ({
+    const stats: RankedCompetitor[] = groupCompetitors.map((gc) => ({
       competitorId: gc.competitor_id,
       wins: 0,
       diff: 0,
@@ -46,11 +58,7 @@ export class GroupRankingReader {
         competitor2Score: fight.competitor2_score,
         forfeitCardId: fight.forfeit_card_id,
         rules: scoringRules(fight),
-        roundScores: this.scoringService.getPersistedRoundScores(
-          scoringRules(fight),
-          fight,
-          fight.warnings,
-        ),
+        roundScores: this.scoringService.getPersistedRoundScores(fight),
         warnings: fight.warnings.map((warning) => ({
           competitorId: warning.competitor_id,
           round: warning.round,
@@ -65,6 +73,17 @@ export class GroupRankingReader {
         s2.diff += score.competitor2Score - score.competitor1Score;
         if (fight.winner_id === fight.competitor2_id) s2.wins++;
       }
+    }
+
+    const tieBreakerMetrics = await this.tieBreakerService.getMetricsTx(tx, {
+      tournamentId: block.tournament_id,
+      nominationId: block.nomination_id,
+      competitorIds: stats.map((stat) => stat.competitorId),
+    });
+    for (const stat of stats) {
+      const metric = tieBreakerMetrics.get(stat.competitorId);
+      stat.activeYellowCount = metric?.activeYellowCount ?? 0;
+      stat.diff -= stat.activeYellowCount * WARNING_SCORE_BONUS;
     }
 
     const manualOrder = (

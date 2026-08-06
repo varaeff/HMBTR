@@ -110,7 +110,7 @@ export class CompetitionOlympicService {
   async progressOlympicBlockTx(tx: PrismaTx, blockId: number) {
     const block = await tx.competition_blocks.findUnique({
       where: { id: blockId },
-      include: { bracket_slots: true },
+      include: { bracket_slots: true, round_states: true },
     });
     if (!block) throw new NotFoundException('Block not found');
     const nomination = await tx.nominations.findUnique({
@@ -128,6 +128,7 @@ export class CompetitionOlympicService {
     );
 
     const semifinalRound = mainRounds - 1;
+    const roundStates = block.round_states ?? [];
 
     for (let round = 1; round < semifinalRound; round++) {
       const fights = await tx.fights.findMany({
@@ -140,6 +141,8 @@ export class CompetitionOlympicService {
       ) {
         break;
       }
+      const state = roundStates.find((item) => item.round === round);
+      if (!state?.results_fixed) break;
 
       const nextRoundExists = await tx.fights.count({
         where: {
@@ -187,6 +190,11 @@ export class CompetitionOlympicService {
       semifinals.length === 2 &&
       semifinals.every((fight) => fight.is_finished && fight.winner_id)
     ) {
+      const semifinalState = roundStates.find(
+        (item) => item.round === semifinalRound,
+      );
+      if (!semifinalState?.results_fixed) return;
+
       const losers = semifinals.map((fight) =>
         fight.winner_id === fight.competitor1_id
           ? fight.competitor2_id

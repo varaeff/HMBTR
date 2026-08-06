@@ -4,8 +4,6 @@ export interface SubmittedRoundScore {
 }
 
 export interface SubmittedFightScore {
-  competitor1_score?: number;
-  competitor2_score?: number;
   round_scores?: SubmittedRoundScore[];
   warnings?: SubmittedFightWarning[];
 }
@@ -19,14 +17,6 @@ export interface SubmittedFightWarning {
 export interface FightScoreUpdateData {
   competitor1_score: number;
   competitor2_score: number;
-  competitor1_round1_score: number;
-  competitor2_round1_score: number;
-  competitor1_round2_score: number;
-  competitor2_round2_score: number;
-  competitor1_round3_score: number;
-  competitor2_round3_score: number;
-  competitor1_round4_score: number;
-  competitor2_round4_score: number;
 }
 
 export interface FightRoundScoreCreateData {

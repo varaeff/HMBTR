@@ -64,6 +64,18 @@ export class CompetitionRedCardService {
     );
   }
 
+  async resolveDoubleRedForfeitTx(
+    tx: PrismaTx,
+    fightId: number,
+    winnerCompetitorId: number,
+  ) {
+    return this.forfeitService.resolveDoubleRedForfeitTx(
+      tx,
+      fightId,
+      winnerCompetitorId,
+    );
+  }
+
   async removeActiveRedCompetitorsFromRegistrationTx(
     tx: PrismaTx,
     block: {

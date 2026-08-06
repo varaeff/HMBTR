@@ -19,11 +19,11 @@ Production does not include PgAdmin.
 
 ## Problem Statement
 
-Deployment work must keep production data isolated from local development data, use the root `compose.yaml`, and preserve the backend migration/startup contract.
+Deployment work must keep production data isolated from local development data, use the root `compose.yaml`, and preserve the backend schema-sync/startup contract.
 
 ## Chosen Approach
 
-Use the root `compose.yaml` for production and Dokploy. Configure production from `.env.example` or Dokploy environment variables. Use the Docker service name `postgres` in `DATABASE_URL`. Let the backend container run Prisma schema migrations with `prisma migrate deploy` before starting the API.
+Use the root `compose.yaml` for production and Dokploy. Configure production from `.env.example` or Dokploy environment variables. Use the Docker service name `postgres` in `DATABASE_URL`. Let the backend container sync the Prisma schema with `prisma db push --accept-data-loss` before starting the API.
 
 ## Database Safety
 
@@ -34,7 +34,9 @@ Do not copy, dump, mount, seed, or reuse local development database data in prod
 - Production database: started by root `compose.yaml`.
 - Production persistent data volume: `hmbtr_prod_postgres_data`.
 
-Production PostgreSQL must start from a clean empty database volume. The backend container runs only Prisma schema migrations with `prisma migrate deploy`. No test or development data is included.
+Production PostgreSQL should start from a clean empty database volume for first deployment. The backend container runs Prisma schema sync with `prisma db push --schema ./prisma/schema.prisma --accept-data-loss`. No test or development data is included.
+
+`--accept-data-loss` means deployment will not wait for interactive confirmation when Prisma detects destructive changes, such as removed columns. It also means the container automatically agrees to that data loss. Before deploying schema removals to a database with production data, take a backup or make an explicit release decision that the data can be removed.
 
 ## Environment Setup
 
@@ -141,10 +143,10 @@ docker compose down -v
 On each backend start, the backend entrypoint runs:
 
 ```bash
-npx prisma migrate deploy --schema ./prisma/schema.prisma
+npx prisma db push --schema ./prisma/schema.prisma --accept-data-loss
 ```
 
-Only schema migrations are applied.
+This is schema sync, not migration history application. Destructive schema changes do not prompt in the container because `--accept-data-loss` is set.
 
 ## PostgreSQL External Connection
 
@@ -210,7 +212,7 @@ Validate PDF changes with a backend image rebuild, executable path check, Chromi
 docker compose logs -f backend
 ```
 
-The backend will apply pending Prisma schema migrations automatically before starting the API.
+The backend will sync the Prisma schema automatically before starting the API.
 
 ## Required VPS Ports
 

@@ -10,11 +10,7 @@ import type {
 } from '@/model/competition'
 import type { Fighter } from '@/model/fighter'
 import { updateGroupsStatistics } from '@/lib/groupsStatistic'
-import {
-  getInitialRoundScores,
-  legacyRoundScoresFromColumns,
-  type FightScoringRules
-} from '@shared/fightScoring'
+import { getInitialRoundScores, type FightScoringRules } from '@shared/fightScoring'
 import { applyFightScoreDraft, evaluateFightWithWarnings } from './fightScoring'
 import type { FightResultDrafts } from './resultDrafts'
 
@@ -51,14 +47,6 @@ interface RawFight {
   competitor2_id?: number
   competitor1_score: number
   competitor2_score: number
-  competitor1_round1_score: number
-  competitor2_round1_score: number
-  competitor1_round2_score: number
-  competitor2_round2_score: number
-  competitor1_round3_score: number
-  competitor2_round3_score: number
-  competitor1_round4_score: number
-  competitor2_round4_score: number
   winner_id?: number | null
   forfeit_card_id?: number | null
   bracket_round?: number
@@ -156,8 +144,7 @@ const groupFighterFromCompetitor = (
   options: CompetitionMapperOptions
 ): GroupFighter => {
   const fighter =
-    options.resolveFighterById?.(competitor.fighter_id) ??
-    createFallbackFighter(competitor.fighter)
+    options.resolveFighterById?.(competitor.fighter_id) ?? createFallbackFighter(competitor.fighter)
 
   return {
     ...fighter,
@@ -187,23 +174,7 @@ const mapFight = (
       competitor1Score: score.competitor1_score,
       competitor2Score: score.competitor2_score
     })) ?? []
-  const legacyRounds = legacyRoundScoresFromColumns(
-    fightRules,
-    {
-      competitor1Round1Score:
-        fightRules.rounds === 1 ? fight.competitor1_score : fight.competitor1_round1_score,
-      competitor2Round1Score:
-        fightRules.rounds === 1 ? fight.competitor2_score : fight.competitor2_round1_score,
-      competitor1Round2Score: fight.competitor1_round2_score,
-      competitor2Round2Score: fight.competitor2_round2_score,
-      competitor1Round3Score: fight.competitor1_round3_score,
-      competitor2Round3Score: fight.competitor2_round3_score,
-      competitor1Round4Score: fight.competitor1_round4_score,
-      competitor2Round4Score: fight.competitor2_round4_score
-    },
-    warnings
-  )
-  const storedRounds = relationRounds.length ? relationRounds : legacyRounds
+  const storedRounds = relationRounds
   const editableRounds = storedRounds.length ? storedRounds : getInitialRoundScores(fightRules)
   const scored = evaluateFightWithWarnings(fightRules, {
     competitor1Id: fight.competitor1_id,

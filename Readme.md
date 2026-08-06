@@ -149,6 +149,8 @@ The production-style stack includes:
 - frontend served by Nginx;
 - runtime frontend API URL configuration through `front/env-config.template.js`.
 
+On backend startup, `docker-entrypoint.sh` runs `npx prisma db push --schema ./prisma/schema.prisma --accept-data-loss`. This avoids interactive prompts during deploy, but destructive schema changes such as removed columns are accepted automatically. Back up production data before deploying schema removals.
+
 Default published ports from `.env.example`:
 
 - frontend: `http://localhost:8080`

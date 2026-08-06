@@ -222,14 +222,6 @@ model fights {
   competitor2_id           Int
   competitor1_score        Int     @default(0)
   competitor2_score        Int     @default(0)
-  competitor1_round1_score Int     @default(0)
-  competitor2_round1_score Int     @default(0)
-  competitor1_round2_score Int     @default(0)
-  competitor2_round2_score Int     @default(0)
-  competitor1_round3_score Int     @default(0)
-  competitor2_round3_score Int     @default(0)
-  competitor1_round4_score Int     @default(0)
-  competitor2_round4_score Int     @default(0)
   winner_id                Int?
   stage                    Int     @default(0)
   fight_number             Int     @default(0)

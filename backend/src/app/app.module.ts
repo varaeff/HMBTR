@@ -15,7 +15,6 @@ import { NominationsModule } from '../nominations/nominations.module';
 import { CompetitorsModule } from '../competitors/competitors.module';
 import { GroupsModule } from '../groups/groups.module';
 import { GroupCompetitorsModule } from '../group-competitors/group-competitors.module';
-import { FightsModule } from '../fights/fights.module';
 import { CompetitionModule } from '../competition/competition.module';
 import { DisciplinaryCardsModule } from '../disciplinary-cards/disciplinary-cards.module';
 import { RatingsModule } from '../ratings/ratings.module';
@@ -40,7 +39,6 @@ import { EmailService } from '../common/services/email.service';
     CompetitorsModule,
     GroupsModule,
     GroupCompetitorsModule,
-    FightsModule,
     CompetitionModule,
     DisciplinaryCardsModule,
     RatingsModule,

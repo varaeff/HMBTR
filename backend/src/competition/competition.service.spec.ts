@@ -14,6 +14,7 @@ import { CompetitionRankingsService } from './rankings/competition-rankings.serv
 import { AdvancementService } from './rankings/advancement.service';
 import { GroupRankingReader } from './rankings/group-ranking.reader';
 import { PendingTieService } from './rankings/pending-tie.service';
+import { TieBreakerService } from './rankings/tie-breaker.service';
 import { TieResolutionService } from './rankings/tie-resolution.service';
 import { CompetitionOlympicProgressService } from './olympic/competition-olympic-progress.service';
 import { CompetitionLifecycleService } from './lifecycle/competition-lifecycle.service';
@@ -44,18 +45,24 @@ type FightUpdateParams = {
   data: {
     competitor1_score?: number;
     competitor2_score?: number;
-    competitor1_round1_score?: number;
-    competitor2_round1_score?: number;
-    competitor1_round2_score?: number;
-    competitor2_round2_score?: number;
-    competitor1_round3_score?: number;
-    competitor2_round3_score?: number;
-    competitor1_round4_score?: number;
-    competitor2_round4_score?: number;
     winner_id?: number | null;
     is_finished?: boolean;
     forfeit_card_id?: number | null;
   };
+};
+
+type DisciplinaryCardCreateParams = {
+  data: {
+    fighter_id: number;
+    tournament_id: number;
+    fight_id: number;
+    marshal_id: number;
+    type: string;
+    source: string;
+    reason: string;
+    active: boolean;
+  };
+  select: { id: true };
 };
 
 const createResultService = (
@@ -143,9 +150,7 @@ describe('competition use-case services', () => {
             fights: [
               {
                 id: 637,
-                warnings: [
-                  { competitor_id: 104, round: 1, reason: 'Holding' },
-                ],
+                warnings: [{ competitor_id: 104, round: 1, reason: 'Holding' }],
               },
             ],
             bracket_slots: [],
@@ -223,6 +228,7 @@ describe('competition use-case services', () => {
           tournament_nomination_id: 15,
           stage: 2,
           bracket_slots: slots,
+          round_states: [{ round: 1, results_fixed: true }],
         }),
         update: jest.fn(),
       },
@@ -315,6 +321,7 @@ describe('competition use-case services', () => {
           tournament_nomination_id: 15,
           stage: 2,
           bracket_slots: [{}, {}, {}, {}],
+          round_states: [{ round: 1, results_fixed: true }],
         }),
         update: jest.fn(),
       },
@@ -387,6 +394,60 @@ describe('competition use-case services', () => {
         bracket_round: 2,
       }),
     ]);
+  });
+
+  it('does not create Olympic downstream fights from an unfixed finished round', async () => {
+    const semifinals = [
+      {
+        id: 1,
+        is_finished: true,
+        winner_id: 101,
+        competitor1_id: 101,
+        competitor2_id: 102,
+      },
+      {
+        id: 2,
+        is_finished: true,
+        winner_id: 103,
+        competitor1_id: 103,
+        competitor2_id: 104,
+      },
+    ];
+    const tx = {
+      competition_blocks: {
+        findUnique: jest.fn().mockResolvedValue({
+          id: 9,
+          tournament_id: 31,
+          nomination_id: 5,
+          stage: 2,
+          bracket_slots: [{}, {}, {}, {}],
+          round_states: [{ round: 1, results_fixed: false }],
+        }),
+      },
+      fights: {
+        aggregate: jest.fn().mockResolvedValue({
+          _max: { fight_number: 10 },
+        }),
+        findMany: jest.fn().mockResolvedValue(semifinals),
+        findFirst: jest.fn().mockResolvedValue(null),
+        create: jest.fn(),
+      },
+      nominations: {
+        findUnique: jest.fn().mockResolvedValue({
+          rounds: 3,
+          round_win: false,
+        }),
+      },
+    };
+
+    await new CompetitionOlympicService().progressOlympicBlockTx(
+      tx as unknown as Parameters<
+        CompetitionOlympicService['progressOlympicBlockTx']
+      >[0],
+      9,
+    );
+
+    expect(tx.fights.create).not.toHaveBeenCalled();
   });
 
   it('progresses Olympic blocks and reapplies forfeits after a red card', async () => {
@@ -472,6 +533,7 @@ describe('competition use-case services', () => {
         prismaWithTransaction as unknown as PrismaService,
       ),
       redCardStorageService,
+      {} as TieBreakerService,
     );
     jest.spyOn(redCardStorageService, 'getActiveRedCards').mockResolvedValue([
       {
@@ -564,6 +626,7 @@ describe('competition use-case services', () => {
         prismaWithTransaction as unknown as PrismaService,
       ),
       redCardStorageService,
+      {} as TieBreakerService,
     );
     jest.spyOn(redCardStorageService, 'getActiveRedCards').mockResolvedValue([
       {
@@ -593,19 +656,264 @@ describe('competition use-case services', () => {
       data: {
         competitor1_score: 0,
         competitor2_score: 3,
-        competitor1_round1_score: 0,
-        competitor2_round1_score: 5,
-        competitor1_round2_score: 0,
-        competitor2_round2_score: 5,
-        competitor1_round3_score: 0,
-        competitor2_round3_score: 5,
-        competitor1_round4_score: 0,
-        competitor2_round4_score: 0,
         winner_id: 102,
         is_finished: true,
         forfeit_card_id: 71,
       },
     });
+    expect(prisma.fight_round_scores.createMany).toHaveBeenCalledWith({
+      data: [
+        {
+          fight_id: 41,
+          round: 1,
+          competitor1_score: 0,
+          competitor2_score: 5,
+        },
+        {
+          fight_id: 41,
+          round: 2,
+          competitor1_score: 0,
+          competitor2_score: 5,
+        },
+        {
+          fight_id: 41,
+          round: 3,
+          competitor1_score: 0,
+          competitor2_score: 5,
+        },
+      ],
+    });
+  });
+
+  it('uses the shared tie breaker when both competitors have active red cards', async () => {
+    const prisma = {
+      fights: {
+        findMany: jest.fn().mockResolvedValue([
+          {
+            id: 41,
+            block_id: 8,
+            tournament_id: 31,
+            nomination_id: 5,
+            fight_number: 2,
+            is_finished: false,
+            forfeit_card_id: null,
+            block: {
+              id: 8,
+              type: 'OLYMPIC',
+              status: 'ACTIVE',
+              lifecycle_state: 'FIGHTS_EDITABLE',
+              tournament_nomination: { is_finished: false },
+              round_states: [{ round: 1, results_fixed: false }],
+            },
+            competitor1_id: 101,
+            competitor2_id: 102,
+            competitor1: { fighter_id: 1 },
+            competitor2: { fighter_id: 2 },
+            nomination: { rounds: 1, round_win: false },
+            rounds: 1,
+            round_win: false,
+          },
+        ]),
+        update: jest.fn(),
+      },
+      fight_round_scores: {
+        deleteMany: jest.fn(),
+        createMany: jest.fn(),
+      },
+    };
+    const prismaWithTransaction = {
+      ...prisma,
+      $transaction: jest.fn(
+        (callback: (tx: typeof prisma) => Promise<unknown>) => callback(prisma),
+      ),
+    };
+    const scoringService = new CompetitionScoringService(
+      prismaWithTransaction as unknown as PrismaService,
+    );
+    const redCardStorageService = new RedCardStorageService(
+      prismaWithTransaction as unknown as PrismaService,
+    );
+    const tieBreakerService = new TieBreakerService(scoringService);
+    jest.spyOn(tieBreakerService, 'getMetricsTx').mockResolvedValue(
+      new Map([
+        [
+          101,
+          {
+            competitorId: 101,
+            fighterId: 1,
+            activeYellowCount: 0,
+            effectiveScoreDiff: 0,
+          },
+        ],
+        [
+          102,
+          {
+            competitorId: 102,
+            fighterId: 2,
+            activeYellowCount: 1,
+            effectiveScoreDiff: 20,
+          },
+        ],
+      ]),
+    );
+    const redCardForfeitService = new RedCardForfeitService(
+      prismaWithTransaction as unknown as PrismaService,
+      scoringService,
+      redCardStorageService,
+      tieBreakerService,
+    );
+    jest.spyOn(redCardStorageService, 'getActiveRedCards').mockResolvedValue([
+      {
+        id: 71,
+        fighter_id: 1,
+        fight_id: 41,
+        received_at: new Date('2026-06-12T00:00:00.000Z'),
+        source_block_id: 8,
+        source_block_type: 'OLYMPIC',
+        source_fight_number: 2,
+        source_tournament_id: 31,
+        source_nomination_id: 5,
+      },
+      {
+        id: 72,
+        fighter_id: 2,
+        fight_id: 41,
+        received_at: new Date('2026-06-12T00:00:00.000Z'),
+        source_block_id: 8,
+        source_block_type: 'OLYMPIC',
+        source_fight_number: 2,
+        source_tournament_id: 31,
+        source_nomination_id: 5,
+      },
+    ]);
+
+    await redCardForfeitService.applyRedCardForfeitsPass(
+      31,
+      new Date('2026-06-12T00:00:00.000Z'),
+    );
+
+    expect(prisma.fights.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 41 },
+        data: expect.objectContaining({
+          competitor1_score: 10,
+          competitor2_score: 0,
+          winner_id: 101,
+          is_finished: true,
+          forfeit_card_id: 72,
+        }),
+      }),
+    );
+  });
+
+  it('leaves a double-red fight unresolved when yellow count and diff are tied', async () => {
+    const prisma = {
+      fights: {
+        findMany: jest.fn().mockResolvedValue([
+          {
+            id: 41,
+            block_id: 8,
+            tournament_id: 31,
+            nomination_id: 5,
+            fight_number: 2,
+            is_finished: false,
+            forfeit_card_id: null,
+            block: {
+              id: 8,
+              type: 'OLYMPIC',
+              status: 'ACTIVE',
+              lifecycle_state: 'FIGHTS_EDITABLE',
+              tournament_nomination: { is_finished: false },
+              round_states: [{ round: 1, results_fixed: false }],
+            },
+            competitor1_id: 101,
+            competitor2_id: 102,
+            competitor1: { fighter_id: 1 },
+            competitor2: { fighter_id: 2 },
+            nomination: { rounds: 1, round_win: false },
+            rounds: 1,
+            round_win: false,
+          },
+        ]),
+        update: jest.fn(),
+      },
+      fight_round_scores: {
+        deleteMany: jest.fn(),
+        createMany: jest.fn(),
+      },
+    };
+    const prismaWithTransaction = {
+      ...prisma,
+      $transaction: jest.fn(
+        (callback: (tx: typeof prisma) => Promise<unknown>) => callback(prisma),
+      ),
+    };
+    const scoringService = new CompetitionScoringService(
+      prismaWithTransaction as unknown as PrismaService,
+    );
+    const redCardStorageService = new RedCardStorageService(
+      prismaWithTransaction as unknown as PrismaService,
+    );
+    const tieBreakerService = new TieBreakerService(scoringService);
+    jest.spyOn(tieBreakerService, 'getMetricsTx').mockResolvedValue(
+      new Map([
+        [
+          101,
+          {
+            competitorId: 101,
+            fighterId: 1,
+            activeYellowCount: 0,
+            effectiveScoreDiff: 0,
+          },
+        ],
+        [
+          102,
+          {
+            competitorId: 102,
+            fighterId: 2,
+            activeYellowCount: 0,
+            effectiveScoreDiff: 0,
+          },
+        ],
+      ]),
+    );
+    const redCardForfeitService = new RedCardForfeitService(
+      prismaWithTransaction as unknown as PrismaService,
+      scoringService,
+      redCardStorageService,
+      tieBreakerService,
+    );
+    jest.spyOn(redCardStorageService, 'getActiveRedCards').mockResolvedValue([
+      {
+        id: 71,
+        fighter_id: 1,
+        fight_id: 41,
+        received_at: new Date('2026-06-12T00:00:00.000Z'),
+        source_block_id: 8,
+        source_block_type: 'OLYMPIC',
+        source_fight_number: 2,
+        source_tournament_id: 31,
+        source_nomination_id: 5,
+      },
+      {
+        id: 72,
+        fighter_id: 2,
+        fight_id: 41,
+        received_at: new Date('2026-06-12T00:00:00.000Z'),
+        source_block_id: 8,
+        source_block_type: 'OLYMPIC',
+        source_fight_number: 2,
+        source_tournament_id: 31,
+        source_nomination_id: 5,
+      },
+    ]);
+
+    await redCardForfeitService.applyRedCardForfeitsPass(
+      31,
+      new Date('2026-06-12T00:00:00.000Z'),
+    );
+
+    expect(prisma.fights.update).not.toHaveBeenCalled();
   });
 
   it('excludes active red-card fighters from group advancers', async () => {
@@ -712,6 +1020,8 @@ describe('competition use-case services', () => {
       {} as PrismaService,
       groupRankingReader,
       redCardService,
+      {} as RedCardStorageService,
+      {} as TieBreakerService,
     );
 
     const pendingTie = await service.getPendingTieTx(tx, 9, 2);
@@ -726,6 +1036,12 @@ describe('competition use-case services', () => {
           .fn()
           .mockResolvedValue([{ competitor_id: 101 }, { competitor_id: 102 }]),
       },
+      competition_blocks: {
+        findUnique: jest.fn().mockResolvedValue({
+          tournament_id: 31,
+          nomination_id: 5,
+        }),
+      },
       fights: {
         findMany: jest.fn().mockResolvedValue([
           {
@@ -733,14 +1049,6 @@ describe('competition use-case services', () => {
             competitor2_id: 102,
             competitor1_score: 0,
             competitor2_score: 0,
-            competitor1_round1_score: 0,
-            competitor2_round1_score: 0,
-            competitor1_round2_score: 0,
-            competitor2_round2_score: 0,
-            competitor1_round3_score: 0,
-            competitor2_round3_score: 0,
-            competitor1_round4_score: 0,
-            competitor2_round4_score: 0,
             forfeit_card_id: null,
             winner_id: 101,
             is_finished: true,
@@ -763,6 +1071,30 @@ describe('competition use-case services', () => {
     };
     const reader = new GroupRankingReader(
       new CompetitionScoringService({} as PrismaService),
+      {
+        getMetricsTx: jest.fn().mockResolvedValue(
+          new Map([
+            [
+              101,
+              {
+                competitorId: 101,
+                fighterId: 1,
+                activeYellowCount: 0,
+                effectiveScoreDiff: 3,
+              },
+            ],
+            [
+              102,
+              {
+                competitorId: 102,
+                fighterId: 2,
+                activeYellowCount: 0,
+                effectiveScoreDiff: -3,
+              },
+            ],
+          ]),
+        ),
+      } as unknown as TieBreakerService,
     );
 
     const rankings = await reader.getGroupRankingsTx(
@@ -772,8 +1104,8 @@ describe('competition use-case services', () => {
     );
 
     expect(rankings.stats).toEqual([
-      { competitorId: 101, wins: 1, diff: 3 },
-      { competitorId: 102, wins: 0, diff: -3 },
+      { competitorId: 101, wins: 1, activeYellowCount: 0, diff: 3 },
+      { competitorId: 102, wins: 0, activeYellowCount: 0, diff: -3 },
     ]);
   });
 
@@ -809,6 +1141,8 @@ describe('competition use-case services', () => {
       {} as PrismaService,
       groupRankingReader,
       redCardService,
+      {} as RedCardStorageService,
+      {} as TieBreakerService,
     );
 
     const pendingTie = await service.getPendingTieTx(
@@ -844,6 +1178,8 @@ describe('competition use-case services', () => {
       {} as PrismaService,
       {} as GroupRankingReader,
       redCardService,
+      {} as RedCardStorageService,
+      {} as TieBreakerService,
     );
     const rankedGroups = [
       {
@@ -916,6 +1252,8 @@ describe('competition use-case services', () => {
       {} as PrismaService,
       {} as GroupRankingReader,
       redCardService,
+      {} as RedCardStorageService,
+      {} as TieBreakerService,
     );
     const rankedGroups = [
       {
@@ -1116,6 +1454,7 @@ describe('competition use-case services', () => {
       {} as PrismaService,
       {} as CompetitionScoringService,
       {} as RedCardStorageService,
+      {} as TieBreakerService,
     );
 
     await service.resetForfeitsForDeletedFightsTx(
@@ -1128,19 +1467,21 @@ describe('competition use-case services', () => {
     expect(tx.disciplinary_cards.deleteMany).toHaveBeenCalledWith({
       where: { id: { in: [13, 14] } },
     });
-    expect(tx.disciplinary_cards.create).toHaveBeenCalledWith({
-      data: expect.objectContaining({
-        fighter_id: 1,
-        tournament_id: 5,
-        fight_id: 120,
-        marshal_id: 22,
-        type: 'RED',
-        source: 'AUTOMATIC',
-        reason: 'AUTO_RED_THREE_YELLOWS_CROSS_TOURNAMENT',
-        active: false,
-      }),
-      select: { id: true },
+    const createCalls = tx.disciplinary_cards.create.mock.calls as Array<
+      [DisciplinaryCardCreateParams]
+    >;
+    const createCall = createCalls[0]?.[0];
+    expect(createCall?.data).toMatchObject({
+      fighter_id: 1,
+      tournament_id: 5,
+      fight_id: 120,
+      marshal_id: 22,
+      type: 'RED',
+      source: 'AUTOMATIC',
+      reason: 'AUTO_RED_THREE_YELLOWS_CROSS_TOURNAMENT',
+      active: false,
     });
+    expect(createCall?.select).toEqual({ id: true });
     expect(tx.red_card_yellow_sources.createMany).toHaveBeenCalledWith({
       data: [
         { red_card_id: 90, yellow_card_id: 10 },
@@ -1299,6 +1640,9 @@ describe('competition use-case services', () => {
     const service = new TieResolutionService(
       prisma as unknown as PrismaService,
       pendingTieService,
+      {
+        applyRedCardConsequences: jest.fn().mockResolvedValue(undefined),
+      } as unknown as CompetitionRedCardService,
     );
 
     await service.resolveTies({

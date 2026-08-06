@@ -11,6 +11,7 @@ export const LIFECYCLE_RESULTS_FIXED = 'RESULTS_FIXED';
 export const SCOPE_GROUP = 'GROUP';
 export const SCOPE_FINAL = 'FINAL';
 export const SCOPE_OLYMPIC_THIRD = 'OLYMPIC_THIRD';
+export const SCOPE_OLYMPIC_DOUBLE_RED = 'OLYMPIC_DOUBLE_RED';
 
 export const COMPETITION_STATE_CHANGED_MESSAGE =
   'Competition state changed; refresh and try again';

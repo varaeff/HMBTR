@@ -10,6 +10,9 @@ export const rankCompetitors = (
 
   return [...competitors].sort((a, b) => {
     if (b.wins !== a.wins) return b.wins - a.wins;
+    if ((a.activeYellowCount ?? 0) !== (b.activeYellowCount ?? 0)) {
+      return (a.activeYellowCount ?? 0) - (b.activeYellowCount ?? 0);
+    }
     if (b.diff !== a.diff) return b.diff - a.diff;
 
     const aManual = manualPlace.get(a.competitorId);
@@ -32,7 +35,10 @@ export const findTieForPlaces = (
     const current = ranked[index];
     const tied = ranked.filter(
       (candidate) =>
-        candidate.wins === current.wins && candidate.diff === current.diff,
+        candidate.wins === current.wins &&
+        (candidate.activeYellowCount ?? 0) ===
+          (current.activeYellowCount ?? 0) &&
+        candidate.diff === current.diff,
     );
     const crossesTargetPlace = tied.some((candidate) => {
       const candidateIndex = ranked.findIndex(

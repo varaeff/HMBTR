@@ -3,9 +3,12 @@
 ## Coding Rules
 
 - Do not allow `any` type in coding.
+- Never start an answer-wait timer when asking the user for clarification.
 - Any code changes must account for the architectural constraints and
   recommendations described in the `backend-architecture` and
   `frontend-architecture` skills.
+- Always use the `minimal-validation` skill when selecting tests and checks
+  for code changes.
 
 ## Persistent Instruction Storage
 
@@ -75,7 +78,8 @@ If no suitable pattern exists:
 
 Before finalizing:
 
-- choose the smallest sufficient validation set from `docs/validation-policy.md`,
+- use the `minimal-validation` skill and choose the smallest sufficient
+  validation set from `docs/validation-policy.md`,
 - verify consistency with neighboring modules,
 - check naming, typing, imports, architecture, and structure,
 - avoid duplicated logic,

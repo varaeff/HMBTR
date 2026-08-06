@@ -32,7 +32,6 @@ export class FightWarningDto {
 
   @IsInt()
   @Min(1)
-  @Max(4)
   round: number;
 
   @IsString()
@@ -46,18 +45,6 @@ export class FightWarningDto {
 export class SaveCompetitionResultFightDto {
   @IsInt()
   fight_id: number;
-
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  @Max(MAX_SCORE)
-  competitor1_score?: number;
-
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  @Max(MAX_SCORE)
-  competitor2_score?: number;
 
   @IsOptional()
   @IsArray()

@@ -104,6 +104,10 @@ Use a facade when callers need a stable single entry point but the implementatio
 
 ## Validation
 
+Use the `minimal-validation` skill and `docs/validation-policy.md` before
+choosing checks. Prefer the smallest focused validation set that covers the
+changed backend behavior.
+
 For backend refactors, prefer focused checks from the affected package:
 
 ```sh

@@ -1,8 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma } from '../../generated/prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { emptyFightScoreData } from '../competition.helpers';
 import type { ActiveRedCard, PrismaTx } from '../competition-internal.types';
+import { TieBreakerService } from '../rankings/tie-breaker.service';
 import { CompetitionScoringService } from '../scoring/competition-scoring.service';
 import {
   AUTO_RED_THREE_YELLOWS_CROSS_TOURNAMENT,
@@ -20,6 +25,7 @@ export class RedCardForfeitService {
     private readonly prisma: PrismaService,
     private readonly scoringService: CompetitionScoringService,
     private readonly storageService: RedCardStorageService,
+    private readonly tieBreakerService: TieBreakerService,
   ) {}
 
   async applyRedCardForfeitsPass(tournamentId: number, checkDate: Date) {
@@ -73,12 +79,11 @@ export class RedCardForfeitService {
         fight,
         secondReds ?? [],
       );
-      const losingCompetitorId = getRedCardLosingCompetitorId({
-        firstCompetitorId: fight.competitor1_id,
-        secondCompetitorId: fight.competitor2_id,
-        firstRed: firstApplicableRed,
-        secondRed: secondApplicableRed,
-      });
+      const losingCompetitorId = await this.getForfeitLosingCompetitorId(
+        fight,
+        firstApplicableRed,
+        secondApplicableRed,
+      );
 
       if (!losingCompetitorId) continue;
 
@@ -111,6 +116,85 @@ export class RedCardForfeitService {
     }
   }
 
+  async resolveDoubleRedForfeitTx(
+    tx: PrismaTx,
+    fightId: number,
+    winnerCompetitorId: number,
+  ) {
+    const fight = await tx.fights.findUnique({
+      where: { id: fightId },
+      include: {
+        block: {
+          include: {
+            tournament_nomination: true,
+            round_states: true,
+          },
+        },
+        competitor1: true,
+        competitor2: true,
+      },
+    });
+    if (!fight?.block) throw new NotFoundException('Fight not found');
+    if (!canApplyRedCardForfeitToFight(fight)) {
+      throw new BadRequestException('Fight cannot be resolved now');
+    }
+    if (
+      winnerCompetitorId !== fight.competitor1_id &&
+      winnerCompetitorId !== fight.competitor2_id
+    ) {
+      throw new BadRequestException('Winner does not belong to the fight');
+    }
+
+    const checkDate = await this.tieBreakerService.getTournamentCheckDateTx(
+      tx,
+      fight.tournament_id,
+    );
+    const activeReds = await this.storageService.getActiveRedCards(
+      [fight.competitor1.fighter_id, fight.competitor2.fighter_id],
+      checkDate,
+    );
+    const firstRed = getApplicableRedForFight(
+      fight,
+      activeReds.filter(
+        (card) => card.fighter_id === fight.competitor1.fighter_id,
+      ),
+    );
+    const secondRed = getApplicableRedForFight(
+      fight,
+      activeReds.filter(
+        (card) => card.fighter_id === fight.competitor2.fighter_id,
+      ),
+    );
+    if (!firstRed || !secondRed) {
+      throw new BadRequestException('Double red conflict is not active');
+    }
+    const metrics = await this.tieBreakerService.getMetricsTx(tx, {
+      tournamentId: fight.tournament_id,
+      nominationId: fight.nomination_id,
+      competitorIds: [fight.competitor1_id, fight.competitor2_id],
+      excludeFightId: fight.id,
+    });
+    const firstMetric = metrics.get(fight.competitor1_id);
+    const secondMetric = metrics.get(fight.competitor2_id);
+    if (!firstMetric || !secondMetric) {
+      throw new BadRequestException('Double red conflict metrics not found');
+    }
+    if (
+      this.tieBreakerService.resolvePair(firstMetric, secondMetric)
+        .winnerCompetitorId !== null
+    ) {
+      throw new BadRequestException('Double red conflict is resolved by policy');
+    }
+
+    const firstLoses = winnerCompetitorId === fight.competitor2_id;
+    await this.persistForfeitTx(
+      tx,
+      fight,
+      firstLoses,
+      firstLoses ? firstRed : secondRed,
+    );
+  }
+
   async resetForfeitsForCard(cardId: number) {
     const fights = await this.prisma.fights.findMany({
       where: { forfeit_card_id: cardId },
@@ -125,6 +209,77 @@ export class RedCardForfeitService {
         where: { fight_id: { in: fights.map((fight) => fight.id) } },
       });
     }
+  }
+
+  private async getForfeitLosingCompetitorId(
+    fight: {
+      id: number;
+      tournament_id: number;
+      nomination_id: number;
+      competitor1_id: number;
+      competitor2_id: number;
+    },
+    firstApplicableRed: ActiveRedCard | undefined,
+    secondApplicableRed: ActiveRedCard | undefined,
+  ) {
+    if (firstApplicableRed && secondApplicableRed) {
+      const metrics = await this.tieBreakerService.getMetricsTx(this.prisma, {
+        tournamentId: fight.tournament_id,
+        nominationId: fight.nomination_id,
+        competitorIds: [fight.competitor1_id, fight.competitor2_id],
+        excludeFightId: fight.id,
+      });
+      const firstMetric = metrics.get(fight.competitor1_id);
+      const secondMetric = metrics.get(fight.competitor2_id);
+      if (!firstMetric || !secondMetric) return null;
+
+      return this.tieBreakerService.resolvePair(firstMetric, secondMetric)
+        .loserCompetitorId;
+    }
+
+    return getRedCardLosingCompetitorId({
+      firstCompetitorId: fight.competitor1_id,
+      secondCompetitorId: fight.competitor2_id,
+      firstRed: firstApplicableRed,
+      secondRed: secondApplicableRed,
+    });
+  }
+
+  private async persistForfeitTx(
+    tx: PrismaTx,
+    fight: {
+      id: number;
+      rounds: number;
+      round_win: boolean;
+      competitor1_id: number;
+      competitor2_id: number;
+    },
+    firstLoses: boolean,
+    forfeitCard: ActiveRedCard | undefined,
+  ) {
+    const forfeitRoundScores = this.scoringService.getRedCardForfeitRoundScores(
+      fight.rounds,
+      fight.round_win,
+      firstLoses,
+    );
+    await tx.fights.update({
+      where: { id: fight.id },
+      data: {
+        ...this.scoringService.getRedCardForfeitScoreData(
+          fight.rounds,
+          fight.round_win,
+          firstLoses,
+        ),
+        winner_id: firstLoses ? fight.competitor2_id : fight.competitor1_id,
+        is_finished: true,
+        forfeit_card_id: forfeitCard?.id ?? null,
+      },
+    });
+    await this.scoringService.replaceFightRoundScoresTx(
+      tx,
+      fight.id,
+      forfeitRoundScores,
+    );
   }
 
   async resetEditableForfeitsForCard(cardId: number) {

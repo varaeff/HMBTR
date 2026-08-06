@@ -134,7 +134,7 @@ Start compiled output:
 npm run start:prod
 ```
 
-The Docker production image runs `docker-entrypoint.sh`, applies the Prisma schema with `npx prisma db push`, and then starts the compiled Nest application.
+The Docker production image runs `docker-entrypoint.sh`, syncs the Prisma schema with `npx prisma db push --schema ./prisma/schema.prisma --accept-data-loss`, and then starts the compiled Nest application. Destructive schema changes will not ask for interactive confirmation in the container, so back up production data before deploying schema removals.
 
 ## Tests And Checks
 

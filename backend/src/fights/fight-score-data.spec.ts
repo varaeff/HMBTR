@@ -3,6 +3,7 @@ import {
   evaluateSubmittedFightScoreWithWarnings,
   evaluateSubmittedFightScore,
   evaluateSubmittedRawFightScoreForPersistence,
+  fightRoundScoreCreateData,
   fightScoreUpdateData,
 } from './fight-score-data';
 
@@ -20,12 +21,14 @@ describe('submitted fight scores', () => {
       true,
     );
 
-    expect(fightScoreUpdateData(evaluation, score)).toMatchObject({
+    expect(fightScoreUpdateData(evaluation)).toMatchObject({
       competitor1_score: 6,
       competitor2_score: 5,
-      competitor1_round1_score: 4,
-      competitor2_round2_score: 4,
     });
+    expect(fightRoundScoreCreateData(score)).toEqual([
+      { round: 1, competitor1_score: 4, competitor2_score: 1 },
+      { round: 2, competitor1_score: 2, competitor2_score: 4 },
+    ]);
   });
 
   it('allows unresolved drafts but rejects them during fixation', () => {
@@ -44,20 +47,6 @@ describe('submitted fight scores', () => {
     expect(() =>
       evaluateSubmittedFightScore({ rounds: 3, roundWin: true }, score, true),
     ).toThrow(BadRequestException);
-  });
-
-  it('rejects client-supplied aggregate scores', () => {
-    expect(() =>
-      evaluateSubmittedFightScore(
-        { rounds: 1, roundWin: false },
-        {
-          competitor1_score: 100,
-          competitor2_score: 0,
-          round_scores: [{ competitor1_score: 1, competitor2_score: 0 }],
-        },
-        false,
-      ),
-    ).toThrow('Fights require round scores only');
   });
 
   it('applies warning bonuses when determining the winner', () => {
@@ -87,7 +76,7 @@ describe('submitted fight scores', () => {
       winnerSide: 2,
       isValidResult: true,
     });
-    expect(fightScoreUpdateData(evaluation, score)).toMatchObject({
+    expect(fightScoreUpdateData(evaluation)).toMatchObject({
       competitor1_score: 11,
       competitor2_score: 15,
     });
@@ -98,7 +87,6 @@ describe('submitted fight scores', () => {
           score,
           false,
         ),
-        score,
       ),
     ).toMatchObject({
       competitor1_score: 8,
@@ -206,13 +194,13 @@ describe('submitted fight scores', () => {
       score,
     );
 
-    expect(fightScoreUpdateData(evaluation, score)).toMatchObject({
+    expect(fightScoreUpdateData(evaluation)).toMatchObject({
       competitor1_score: 4,
       competitor2_score: 0,
-      competitor1_round1_score: 3,
-      competitor2_round1_score: 0,
-      competitor1_round2_score: 1,
-      competitor2_round2_score: 0,
     });
+    expect(fightRoundScoreCreateData(score)).toEqual([
+      { round: 1, competitor1_score: 3, competitor2_score: 0 },
+      { round: 2, competitor1_score: 1, competitor2_score: 0 },
+    ]);
   });
 });

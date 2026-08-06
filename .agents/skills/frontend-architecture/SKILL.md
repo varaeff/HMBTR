@@ -88,6 +88,9 @@ and HTTP calls inside the owning store or API adapter.
 - Do not move generic primitives into `widgets/`.
 - Do not put route shell orchestration into widgets.
 - Keep `AlertWidget` top-level unless it becomes clearly owned by a narrower feature area.
+- Use the `minimal-validation` skill and `docs/validation-policy.md` before
+  choosing frontend checks; prefer focused tests and type checks over broad
+  validation by default.
 
 ## Related Files
 

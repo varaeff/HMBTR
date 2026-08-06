@@ -24,22 +24,11 @@ export const submittedRoundScores = (
     competitor2Score: round.competitor2_score,
   }));
 
-const rejectAggregateScores = (score: SubmittedFightScore) => {
-  const hasAnyAggregateScore =
-    score.competitor1_score !== undefined ||
-    score.competitor2_score !== undefined;
-
-  if (hasAnyAggregateScore) {
-    throw new BadRequestException('Fights require round scores only');
-  }
-};
-
 export const evaluateSubmittedFightScore = (
   rules: FightScoringRules,
   score: SubmittedFightScore,
   requireWinner: boolean,
 ): FightScoreEvaluation => {
-  rejectAggregateScores(score);
   if (!score.round_scores?.length) {
     throw new BadRequestException('Fights require round scores');
   }
@@ -59,7 +48,6 @@ export const evaluateSubmittedRawFightScoreForPersistence = (
   rules: FightScoringRules,
   score: SubmittedFightScore,
 ): FightScoreEvaluation => {
-  rejectAggregateScores(score);
   const roundScores = submittedRoundScores(score);
   if (!roundScores.length) {
     throw new BadRequestException('Fights require round scores');

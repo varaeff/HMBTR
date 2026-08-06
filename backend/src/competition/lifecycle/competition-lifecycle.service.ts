@@ -205,9 +205,18 @@ export class CompetitionLifecycleService {
         (item) => item.round === round - 1,
       );
       const finalRound = Math.log2(block.bracket_slots.length);
+      const previousForfeitRoundComplete =
+        previousState && !previousState.results_fixed
+        ? await this.isOlympicRoundFullyServerForfeited(
+            block.id,
+            round - 1,
+            finalRound,
+          )
+        : false;
       if (
         !state ||
-        !previousState?.results_fixed ||
+        !previousState ||
+        (!previousState.results_fixed && !previousForfeitRoundComplete) ||
         state.results_fixed ||
         (state.pairs_fixed && round !== finalRound)
       ) {
@@ -231,13 +240,14 @@ export class CompetitionLifecycleService {
         await tx.competition_round_states.delete({
           where: { block_id_round: { block_id: block.id, round } },
         });
-        const previousTransition = await tx.competition_round_states.updateMany(
-          {
+        if (previousState.results_fixed) {
+          const previousTransition =
+            await tx.competition_round_states.updateMany({
             where: { id: previousState.id, results_fixed: true },
             data: { results_fixed: false },
-          },
-        );
-        assertSingleTransition(previousTransition.count);
+            });
+          assertSingleTransition(previousTransition.count);
+        }
         await tx.fights.updateMany({
           where: {
             block_id: block.id,
@@ -301,6 +311,35 @@ export class CompetitionLifecycleService {
 
     await this.afterBackwardTransition(block);
     return this.stateReader.getState(block.tournament_id, block.nomination_id);
+  }
+
+  private async isOlympicRoundFullyServerForfeited(
+    blockId: number,
+    round: number,
+    finalRound: number,
+  ) {
+    const fights = await this.prisma.fights.findMany({
+      where: {
+        block_id: blockId,
+        OR:
+          round === finalRound
+            ? [{ bracket_round: round }, { is_bronze: true }]
+            : [{ bracket_round: round, is_bronze: false }],
+      },
+      select: {
+        winner_id: true,
+        is_finished: true,
+        forfeit_card_id: true,
+      },
+    });
+
+    return (
+      fights.length > 0 &&
+      fights.every(
+        (fight) =>
+          fight.is_finished && fight.winner_id && fight.forfeit_card_id,
+      )
+    );
   }
 
   private async afterBackwardTransition(block: {

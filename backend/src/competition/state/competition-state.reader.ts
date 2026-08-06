@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import {
+  BLOCK_OLYMPIC,
   BLOCK_GROUP,
   SCOPE_FINAL,
   SCOPE_GROUP,
@@ -94,6 +95,12 @@ export class CompetitionStateReader {
       activeGroupsCount > 1
     ) {
       pendingTie = await this.rankingsService.getPendingOlympicThirdPlaceTieTx(
+        this.prisma,
+        activeBlock.id,
+      );
+    }
+    if (!pendingTie && activeBlock?.type === BLOCK_OLYMPIC) {
+      pendingTie = await this.rankingsService.getPendingOlympicDoubleRedTieTx(
         this.prisma,
         activeBlock.id,
       );

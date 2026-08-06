@@ -42,6 +42,11 @@ Keep card domain rules in the backend. Send explicit server-derived flags, such 
    `card-issued` so the owner can refresh cards and competition state.
 9. Fighter registration eligibility is server-derived in bulk. It combines open tournament nominations, gender compatibility, existing registrations, and active red cards evaluated on the tournament check date.
 10. Applying or updating an active red card uses the full red-card consequence path: forfeit formed unfinished fights, progress any Olympic block made ready by those forfeits, then reapply forfeits to newly created final or bronze fights.
+    If both fighters in a fight have active red cards, choose the forfeit
+    winner by fewer active yellow cards from the current tournament, then
+    effective score diff in the current nomination including yellow penalties.
+    If those are equal, return a manual pending conflict; never choose by red
+    card date or id.
 11. Group-stage red cards preserve earlier fights, forfeit the attached fight
     and all later fights in that same block by `fight_number`, and active-red
     exclusion from rankings prevents the fighter from advancing.

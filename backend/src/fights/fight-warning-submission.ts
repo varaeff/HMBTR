@@ -89,13 +89,6 @@ export const evaluateSubmittedFightScoreWithWarnings = (
     rules,
     { competitor1Id, competitor2Id, warnings },
     submittedRoundScores(score),
-    score.competitor1_score !== undefined &&
-      score.competitor2_score !== undefined
-      ? {
-          competitor1Score: score.competitor1_score,
-          competitor2Score: score.competitor2_score,
-        }
-      : undefined,
   );
 
   if (adjusted.technicalLoserSide) {

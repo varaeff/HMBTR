@@ -16,8 +16,12 @@ export class ResolveTiesDto {
   block_id?: number;
 
   @IsOptional()
-  @IsIn(['GROUP', 'OLYMPIC_THIRD'])
-  tie_scope?: 'GROUP' | 'OLYMPIC_THIRD';
+  @IsNumber()
+  fight_id?: number;
+
+  @IsOptional()
+  @IsIn(['GROUP', 'OLYMPIC_THIRD', 'OLYMPIC_DOUBLE_RED'])
+  tie_scope?: 'GROUP' | 'OLYMPIC_THIRD' | 'OLYMPIC_DOUBLE_RED';
 
   @IsArray()
   ordered_competitor_ids: number[];

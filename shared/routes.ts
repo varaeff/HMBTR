@@ -89,14 +89,6 @@ export const API_ROUTES = {
       `/group-competitors/group/${groupId}`,
     BY_ID: (id: string | number) => `/group-competitors/${id}`,
   },
-  FIGHTS: {
-    ROOT: "fights",
-    SCORES: "/fights/scores",
-    BY_TOURNAMENT: (tournamentId: string | number) =>
-      `/fights/tournament/${tournamentId}`,
-    BY_GROUP: (groupId: string | number) => `/fights/group/${groupId}`,
-    BY_ID: (id: string | number) => `/fights/${id}`,
-  },
   DISCIPLINARY_CARDS: {
     ROOT: "disciplinary-cards",
     BY_FIGHTER: (fighterId: string | number) =>

@@ -45,14 +45,6 @@ export type TournamentReportFight = {
   competitor1_score: number;
   competitor2_score: number;
   winner_id: number | null;
-  competitor1_round1_score: number;
-  competitor2_round1_score: number;
-  competitor1_round2_score: number;
-  competitor2_round2_score: number;
-  competitor1_round3_score: number;
-  competitor2_round3_score: number;
-  competitor1_round4_score: number;
-  competitor2_round4_score: number;
   forfeit_card_id: number | null;
   bracket_round: number | null;
   bracket_position: number | null;

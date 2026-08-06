@@ -56,4 +56,11 @@ export class CompetitionRankingsService {
   ): Promise<PendingTieResult | null> {
     return this.pendingTieService.getPendingOlympicThirdPlaceTieTx(tx, blockId);
   }
+
+  getPendingOlympicDoubleRedTieTx(
+    tx: PrismaTx,
+    blockId: number,
+  ): Promise<PendingTieResult | null> {
+    return this.pendingTieService.getPendingOlympicDoubleRedTieTx(tx, blockId);
+  }
 }

@@ -210,6 +210,8 @@ Competition store оформлен как slice folder:
 
 Внешний код должен импортировать competition store из `@/stores/competition`, а не из приватных файлов slice.
 
+Competition state включает `pendingTie` для нерешенных backend-решений о порядке участников. Frontend хранит scope и идентификаторы, полученные от сервера, включая `fightId` для Olympic double-red conflicts, и отправляет их обратно через типизированную команду `resolveTie`, не вычисляя скрытых fallback-победителей на клиенте.
+
 ### Слой API
 
 HTTP-инфраструктура находится в `front/src/api`.
@@ -342,6 +344,8 @@ Access token и refresh token сохраняются в `localStorage`. Axios in
 
 Эта граница не дает tournament widgets становиться владельцами API, но оставляет им богатое локальное состояние представления.
 
+`TieResolver` - tournament widget для ручного порядка при unresolved conflicts. Он работает с групповыми ничьими, Olympic third-place cutoff ties и Olympic double-red conflicts из одной read model `pendingTie`. Компонент должен показывать участников, пришедших с сервера, и поднимать ordered competitor ids наверх; backend остается владельцем валидации scope и применения перехода состояния.
+
 ## Disciplinary Cards
 
 Состояние disciplinary cards находится в `stores/disciplinaryCards.ts`. Представление карточек на странице турнира находится в `widgets/tournament/DisciplinaryCards`.
@@ -436,6 +440,8 @@ Test files лежат рядом с поведением, которое они 
 End-to-end tests настроены через Cypress scripts, но стандартная validation policy предпочитает focused Vitest и type/build checks, если измененный сценарий не требует browser-level coverage.
 
 ## Сборка и валидация
+
+Перед выбором проверок используйте skill `minimal-validation` и `docs/validation-policy.md`. Для обычных изменений предпочитайте сфокусированную проверку измененного поведения, а не запуск всех frontend checks по умолчанию.
 
 Типовые frontend-проверки:
 

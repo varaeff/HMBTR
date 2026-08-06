@@ -75,7 +75,7 @@ export class CompetitionResultService {
     await this.prisma.fights.update({
       where: { id: dto.fight_id },
       data: {
-        ...fightScoreUpdateData(evaluation, dto),
+        ...fightScoreUpdateData(evaluation),
         winner_id: winnerId,
         is_finished: evaluation.isValidResult,
       },

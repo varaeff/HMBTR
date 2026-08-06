@@ -18,6 +18,32 @@ const tiedFighters = computed(() => {
   const ids = new Set(pendingTie.value?.competitorIds ?? [])
   const groupId = pendingTie.value?.groupId
   const blockId = pendingTie.value?.blockId
+  const fightId = pendingTie.value?.fightId
+  if (pendingTie.value?.scope === 'OLYMPIC_DOUBLE_RED') {
+    const fight = props.blocks
+      .find((block) => block.id === blockId)
+      ?.fights.find((item) => item.id === fightId)
+    if (!fight) return []
+
+    const fighters: GroupFighter[] = []
+    if (fight.competitor1Id !== undefined && ids.has(fight.competitor1Id)) {
+      fighters.push({
+        ...fight.fighter1,
+        competitorId: fight.competitor1Id,
+        wins: 0,
+        diff: 0
+      })
+    }
+    if (fight.competitor2Id !== undefined && ids.has(fight.competitor2Id)) {
+      fighters.push({
+        ...fight.fighter2,
+        competitorId: fight.competitor2Id,
+        wins: 0,
+        diff: 0
+      })
+    }
+    return fighters
+  }
   const groups = props.blocks
     .filter((block) => blockId === undefined || block.id === blockId)
     .flatMap((block) => block.groups)

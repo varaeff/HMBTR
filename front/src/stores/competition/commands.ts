@@ -119,6 +119,7 @@ export const resolveTie = async (
     nomination_id: nominationId,
     group_id: pendingTie.groupId ?? undefined,
     block_id: pendingTie.blockId,
+    fight_id: pendingTie.fightId ?? undefined,
     tie_scope: pendingTie.scope ?? 'GROUP',
     ordered_competitor_ids: orderedCompetitorIds
   })

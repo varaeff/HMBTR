@@ -38,14 +38,7 @@ const rawFight = {
   competitor2_id: 502,
   competitor1_score: 5,
   competitor2_score: 3,
-  competitor1_round1_score: 5,
-  competitor2_round1_score: 3,
-  competitor1_round2_score: 0,
-  competitor2_round2_score: 0,
-  competitor1_round3_score: 0,
-  competitor2_round3_score: 0,
-  competitor1_round4_score: 0,
-  competitor2_round4_score: 0
+  round_scores: [{ competitor1_score: 5, competitor2_score: 3 }]
 }
 
 const competitionState = (): RawCompetitionState => ({
@@ -68,10 +61,7 @@ const competitionState = (): RawCompetitionState => ({
         {
           id: 11,
           name: 'A',
-          fighters: [
-            { competitor: rawFight.competitor1 },
-            { competitor: rawFight.competitor2 }
-          ]
+          fighters: [{ competitor: rawFight.competitor1 }, { competitor: rawFight.competitor2 }]
         }
       ],
       fights: [rawFight]
@@ -81,9 +71,14 @@ const competitionState = (): RawCompetitionState => ({
 
 describe('mapCompetitionState', () => {
   it('uses the injected fighter resolver before falling back to raw fighter data', () => {
-    const mapped = mapCompetitionState(competitionState(), {}, {
-      resolveFighterById: (fighterId) => (fighterId === resolvedFighter.id ? resolvedFighter : undefined)
-    })
+    const mapped = mapCompetitionState(
+      competitionState(),
+      {},
+      {
+        resolveFighterById: (fighterId) =>
+          fighterId === resolvedFighter.id ? resolvedFighter : undefined
+      }
+    )
 
     const [firstFighter, secondFighter] = mapped.blocks[0].groups[0].fighters
 

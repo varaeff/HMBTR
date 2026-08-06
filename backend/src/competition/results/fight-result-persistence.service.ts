@@ -31,7 +31,7 @@ export class FightResultPersistenceService {
     await tx.fights.update({
       where: { id: result.submission.fight_id },
       data: {
-        ...fightScoreUpdateData(result.rawEvaluation, result.submission),
+        ...fightScoreUpdateData(result.rawEvaluation),
         winner_id: result.winnerId,
         is_finished: true,
       },

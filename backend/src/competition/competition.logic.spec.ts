@@ -63,6 +63,16 @@ describe('competition logic', () => {
     expect(ranked.map((item) => item.competitorId)).toEqual([1, 3, 2, 4]);
   });
 
+  it('uses fewer active yellow cards before score diff in rankings', () => {
+    const ranked = rankCompetitors([
+      { competitorId: 1, wins: 2, activeYellowCount: 1, diff: 20 },
+      { competitorId: 2, wins: 2, activeYellowCount: 0, diff: 5 },
+      { competitorId: 3, wins: 1, activeYellowCount: 0, diff: 50 },
+    ]);
+
+    expect(ranked.map((item) => item.competitorId)).toEqual([2, 1, 3]);
+  });
+
   it('detects ties that affect advancement places', () => {
     const tied = findTieForPlaces(
       [
@@ -74,6 +84,19 @@ describe('competition logic', () => {
     );
 
     expect(tied).toEqual([2, 3]);
+  });
+
+  it('does not report an advancement tie when active yellow cards resolve it', () => {
+    const tied = findTieForPlaces(
+      [
+        { competitorId: 1, wins: 2, activeYellowCount: 0, diff: 5 },
+        { competitorId: 2, wins: 1, activeYellowCount: 0, diff: 1 },
+        { competitorId: 3, wins: 1, activeYellowCount: 1, diff: 10 },
+      ],
+      2,
+    );
+
+    expect(tied).toEqual([]);
   });
 
   it('seeds Olympic slots to separate teammates as long as possible', () => {
@@ -211,6 +234,40 @@ describe('competition logic', () => {
     ]);
 
     expect(tied).toEqual([3, 6]);
+  });
+
+  it('uses active yellow cards before diff for Olympic third-place cutoff', () => {
+    const advancers = selectOlympicAdvancerIds(
+      [
+        {
+          name: 'A',
+          ranked: [
+            { competitorId: 1, wins: 2, diff: 8 },
+            { competitorId: 2, wins: 1, diff: 1 },
+            { competitorId: 3, wins: 1, activeYellowCount: 1, diff: 9 },
+          ],
+        },
+        {
+          name: 'B',
+          ranked: [
+            { competitorId: 4, wins: 2, diff: 7 },
+            { competitorId: 5, wins: 1, diff: 2 },
+            { competitorId: 6, wins: 1, activeYellowCount: 0, diff: 0 },
+          ],
+        },
+        {
+          name: 'C',
+          ranked: [
+            { competitorId: 7, wins: 2, diff: 6 },
+            { competitorId: 8, wins: 1, diff: 0 },
+            { competitorId: 9, wins: 1, activeYellowCount: 0, diff: 3 },
+          ],
+        },
+      ],
+      true,
+    );
+
+    expect(advancers).toEqual([1, 2, 4, 5, 7, 8, 9, 6]);
   });
 
   it('uses manual order to choose between tied third places at the Olympic cutoff', () => {

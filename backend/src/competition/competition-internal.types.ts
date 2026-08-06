@@ -1,12 +1,20 @@
 import type { PrismaClient } from '../generated/prisma/client';
 import type { RankedCompetitor } from './competition.logic';
-import type { SCOPE_GROUP, SCOPE_OLYMPIC_THIRD } from './competition.constants';
+import type {
+  SCOPE_GROUP,
+  SCOPE_OLYMPIC_DOUBLE_RED,
+  SCOPE_OLYMPIC_THIRD,
+} from './competition.constants';
 
-export type PendingTieScope = typeof SCOPE_GROUP | typeof SCOPE_OLYMPIC_THIRD;
+export type PendingTieScope =
+  | typeof SCOPE_GROUP
+  | typeof SCOPE_OLYMPIC_THIRD
+  | typeof SCOPE_OLYMPIC_DOUBLE_RED;
 
 export interface PendingTieResult {
   blockId: number;
   groupId: number | null;
+  fightId?: number | null;
   competitorIds: number[];
   scope: PendingTieScope;
 }

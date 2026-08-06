@@ -97,11 +97,12 @@ export interface GroupPlacement {
   competitorId: number
 }
 
-export type PendingTieScope = 'GROUP' | 'OLYMPIC_THIRD'
+export type PendingTieScope = 'GROUP' | 'OLYMPIC_THIRD' | 'OLYMPIC_DOUBLE_RED'
 
 export interface PendingTie {
   blockId: number
   groupId: number | null
+  fightId?: number | null
   competitorIds: number[]
   scope?: PendingTieScope
 }

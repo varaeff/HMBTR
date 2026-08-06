@@ -10,6 +10,9 @@ const compareThirdPlaces = (
   b: OlympicAdvancer,
 ) => {
   if (b.wins !== a.wins) return b.wins - a.wins;
+  if ((a.activeYellowCount ?? 0) !== (b.activeYellowCount ?? 0)) {
+    return (a.activeYellowCount ?? 0) - (b.activeYellowCount ?? 0);
+  }
   if (b.diff !== a.diff) return b.diff - a.diff;
 
   const aManual = manualPlace.get(a.competitorId);
@@ -67,7 +70,10 @@ export const findThirdPlaceAdvancementTie = (
 
   const tiedAtBoundary = sortedThirdPlaces.filter(
     (competitor) =>
-      competitor.wins === boundary.wins && competitor.diff === boundary.diff,
+      competitor.wins === boundary.wins &&
+      (competitor.activeYellowCount ?? 0) ===
+        (boundary.activeYellowCount ?? 0) &&
+      competitor.diff === boundary.diff,
   );
   const crossesBoundary =
     tiedAtBoundary.some((competitor) =>

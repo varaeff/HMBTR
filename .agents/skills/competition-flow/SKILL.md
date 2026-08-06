@@ -53,7 +53,7 @@ Keep domain rules in backend logic helpers, not in Vue components. The frontend 
 - When third-place advancers are used, preserve their priority order from the selection helper.
 - Before creating an Olympic bracket with third-place advancers, resolve ties in two passes:
   1. Resolve any in-group tie for 3rd place in groups whose third-place fighter advances or can advance through a tied cutoff.
-  2. Then resolve cross-group ties between third-place fighters when the tied wins/diff set crosses the remaining Olympic bracket slots.
+  2. Then resolve cross-group ties between third-place fighters when the tied wins/active-yellow/diff set crosses the remaining Olympic bracket slots.
 - Store cross-group best-third manual order separately from per-group placements so it does not alter group rankings.
 - First-round Olympic slots are adjacent pairs. Pair each selected third-place fighter with a first-place fighter from another group before seeding the remaining competitors.
 - Preserve backend slot creation as the source of truth; frontend highlighting should derive selected competitor ids from created Olympic bracket slots.
@@ -101,8 +101,8 @@ Keep domain rules in backend logic helpers, not in Vue components. The frontend 
 - Group wins, Olympic advancement, ratings, and other outcome logic use persisted `winner_id`, never aggregate score comparison.
 - Red-card forfeits in round-win nominations persist `X:0`, where `X` is the
   normal-round count, plus `5:0` for the opponent in every normal round.
-  Other forfeits remain aggregate-only and use `winner_id`.
-- Persisted round details live in `fight_round_scores`; legacy `competitor*_round1..4_score` columns may exist only as compatibility summary fields.
+  Other forfeits keep the aggregate `10:0` summary and use `winner_id`.
+- Persisted round details live only in `fight_round_scores`.
 - Editable frontend drafts store structured round scores. Extra rows are cleared immediately when obsolete, but new extra rows are revealed only after blur of the last score input in the visible fight group. Moving focus to another fight is not sufficient unless the blurred input was that last input.
 - When Enter or forward Tab navigation from the last score input reveals an extra round, move focus to the first input of the new extra round instead of leaving it in the next fight.
 - If focus leaves a tied fight for another fight before the last visible score input, keep the current rows and highlight the tied score inputs instead of adding an extra row. Suppress that highlight for the next fight when it only lost focus because Enter navigation was redirected back to a newly added extra round.
@@ -149,7 +149,7 @@ Keep domain rules in backend logic helpers, not in Vue components. The frontend 
 - If top-2 group advancers already produce 4, 8, or 16 fighters, use normal Olympic creation.
 - If top-2 advancers fall short of the next supported Olympic size, optional third-place advancement may fill only the exact shortfall.
 - If there are not enough third-place fighters to fill the full shortfall, do not partially expand the bracket.
-- When more third-place fighters exist than slots, choose deterministically using the same ranking metrics: wins, then diff, then stable group/name and competitor id ordering.
+- When more third-place fighters exist than slots, choose using the same advancement tie-breakers: wins, then fewer active yellow cards from the current tournament, then effective score diff including yellow penalties. If those metrics are still equal at the advancement boundary, require manual tie resolution; do not fall back to group/name or competitor id.
 - Single-group stages finish directly instead of creating an Olympic block from group top-2 logic.
 - If a selected third-place fighter is added to Olympic, highlight that fighter in the original group table using the same visual treatment as first and second places.
 - Fight block headings should render only for blocks with generated fights. Use singular `Group` for one group letter and plural `Groups` for paired group blocks.
@@ -168,6 +168,7 @@ Keep domain rules in backend logic helpers, not in Vue components. The frontend 
   by progression.
 - Keep red-carded fighters visible in group standings, but exclude active-red competitors before advancement selection and advancement-related tie detection.
 - When a red-card semifinal forfeit completes both semifinals, progress the Olympic block immediately and reapply forfeits so a newly created bronze fight involving that fighter is fixed at `0:10`.
+- If both fighters in the same fight have active red cards, resolve the server-generated forfeit winner by fewer active yellow cards from the current tournament, then effective score diff in the current nomination including yellow penalties. If still equal, expose a manual pending conflict instead of choosing by card date/id.
 
 ## Related Files
 

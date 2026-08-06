@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-echo "Applying database schema migrations..."
+echo "Syncing Prisma schema with db push..."
 npx prisma db push --schema ./prisma/schema.prisma --accept-data-loss
 
 echo "Starting HMBTR backend..."

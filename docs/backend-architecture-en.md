@@ -19,7 +19,6 @@ The application is composed around `AppModule`. It imports:
 - `CompetitorsModule`;
 - `GroupsModule`;
 - `GroupCompetitorsModule`;
-- `FightsModule`;
 - `CompetitionModule`;
 - `DisciplinaryCardsModule`;
 - `RatingsModule`;
@@ -359,11 +358,12 @@ Facade:
 Internal services:
 
 - `GroupRankingReader` - group standings through effective scores and manual order;
-- `PendingTieService` - ordinary group ties and Olympic third-place tie detection;
+- `TieBreakerService` - shared advancement and double-red tie-break metrics from active current-tournament yellows and effective score diff;
+- `PendingTieService` - ordinary group ties, Olympic third-place tie detection, and Olympic double-red conflict detection;
 - `AdvancementService` - advancing competitor selection and active-red exclusion;
 - `TieResolutionService` - manual placements persistence and group block transition to `RESULTS_FIXED`.
 
-Active-red rule: fighters with active red cards remain visible in standings stats, but are excluded from advancement and tie checks where this affects later progression.
+Active-red rule: fighters with active red cards remain visible in standings stats, but are excluded from advancement and tie checks where this affects later progression. Ties that affect advancement are broken by fewer active yellow cards from the current tournament, then effective score diff including yellow penalties; unresolved equality remains manual.
 
 ### Olympic
 
@@ -527,25 +527,25 @@ Responsibilities:
 
 Ratings should not know competition lifecycle details beyond persisted final/completed data needed for calculation.
 
-## Fights
+## Fight Score Helpers
 
 Folder: `backend/src/fights`
 
 Responsibilities:
 
-- standalone fight CRUD/list routes;
-- fight score submission helpers;
-- fight score data conversion.
+- shared fight score submission helpers;
+- fight score data conversion;
+- warning submission normalization used by competition result persistence.
 
 Key files:
 
-- `fights.controller.ts`;
-- `fights.service.ts`;
 - `fight-score-submission.ts`;
 - `fight-score-data.ts`;
+- `fight-score-persistence.ts`;
+- `fight-warning-submission.ts`;
 - `fight-score.types.ts`.
 
-Competition owns tournament lifecycle result fixation. Fights module owns general operations over fight data and shared submission/evaluation helpers.
+There is no standalone fights API module. Competition owns tournament fight lifecycle, result fixation, and persistence orchestration. Files under `backend/src/fights` are shared helpers consumed by competition and report/result flows.
 
 ## Simple CRUD Modules
 
@@ -718,6 +718,8 @@ External IO is mocked at the boundary:
 - PDF generation is mocked while internal markdown/report formatting remains real.
 
 ## Build And Validation
+
+Use the `minimal-validation` skill and `docs/validation-policy.md` before choosing checks. Prefer focused validation for the changed behavior instead of running every backend check by default.
 
 Typical backend checks:
 

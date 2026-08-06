@@ -12,6 +12,7 @@ import { AdvancementService } from './rankings/advancement.service';
 import { CompetitionRankingsService } from './rankings/competition-rankings.service';
 import { GroupRankingReader } from './rankings/group-ranking.reader';
 import { PendingTieService } from './rankings/pending-tie.service';
+import { TieBreakerService } from './rankings/tie-breaker.service';
 import { TieResolutionService } from './rankings/tie-resolution.service';
 import { CompetitionRedCardService } from './competition-red-card.service';
 import { CompetitionResultService } from './results/competition-result.service';
@@ -48,6 +49,7 @@ import { RedCardStorageService } from './red-cards/red-card-storage.service';
     FightResultPersistenceService,
     GroupRankingReader,
     PendingTieService,
+    TieBreakerService,
     RedCardConsequencesService,
     RedCardForfeitService,
     RedCardRegistrationService,

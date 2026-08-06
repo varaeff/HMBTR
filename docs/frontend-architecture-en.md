@@ -210,6 +210,8 @@ The competition store is a slice folder:
 
 Callers should import the competition store from `@/stores/competition`, not from private slice files.
 
+Competition state includes `pendingTie` for unresolved backend ordering decisions. The frontend stores the server scope and identifiers, including `fightId` for Olympic double-red conflicts, and sends them back through the typed `resolveTie` command instead of deriving hidden fallback winners client-side.
+
 ### API Layer
 
 HTTP infrastructure lives in `front/src/api`.
@@ -342,6 +344,8 @@ The expected flow is:
 
 This boundary keeps tournament widgets from becoming API owners while still allowing rich local presentation state.
 
+`TieResolver` is a tournament widget for manual ordering conflicts. It handles group ties, Olympic third-place cutoff ties, and Olympic double-red conflicts from the same `pendingTie` read model. It should present the server-provided competitors and emit ordered competitor ids upward; the backend remains responsible for validating the scope and applying the resulting state transition.
+
 ## Disciplinary Cards
 
 Disciplinary card state lives in `stores/disciplinaryCards.ts`. Tournament card presentation lives under `widgets/tournament/DisciplinaryCards`.
@@ -436,6 +440,8 @@ Test files are colocated with the behavior they cover. Pure helpers and composab
 End-to-end tests are configured through Cypress scripts, but the default validation policy favors focused Vitest and type/build checks unless the changed workflow requires browser-level coverage.
 
 ## Build And Validation
+
+Use the `minimal-validation` skill and `docs/validation-policy.md` before choosing checks. Prefer focused validation for the changed behavior instead of running every frontend check by default.
 
 Typical frontend checks:
 

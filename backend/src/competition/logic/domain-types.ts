@@ -1,6 +1,7 @@
 export type RankedCompetitor = {
   competitorId: number;
   wins: number;
+  activeYellowCount?: number;
   diff: number;
 };
 

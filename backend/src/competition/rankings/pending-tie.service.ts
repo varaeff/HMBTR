@@ -10,8 +10,11 @@ import {
 import type { RankedGroup } from '../competition.logic';
 import {
   BLOCK_GROUP,
+  BLOCK_OLYMPIC,
   SCOPE_GROUP,
+  SCOPE_OLYMPIC_DOUBLE_RED,
   SCOPE_OLYMPIC_THIRD,
+  STATUS_ACTIVE,
 } from '../competition.constants';
 import type {
   GroupRankings,
@@ -19,7 +22,13 @@ import type {
   PrismaTx,
 } from '../competition-internal.types';
 import { CompetitionRedCardService } from '../competition-red-card.service';
+import {
+  canApplyRedCardForfeitToFight,
+  getApplicableRedForFight,
+} from '../red-cards/red-card-policy';
+import { RedCardStorageService } from '../red-cards/red-card-storage.service';
 import { GroupRankingReader } from './group-ranking.reader';
+import { TieBreakerService } from './tie-breaker.service';
 
 @Injectable()
 export class PendingTieService {
@@ -27,6 +36,8 @@ export class PendingTieService {
     private readonly prisma: PrismaService,
     private readonly groupRankingReader: GroupRankingReader,
     private readonly redCardService: CompetitionRedCardService,
+    private readonly redCardStorageService: RedCardStorageService,
+    private readonly tieBreakerService: TieBreakerService,
   ) {}
 
   getPendingTie(
@@ -226,6 +237,114 @@ export class PendingTieService {
         competitorIds: unresolvedThirdPlaceTie,
         scope: SCOPE_OLYMPIC_THIRD,
       };
+    }
+
+    return null;
+  }
+
+  async getPendingOlympicDoubleRedTieTx(
+    tx: PrismaTx,
+    blockId: number,
+  ): Promise<PendingTieResult | null> {
+    if (!(await this.redCardStorageService.disciplinaryCardStorageExists())) {
+      return null;
+    }
+
+    const block = await tx.competition_blocks.findUnique({
+      where: { id: blockId },
+      include: {
+        tournament_nomination: true,
+        round_states: true,
+      },
+    });
+    if (!block || block.type !== BLOCK_OLYMPIC) return null;
+    if (
+      block.status !== STATUS_ACTIVE ||
+      block.tournament_nomination.is_finished
+    ) {
+      return null;
+    }
+
+    const fights = await tx.fights.findMany({
+      where: {
+        block_id: blockId,
+        is_finished: false,
+      },
+      include: {
+        block: {
+          include: {
+            tournament_nomination: true,
+            round_states: true,
+          },
+        },
+        competitor1: true,
+        competitor2: true,
+      },
+      orderBy: [
+        { bracket_round: 'asc' },
+        { bracket_position: 'asc' },
+        { fight_number: 'asc' },
+      ],
+    });
+    if (!fights.length) return null;
+
+    const checkDate = await this.tieBreakerService.getTournamentCheckDateTx(
+      tx,
+      block.tournament_id,
+    );
+    const fighterIds = [
+      ...new Set(
+        fights.flatMap((fight) => [
+          fight.competitor1.fighter_id,
+          fight.competitor2.fighter_id,
+        ]),
+      ),
+    ];
+    const activeReds = await this.redCardStorageService.getActiveRedCards(
+      fighterIds,
+      checkDate,
+    );
+
+    for (const fight of fights) {
+      if (!canApplyRedCardForfeitToFight(fight)) continue;
+
+      const firstRed = getApplicableRedForFight(
+        fight,
+        activeReds.filter(
+          (card) => card.fighter_id === fight.competitor1.fighter_id,
+        ),
+      );
+      const secondRed = getApplicableRedForFight(
+        fight,
+        activeReds.filter(
+          (card) => card.fighter_id === fight.competitor2.fighter_id,
+        ),
+      );
+      if (!firstRed || !secondRed) continue;
+
+      const metrics = await this.tieBreakerService.getMetricsTx(tx, {
+        tournamentId: fight.tournament_id,
+        nominationId: fight.nomination_id,
+        competitorIds: [fight.competitor1_id, fight.competitor2_id],
+        excludeFightId: fight.id,
+      });
+      const firstMetric = metrics.get(fight.competitor1_id);
+      const secondMetric = metrics.get(fight.competitor2_id);
+      if (!firstMetric || !secondMetric) continue;
+
+      const decision = this.tieBreakerService.resolvePair(
+        firstMetric,
+        secondMetric,
+      );
+      if (decision.winnerCompetitorId === null) {
+        return {
+          blockId,
+          groupId: null,
+          fightId: fight.id,
+          competitorIds: [fight.competitor1_id, fight.competitor2_id],
+          scope: SCOPE_OLYMPIC_DOUBLE_RED,
+        };
+      }
     }
 
     return null;

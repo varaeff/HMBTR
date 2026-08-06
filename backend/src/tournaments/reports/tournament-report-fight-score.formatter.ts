@@ -3,7 +3,6 @@ import {
   applyFightWarningBonuses,
   evaluateFightScore,
   formatFightResult,
-  legacyRoundScoresFromColumns,
   type FightScoreEvaluation,
   type FightScoringRules,
   type FightWarning,
@@ -27,7 +26,7 @@ export class TournamentReportFightScoreFormatter {
       roundWin: nomination.round_win,
     };
     const warnings = this.getFightWarnings(fight);
-    const rounds = this.getPersistedRoundScores(rules, fight, warnings);
+    const rounds = this.getPersistedRoundScores(fight);
     const adjusted = applyFightWarningBonuses(
       rules,
       {
@@ -76,7 +75,7 @@ export class TournamentReportFightScoreFormatter {
       roundWin: fight.nomination.round_win,
     };
     const warnings = this.getFightWarnings(fight);
-    const roundScores = this.getPersistedRoundScores(rules, fight, warnings);
+    const roundScores = this.getPersistedRoundScores(fight);
 
     return applyFightWarningBonuses(
       rules,
@@ -97,32 +96,11 @@ export class TournamentReportFightScoreFormatter {
     }));
   }
 
-  private getPersistedRoundScores(
-    rules: FightScoringRules,
-    fight: TournamentReportFight,
-    warnings: Array<{ round: number }>,
-  ): RoundScore[] {
-    if (fight.round_scores.length) {
-      return fight.round_scores.map((score) => ({
-        competitor1Score: score.competitor1_score,
-        competitor2Score: score.competitor2_score,
-      }));
-    }
-
-    return legacyRoundScoresFromColumns(
-      rules,
-      {
-        competitor1Round1Score: fight.competitor1_round1_score,
-        competitor2Round1Score: fight.competitor2_round1_score,
-        competitor1Round2Score: fight.competitor1_round2_score,
-        competitor2Round2Score: fight.competitor2_round2_score,
-        competitor1Round3Score: fight.competitor1_round3_score,
-        competitor2Round3Score: fight.competitor2_round3_score,
-        competitor1Round4Score: fight.competitor1_round4_score,
-        competitor2Round4Score: fight.competitor2_round4_score,
-      },
-      warnings,
-    );
+  private getPersistedRoundScores(fight: TournamentReportFight): RoundScore[] {
+    return fight.round_scores.map((score) => ({
+      competitor1Score: score.competitor1_score,
+      competitor2Score: score.competitor2_score,
+    }));
   }
 
   private formatFightWarningScore(

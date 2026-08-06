@@ -6,13 +6,16 @@ import {
 import { PrismaService } from '../../prisma/prisma.service';
 import {
   BLOCK_GROUP,
+  BLOCK_OLYMPIC,
   LIFECYCLE_FIGHTS_EDITABLE,
   LIFECYCLE_RESULTS_FIXED,
   SCOPE_GROUP,
+  SCOPE_OLYMPIC_DOUBLE_RED,
   SCOPE_OLYMPIC_THIRD,
   STATUS_ACTIVE,
 } from '../competition.constants';
 import { assertSingleTransition } from '../competition.helpers';
+import { CompetitionRedCardService } from '../competition-red-card.service';
 import type { PrismaTx } from '../competition-internal.types';
 import { ResolveTiesDto } from '../dto/resolve-ties.dto';
 import { PendingTieService } from './pending-tie.service';
@@ -22,6 +25,7 @@ export class TieResolutionService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly pendingTieService: PendingTieService,
+    private readonly redCardService: CompetitionRedCardService,
   ) {}
 
   async resolveTies(dto: ResolveTiesDto) {
@@ -36,8 +40,17 @@ export class TieResolutionService {
         tx,
         tournamentNomination.id,
       );
+      if (!activeBlock) {
+        throw new BadRequestException('Active block is required');
+      }
+      if (tieScope === SCOPE_OLYMPIC_DOUBLE_RED) {
+        if (activeBlock.type !== BLOCK_OLYMPIC) {
+          throw new BadRequestException('Olympic block is required');
+        }
+        await this.saveOlympicDoubleRedResolutionTx(tx, dto, activeBlock.id);
+        return;
+      }
       if (
-        !activeBlock ||
         activeBlock.type !== BLOCK_GROUP ||
         activeBlock.lifecycle_state !== LIFECYCLE_FIGHTS_EDITABLE
       ) {
@@ -61,6 +74,29 @@ export class TieResolutionService {
         activeBlock.id,
       );
     });
+    if (tieScope === SCOPE_OLYMPIC_DOUBLE_RED) {
+      await this.redCardService.applyRedCardConsequences(dto.tournament_id);
+    }
+  }
+
+  private async saveOlympicDoubleRedResolutionTx(
+    tx: PrismaTx,
+    dto: ResolveTiesDto,
+    activeBlockId: number,
+  ) {
+    if (!dto.block_id || dto.block_id !== activeBlockId || !dto.fight_id) {
+      throw new BadRequestException('Olympic double red fight is required');
+    }
+    const winnerCompetitorId = dto.ordered_competitor_ids[0];
+    if (winnerCompetitorId === undefined) {
+      throw new BadRequestException('Winner is required');
+    }
+
+    await this.redCardService.resolveDoubleRedForfeitTx(
+      tx,
+      dto.fight_id,
+      winnerCompetitorId,
+    );
   }
 
   private async saveOlympicThirdPlaceOrderTx(
