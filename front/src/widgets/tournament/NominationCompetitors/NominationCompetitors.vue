@@ -3,8 +3,9 @@ import { computed, ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { tData } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { CardStatusIcon } from '@/widgets/tournament/DisciplinaryCards'
-import type { DisciplinaryCardStatus, Fighter } from '@/model'
+import { CardStatusIcon, formatActiveDisciplinaryCardTitle } from '@/widgets/tournament/DisciplinaryCards'
+import type { Fighter } from '@/model'
+import type { ActiveCardTypes } from '@/widgets/tournament/types'
 
 const props = defineProps<{
   competitors: Fighter[]
@@ -14,7 +15,7 @@ const props = defineProps<{
   hasAccess: boolean
   canCloseRegistration?: boolean
   closeRegistrationHint?: string
-  activeCardTypes?: Partial<Record<number, DisciplinaryCardStatus>>
+  activeCardTypes?: ActiveCardTypes
 }>()
 
 const emit = defineEmits<{
@@ -28,6 +29,8 @@ const isPending = ref(false)
 const currentLanguage = computed(() => i18next.language)
 
 const localizedData = (text?: string) => tData(text ?? '', currentLanguage.value)
+const cardTitle = (card: NonNullable<ActiveCardTypes[number]>[number]) =>
+  formatActiveDisciplinaryCardTitle(card, currentLanguage.value, (key) => i18next.t(key))
 
 const handleClose = async () => {
   try {
@@ -67,7 +70,14 @@ const removeCompetitor = async (fighterId: number) => {
           <div class="inline-flex items-center gap-1">
             {{ index + 1 }}. {{ localizedData(competitor.surname) }}
             {{ localizedData(competitor.name) }}
-            <CardStatusIcon :type="activeCardTypes?.[competitor.id]" />
+            <span
+              v-for="card in activeCardTypes?.[competitor.id] ?? []"
+              :key="card.id"
+              :title="cardTitle(card)"
+              class="inline-flex"
+            >
+              <CardStatusIcon :type="card" :showTitle="false" />
+            </span>
           </div>
           <div class="text-muted-foreground">
             {{ localizedData(competitor.city) }} {{ localizedData(competitor.club) }}

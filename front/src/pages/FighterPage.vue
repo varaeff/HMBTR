@@ -38,7 +38,7 @@ import type {
 } from '@/model'
 import { tData } from '@/lib/utils'
 import { dateToString } from '@/lib/dateUtils'
-import { hasAccess, hasAdminAccess } from '@/lib/checkAccess'
+import { hasMarshalManageAccess, hasTournamentMarshalAccess } from '@/lib/checkAccess'
 
 type Language = 'ru' | 'en'
 
@@ -129,8 +129,8 @@ const fighterEditForm = useEditableEntityForm<Fighter, FighterEditDraft, Fighter
 const editFighter = fighterEditForm.draft
 const isEditing = fighterEditForm.isEditing
 const buttonDisabled = fighterEditForm.buttonDisabled
-const canManageCards = computed(() => hasAccess())
-const canDeleteCards = computed(() => Boolean(hasAdminAccess()))
+const canManageCards = computed(() => hasMarshalManageAccess())
+const canDeleteCards = computed(() => Boolean(hasTournamentMarshalAccess()))
 const currentLanguage = computed<Language>(() => (i18next.language === 'en' ? 'en' : 'ru'))
 
 onMounted(async () => {
@@ -421,7 +421,10 @@ const saveFighter = async () => {
             </div>
           </section>
 
-          <section v-if="cardsStore.fighterCards.length" class="mb-10 w-full min-w-0">
+          <section
+            v-if="cardsStore.fighterCards.length"
+            class="relative left-1/2 mb-10 w-screen max-w-[88rem] -translate-x-1/2 px-4"
+          >
             <h3 class="mb-6 text-center text-xl font-semibold">
               {{ $t('disciplinaryCardsTitle') }}
             </h3>

@@ -56,10 +56,12 @@ Keep card domain rules in the backend. Send explicit server-derived flags, such 
     `disciplinary_card_settings` row. Yellow cards support end-of-month or
     day-count expiry; red-card expiry is day-count only and depends on source
     plus the number of active yellow cards at `received_at`.
-15. Red cards persist `active`. Only active red cards block registration,
-    create forfeits, or restrict fighters. Inactive red cards remain visible
-    with pale presentation and can be activated by card managers, but an active
-    red card cannot be switched back to inactive.
+15. Red cards persist `active`. Only effective active red cards block
+    registration, create forfeits, or restrict fighters. For list and summary
+    APIs, effective active means persisted `active = true`,
+    `received_at <= checkDate`, and `expires_at >= checkDate`. Inactive red
+    cards remain visible with pale presentation and can be activated by card
+    managers, but an active red card cannot be switched back to inactive.
 16. Yellow cards also persist `active`. When an automatic red card consumes
     yellow cards, store those exact yellow ids in `red_card_yellow_sources`,
     close their `expires_at` to the red activation date, and set them inactive.
@@ -77,6 +79,22 @@ Keep card domain rules in the backend. Send explicit server-derived flags, such 
 19. Automatic cards can only have `expires_at` edited, and only from fighter
     card tables where expiration is visible. Do not show automatic-card edit on
     tournament card tables.
+20. Organizers may issue and delete cards while the related fight lifecycle
+    allows it, but card editing and inactive automatic cross-tournament red
+    activation are administrator/secretary-only operations.
+21. Inactive automatic red cards issued for three active yellows across
+    tournaments can be activated only from fighter card tables. Activation is
+    submitted on save, sets the red card's `received_at` to the current
+    server date-only activation date, and closes its source yellows at that
+    same date. Reject activation when the current server date-only date is on
+    or before the inactive red card's original `received_at`.
+22. Yellow cards closed by an automatic red are fully update-locked. The UI must
+    hide edit for those rows, and the backend must reject any update payload for
+    them. Deletion still follows the existing yellow-card deletion path.
+23. Tournament competitor, group, and bracket labels display every active card
+    for the fighter at the tournament `event_date`, including cards issued on
+    other tournaments. Tooltips use `tournament name: raw reason`. Tournament
+    card tables still list only cards issued on that tournament.
 
 ## Constraints
 
@@ -102,12 +120,34 @@ Keep card domain rules in the backend. Send explicit server-derived flags, such 
 ## Edge Cases
 
 - A card issued in a completed nomination must not show `Delete` on either tournament or fighter pages.
+- Red-card deletion must stay blocked after Olympic downstream progression.
+  If a semifinal red creates final or bronze fights, delete becomes available
+  only after rolling back those downstream fights and while the source fight
+  results remain editable.
 - If a card table contains only non-deletable cards and no edit permission, hide the actions column.
 - Editing red-card expiration can affect active-card forfeits; reset and reapply red-card forfeits after red-card expiration updates.
 - Automatic red cards use backend threshold checks against active yellow cards.
   Prefer the active same-tournament threshold when it overlaps with the
   cross-tournament threshold. Cross-tournament automatic reds are inactive and
   must not prevent later active reds.
+- Manual yellow-card deletion must run the same automatic-red recovery logic as
+  rollback: delete linked automatic reds, restore their source yellows, delete
+  the requested yellow, then re-check whether the remaining active yellows now
+  require an inactive cross-tournament red.
+- Persisted `active` is structural only: `false` is for yellows closed by an
+  automatic red and inactive automatic cross-tournament reds. Do not update
+  persisted `active` from `expires_at`, and do not add scheduled expiration
+  jobs. Fighter card lists use the current server date-only context; tournament
+  lists and active-card summaries use the tournament `event_date`.
+- Historical tournament card views must treat yellows closed by a later
+  automatic red as active before the red's `closed_at` date when
+  `yellow_active_before_close` was true and
+  `yellow_expires_at_before_close` covers the tournament check date.
+- Competition rollback and fight-deletion flows must handle card side effects
+  before deleting fights. Do not rely on FK cascade alone: restore yellows
+  closed by deleted automatic reds, delete automatic reds linked to deleted
+  yellows, then re-evaluate inactive cross-tournament automatic reds for the
+  affected fighter and tournament date.
 - Inactive card rows remain available behind the shared "show inactive"
   checkbox and should use `text-muted-foreground` in every card table.
 - Automatic cards cannot be deleted manually and their reason is read-only.

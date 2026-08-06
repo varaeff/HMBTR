@@ -3,13 +3,14 @@ import { ref, computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { tData } from '@/lib/utils'
 import { Table, TableHeader, TableBody, TableCell, TableRow } from '@/components/ui/table'
-import { CardStatusIcon } from '@/widgets/tournament/DisciplinaryCards'
-import type { DisciplinaryCardStatus, GroupFighter, Group } from '@/model'
+import { CardStatusIcon, formatActiveDisciplinaryCardTitle } from '@/widgets/tournament/DisciplinaryCards'
+import type { ActiveDisciplinaryCardSummary, GroupFighter, Group } from '@/model'
+import type { ActiveCardTypes } from '@/widgets/tournament/types'
 
 const props = defineProps<{
   isFixed: boolean
   groups: Group[]
-  activeCardTypes?: Partial<Record<number, DisciplinaryCardStatus>>
+  activeCardTypes?: ActiveCardTypes
   redCardGroupFighterKeys?: Set<string>
   highlightedAdvancerCompetitorIds?: Set<number>
 }>()
@@ -21,6 +22,8 @@ const emit = defineEmits<{
 const { i18next } = useTranslation()
 const languageKey = computed(() => i18next.language)
 const displayGroups = computed(() => props.groups)
+const cardTitle = (card: ActiveDisciplinaryCardSummary) =>
+  formatActiveDisciplinaryCardTitle(card, languageKey.value, (key) => i18next.t(key))
 
 const activeDrag = ref<{ fighter: GroupFighter; groupIdx: number; fighterIdx: number } | null>(null)
 
@@ -149,7 +152,14 @@ const hasGroupRedCard = (group: Group, fighter: GroupFighter) =>
             <TableCell class="font-medium"
               ><span class="inline-flex items-center gap-1">
                 {{ tData(fighter.surname) }} {{ tData(fighter.name) }}
-                <CardStatusIcon :type="activeCardTypes?.[fighter.id]" /> </span
+                <span
+                  v-for="card in activeCardTypes?.[fighter.id] ?? []"
+                  :key="card.id"
+                  :title="cardTitle(card)"
+                  class="inline-flex"
+                >
+                  <CardStatusIcon :type="card" :showTitle="false" />
+                </span> </span
             ></TableCell>
             <TableCell v-if="props.isFixed" class="font-bold text-center">
               {{ fighter.wins }}

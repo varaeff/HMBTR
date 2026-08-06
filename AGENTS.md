@@ -3,6 +3,9 @@
 ## Coding Rules
 
 - Do not allow `any` type in coding.
+- Any code changes must account for the architectural constraints and
+  recommendations described in the `backend-architecture` and
+  `frontend-architecture` skills.
 
 ## Persistent Instruction Storage
 

@@ -1040,6 +1040,117 @@ describe('competition use-case services', () => {
     });
   });
 
+  it('recreates inactive cross-tournament red when deleting a same-tournament automatic red restores three active yellows', async () => {
+    const activeRedDate = new Date('2026-05-19T00:00:00.000Z');
+    const tx = {
+      fights: {
+        findMany: jest
+          .fn()
+          .mockResolvedValueOnce([{ id: 200 }])
+          .mockResolvedValueOnce([]),
+        updateMany: jest.fn(),
+      },
+      fight_round_scores: {
+        deleteMany: jest.fn(),
+      },
+      disciplinary_cards: {
+        findMany: jest
+          .fn()
+          .mockResolvedValueOnce([
+            {
+              id: 13,
+              fighter_id: 1,
+              tournament_id: 5,
+              type: 'YELLOW',
+              source: 'MANUAL',
+              reason: 'second nomination yellow',
+              received_at: activeRedDate,
+            },
+            {
+              id: 14,
+              fighter_id: 1,
+              tournament_id: 5,
+              type: 'RED',
+              source: 'AUTOMATIC',
+              reason: 'AUTO_RED_TWO_YELLOWS_SAME_TOURNAMENT',
+              received_at: activeRedDate,
+            },
+          ])
+          .mockResolvedValueOnce([
+            {
+              id: 10,
+              tournament_id: 2,
+              fight_id: 100,
+              marshal_id: 20,
+              received_at: new Date('2026-04-01T00:00:00.000Z'),
+            },
+            {
+              id: 11,
+              tournament_id: 3,
+              fight_id: 110,
+              marshal_id: 21,
+              received_at: new Date('2026-04-15T00:00:00.000Z'),
+            },
+            {
+              id: 12,
+              tournament_id: 5,
+              fight_id: 120,
+              marshal_id: 22,
+              received_at: activeRedDate,
+            },
+          ]),
+        findFirst: jest.fn().mockResolvedValue(null),
+        deleteMany: jest.fn(),
+        create: jest.fn().mockResolvedValue({ id: 90 }),
+      },
+      disciplinary_card_settings: {
+        findUnique: jest.fn().mockResolvedValue({ red_auto_yellow_days: 30 }),
+      },
+      red_card_yellow_sources: {
+        createMany: jest.fn(),
+      },
+      $queryRaw: jest.fn().mockResolvedValue([]),
+      $executeRaw: jest.fn(),
+    };
+    const service = new RedCardForfeitService(
+      {} as PrismaService,
+      {} as CompetitionScoringService,
+      {} as RedCardStorageService,
+    );
+
+    await service.resetForfeitsForDeletedFightsTx(
+      tx as unknown as Parameters<
+        RedCardForfeitService['resetForfeitsForDeletedFightsTx']
+      >[0],
+      7,
+    );
+
+    expect(tx.disciplinary_cards.deleteMany).toHaveBeenCalledWith({
+      where: { id: { in: [13, 14] } },
+    });
+    expect(tx.disciplinary_cards.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        fighter_id: 1,
+        tournament_id: 5,
+        fight_id: 120,
+        marshal_id: 22,
+        type: 'RED',
+        source: 'AUTOMATIC',
+        reason: 'AUTO_RED_THREE_YELLOWS_CROSS_TOURNAMENT',
+        active: false,
+      }),
+      select: { id: true },
+    });
+    expect(tx.red_card_yellow_sources.createMany).toHaveBeenCalledWith({
+      data: [
+        { red_card_id: 90, yellow_card_id: 10 },
+        { red_card_id: 90, yellow_card_id: 11 },
+        { red_card_id: 90, yellow_card_id: 12 },
+      ],
+      skipDuplicates: true,
+    });
+  });
+
   it('keeps red-card forfeits fixed when canceling group results', async () => {
     const tx = {
       competition_placements: {

@@ -116,6 +116,7 @@ export class DisciplinaryCardStorage {
         "type" = ${params.type},
         "marshal_id" = ${params.marshalId},
         "active" = ${params.active},
+        "received_at" = ${params.receivedAt},
         "expires_at" = ${params.expiresAt},
         "updated_at" = CURRENT_TIMESTAMP
       WHERE "id" = ${params.id}

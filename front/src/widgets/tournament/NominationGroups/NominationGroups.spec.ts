@@ -3,7 +3,19 @@ import { mount } from '@vue/test-utils'
 import i18next from 'i18next'
 import I18NextVue from 'i18next-vue'
 import NominationGroups from './NominationGroups.vue'
-import type { DisciplinaryCardStatus, Group } from '@/model'
+import type { ActiveDisciplinaryCardSummary, Group } from '@/model'
+
+const activeRedCard: ActiveDisciplinaryCardSummary = {
+  id: 1,
+  fighter_id: 1,
+  tournament_id: 1,
+  tournament_name: 'Cup',
+  reason: 'AUTO_RED_THREE_YELLOWS_CROSS_TOURNAMENT',
+  type: 'RED',
+  active: true,
+  received_at: '2026-05-19T00:00:00.000Z',
+  expires_at: '2026-06-19T00:00:00.000Z'
+}
 
 const groups: Group[] = [
   {
@@ -61,7 +73,9 @@ describe('NominationGroups', () => {
             tournamentPageGroupName: 'Group',
             groupsTableFighter: 'Fighter',
             groupsTableWins: 'Wins',
-            groupsTableDifference: 'Difference'
+            groupsTableDifference: 'Difference',
+            disciplinaryCardsReasonAUTO_RED_THREE_YELLOWS_CROSS_TOURNAMENT:
+              'Automatic red for 3 active yellow cards'
           }
         }
       }
@@ -71,7 +85,7 @@ describe('NominationGroups', () => {
       props: {
         groups,
         isFixed: true,
-        activeCardTypes: { 1: { type: 'RED', active: true } as DisciplinaryCardStatus },
+        activeCardTypes: { 1: [activeRedCard] },
         redCardGroupFighterKeys: new Set(['A:1'])
       },
       global: {
@@ -92,6 +106,9 @@ describe('NominationGroups', () => {
     expect(fighterRows[0].classes()).not.toContain('bg-green-100')
     expect(fighterRows[1].classes()).not.toContain('bg-red-100/60')
     expect(fighterRows[1].classes()).toContain('bg-green-100')
+    expect(
+      wrapper.find('[title="Cup: Automatic red for 3 active yellow cards"]').exists()
+    ).toBe(true)
 
     wrapper.unmount()
   })

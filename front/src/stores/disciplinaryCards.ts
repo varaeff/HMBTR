@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import http from '@/api/http'
 import { API_ROUTES } from '@shared/routes'
 import type {
+  ActiveDisciplinaryCardSummary,
   CreateDisciplinaryCardPayload,
   DisciplinaryCard,
   UpdateDisciplinaryCardPayload
@@ -9,12 +10,14 @@ import type {
 
 interface DisciplinaryCardsState {
   tournamentCards: DisciplinaryCard[]
+  tournamentActiveCards: ActiveDisciplinaryCardSummary[]
   fighterCards: DisciplinaryCard[]
 }
 
 export const useDisciplinaryCardsStore = defineStore('disciplinaryCards', {
   state: (): DisciplinaryCardsState => ({
     tournamentCards: [],
+    tournamentActiveCards: [],
     fighterCards: []
   }),
 
@@ -24,6 +27,13 @@ export const useDisciplinaryCardsStore = defineStore('disciplinaryCards', {
         API_ROUTES.DISCIPLINARY_CARDS.BY_TOURNAMENT(tournamentId)
       )
       this.tournamentCards = data
+    },
+
+    async loadTournamentActiveCards(tournamentId: number) {
+      const { data } = await http.get<ActiveDisciplinaryCardSummary[]>(
+        API_ROUTES.DISCIPLINARY_CARDS.ACTIVE_BY_TOURNAMENT(tournamentId)
+      )
+      this.tournamentActiveCards = data
     },
 
     async loadFighterCards(fighterId: number) {
@@ -39,6 +49,7 @@ export const useDisciplinaryCardsStore = defineStore('disciplinaryCards', {
         payload
       )
       await this.loadTournamentCards(payload.tournament_id)
+      await this.loadTournamentActiveCards(payload.tournament_id)
       return data
     },
 
@@ -48,6 +59,7 @@ export const useDisciplinaryCardsStore = defineStore('disciplinaryCards', {
         payload
       )
       await this.loadTournamentCards(data.tournament_id)
+      await this.loadTournamentActiveCards(data.tournament_id)
       return data
     },
 

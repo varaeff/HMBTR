@@ -2,7 +2,7 @@ import type {
   CompetitionBlock,
   CompetitionPlacement,
   CreateDisciplinaryCardPayload,
-  DisciplinaryCardStatus,
+  ActiveDisciplinaryCardSummary,
   DisciplinaryCard,
   Fighter,
   FightData,
@@ -17,7 +17,7 @@ import type { FightWarning, RoundScore } from '@shared/fightScoring'
 
 export type TournamentReportLanguage = 'en' | 'ru'
 
-export type ActiveCardTypes = Partial<Record<number, DisciplinaryCardStatus>>
+export type ActiveCardTypes = Partial<Record<number, ActiveDisciplinaryCardSummary[]>>
 
 export type CreateDisciplinaryCardAction = (
   payload: CreateDisciplinaryCardPayload
@@ -34,6 +34,7 @@ export interface TournamentBlockDisplayProps {
   canEditCompetition: boolean
   canUseCompetitionBackwardActions: boolean
   canManageCards: boolean
+  canIssueCards: boolean
   canGenerateGroupFights: boolean
   hasBlockingGroupAdvancementTie: boolean
   olympicCompetitorIds: Set<number>
@@ -61,6 +62,7 @@ export interface TournamentCompetitionBlockPermissions {
   canEditCompetition: boolean
   canUseCompetitionBackwardActions: boolean
   canManageCards: boolean
+  canIssueCards: boolean
 }
 
 export interface TournamentCompetitionBlockOptions {
@@ -123,6 +125,7 @@ export interface TournamentNominationTabsPermissions {
   canEditCompetition: boolean
   canUseCompetitionBackwardActions: boolean
   canManageCards: boolean
+  canIssueCards: boolean
 }
 
 export interface TournamentNominationTabsCompetitionOptions {

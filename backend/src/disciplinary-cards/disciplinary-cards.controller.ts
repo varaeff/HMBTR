@@ -35,6 +35,14 @@ export class DisciplinaryCardsController {
   }
 
   @Public()
+  @Get('tournament/:tournamentId/active')
+  findActiveByTournament(
+    @Param('tournamentId', ParseIntPipe) tournamentId: number,
+  ) {
+    return this.disciplinaryCardsService.findActiveForTournament(tournamentId);
+  }
+
+  @Public()
   @Get('tournament/:tournamentId')
   findByTournament(@Param('tournamentId', ParseIntPipe) tournamentId: number) {
     return this.disciplinaryCardsService.findByTournament(tournamentId);
@@ -56,7 +64,7 @@ export class DisciplinaryCardsController {
     @Body() dto: UpdateDisciplinaryCardDto,
     @Req() req: { user?: RequestUser },
   ) {
-    this.requireCardManager(req.user);
+    this.requireCardEditor(req.user);
 
     return this.disciplinaryCardsService.update(id, dto);
   }
@@ -75,6 +83,14 @@ export class DisciplinaryCardsController {
     if (!user?.is_admin && !user?.is_organizer && !user?.is_secretary) {
       throw new ForbiddenException(
         'Organizer, secretary or administrator access required',
+      );
+    }
+  }
+
+  private requireCardEditor(user?: RequestUser) {
+    if (!user?.is_admin && !user?.is_secretary) {
+      throw new ForbiddenException(
+        'Secretary or administrator access required',
       );
     }
   }

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CompetitionService } from '../../competition/competition.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { DisciplinaryCardStorage } from '../cards/disciplinary-card-storage';
+import { AUTO_RED_THREE_YELLOWS_CROSS_TOURNAMENT } from '../disciplinary-card.constants';
 import type { StoredDisciplinaryCard } from '../disciplinary-card.types';
 
 @Injectable()
@@ -121,6 +122,30 @@ export class RedYellowSourceService {
       DELETE FROM "red_card_yellow_sources"
       WHERE "red_card_id" = ${redCardId}
     `;
+  }
+
+  async deleteInactiveCrossTournamentRedsForTournamentSourceYellows(
+    tournamentId: number,
+    yellowCardIds: number[],
+  ) {
+    await Promise.all(
+      yellowCardIds.map((yellowCardId) =>
+        this.prisma.$executeRaw`
+          DELETE FROM "disciplinary_cards" red
+          WHERE red."type" = 'RED'
+            AND red."source" = 'AUTOMATIC'
+            AND red."active" = false
+            AND red."reason" = ${AUTO_RED_THREE_YELLOWS_CROSS_TOURNAMENT}
+            AND red."tournament_id" = ${tournamentId}
+            AND EXISTS (
+              SELECT 1
+              FROM "red_card_yellow_sources" source
+              WHERE source."red_card_id" = red."id"
+                AND source."yellow_card_id" = ${yellowCardId}
+            )
+        `,
+      ),
+    );
   }
 
   async deleteAutomaticRedsIssuedFromYellow(yellowCardId: number) {

@@ -78,6 +78,12 @@ export class AutomaticRedCardService {
 
       if (inactiveAutoRedExists.length) return;
     }
+    if (isSameTournamentThreshold) {
+      await this.redYellowSources.deleteInactiveCrossTournamentRedsForTournamentSourceYellows(
+        card.tournament_id,
+        sourceYellowIds,
+      );
+    }
 
     const redCard = await this.storage.insertCard({
       fighterId: card.fighter_id,
@@ -111,9 +117,78 @@ export class AutomaticRedCardService {
     await this.consequences.applyRedCardConsequences(redCard);
   }
 
+  async createInactiveCrossTournamentRedIfNeeded(
+    fighterId: number,
+    tournamentId: number,
+    checkDate: Date,
+  ) {
+    const activeYellowCards = await this.getActiveYellowCards(
+      fighterId,
+      checkDate,
+    );
+    const sameTournamentYellowCards = activeYellowCards.filter(
+      (yellowCard) => yellowCard.tournament_id === tournamentId,
+    );
+
+    if (activeYellowCards.length < 3 || sameTournamentYellowCards.length >= 2) {
+      return;
+    }
+
+    const sourceYellowCards = activeYellowCards.slice(0, 3);
+    const triggerYellow = sourceYellowCards[sourceYellowCards.length - 1];
+    const [activeRedExists, inactiveAutoRedExists] = await Promise.all([
+      this.prisma.$queryRaw<Array<{ id: number }>>`
+        SELECT "id"
+        FROM "disciplinary_cards"
+        WHERE "fighter_id" = ${fighterId}
+          AND "type" = 'RED'
+          AND "active" = true
+          AND "received_at" <= ${triggerYellow.received_at}
+          AND "expires_at" >= ${triggerYellow.received_at}
+        LIMIT 1
+      `,
+      this.prisma.$queryRaw<Array<{ id: number }>>`
+        SELECT "id"
+        FROM "disciplinary_cards"
+        WHERE "fighter_id" = ${fighterId}
+          AND "type" = 'RED'
+          AND "source" = 'AUTOMATIC'
+          AND "active" = false
+          AND "reason" = ${AUTO_RED_THREE_YELLOWS_CROSS_TOURNAMENT}
+          AND "received_at" <= ${triggerYellow.received_at}
+          AND "expires_at" >= ${triggerYellow.received_at}
+        LIMIT 1
+      `,
+    ]);
+
+    if (activeRedExists.length || inactiveAutoRedExists.length) return;
+
+    const redCard = await this.storage.insertCard({
+      fighterId,
+      tournamentId: triggerYellow.tournament_id,
+      fightId: triggerYellow.fight_id,
+      marshalId: triggerYellow.marshal_id,
+      type: CARD_RED,
+      source: SOURCE_AUTOMATIC,
+      receivedAt: triggerYellow.received_at,
+      reason: AUTO_RED_THREE_YELLOWS_CROSS_TOURNAMENT,
+      expiresAt: this.expiration.addDays(
+        triggerYellow.received_at,
+        (await this.settingsService.getDisciplinaryCardSettings())
+          .red_auto_yellow_days,
+      ),
+      active: false,
+    });
+
+    await this.redYellowSources.recordRedYellowSources(
+      redCard.id,
+      sourceYellowCards.map((yellowCard) => yellowCard.id),
+    );
+  }
+
   private async getActiveYellowCards(fighterId: number, checkDate: Date) {
     return this.prisma.$queryRaw<ActiveYellowCard[]>`
-      SELECT "id", "tournament_id"
+      SELECT "id", "tournament_id", "fight_id", "marshal_id", "received_at"
       FROM "disciplinary_cards"
       WHERE "fighter_id" = ${fighterId}
         AND "type" = 'YELLOW'

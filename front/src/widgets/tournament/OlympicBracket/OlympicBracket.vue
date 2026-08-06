@@ -3,11 +3,11 @@ import { computed } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import type {
   CompetitionBlock,
-  DisciplinaryCardStatus,
   FightData,
   TournamentMarshal
 } from '@/model'
 import type {
+  ActiveCardTypes,
   CreateDisciplinaryCardAction,
   FightScoreUpdatePayload,
   OlympicRoundPayload,
@@ -32,7 +32,7 @@ const props = defineProps<{
   canIssueCards?: boolean
   tournamentId?: number
   cardDate?: string
-  activeCardTypes?: Partial<Record<number, DisciplinaryCardStatus>>
+  activeCardTypes?: ActiveCardTypes
   tournamentMarshals?: TournamentMarshal[]
   createDisciplinaryCard?: CreateDisciplinaryCardAction
   attachedCardCountByFightId?: Record<number, number>

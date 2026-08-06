@@ -36,7 +36,8 @@ const nominationTabsState = computed<TournamentNominationTabsState>(() => ({
 const nominationTabsPermissions = computed<TournamentNominationTabsPermissions>(() => ({
   canEditCompetition: props.page.permissions.canEditCompetition,
   canUseCompetitionBackwardActions: props.page.permissions.canUseCompetitionBackwardActions,
-  canManageCards: props.page.permissions.canManageCards
+  canManageCards: props.page.permissions.canManageCards,
+  canIssueCards: props.page.permissions.canIssueCards
 }))
 
 const nominationTabsCompetitionOptions = computed<TournamentNominationTabsCompetitionOptions>(

@@ -1,19 +1,21 @@
 <script setup lang="ts">
 import { MessageCircleWarning } from 'lucide-vue-next'
+import { computed } from 'vue'
+import { useTranslation } from 'i18next-vue'
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger
 } from '@/components/ui/context-menu'
-import { CardStatusIcon } from '@/widgets/tournament/DisciplinaryCards'
-import type { DisciplinaryCardStatus, Fighter } from '@/model'
+import { CardStatusIcon, formatActiveDisciplinaryCardTitle } from '@/widgets/tournament/DisciplinaryCards'
+import type { ActiveDisciplinaryCardSummary, Fighter } from '@/model'
 import type { FightWarningMarker } from './types'
 
 const props = defineProps<{
   surname: string
   fighter: Fighter
-  cardType?: DisciplinaryCardStatus
+  cardTypes?: ActiveDisciplinaryCardSummary[]
   warningMarkers: FightWarningMarker[]
   warningTitle: string
   canOpenMenu: boolean
@@ -26,6 +28,11 @@ const emit = defineEmits<{
   (e: 'issue-warning'): void
   (e: 'remove-warning', warningIndex: number): void
 }>()
+
+const { i18next } = useTranslation()
+const currentLanguage = computed(() => i18next.language)
+const cardTitle = (card: ActiveDisciplinaryCardSummary) =>
+  formatActiveDisciplinaryCardTitle(card, currentLanguage.value, (key) => i18next.t(key))
 </script>
 
 <template>
@@ -34,7 +41,14 @@ const emit = defineEmits<{
       <ContextMenuTrigger as-child>
         <span class="inline-flex cursor-pointer items-center gap-1">
           {{ surname }}
-          <CardStatusIcon :type="cardType" />
+          <span
+            v-for="card in cardTypes ?? []"
+            :key="card.id"
+            :title="cardTitle(card)"
+            class="inline-flex"
+          >
+            <CardStatusIcon :type="card" :showTitle="false" />
+          </span>
         </span>
       </ContextMenuTrigger>
       <ContextMenuContent>
@@ -49,7 +63,14 @@ const emit = defineEmits<{
 
     <span v-else class="inline-flex items-center gap-1">
       {{ surname }}
-      <CardStatusIcon :type="cardType" />
+      <span
+        v-for="card in cardTypes ?? []"
+        :key="card.id"
+        :title="cardTitle(card)"
+        class="inline-flex"
+      >
+        <CardStatusIcon :type="card" :showTitle="false" />
+      </span>
     </span>
 
     <span

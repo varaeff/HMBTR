@@ -17,7 +17,7 @@ import { useTournamentCompetitionState } from '@/composables/useTournamentCompet
 import { useTournamentReportDownload } from '@/composables/useTournamentReportDownload'
 import { tData } from '@/lib/utils'
 import { dateToString } from '@/lib/dateUtils'
-import { hasAccess, hasAdminAccess, hasTournamentMarshalAccess } from '@/lib/checkAccess'
+import { hasAccess, hasMarshalManageAccess, hasTournamentMarshalAccess } from '@/lib/checkAccess'
 import {
   canShowAddJudgesButton as getCanShowAddJudgesButton,
   canShowTournamentMarshalSelector
@@ -40,7 +40,7 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
   const tournament = ref<Tournament | null>(null)
   const activeTab = ref<number>(0)
   const canEdit = hasAccess()
-  const canDeleteCards = Boolean(hasAdminAccess())
+  const canDeleteCards = Boolean(hasTournamentMarshalAccess())
   const isNominationLoading = ref(false)
   const isCardsOpen = ref(true)
   const isMarshalRegistrationOpen = ref(false)
@@ -147,6 +147,7 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
     competitionStore
   })
   const tournamentCards = computed(() => cardsStore.tournamentCards)
+  const tournamentActiveCards = computed(() => cardsStore.tournamentActiveCards)
   const tournamentMarshals = computed(() => tournamentMarshalsStore.tournamentMarshals)
   const {
     cardIssueDate,
@@ -164,7 +165,8 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
 
   const canEditCompetition = computed(() => canEdit && !nominationFinished.value)
   const canUseCompetitionBackwardActions = computed(() => canEdit)
-  const canManageCards = computed(() => canEdit || hasTournamentMarshalAccess())
+  const canManageCards = computed(() => hasMarshalManageAccess())
+  const canIssueCards = computed(() => hasTournamentMarshalAccess())
   const canManageTournamentMarshals = computed(() => hasTournamentMarshalAccess())
   const hasOpenFighterRegistration = computed(() => tournamentNominations.value.open.length > 0)
   const hasTournamentMarshals = computed(() => tournamentMarshalsStore.tournamentMarshals.length > 0)
@@ -229,6 +231,7 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
       tournamentsListStore.showTournamentDetails(tournamentId.value),
       fightersListStore.getFightersList(),
       cardsStore.loadTournamentCards(tournamentId.value),
+      cardsStore.loadTournamentActiveCards(tournamentId.value),
       tournamentMarshalsStore.loadTournamentMarshals(tournamentId.value)
     ])
 
@@ -312,6 +315,7 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
       canEditCompetition,
       canUseCompetitionBackwardActions,
       canManageCards,
+      canIssueCards,
       canManageTournamentMarshals
     }),
     marshalRegistration: reactive({
@@ -322,6 +326,7 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
     }),
     cards: reactive({
       tournamentCards,
+      tournamentActiveCards,
       isCardsOpen,
       activeCardTypes,
       cardIssueDate,

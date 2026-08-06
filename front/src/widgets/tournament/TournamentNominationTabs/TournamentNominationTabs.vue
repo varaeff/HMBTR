@@ -55,7 +55,8 @@ const blockState = (block: CompetitionBlock): TournamentCompetitionBlockState =>
 const blockPermissions = computed<TournamentCompetitionBlockPermissions>(() => ({
   canEditCompetition: props.permissions.canEditCompetition,
   canUseCompetitionBackwardActions: props.permissions.canUseCompetitionBackwardActions,
-  canManageCards: props.permissions.canManageCards
+  canManageCards: props.permissions.canManageCards,
+  canIssueCards: props.permissions.canIssueCards
 }))
 
 const blockOptions = computed<TournamentCompetitionBlockOptions>(() => ({

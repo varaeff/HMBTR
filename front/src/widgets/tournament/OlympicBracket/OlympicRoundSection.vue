@@ -2,12 +2,9 @@
 import { computed } from 'vue'
 import { Button } from '@/components/ui/button'
 import { FightCard } from '@/widgets/tournament/FightCard'
+import type { FightData, TournamentMarshal } from '@/model'
 import type {
-  DisciplinaryCardStatus,
-  FightData,
-  TournamentMarshal
-} from '@/model'
-import type {
+  ActiveCardTypes,
   CreateDisciplinaryCardAction,
   FightScoreUpdatePayload
 } from '@/widgets/tournament/types'
@@ -22,7 +19,7 @@ const props = withDefaults(
     canIssueCards?: boolean
     tournamentId?: number
     cardDate?: string
-    activeCardTypes?: Partial<Record<number, DisciplinaryCardStatus>>
+    activeCardTypes?: ActiveCardTypes
     tournamentMarshals?: TournamentMarshal[]
     createDisciplinaryCard?: CreateDisciplinaryCardAction
     showLifecycle?: boolean

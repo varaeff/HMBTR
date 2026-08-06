@@ -1,13 +1,21 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import type { DisciplinaryCard } from '../disciplinary-card.types';
+import {
+  AUTO_RED_THREE_YELLOWS_CROSS_TOURNAMENT,
+  CARD_RED,
+  SOURCE_AUTOMATIC,
+} from '../disciplinary-card.constants';
+import type {
+  ActiveDisciplinaryCardSummary,
+  DisciplinaryCard,
+} from '../disciplinary-card.types';
 
 @Injectable()
 export class DisciplinaryCardReader {
   constructor(private prisma: PrismaService) {}
 
-  async findOne(id: number) {
-    const rows = await this.findCards({ cardId: id });
+  async findOne(id: number, checkDate: Date) {
+    const rows = await this.findCards({ cardId: id }, checkDate);
     const card = rows[0];
 
     if (!card) throw new NotFoundException('Disciplinary card not found');
@@ -19,7 +27,7 @@ export class DisciplinaryCardReader {
     cardId?: number;
     fighterId?: number;
     tournamentId?: number;
-  }) {
+  }, checkDate: Date) {
     const cardId = filter.cardId ?? null;
     const fighterId = filter.fighterId ?? null;
     const tournamentId = filter.tournamentId ?? null;
@@ -46,7 +54,29 @@ export class DisciplinaryCardReader {
             AND source_red."type" = 'RED'
             AND source_red."source" = 'AUTOMATIC'
         ) AS "expires_at_locked",
-        dc."active",
+        (
+          (
+            dc."active" = true
+            AND dc."received_at" <= ${checkDate}
+            AND dc."expires_at" >= ${checkDate}
+          )
+          OR (
+            dc."type" = 'YELLOW'
+            AND dc."received_at" <= ${checkDate}
+            AND EXISTS (
+              SELECT 1
+              FROM "red_card_yellow_sources" historical_source
+              JOIN "disciplinary_cards" historical_red
+                ON historical_red."id" = historical_source."red_card_id"
+              WHERE historical_source."yellow_card_id" = dc."id"
+                AND historical_source."closed_at" > ${checkDate}
+                AND historical_source."yellow_active_before_close" = true
+                AND historical_source."yellow_expires_at_before_close" >= ${checkDate}
+                AND historical_red."type" = 'RED'
+                AND historical_red."source" = 'AUTOMATIC'
+            )
+          )
+        ) AS "active",
         dc."created_at",
         dc."updated_at",
         f."fight_number",
@@ -69,7 +99,16 @@ export class DisciplinaryCardReader {
         marshal."name" AS "marshal_name",
         marshal."surname" AS "marshal_surname",
         marshal."patronymic" AS "marshal_patronymic",
-        true AS "can_manage",
+        NOT EXISTS (
+          SELECT 1
+          FROM "red_card_yellow_sources" manage_source
+          JOIN "disciplinary_cards" manage_red
+            ON manage_red."id" = manage_source."red_card_id"
+          WHERE manage_source."yellow_card_id" = dc."id"
+            AND manage_source."closed_at" IS NOT NULL
+            AND manage_red."type" = 'RED'
+            AND manage_red."source" = 'AUTOMATIC'
+        ) AS "can_manage",
         (
           cb."status" = 'ACTIVE'
           AND tn."is_finished" = false
@@ -130,9 +169,22 @@ export class DisciplinaryCardReader {
                     )
                   )
               )
+              AND NOT EXISTS (
+                SELECT 1
+                FROM "competition_round_states" later_state
+                WHERE later_state."block_id" = cb."id"
+                  AND later_state."round" > f."bracket_round"
+              )
             )
           )
-        ) AS "can_delete"
+        ) AS "can_delete",
+        (
+          dc."type" = ${CARD_RED}
+          AND dc."source" = ${SOURCE_AUTOMATIC}
+          AND dc."active" = false
+          AND dc."reason" = ${AUTO_RED_THREE_YELLOWS_CROSS_TOURNAMENT}
+          AND ${checkDate} > dc."received_at"
+        ) AS "can_activate"
       FROM "disciplinary_cards" dc
       JOIN "fighters" card_fighter ON card_fighter."id" = dc."fighter_id"
       JOIN "marshals" marshal ON marshal."id" = dc."marshal_id"
@@ -155,6 +207,75 @@ export class DisciplinaryCardReader {
         AND (${fighterId}::int IS NULL OR dc."fighter_id" = ${fighterId}::int)
         AND (${tournamentId}::int IS NULL OR dc."tournament_id" = ${tournamentId}::int)
       ORDER BY dc."received_at" DESC, dc."id" DESC
+    `;
+  }
+
+  async findActiveCardsForTournament(tournamentId: number, checkDate: Date) {
+    return this.prisma.$queryRaw<ActiveDisciplinaryCardSummary[]>`
+      SELECT
+        dc."id",
+        dc."fighter_id",
+        dc."type",
+        (
+          (
+            dc."active" = true
+            AND dc."received_at" <= ${checkDate}
+            AND dc."expires_at" >= ${checkDate}
+          )
+          OR (
+            dc."type" = 'YELLOW'
+            AND dc."received_at" <= ${checkDate}
+            AND EXISTS (
+              SELECT 1
+              FROM "red_card_yellow_sources" historical_source
+              JOIN "disciplinary_cards" historical_red
+                ON historical_red."id" = historical_source."red_card_id"
+              WHERE historical_source."yellow_card_id" = dc."id"
+                AND historical_source."closed_at" > ${checkDate}
+                AND historical_source."yellow_active_before_close" = true
+                AND historical_source."yellow_expires_at_before_close" >= ${checkDate}
+                AND historical_red."type" = 'RED'
+                AND historical_red."source" = 'AUTOMATIC'
+            )
+          )
+        ) AS "active",
+        dc."tournament_id",
+        t."name" AS "tournament_name",
+        dc."reason",
+        dc."received_at",
+        dc."expires_at"
+      FROM "disciplinary_cards" dc
+      JOIN "tournaments" t ON t."id" = dc."tournament_id"
+      WHERE (
+          (
+            dc."active" = true
+            AND dc."received_at" <= ${checkDate}
+            AND dc."expires_at" >= ${checkDate}
+          )
+          OR (
+            dc."type" = 'YELLOW'
+            AND dc."received_at" <= ${checkDate}
+            AND EXISTS (
+              SELECT 1
+              FROM "red_card_yellow_sources" historical_source
+              JOIN "disciplinary_cards" historical_red
+                ON historical_red."id" = historical_source."red_card_id"
+              WHERE historical_source."yellow_card_id" = dc."id"
+                AND historical_source."closed_at" > ${checkDate}
+                AND historical_source."yellow_active_before_close" = true
+                AND historical_source."yellow_expires_at_before_close" >= ${checkDate}
+                AND historical_red."type" = 'RED'
+                AND historical_red."source" = 'AUTOMATIC'
+            )
+          )
+        )
+        AND EXISTS (
+          SELECT 1
+          FROM "competitors" competitor
+          WHERE competitor."tournament_id" = ${tournamentId}
+            AND competitor."fighter_id" = dc."fighter_id"
+        )
+      ORDER BY dc."received_at" ASC, dc."id" ASC
     `;
   }
 }

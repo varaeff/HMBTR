@@ -103,6 +103,8 @@ export const API_ROUTES = {
       `/disciplinary-cards/fighter/${fighterId}`,
     BY_TOURNAMENT: (tournamentId: string | number) =>
       `/disciplinary-cards/tournament/${tournamentId}`,
+    ACTIVE_BY_TOURNAMENT: (tournamentId: string | number) =>
+      `/disciplinary-cards/tournament/${tournamentId}/active`,
     BY_ID: (id: string | number) => `/disciplinary-cards/${id}`,
   },
   RATINGS: {

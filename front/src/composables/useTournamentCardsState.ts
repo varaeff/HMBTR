@@ -1,13 +1,14 @@
 import { computed, type ComputedRef, type Ref } from 'vue'
 import type {
+  ActiveDisciplinaryCardSummary,
   CompetitionBlock,
   DisciplinaryCard,
-  DisciplinaryCardStatus,
   Tournament
 } from '@/model'
 
 interface TournamentCardsStateStore {
   tournamentCards: DisciplinaryCard[]
+  tournamentActiveCards: ActiveDisciplinaryCardSummary[]
 }
 
 const toDateInputValue = (date: Date) => {
@@ -36,39 +37,18 @@ export const useTournamentCardsState = ({
       : toDateInputValue(new Date())
   )
 
-  const tournamentCardCheckDate = computed(() => {
-    if (tournament.value?.event_date) return tournament.value.event_date
-    return new Date()
-  })
+  const activeCardTypes = computed<Partial<Record<number, ActiveDisciplinaryCardSummary[]>>>(() => {
+    const statuses: Partial<Record<number, ActiveDisciplinaryCardSummary[]>> = {}
 
-  const isCardActive = (receivedAt: string, expiresAt: string) => {
-    const checkDate = new Date(tournamentCardCheckDate.value).setHours(0, 0, 0, 0)
-    const received = new Date(receivedAt).setHours(0, 0, 0, 0)
-    const expires = new Date(expiresAt).setHours(0, 0, 0, 0)
-
-    return received <= checkDate && expires >= checkDate
-  }
-
-  const activeCardTypes = computed<Partial<Record<number, DisciplinaryCardStatus>>>(() => {
-    const statuses: Partial<Record<number, DisciplinaryCardStatus>> = {}
-    const priority = (status: DisciplinaryCardStatus) =>
-      status.type === 'RED' ? (status.active ? 3 : 2) : 1
-
-    for (const card of cardsStore.tournamentCards) {
-      if (!isCardActive(card.received_at, card.expires_at)) continue
-      if (card.type === 'YELLOW' && !card.active) continue
-      const nextStatus: DisciplinaryCardStatus = {
-        type: card.type,
-        active: card.active
-      }
-      const currentStatus = statuses[card.fighter_id]
-      if (!currentStatus || priority(nextStatus) > priority(currentStatus)) {
-        statuses[card.fighter_id] = nextStatus
-      }
+    for (const card of cardsStore.tournamentActiveCards) {
+      statuses[card.fighter_id] = [...(statuses[card.fighter_id] ?? []), card]
     }
 
     return statuses
   })
+  const activeCardIdSet = computed(
+    () => new Set(cardsStore.tournamentActiveCards.map((card) => card.id))
+  )
 
   const getRedCardGroupFighterKeys = (block: CompetitionBlock) => {
     const keys = new Set<string>()
@@ -80,7 +60,7 @@ export const useTournamentCardsState = ({
         card.nomination_id !== activeTab.value ||
         card.fight_stage !== block.stage ||
         !card.group_name ||
-        !isCardActive(card.received_at, card.expires_at)
+        !activeCardIdSet.value.has(card.id)
       ) {
         continue
       }

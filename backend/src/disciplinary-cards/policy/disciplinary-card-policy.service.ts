@@ -3,8 +3,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { isFightResultsFixed } from '../../competition/competition.helpers';
 import { PrismaService } from '../../prisma/prisma.service';
 import {
+  AUTO_RED_THREE_YELLOWS_CROSS_TOURNAMENT,
   CARD_RED,
   CARD_YELLOW,
   SOURCE_AUTOMATIC,
@@ -133,10 +135,9 @@ export class DisciplinaryCardPolicyService {
     }
     if (
       existing.type === CARD_YELLOW &&
-      dto.expires_at !== undefined &&
       (await this.redYellowSources.isYellowExpirationLocked(existing.id))
     ) {
-      throw new BadRequestException('Yellow card expiration is locked');
+      throw new BadRequestException('Yellow card is locked by automatic red');
     }
 
     const resultFieldsChanged =
@@ -144,7 +145,8 @@ export class DisciplinaryCardPolicyService {
       (dto.active !== undefined && dto.active !== existing.active);
     if (
       (lockState.fight_locked || lockState.results_fixed) &&
-      resultFieldsChanged
+      resultFieldsChanged &&
+      !this.isAllowedInactiveAutomaticRedActivation(existing, dto)
     ) {
       throw new BadRequestException('Card result-affecting fields are fixed');
     }
@@ -159,6 +161,7 @@ export class DisciplinaryCardPolicyService {
       include: {
         block: {
           include: {
+            round_states: true,
             tournament_nomination: true,
           },
         },
@@ -173,6 +176,19 @@ export class DisciplinaryCardPolicyService {
       throw new BadRequestException(
         'Cannot delete a card after this stage is completed',
       );
+    }
+    if (isFightResultsFixed({ ...fight, block: fight.block })) {
+      throw new BadRequestException(
+        'Cannot delete a card after fight results are fixed',
+      );
+    }
+    if (fight.block.type === 'OLYMPIC' && fight.bracket_round !== null) {
+      const sourceRound = fight.bracket_round;
+      if (fight.block.round_states.some((state) => state.round > sourceRound)) {
+        throw new BadRequestException(
+          'Cannot delete a card after later Olympic fights are formed',
+        );
+      }
     }
   }
 
@@ -191,10 +207,27 @@ export class DisciplinaryCardPolicyService {
     if (dto.marshal_id !== undefined) {
       throw new BadRequestException('Automatic card marshal cannot be edited');
     }
-    if (dto.active !== undefined) {
+    if (
+      dto.active !== undefined &&
+      !this.isAllowedInactiveAutomaticRedActivation(existing, dto)
+    ) {
       throw new BadRequestException(
         'Automatic card active flag cannot be edited',
       );
     }
+  }
+
+  private isAllowedInactiveAutomaticRedActivation(
+    existing: StoredDisciplinaryCard,
+    dto: UpdateDisciplinaryCardDto,
+  ) {
+    return (
+      existing.type === CARD_RED &&
+      existing.source === SOURCE_AUTOMATIC &&
+      existing.reason === AUTO_RED_THREE_YELLOWS_CROSS_TOURNAMENT &&
+      existing.active === false &&
+      dto.active === true &&
+      dto.type === undefined
+    );
   }
 }

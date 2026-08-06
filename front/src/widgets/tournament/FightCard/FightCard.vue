@@ -11,9 +11,9 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
-import type { DisciplinaryCardStatus, FightData, Fighter, TournamentMarshal } from '@/model'
+import type { FightData, Fighter, TournamentMarshal } from '@/model'
 import type { FightWarning, RoundScore } from '@shared/fightScoring'
-import type { CreateDisciplinaryCardAction } from '@/widgets/tournament/types'
+import type { ActiveCardTypes, CreateDisciplinaryCardAction } from '@/widgets/tournament/types'
 import FightParticipantLabel from './FightParticipantLabel.vue'
 import FightResultDisplay from './FightResultDisplay.vue'
 import FightScoreEditor from './FightScoreEditor.vue'
@@ -28,7 +28,7 @@ const props = defineProps<{
   canIssueCards?: boolean
   tournamentId?: number
   cardDate?: string
-  activeCardTypes?: Partial<Record<number, DisciplinaryCardStatus>>
+  activeCardTypes?: ActiveCardTypes
   tournamentMarshals?: TournamentMarshal[]
   createDisciplinaryCard?: CreateDisciplinaryCardAction
 }>()
@@ -52,8 +52,8 @@ const canIssueCardsRef = computed(() => props.canIssueCards)
 const currentLanguage = computed(() => i18next.language)
 const fighter1Surname = computed(() => tData(props.fight.fighter1.surname, currentLanguage.value))
 const fighter2Surname = computed(() => tData(props.fight.fighter2.surname, currentLanguage.value))
-const fighter1CardType = computed(() => props.activeCardTypes?.[props.fight.fighter1.id])
-const fighter2CardType = computed(() => props.activeCardTypes?.[props.fight.fighter2.id])
+const fighter1CardTypes = computed(() => props.activeCardTypes?.[props.fight.fighter1.id] ?? [])
+const fighter2CardTypes = computed(() => props.activeCardTypes?.[props.fight.fighter2.id] ?? [])
 const cardDate = computed(() => props.cardDate ?? new Date().toISOString().slice(0, 10))
 const {
   canEdit,
@@ -127,7 +127,7 @@ const openIssueDialog = (fighter: Fighter) => {
       <FightParticipantLabel
         :surname="fighter1Surname"
         :fighter="fight.fighter1"
-        :card-type="fighter1CardType"
+        :card-types="fighter1CardTypes"
         :warning-markers="warningMarkers(1)"
         :warning-title="warningTitle"
         :can-open-menu="canOpenFighterMenu"
@@ -141,7 +141,7 @@ const openIssueDialog = (fighter: Fighter) => {
       <FightParticipantLabel
         :surname="fighter2Surname"
         :fighter="fight.fighter2"
-        :card-type="fighter2CardType"
+        :card-types="fighter2CardTypes"
         :warning-markers="warningMarkers(2)"
         :warning-title="warningTitle"
         :can-open-menu="canOpenFighterMenu"

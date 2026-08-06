@@ -39,6 +39,19 @@ export interface DisciplinaryCard {
   can_manage: boolean;
   can_change_result_fields: boolean;
   can_delete: boolean;
+  can_activate: boolean;
+}
+
+export interface ActiveDisciplinaryCardSummary {
+  id: number;
+  fighter_id: number;
+  type: DisciplinaryCardType;
+  active: boolean;
+  tournament_id: number;
+  tournament_name: string;
+  reason: string;
+  received_at: Date;
+  expires_at: Date;
 }
 
 export interface CardFightLockState {
@@ -65,6 +78,9 @@ export interface StoredDisciplinaryCard {
 export interface ActiveYellowCard {
   id: number;
   tournament_id: number;
+  fight_id: number;
+  marshal_id: number;
+  received_at: Date;
 }
 
 export interface InsertDisciplinaryCardParams {
@@ -86,5 +102,6 @@ export interface UpdateDisciplinaryCardParams {
   type: DisciplinaryCardType;
   marshalId: number;
   active: boolean;
+  receivedAt: Date;
   expiresAt: Date;
 }

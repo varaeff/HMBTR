@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useTranslation } from 'i18next-vue'
 import { Button } from '@/components/ui/button'
 import { tData } from '@/lib/utils'
-import { CardStatusIcon } from '@/widgets/tournament/DisciplinaryCards'
-import type { BracketSlot, DisciplinaryCardStatus } from '@/model'
+import { CardStatusIcon, formatActiveDisciplinaryCardTitle } from '@/widgets/tournament/DisciplinaryCards'
+import type { ActiveDisciplinaryCardSummary, BracketSlot } from '@/model'
+import type { ActiveCardTypes } from '@/widgets/tournament/types'
 
 const props = defineProps<{
   slotPairs: BracketSlot[][]
@@ -12,7 +14,7 @@ const props = defineProps<{
   isLocked: boolean
   isFixingPairs: boolean
   latestRound?: number
-  activeCardTypes?: Partial<Record<number, DisciplinaryCardStatus>>
+  activeCardTypes?: ActiveCardTypes
 }>()
 
 const emit = defineEmits<{
@@ -22,6 +24,10 @@ const emit = defineEmits<{
 }>()
 
 const draggedSlot = ref<number | null>(null)
+const { i18next } = useTranslation()
+const currentLanguage = computed(() => i18next.language)
+const cardTitle = (card: ActiveDisciplinaryCardSummary) =>
+  formatActiveDisciplinaryCardTitle(card, currentLanguage.value, (key) => i18next.t(key))
 
 const dropOnSlot = (targetPosition: number) => {
   if (!draggedSlot.value || props.isLocked || draggedSlot.value === targetPosition) {
@@ -63,7 +69,14 @@ const dropOnSlot = (targetPosition: number) => {
         >
           <div class="font-semibold leading-tight">
             {{ tData(slot.fighter.surname) }} {{ tData(slot.fighter.name) }}
-            <CardStatusIcon :type="activeCardTypes?.[slot.fighter.id]" />
+            <span
+              v-for="card in activeCardTypes?.[slot.fighter.id] ?? []"
+              :key="card.id"
+              :title="cardTitle(card)"
+              class="inline-flex"
+            >
+              <CardStatusIcon :type="card" :showTitle="false" />
+            </span>
           </div>
           <div class="mt-1 text-muted-foreground">
             {{ tData(slot.fighter.city)

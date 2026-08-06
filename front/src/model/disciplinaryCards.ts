@@ -6,6 +6,16 @@ export interface DisciplinaryCardStatus {
   active: boolean
 }
 
+export interface ActiveDisciplinaryCardSummary extends DisciplinaryCardStatus {
+  id: number
+  fighter_id: number
+  tournament_id: number
+  tournament_name: string
+  reason: string
+  received_at: string
+  expires_at: string
+}
+
 export interface DisciplinaryCard {
   id: number
   fighter_id: number
@@ -44,6 +54,7 @@ export interface DisciplinaryCard {
   can_manage: boolean
   can_change_result_fields: boolean
   can_delete: boolean
+  can_activate: boolean
 }
 
 export interface CreateDisciplinaryCardPayload {

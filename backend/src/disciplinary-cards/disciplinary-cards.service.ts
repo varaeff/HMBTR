@@ -7,6 +7,7 @@ import { DisciplinaryCardStorage } from './cards/disciplinary-card-storage';
 import {
   CARD_RED,
   CARD_YELLOW,
+  AUTO_RED_THREE_YELLOWS_CROSS_TOURNAMENT,
   SOURCE_AUTOMATIC,
   SOURCE_MANUAL,
 } from './disciplinary-card.constants';
@@ -40,13 +41,28 @@ export class DisciplinaryCardsService {
   async findByFighter(fighterId: number) {
     await this.storage.ensureStorageReady();
 
-    return this.reader.findCards({ fighterId });
+    return this.reader.findCards(
+      { fighterId },
+      this.expiration.toDateOnly(new Date()),
+    );
   }
 
   async findByTournament(tournamentId: number) {
     await this.storage.ensureStorageReady();
 
-    return this.reader.findCards({ tournamentId });
+    const checkDate =
+      await this.expiration.getTournamentCheckDate(tournamentId);
+
+    return this.reader.findCards({ tournamentId }, checkDate);
+  }
+
+  async findActiveForTournament(tournamentId: number) {
+    await this.storage.ensureStorageReady();
+
+    const checkDate =
+      await this.expiration.getTournamentCheckDate(tournamentId);
+
+    return this.reader.findActiveCardsForTournament(tournamentId, checkDate);
   }
 
   async create(dto: CreateDisciplinaryCardDto) {
@@ -85,7 +101,11 @@ export class DisciplinaryCardsService {
 
     await this.applyConsequences(card);
 
-    return this.reader.findOne(card.id);
+    const checkDate = await this.expiration.getTournamentCheckDate(
+      card.tournament_id,
+    );
+
+    return this.reader.findOne(card.id, checkDate);
   }
 
   async update(id: number, dto: UpdateDisciplinaryCardDto) {
@@ -101,14 +121,6 @@ export class DisciplinaryCardsService {
     const reason = dto.reason ?? existing.reason;
     const marshalId = dto.marshal_id ?? existing.marshal_id;
     const marshalChanged = marshalId !== existing.marshal_id;
-    const active =
-      type === CARD_YELLOW
-        ? existing.type === CARD_YELLOW
-          ? existing.active
-          : true
-        : existing.type !== CARD_RED
-          ? true
-          : (dto.active ?? existing.active);
     const expiresAt = dto.expires_at
       ? this.expiration.toDateOnly(dto.expires_at)
       : type !== existing.type
@@ -120,11 +132,24 @@ export class DisciplinaryCardsService {
             existing.id,
           )
         : this.expiration.toDateOnly(existing.expires_at);
+    const active = this.resolveUpdatedStructuralActive(existing, dto, type);
     const activatesInactiveRed =
       existing.type === CARD_RED &&
       !existing.active &&
       type === CARD_RED &&
       active;
+    const receivedAt = activatesInactiveRed
+      ? this.expiration.toDateOnly(new Date())
+      : this.expiration.toDateOnly(existing.received_at);
+    if (
+      activatesInactiveRed &&
+      receivedAt.getTime() <=
+        this.expiration.toDateOnly(existing.received_at).getTime()
+    ) {
+      throw new BadRequestException(
+        'Inactive red card cannot be activated on or before its original issue date',
+      );
+    }
 
     await this.storage.updateCard({
       id,
@@ -132,6 +157,7 @@ export class DisciplinaryCardsService {
       type,
       marshalId,
       active,
+      receivedAt,
       expiresAt,
     });
 
@@ -152,7 +178,7 @@ export class DisciplinaryCardsService {
     if (activatesInactiveRed) {
       await this.redYellowSources.closeSourceYellowsForRed(
         updated.id,
-        this.expiration.toDateOnly(new Date()),
+        receivedAt,
       );
     }
     if (updated.type !== existing.type) {
@@ -167,7 +193,11 @@ export class DisciplinaryCardsService {
       );
     }
 
-    return this.reader.findOne(id);
+    const checkDate = await this.expiration.getTournamentCheckDate(
+      updated.tournament_id,
+    );
+
+    return this.reader.findOne(id, checkDate);
   }
 
   async delete(id: number) {
@@ -193,6 +223,12 @@ export class DisciplinaryCardsService {
 
     if (card.type === CARD_RED) {
       await this.competitionService.applyRedCardForfeits(card.tournament_id);
+    } else {
+      await this.automaticReds.createInactiveCrossTournamentRedIfNeeded(
+        card.fighter_id,
+        card.tournament_id,
+        card.received_at,
+      );
     }
   }
 
@@ -211,5 +247,36 @@ export class DisciplinaryCardsService {
     }
 
     await this.consequences.applyRedCardConsequences(card);
+  }
+
+  private resolveUpdatedStructuralActive(
+    existing: StoredDisciplinaryCard,
+    dto: UpdateDisciplinaryCardDto,
+    type: StoredDisciplinaryCard['type'],
+  ) {
+    if (this.isInactiveCrossTournamentAutomaticRed(existing, dto, type)) {
+      return dto.active ?? existing.active;
+    }
+
+    if (type === CARD_RED && dto.active !== undefined) {
+      return dto.active;
+    }
+
+    return true;
+  }
+
+  private isInactiveCrossTournamentAutomaticRed(
+    existing: StoredDisciplinaryCard,
+    dto: UpdateDisciplinaryCardDto,
+    type: StoredDisciplinaryCard['type'],
+  ) {
+    return (
+      existing.type === CARD_RED &&
+      type === CARD_RED &&
+      existing.source === SOURCE_AUTOMATIC &&
+      existing.reason === AUTO_RED_THREE_YELLOWS_CROSS_TOURNAMENT &&
+      existing.active === false &&
+      dto.active !== true
+    );
   }
 }

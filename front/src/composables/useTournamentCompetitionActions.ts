@@ -74,6 +74,7 @@ interface ApiUiErrorStore {
 
 interface TournamentCardsCommandStore {
   loadTournamentCards(tournamentId: number): Promise<void>
+  loadTournamentActiveCards(tournamentId: number): Promise<void>
   createCard(payload: CreateDisciplinaryCardPayload): Promise<DisciplinaryCard>
   updateCard(id: number, payload: UpdateDisciplinaryCardPayload): Promise<DisciplinaryCard>
   deleteCard(id: number): Promise<void>
@@ -127,7 +128,10 @@ export const useTournamentCompetitionActions = ({
   }
 
   const refreshCardsAndCompetition = async () => {
-    await cardsStore.loadTournamentCards(tournamentId.value)
+    await Promise.all([
+      cardsStore.loadTournamentCards(tournamentId.value),
+      cardsStore.loadTournamentActiveCards(tournamentId.value)
+    ])
     await competitionStore.setCompetitors()
     if (activeTab.value) {
       await competitionStore.loadCompetitionState()

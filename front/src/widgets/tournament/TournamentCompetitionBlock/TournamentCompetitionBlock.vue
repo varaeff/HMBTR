@@ -78,7 +78,7 @@ const isGroupBlockComplete = computed(
             state.block.lifecycleState === 'FIGHTS_EDITABLE'
           "
           :canIssueCards="
-            permissions.canManageCards &&
+            permissions.canIssueCards &&
             state.block.status === 'ACTIVE' &&
             state.block.lifecycleState === 'FIGHTS_EDITABLE'
           "
@@ -136,7 +136,7 @@ const isGroupBlockComplete = computed(
         :canUseBackwardActions="
           permissions.canUseCompetitionBackwardActions && state.block.status === 'ACTIVE'
         "
-        :canIssueCards="permissions.canManageCards"
+        :canIssueCards="permissions.canIssueCards"
         :tournamentId="state.tournamentId"
         :cardDate="cards.cardIssueDate"
         :activeCardTypes="cards.activeCardTypes"

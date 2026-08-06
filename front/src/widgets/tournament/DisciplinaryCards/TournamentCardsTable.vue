@@ -2,7 +2,7 @@
 import { computed, reactive, ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { RouterLink } from 'vue-router'
-import { Save, SquarePen, SquareX, Trash2 } from 'lucide-vue-next'
+import { CheckCheck, Save, SquarePen, SquareX, Trash2 } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Table, TableHeader, TableBody, TableCell, TableRow } from '@/components/ui/table'
@@ -13,6 +13,7 @@ import type {
   UpdateDisciplinaryCardAction
 } from '@/widgets/tournament/types'
 import CardStatusIcon from './CardStatusIcon.vue'
+import { formatDisciplinaryCardReason } from './disciplinaryCardPresentation'
 
 const props = defineProps<{
   cards: DisciplinaryCard[]
@@ -89,28 +90,26 @@ const marshalName = (card: DisciplinaryCard) =>
   personInitials(card.marshal_surname, card.marshal_name, card.marshal_patronymic)
 
 const marshalLabel = (item: TournamentMarshal) =>
-  `${tData(item.marshal.surname, currentLanguage.value)} ${tData(
-    item.marshal.name,
-    currentLanguage.value
-  )}`
+  personInitials(item.marshal.surname, item.marshal.name, item.marshal.patronymic ?? null)
 
 const cardTournamentMarshals = (card: DisciplinaryCard) =>
   props.tournamentMarshals ??
   props.tournamentMarshalsByTournamentId?.[card.tournament_id] ??
   []
 
-const reasonText = (reason: string) => {
-  const translationKey = `disciplinaryCardsReason${reason}`
-  const translated = i18next.t(translationKey)
-
-  return translated === translationKey ? reason : translated
-}
+const reasonText = (reason: string) =>
+  formatDisciplinaryCardReason(reason, (key) => i18next.t(key))
 
 const isFighterMode = computed(() => props.mode === 'fighter')
 const canDeleteCard = (card: DisciplinaryCard) => props.canDelete && card.can_delete
 const isAutomaticCard = (card: DisciplinaryCard) => card.source === 'AUTOMATIC'
+const canActivateCard = (card: DisciplinaryCard) =>
+  props.canManage && isFighterMode.value && card.can_manage && card.can_activate
 const canEditCard = (card: DisciplinaryCard) =>
-  props.canManage && card.can_manage && (!isAutomaticCard(card) || isFighterMode.value)
+  props.canManage &&
+  card.can_manage &&
+  (!isAutomaticCard(card) || isFighterMode.value) &&
+  (card.type !== 'YELLOW' || !card.expires_at_locked)
 const canShowActions = computed(() =>
   visibleCards.value.some((card) => canEditCard(card) || canDeleteCard(card))
 )
@@ -125,6 +124,9 @@ const resultFieldPayload = (card: DisciplinaryCard) =>
     : {}
 const canEditExpiration = (card: DisciplinaryCard) =>
   isFighterMode.value && !(card.type === 'YELLOW' && card.expires_at_locked)
+const markRedActivation = () => {
+  draft.active = true
+}
 const toggleDraftType = () => {
   draft.type = draft.type === 'YELLOW' ? 'RED' : 'YELLOW'
 }
@@ -145,11 +147,16 @@ const cancelEdit = () => {
 
 const saveEdit = async (card: DisciplinaryCard) => {
   if (isAutomaticCard(card)) {
+    const activePayload =
+      canActivateCard(card) && draft.active !== card.active ? { active: draft.active } : {}
     await props.updateCard(
       card.id,
-      canEditExpiration(card) && draft.expires_at !== draft.initial_expires_at
-        ? { expires_at: draft.expires_at }
-        : {}
+      {
+        ...activePayload,
+        ...(canEditExpiration(card) && draft.expires_at !== draft.initial_expires_at
+          ? { expires_at: draft.expires_at }
+          : {})
+      }
     )
     editingId.value = null
     emit('changed')
@@ -197,30 +204,31 @@ const deleteCard = async (card: DisciplinaryCard) => {
       {{ $t('disciplinaryCardsShowInactive') }}
     </label>
 
-    <Table class="w-full table-fixed">
+    <div class="w-full overflow-x-auto">
+    <Table class="min-w-[68rem] table-auto">
       <TableHeader>
         <TableRow>
-          <TableCell class="w-12 text-center font-bold">{{ $t('disciplinaryCardsType') }}</TableCell>
-          <TableCell v-if="isFighterMode" class="font-bold">{{
+          <TableCell class="w-12 whitespace-nowrap text-center align-top font-bold">{{ $t('disciplinaryCardsType') }}</TableCell>
+          <TableCell v-if="isFighterMode" class="max-w-72 whitespace-normal break-words align-top font-bold">{{
             $t('disciplinaryCardsTournament')
           }}</TableCell>
-          <TableCell v-else class="font-bold">{{ $t('disciplinaryCardsFighter') }}</TableCell>
-          <TableCell class="font-bold">{{ $t('disciplinaryCardsMarshal') }}</TableCell>
-          <TableCell v-if="isFighterMode" class="font-bold">{{
+          <TableCell v-else class="whitespace-nowrap align-top font-bold">{{ $t('disciplinaryCardsFighter') }}</TableCell>
+          <TableCell class="whitespace-nowrap align-top font-bold">{{ $t('disciplinaryCardsMarshal') }}</TableCell>
+          <TableCell v-if="isFighterMode" class="w-28 whitespace-nowrap align-top font-bold">{{
             $t('disciplinaryCardsDate')
           }}</TableCell>
-          <TableCell v-else class="font-bold">{{ $t('disciplinaryCardsNomination') }}</TableCell>
-          <TableCell v-if="!isFighterMode" class="font-bold">{{
+          <TableCell v-else class="whitespace-nowrap align-top font-bold">{{ $t('disciplinaryCardsNomination') }}</TableCell>
+          <TableCell v-if="!isFighterMode" class="w-16 whitespace-nowrap align-top font-bold">{{
             $t('disciplinaryCardsFight')
           }}</TableCell>
-          <TableCell class="w-[36%] font-bold whitespace-normal">{{
+          <TableCell class="max-w-[34rem] whitespace-normal break-words align-top font-bold">{{
             $t('disciplinaryCardsReason')
           }}</TableCell>
-          <TableCell class="font-bold">{{ $t('disciplinaryCardsActive') }}</TableCell>
-          <TableCell v-if="isFighterMode" class="font-bold">{{
+          <TableCell class="w-24 whitespace-nowrap align-top font-bold">{{ $t('disciplinaryCardsActive') }}</TableCell>
+          <TableCell v-if="isFighterMode" class="w-28 whitespace-nowrap align-top font-bold">{{
             $t('disciplinaryCardsExpires')
           }}</TableCell>
-          <TableCell v-if="canShowActions" class="font-bold text-right">{{
+          <TableCell v-if="canShowActions" class="w-24 whitespace-nowrap align-top text-right font-bold">{{
             $t('disciplinaryCardsActions')
           }}</TableCell>
         </TableRow>
@@ -232,23 +240,22 @@ const deleteCard = async (card: DisciplinaryCard) => {
           :class="!card.active ? 'text-muted-foreground' : undefined"
         >
         <template v-if="editingId === card.id">
-          <TableCell class="text-center">
+          <TableCell class="whitespace-nowrap text-center align-top">
             <span v-if="isAutomaticCard(card)" class="inline-flex justify-center">
-              <CardStatusIcon :type="{ type: draft.type, active: draft.active }" />
+              <CardStatusIcon :type="{ type: draft.type, active: draft.active }" :showTitle="false" />
             </span>
             <Button
               v-else
               size="icon-sm"
               variant="outline"
-              :title="$t('disciplinaryCardsType')"
               :aria-label="$t('disciplinaryCardsType')"
               :disabled="!card.can_change_result_fields"
               @click="toggleDraftType"
             >
-              <CardStatusIcon :type="{ type: draft.type, active: draft.active }" />
+              <CardStatusIcon :type="{ type: draft.type, active: draft.active }" :showTitle="false" />
             </Button>
           </TableCell>
-          <TableCell v-if="isFighterMode">
+          <TableCell v-if="isFighterMode" class="max-w-72 whitespace-normal break-words align-top">
             <RouterLink
               class="text-primary underline-offset-4 hover:underline"
               :to="{
@@ -260,8 +267,8 @@ const deleteCard = async (card: DisciplinaryCard) => {
               {{ tData(card.tournament_name, currentLanguage) }}
             </RouterLink>
           </TableCell>
-          <TableCell v-else>{{ fighterName(card) }}</TableCell>
-          <TableCell>
+          <TableCell v-else class="whitespace-nowrap align-top">{{ fighterName(card) }}</TableCell>
+          <TableCell class="whitespace-nowrap align-top">
             <span v-if="isAutomaticCard(card)">{{ marshalName(card) }}</span>
             <select
               v-else
@@ -278,24 +285,31 @@ const deleteCard = async (card: DisciplinaryCard) => {
               </option>
             </select>
           </TableCell>
-          <TableCell v-if="isFighterMode">
-            <input
-              :value="dateInputValue(card.received_at)"
-              type="date"
-              disabled
-              class="h-8 rounded border bg-muted px-2"
-            />
+          <TableCell v-if="isFighterMode" class="whitespace-nowrap align-top">
+            {{ formatDate(card.received_at) }}
           </TableCell>
-          <TableCell v-else>{{ nominationName(card) }}</TableCell>
-          <TableCell v-if="!isFighterMode">{{ fightLabel(card) }}</TableCell>
-          <TableCell class="min-w-0 whitespace-normal" data-testid="disciplinary-card-reason">
+          <TableCell v-else class="whitespace-nowrap align-top">{{ nominationName(card) }}</TableCell>
+          <TableCell v-if="!isFighterMode" class="whitespace-nowrap align-top">{{ fightLabel(card) }}</TableCell>
+          <TableCell class="max-w-[34rem] whitespace-normal break-words align-top" data-testid="disciplinary-card-reason">
             <span v-if="isAutomaticCard(card)" class="text-sm text-muted-foreground">
               {{ reasonText(card.reason) }}
             </span>
             <input v-else v-model="draft.reason" class="h-8 w-full rounded border bg-background px-2" />
           </TableCell>
-          <TableCell>
-            <div v-if="draft.type === 'RED' && !isAutomaticCard(card)" class="flex justify-center">
+          <TableCell class="whitespace-nowrap align-top">
+            <div v-if="canActivateCard(card)" class="flex justify-start">
+              <Button
+                size="icon-sm"
+                :variant="draft.active ? 'default' : 'outline'"
+                :title="$t('disciplinaryCardsActivate')"
+                :aria-label="$t('disciplinaryCardsActivate')"
+                :disabled="draft.active"
+                @click="markRedActivation"
+              >
+                <CheckCheck />
+              </Button>
+            </div>
+            <div v-else-if="draft.type === 'RED' && !isAutomaticCard(card)" class="flex justify-center">
               <Checkbox
                 :model-value="draft.active"
                 :disabled="card.active || !card.can_change_result_fields"
@@ -303,7 +317,7 @@ const deleteCard = async (card: DisciplinaryCard) => {
               />
             </div>
           </TableCell>
-          <TableCell v-if="isFighterMode">
+          <TableCell v-if="isFighterMode" class="whitespace-nowrap align-top">
             <input
               v-model="draft.expires_at"
               type="date"
@@ -316,7 +330,7 @@ const deleteCard = async (card: DisciplinaryCard) => {
               "
             />
           </TableCell>
-          <TableCell class="text-right">
+          <TableCell class="whitespace-nowrap align-top text-right">
             <div class="flex justify-end gap-2">
               <Button
                 size="icon-sm"
@@ -339,12 +353,12 @@ const deleteCard = async (card: DisciplinaryCard) => {
           </TableCell>
         </template>
         <template v-else>
-          <TableCell class="text-center">
+          <TableCell class="whitespace-nowrap text-center align-top">
             <span class="inline-flex justify-center">
-              <CardStatusIcon :type="{ type: card.type, active: card.active }" />
+              <CardStatusIcon :type="{ type: card.type, active: card.active }" :showTitle="false" />
             </span>
           </TableCell>
-          <TableCell v-if="isFighterMode">
+          <TableCell v-if="isFighterMode" class="max-w-72 whitespace-normal break-words align-top">
             <RouterLink
               class="text-primary underline-offset-4 hover:underline"
               :to="{
@@ -356,24 +370,24 @@ const deleteCard = async (card: DisciplinaryCard) => {
               {{ tData(card.tournament_name, currentLanguage) }}
             </RouterLink>
           </TableCell>
-          <TableCell v-else>{{ fighterName(card) }}</TableCell>
-          <TableCell>{{ marshalName(card) }}</TableCell>
-          <TableCell v-if="isFighterMode">{{ formatDate(card.received_at) }}</TableCell>
-          <TableCell v-else>{{ nominationName(card) }}</TableCell>
-          <TableCell v-if="!isFighterMode">{{ fightLabel(card) }}</TableCell>
+          <TableCell v-else class="whitespace-nowrap align-top">{{ fighterName(card) }}</TableCell>
+          <TableCell class="whitespace-nowrap align-top">{{ marshalName(card) }}</TableCell>
+          <TableCell v-if="isFighterMode" class="whitespace-nowrap align-top">{{ formatDate(card.received_at) }}</TableCell>
+          <TableCell v-else class="whitespace-nowrap align-top">{{ nominationName(card) }}</TableCell>
+          <TableCell v-if="!isFighterMode" class="whitespace-nowrap align-top">{{ fightLabel(card) }}</TableCell>
           <TableCell
-            class="min-w-0 whitespace-normal break-words"
+            class="max-w-[34rem] whitespace-normal break-words align-top"
             data-testid="disciplinary-card-reason"
           >
             {{ reasonText(card.reason) }}
           </TableCell>
-          <TableCell>
+          <TableCell class="whitespace-nowrap align-top">
             <span class="text-sm text-muted-foreground">
               {{ card.active ? $t('disciplinaryCardsActiveYes') : $t('disciplinaryCardsActiveNo') }}
             </span>
           </TableCell>
-          <TableCell v-if="isFighterMode">{{ formatDate(card.expires_at) }}</TableCell>
-          <TableCell v-if="canShowActions" class="text-right">
+          <TableCell v-if="isFighterMode" class="whitespace-nowrap align-top">{{ formatDate(card.expires_at) }}</TableCell>
+          <TableCell v-if="canShowActions" class="whitespace-nowrap align-top text-right">
             <div class="flex justify-end gap-2">
               <Button
                 v-if="canEditCard(card)"
@@ -401,5 +415,6 @@ const deleteCard = async (card: DisciplinaryCard) => {
       </TableRow>
       </TableBody>
     </Table>
+    </div>
   </div>
 </template>

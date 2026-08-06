@@ -81,4 +81,15 @@ describe('DisciplinaryCardsController', () => {
 
     expect(service.update).toHaveBeenCalledWith(7, updateDto);
   });
+
+  it('rejects card updates by organizers', () => {
+    const { controller } = createController();
+    const updateDto: UpdateDisciplinaryCardDto = {
+      marshal_id: 8,
+    };
+
+    expect(() =>
+      controller.update(7, updateDto, { user: { is_organizer: true } }),
+    ).toThrow(ForbiddenException);
+  });
 });
