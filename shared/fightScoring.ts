@@ -5,6 +5,7 @@ export type WinnerSide = 1 | 2 | null
 export interface RoundScore {
   competitor1Score: number
   competitor2Score: number
+  durationSeconds?: number
 }
 
 export interface FightWarning {

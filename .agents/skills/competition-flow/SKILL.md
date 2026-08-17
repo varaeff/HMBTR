@@ -93,6 +93,21 @@ Keep domain rules in backend logic helpers, not in Vue components. The frontend 
 - Persist `rounds` and `round_win` on every fight when it is created. Later
   nomination-setting changes must affect only future fights; scoring, warnings,
   forfeits, reports, and result validation should read the fight snapshot.
+- Nomination round-time fields are defaults for future fights only. Persist
+  `main_round_time` and `additional_round_time` on every fight at creation time
+  alongside the scoring snapshot. Existing fights must keep their stored timing
+  snapshot when nomination settings change.
+- Updating only nomination round-time fields must not require existing-fight
+  confirmation. Only scoring rule changes (`rounds`, `round_win`) need that
+  conflict guard, because they can reinterpret already-created fights.
+- Persist concrete played-round durations in `fight_round_scores.duration_seconds`.
+  Missing submitted durations should default from the fight timing snapshot:
+  rounds `<= fight.rounds` use `main_round_time`; extra rounds use
+  `additional_round_time`. Red-card forfeit generated round rows use `0`.
+- The "show round times" toggle is only useful for fight blocks that still have
+  at least one editable score/time input. If every fight is finished, a red-card
+  forfeit, or a warning technical defeat, hide the toggle and let each fight card
+  show its stored time automatically when needed.
 - Keep pure score evaluation and result formatting in `shared/fightScoring.ts`; backend and frontend must consume the same rules.
 - All fights submit ordered `round_scores`, including one-round nominations. The backend calculates aggregate scores and `winner_id`.
 - For `round_win = false`, the aggregate total determines the winner. For `round_win = true`, won rounds determine the winner and drawn rounds award no round win.

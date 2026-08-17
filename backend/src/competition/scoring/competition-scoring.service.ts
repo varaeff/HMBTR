@@ -15,11 +15,13 @@ export class CompetitionScoringService {
     round_scores: Array<{
       competitor1_score: number;
       competitor2_score: number;
+      duration_seconds?: number;
     }>;
   }): RoundScore[] {
     return fight.round_scores.map((score) => ({
       competitor1Score: score.competitor1_score,
       competitor2Score: score.competitor2_score,
+      durationSeconds: score.duration_seconds ?? 0,
     }));
   }
 
@@ -71,6 +73,7 @@ export class CompetitionScoringService {
         round: index + 1,
         competitor1_score: score.competitor1Score,
         competitor2_score: score.competitor2Score,
+        duration_seconds: score.durationSeconds ?? 0,
       })),
     });
   }

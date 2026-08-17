@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import type { RoundScore } from '@shared/fightScoring'
+import { formatRoundTime } from '@/lib/roundTime'
 import type { FightResultDisplayText, FightWarningResultScore } from './types'
 
 defineProps<{
   warningResultScore: FightWarningResultScore | null
   resultDisplay: FightResultDisplayText
+  roundScores: RoundScore[]
+  showRoundTimes: boolean
 }>()
 </script>
 
@@ -47,5 +51,11 @@ defineProps<{
         {{ resultDisplay.details }}
       </span>
     </template>
+    <div v-if="showRoundTimes" class="mt-1 grid gap-0.5 text-xs text-muted-foreground">
+      <div v-for="(round, index) in roundScores" :key="index">
+        R{{ index + 1 }} {{ $t('fightRoundTimeLabel') }}
+        {{ formatRoundTime(round.durationSeconds ?? 0) }}
+      </div>
+    </div>
   </div>
 </template>

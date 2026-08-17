@@ -19,6 +19,7 @@ import FightResultDisplay from './FightResultDisplay.vue'
 import FightScoreEditor from './FightScoreEditor.vue'
 import FightWarningIssueDialog from './FightWarningIssueDialog.vue'
 import IssueCardDialog from './IssueCardDialog.vue'
+import { hasEditableRoundTimeInput } from '../fightRoundTimeVisibility'
 import { useFightScoreDraft } from './useFightScoreDraft'
 import { useIssueCardDialog } from './useIssueCardDialog'
 
@@ -31,6 +32,7 @@ const props = defineProps<{
   activeCardTypes?: ActiveCardTypes
   tournamentMarshals?: TournamentMarshal[]
   createDisciplinaryCard?: CreateDisciplinaryCardAction
+  showRoundTimes?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -74,6 +76,7 @@ const {
   warningMarkers,
   bonusForScore,
   updateScore,
+  updateRoundTime,
   handleBlur,
   canIssueWarning,
   issueWarning,
@@ -88,6 +91,13 @@ const {
   translate: i18next.t.bind(i18next),
   emitScoreUpdate: (payload) => emit('update:score', payload)
 })
+const shouldShowRoundTimes = computed(() =>
+  Boolean(
+    props.showRoundTimes ||
+      props.fight.isFinished ||
+      (props.hasAccess && !hasEditableRoundTimeInput(props.fight))
+  )
+)
 const {
   issueDialogOpen,
   issueFighter,
@@ -158,15 +168,19 @@ const openIssueDialog = (fighter: Fighter) => {
         v-if="canEdit"
         :visible-round-scores="visibleRoundScores"
         :can-edit-scores="canEditScores"
+        :show-round-times="shouldShowRoundTimes"
         :highlight-tie-break-required="highlightTieBreakRequired"
         :bonus-for-score="bonusForScore"
         @update-score="updateScore"
+        @update-round-time="updateRoundTime"
         @score-blur="handleBlur"
       />
       <FightResultDisplay
         v-else
         :warning-result-score="warningResultScore"
         :result-display="resultDisplay"
+        :round-scores="visibleRoundScores"
+        :show-round-times="shouldShowRoundTimes"
       />
     </div>
   </div>

@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
+import { Checkbox } from '@/components/ui/checkbox'
 import { FightCard } from '@/widgets/tournament/FightCard'
+import { hasEditableRoundTimeInputs } from '@/widgets/tournament/fightRoundTimeVisibility'
 import type { BlockData, TournamentMarshal } from '@/model'
 import type {
   ActiveCardTypes,
@@ -20,6 +22,7 @@ const props = defineProps<{
   createDisciplinaryCard?: CreateDisciplinaryCardAction
   blockId?: number
   blocksData: BlockData[]
+  showRoundTimeToggle?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -28,9 +31,25 @@ const emit = defineEmits<{
 }>()
 
 const blocks = computed(() => props.blocksData.filter((block) => block.fights.length > 0))
+const roundTimesVisibility = ref<Record<string, boolean>>({})
 
 const getGroupLabel = (letters: string[]) => {
   return letters.join(', ')
+}
+
+const visibilityKey = (block: BlockData) => block.letters.join('|')
+
+const isRoundTimesVisible = (block: BlockData) =>
+  Boolean(roundTimesVisibility.value[visibilityKey(block)])
+
+const canShowRoundTimeToggle = (block: BlockData) =>
+  Boolean(props.showRoundTimeToggle && hasEditableRoundTimeInputs(block.fights))
+
+const setRoundTimesVisible = (block: BlockData, value: unknown) => {
+  roundTimesVisibility.value = {
+    ...roundTimesVisibility.value,
+    [visibilityKey(block)]: value === true
+  }
 }
 
 const getGroupTitle = (letters: string[]) => {
@@ -62,6 +81,16 @@ const handleScoreUpdate = (
       <h3 class="text-lg font-semibold">
         {{ getGroupTitle(block.letters) }}
       </h3>
+      <label
+        v-if="canShowRoundTimeToggle(block)"
+        class="flex items-center gap-2 text-sm text-muted-foreground"
+      >
+        <Checkbox
+          :model-value="isRoundTimesVisible(block)"
+          @update:model-value="(value) => setRoundTimesVisible(block, value)"
+        />
+        {{ $t('tournamentPageShowRoundTimes') }}
+      </label>
 
       <div class="space-y-2">
         <FightCard
@@ -75,6 +104,7 @@ const handleScoreUpdate = (
           :activeCardTypes="activeCardTypes"
           :tournamentMarshals="tournamentMarshals"
           :createDisciplinaryCard="createDisciplinaryCard"
+          :show-round-times="isRoundTimesVisible(block)"
           @update:score="(scores) => handleScoreUpdate(fight.id, fight.number, scores)"
           @card-issued="emit('card-issued')"
         />

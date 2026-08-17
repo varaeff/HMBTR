@@ -1,4 +1,5 @@
 import type { Fighter } from '@/model/fighter'
+import type { RoundScore } from '@shared/fightScoring'
 
 export interface GroupFighter extends Fighter {
   competitorId?: number
@@ -25,10 +26,12 @@ export interface FightData {
   fighter2Score: number
   fighter1EffectiveScore?: number
   fighter2EffectiveScore?: number
-  roundScores: Array<{ competitor1Score: number; competitor2Score: number }>
+  roundScores: RoundScore[]
   warnings?: Array<{ competitorId: number; round: number; reason: string }>
   rounds: 1 | 2 | 3
   roundWin: boolean
+  mainRoundTime?: number
+  additionalRoundTime?: number
   isResultValid: boolean
   winnerId?: number | null
   forfeitCardId?: number | null

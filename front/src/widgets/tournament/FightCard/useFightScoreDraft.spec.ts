@@ -55,7 +55,8 @@ describe('useFightScoreDraft', () => {
 
     expect(draft.visibleRoundScores.value[0]).toEqual({
       competitor1Score: 12,
-      competitor2Score: 0
+      competitor2Score: 0,
+      durationSeconds: 0
     })
     expect(updates.at(-1)?.roundScores).toEqual([
       { competitor1Score: 12, competitor2Score: 0 }

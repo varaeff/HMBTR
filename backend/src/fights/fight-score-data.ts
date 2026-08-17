@@ -1,4 +1,5 @@
 export type {
+  FightRoundTimeSnapshot,
   FightRoundScoreCreateData,
   FightScoreUpdateData,
   SubmittedFightScore,

@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { FightCard } from '@/widgets/tournament/FightCard'
+import { hasEditableRoundTimeInputs } from '@/widgets/tournament/fightRoundTimeVisibility'
 import type { FightData, TournamentMarshal } from '@/model'
 import type {
   ActiveCardTypes,
@@ -54,6 +56,13 @@ const emit = defineEmits<{
 }>()
 
 const resultFightsForAction = computed(() => props.resultFights ?? props.fights)
+const canShowRoundTimeToggle = computed(() =>
+  !props.resultsFixed && hasEditableRoundTimeInputs(props.fights)
+)
+const showRoundTimes = ref(false)
+const setShowRoundTimes = (value: unknown) => {
+  showRoundTimes.value = value === true
+}
 
 const updateScore = (
   fight: FightData,
@@ -70,15 +79,13 @@ const updateScore = (
 <template>
   <section class="space-y-3">
     <h3 class="text-lg font-semibold">{{ title }}</h3>
-    <div v-if="showLifecycle" class="text-sm text-muted-foreground">
-      {{
-        $t(
-          resultsFixed
-            ? 'tournamentPageLifecycleRESULTS_FIXED'
-            : 'tournamentPageLifecycleFIGHTS_EDITABLE'
-        )
-      }}
-    </div>
+    <label v-if="canShowRoundTimeToggle" class="flex items-center gap-2 text-sm text-muted-foreground">
+      <Checkbox
+        :model-value="showRoundTimes"
+        @update:model-value="setShowRoundTimes"
+      />
+      {{ $t('tournamentPageShowRoundTimes') }}
+    </label>
     <div class="space-y-2">
       <FightCard
         v-for="fight in fights"
@@ -91,6 +98,7 @@ const updateScore = (
         :activeCardTypes="activeCardTypes"
         :tournamentMarshals="tournamentMarshals"
         :createDisciplinaryCard="createDisciplinaryCard"
+        :show-round-times="showRoundTimes"
         @update:score="(scores) => updateScore(fight, scores)"
         @card-issued="emit('card-issued')"
       />

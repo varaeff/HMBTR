@@ -74,10 +74,10 @@ model marshals {
   category_id Int
   pic         String?
 
-  country     countries             @relation(fields: [country_id], references: [id])
-  city        cities                @relation(fields: [city_id], references: [id])
-  category    marshals_categories   @relation(fields: [category_id], references: [id])
-  tournaments tournament_marshals[]
+  country            countries             @relation(fields: [country_id], references: [id])
+  city               cities                @relation(fields: [city_id], references: [id])
+  category           marshals_categories   @relation(fields: [category_id], references: [id])
+  tournaments        tournament_marshals[]
   disciplinary_cards disciplinary_cards[]
 }
 
@@ -123,12 +123,14 @@ model tournament_marshals {
 }
 
 model nominations {
-  id        Int     @id @default(autoincrement())
-  name_ru   String  @db.VarChar(255)
-  name_en   String  @db.VarChar(255)
-  is_male   Boolean @default(true)
-  rounds    Int     @default(1)
-  round_win Boolean @default(false)
+  id                    Int     @id @default(autoincrement())
+  name_ru               String  @db.VarChar(255)
+  name_en               String  @db.VarChar(255)
+  is_male               Boolean @default(true)
+  rounds                Int     @default(1)
+  round_win             Boolean @default(false)
+  main_round_time       Int     @default(0)
+  additional_round_time Int     @default(0)
 
   tournaments            tournament_nominations[]
   competitors            competitors[]
@@ -213,25 +215,27 @@ model group_competitors {
 }
 
 model fights {
-  id                       Int     @id @default(autoincrement())
-  tournament_id            Int
-  nomination_id            Int
-  block_id                 Int?
-  group_id                 Int?
-  competitor1_id           Int
-  competitor2_id           Int
-  competitor1_score        Int     @default(0)
-  competitor2_score        Int     @default(0)
-  winner_id                Int?
-  stage                    Int     @default(0)
-  fight_number             Int     @default(0)
-  bracket_round            Int?
-  bracket_position         Int?
-  is_bronze                Boolean @default(false)
-  is_finished              Boolean @default(false)
-  forfeit_card_id          Int?
-  rounds                   Int     @default(1)
-  round_win                Boolean @default(false)
+  id                    Int     @id @default(autoincrement())
+  tournament_id         Int
+  nomination_id         Int
+  block_id              Int?
+  group_id              Int?
+  competitor1_id        Int
+  competitor2_id        Int
+  competitor1_score     Int     @default(0)
+  competitor2_score     Int     @default(0)
+  winner_id             Int?
+  stage                 Int     @default(0)
+  fight_number          Int     @default(0)
+  bracket_round         Int?
+  bracket_position      Int?
+  is_bronze             Boolean @default(false)
+  is_finished           Boolean @default(false)
+  forfeit_card_id       Int?
+  rounds                Int     @default(1)
+  round_win             Boolean @default(false)
+  main_round_time       Int     @default(0)
+  additional_round_time Int     @default(0)
 
   tournament tournaments         @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
   nomination nominations         @relation(fields: [nomination_id], references: [id], onDelete: Cascade)
@@ -257,6 +261,7 @@ model fight_round_scores {
   round             Int
   competitor1_score Int @default(0)
   competitor2_score Int @default(0)
+  duration_seconds  Int @default(0)
 
   fight fights @relation(fields: [fight_id], references: [id], onDelete: Cascade)
 
@@ -294,10 +299,10 @@ model disciplinary_cards {
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
 
-  fighter    fighters    @relation(fields: [fighter_id], references: [id], onDelete: Cascade)
-  tournament tournaments @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
-  fight      fights      @relation(fields: [fight_id], references: [id], onDelete: Cascade)
-  marshal    marshals    @relation(fields: [marshal_id], references: [id])
+  fighter                           fighters                  @relation(fields: [fighter_id], references: [id], onDelete: Cascade)
+  tournament                        tournaments               @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
+  fight                             fights                    @relation(fields: [fight_id], references: [id], onDelete: Cascade)
+  marshal                           marshals                  @relation(fields: [marshal_id], references: [id])
   red_card_yellow_sources_as_red    red_card_yellow_sources[] @relation("RedCardSources")
   red_card_yellow_sources_as_yellow red_card_yellow_sources[] @relation("YellowCardSources")
 
@@ -308,13 +313,13 @@ model disciplinary_cards {
 }
 
 model red_card_yellow_sources {
-  id                              Int      @id @default(autoincrement())
-  red_card_id                     Int
-  yellow_card_id                  Int
-  yellow_expires_at_before_close  DateTime? @db.Date
-  yellow_active_before_close      Boolean?
-  closed_at                       DateTime? @db.Date
-  created_at                      DateTime @default(now())
+  id                             Int       @id @default(autoincrement())
+  red_card_id                    Int
+  yellow_card_id                 Int
+  yellow_expires_at_before_close DateTime? @db.Date
+  yellow_active_before_close     Boolean?
+  closed_at                      DateTime? @db.Date
+  created_at                     DateTime  @default(now())
 
   red_card    disciplinary_cards @relation("RedCardSources", fields: [red_card_id], references: [id], onDelete: Cascade)
   yellow_card disciplinary_cards @relation("YellowCardSources", fields: [yellow_card_id], references: [id], onDelete: Cascade)
@@ -324,15 +329,15 @@ model red_card_yellow_sources {
 }
 
 model disciplinary_card_settings {
-  id                                    Int      @id @default(1)
-  yellow_expiration_mode                String   @default("END_OF_YEAR_MONTH") @db.VarChar(32)
-  yellow_expiration_month               Int      @default(12)
-  yellow_expiration_days                Int      @default(365)
-  red_auto_yellow_days                  Int      @default(45)
-  red_manual_days                       Int      @default(90)
-  red_manual_with_one_yellow_days       Int      @default(120)
-  red_manual_with_two_or_more_yellows_days Int   @default(180)
-  updated_at                            DateTime @updatedAt
+  id                                       Int      @id @default(1)
+  yellow_expiration_mode                   String   @default("END_OF_YEAR_MONTH") @db.VarChar(32)
+  yellow_expiration_month                  Int      @default(12)
+  yellow_expiration_days                   Int      @default(365)
+  red_auto_yellow_days                     Int      @default(45)
+  red_manual_days                          Int      @default(90)
+  red_manual_with_one_yellow_days          Int      @default(120)
+  red_manual_with_two_or_more_yellows_days Int      @default(180)
+  updated_at                               DateTime @updatedAt
 }
 
 model fighter_nomination_ratings {

@@ -40,7 +40,7 @@ export class FightResultPersistenceService {
     await this.scoringService.replaceFightRoundScoresTx(
       tx,
       result.submission.fight_id,
-      submittedRoundScores(result.submission),
+      submittedRoundScores(result.submission, result.roundTiming),
     );
     await tx.fight_warnings.deleteMany({
       where: { fight_id: result.submission.fight_id },

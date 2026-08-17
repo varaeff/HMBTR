@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import type { RoundScore } from '@shared/fightScoring'
+import RoundTimeInput from '@/components/ui/round-time-input/RoundTimeInput.vue'
 import type { FighterSide } from './types'
 
 const props = defineProps<{
   visibleRoundScores: RoundScore[]
   canEditScores: boolean
+  showRoundTimes: boolean
   highlightTieBreakRequired: boolean
   bonusForScore: (fighter: FighterSide, round?: number) => number
 }>()
 
 const emit = defineEmits<{
   (e: 'update-score', fighter: FighterSide, value: string, roundIndex?: number): void
+  (e: 'update-round-time', roundIndex: number, durationSeconds: number): void
   (
     e: 'score-blur',
     event: FocusEvent,
@@ -130,6 +133,17 @@ const selectInputContent = (event: Event) => {
       <span class="text-sm font-bold text-red-900">
         {{ bonusForScore(2, roundIndex + 1) > 0 ? `+${bonusForScore(2, roundIndex + 1)}` : '' }}
       </span>
+      <label
+        v-if="showRoundTimes"
+        class="col-span-full ml-9 flex items-center gap-2 text-xs font-medium text-muted-foreground sm:col-span-2 sm:ml-0"
+      >
+        {{ $t('fightRoundTimeLabel') }}
+        <RoundTimeInput
+          :model-value="round.durationSeconds ?? 0"
+          :disabled="!canEditScores"
+          @update:model-value="(value) => emit('update-round-time', roundIndex, value)"
+        />
+      </label>
     </div>
   </div>
 </template>

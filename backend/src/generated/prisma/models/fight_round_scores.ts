@@ -32,6 +32,7 @@ export type Fight_round_scoresAvgAggregateOutputType = {
   round: number | null
   competitor1_score: number | null
   competitor2_score: number | null
+  duration_seconds: number | null
 }
 
 export type Fight_round_scoresSumAggregateOutputType = {
@@ -40,6 +41,7 @@ export type Fight_round_scoresSumAggregateOutputType = {
   round: number | null
   competitor1_score: number | null
   competitor2_score: number | null
+  duration_seconds: number | null
 }
 
 export type Fight_round_scoresMinAggregateOutputType = {
@@ -48,6 +50,7 @@ export type Fight_round_scoresMinAggregateOutputType = {
   round: number | null
   competitor1_score: number | null
   competitor2_score: number | null
+  duration_seconds: number | null
 }
 
 export type Fight_round_scoresMaxAggregateOutputType = {
@@ -56,6 +59,7 @@ export type Fight_round_scoresMaxAggregateOutputType = {
   round: number | null
   competitor1_score: number | null
   competitor2_score: number | null
+  duration_seconds: number | null
 }
 
 export type Fight_round_scoresCountAggregateOutputType = {
@@ -64,6 +68,7 @@ export type Fight_round_scoresCountAggregateOutputType = {
   round: number
   competitor1_score: number
   competitor2_score: number
+  duration_seconds: number
   _all: number
 }
 
@@ -74,6 +79,7 @@ export type Fight_round_scoresAvgAggregateInputType = {
   round?: true
   competitor1_score?: true
   competitor2_score?: true
+  duration_seconds?: true
 }
 
 export type Fight_round_scoresSumAggregateInputType = {
@@ -82,6 +88,7 @@ export type Fight_round_scoresSumAggregateInputType = {
   round?: true
   competitor1_score?: true
   competitor2_score?: true
+  duration_seconds?: true
 }
 
 export type Fight_round_scoresMinAggregateInputType = {
@@ -90,6 +97,7 @@ export type Fight_round_scoresMinAggregateInputType = {
   round?: true
   competitor1_score?: true
   competitor2_score?: true
+  duration_seconds?: true
 }
 
 export type Fight_round_scoresMaxAggregateInputType = {
@@ -98,6 +106,7 @@ export type Fight_round_scoresMaxAggregateInputType = {
   round?: true
   competitor1_score?: true
   competitor2_score?: true
+  duration_seconds?: true
 }
 
 export type Fight_round_scoresCountAggregateInputType = {
@@ -106,6 +115,7 @@ export type Fight_round_scoresCountAggregateInputType = {
   round?: true
   competitor1_score?: true
   competitor2_score?: true
+  duration_seconds?: true
   _all?: true
 }
 
@@ -201,6 +211,7 @@ export type Fight_round_scoresGroupByOutputType = {
   round: number
   competitor1_score: number
   competitor2_score: number
+  duration_seconds: number
   _count: Fight_round_scoresCountAggregateOutputType | null
   _avg: Fight_round_scoresAvgAggregateOutputType | null
   _sum: Fight_round_scoresSumAggregateOutputType | null
@@ -232,6 +243,7 @@ export type fight_round_scoresWhereInput = {
   round?: Prisma.IntFilter<"fight_round_scores"> | number
   competitor1_score?: Prisma.IntFilter<"fight_round_scores"> | number
   competitor2_score?: Prisma.IntFilter<"fight_round_scores"> | number
+  duration_seconds?: Prisma.IntFilter<"fight_round_scores"> | number
   fight?: Prisma.XOR<Prisma.FightsScalarRelationFilter, Prisma.fightsWhereInput>
 }
 
@@ -241,6 +253,7 @@ export type fight_round_scoresOrderByWithRelationInput = {
   round?: Prisma.SortOrder
   competitor1_score?: Prisma.SortOrder
   competitor2_score?: Prisma.SortOrder
+  duration_seconds?: Prisma.SortOrder
   fight?: Prisma.fightsOrderByWithRelationInput
 }
 
@@ -254,6 +267,7 @@ export type fight_round_scoresWhereUniqueInput = Prisma.AtLeast<{
   round?: Prisma.IntFilter<"fight_round_scores"> | number
   competitor1_score?: Prisma.IntFilter<"fight_round_scores"> | number
   competitor2_score?: Prisma.IntFilter<"fight_round_scores"> | number
+  duration_seconds?: Prisma.IntFilter<"fight_round_scores"> | number
   fight?: Prisma.XOR<Prisma.FightsScalarRelationFilter, Prisma.fightsWhereInput>
 }, "id" | "fight_id_round">
 
@@ -263,6 +277,7 @@ export type fight_round_scoresOrderByWithAggregationInput = {
   round?: Prisma.SortOrder
   competitor1_score?: Prisma.SortOrder
   competitor2_score?: Prisma.SortOrder
+  duration_seconds?: Prisma.SortOrder
   _count?: Prisma.fight_round_scoresCountOrderByAggregateInput
   _avg?: Prisma.fight_round_scoresAvgOrderByAggregateInput
   _max?: Prisma.fight_round_scoresMaxOrderByAggregateInput
@@ -279,12 +294,14 @@ export type fight_round_scoresScalarWhereWithAggregatesInput = {
   round?: Prisma.IntWithAggregatesFilter<"fight_round_scores"> | number
   competitor1_score?: Prisma.IntWithAggregatesFilter<"fight_round_scores"> | number
   competitor2_score?: Prisma.IntWithAggregatesFilter<"fight_round_scores"> | number
+  duration_seconds?: Prisma.IntWithAggregatesFilter<"fight_round_scores"> | number
 }
 
 export type fight_round_scoresCreateInput = {
   round: number
   competitor1_score?: number
   competitor2_score?: number
+  duration_seconds?: number
   fight: Prisma.fightsCreateNestedOneWithoutRound_scoresInput
 }
 
@@ -294,12 +311,14 @@ export type fight_round_scoresUncheckedCreateInput = {
   round: number
   competitor1_score?: number
   competitor2_score?: number
+  duration_seconds?: number
 }
 
 export type fight_round_scoresUpdateInput = {
   round?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  duration_seconds?: Prisma.IntFieldUpdateOperationsInput | number
   fight?: Prisma.fightsUpdateOneRequiredWithoutRound_scoresNestedInput
 }
 
@@ -309,6 +328,7 @@ export type fight_round_scoresUncheckedUpdateInput = {
   round?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  duration_seconds?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type fight_round_scoresCreateManyInput = {
@@ -317,12 +337,14 @@ export type fight_round_scoresCreateManyInput = {
   round: number
   competitor1_score?: number
   competitor2_score?: number
+  duration_seconds?: number
 }
 
 export type fight_round_scoresUpdateManyMutationInput = {
   round?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  duration_seconds?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type fight_round_scoresUncheckedUpdateManyInput = {
@@ -331,6 +353,7 @@ export type fight_round_scoresUncheckedUpdateManyInput = {
   round?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  duration_seconds?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type Fight_round_scoresListRelationFilter = {
@@ -354,6 +377,7 @@ export type fight_round_scoresCountOrderByAggregateInput = {
   round?: Prisma.SortOrder
   competitor1_score?: Prisma.SortOrder
   competitor2_score?: Prisma.SortOrder
+  duration_seconds?: Prisma.SortOrder
 }
 
 export type fight_round_scoresAvgOrderByAggregateInput = {
@@ -362,6 +386,7 @@ export type fight_round_scoresAvgOrderByAggregateInput = {
   round?: Prisma.SortOrder
   competitor1_score?: Prisma.SortOrder
   competitor2_score?: Prisma.SortOrder
+  duration_seconds?: Prisma.SortOrder
 }
 
 export type fight_round_scoresMaxOrderByAggregateInput = {
@@ -370,6 +395,7 @@ export type fight_round_scoresMaxOrderByAggregateInput = {
   round?: Prisma.SortOrder
   competitor1_score?: Prisma.SortOrder
   competitor2_score?: Prisma.SortOrder
+  duration_seconds?: Prisma.SortOrder
 }
 
 export type fight_round_scoresMinOrderByAggregateInput = {
@@ -378,6 +404,7 @@ export type fight_round_scoresMinOrderByAggregateInput = {
   round?: Prisma.SortOrder
   competitor1_score?: Prisma.SortOrder
   competitor2_score?: Prisma.SortOrder
+  duration_seconds?: Prisma.SortOrder
 }
 
 export type fight_round_scoresSumOrderByAggregateInput = {
@@ -386,6 +413,7 @@ export type fight_round_scoresSumOrderByAggregateInput = {
   round?: Prisma.SortOrder
   competitor1_score?: Prisma.SortOrder
   competitor2_score?: Prisma.SortOrder
+  duration_seconds?: Prisma.SortOrder
 }
 
 export type fight_round_scoresCreateNestedManyWithoutFightInput = {
@@ -434,6 +462,7 @@ export type fight_round_scoresCreateWithoutFightInput = {
   round: number
   competitor1_score?: number
   competitor2_score?: number
+  duration_seconds?: number
 }
 
 export type fight_round_scoresUncheckedCreateWithoutFightInput = {
@@ -441,6 +470,7 @@ export type fight_round_scoresUncheckedCreateWithoutFightInput = {
   round: number
   competitor1_score?: number
   competitor2_score?: number
+  duration_seconds?: number
 }
 
 export type fight_round_scoresCreateOrConnectWithoutFightInput = {
@@ -478,6 +508,7 @@ export type fight_round_scoresScalarWhereInput = {
   round?: Prisma.IntFilter<"fight_round_scores"> | number
   competitor1_score?: Prisma.IntFilter<"fight_round_scores"> | number
   competitor2_score?: Prisma.IntFilter<"fight_round_scores"> | number
+  duration_seconds?: Prisma.IntFilter<"fight_round_scores"> | number
 }
 
 export type fight_round_scoresCreateManyFightInput = {
@@ -485,12 +516,14 @@ export type fight_round_scoresCreateManyFightInput = {
   round: number
   competitor1_score?: number
   competitor2_score?: number
+  duration_seconds?: number
 }
 
 export type fight_round_scoresUpdateWithoutFightInput = {
   round?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  duration_seconds?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type fight_round_scoresUncheckedUpdateWithoutFightInput = {
@@ -498,6 +531,7 @@ export type fight_round_scoresUncheckedUpdateWithoutFightInput = {
   round?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  duration_seconds?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type fight_round_scoresUncheckedUpdateManyWithoutFightInput = {
@@ -505,6 +539,7 @@ export type fight_round_scoresUncheckedUpdateManyWithoutFightInput = {
   round?: Prisma.IntFieldUpdateOperationsInput | number
   competitor1_score?: Prisma.IntFieldUpdateOperationsInput | number
   competitor2_score?: Prisma.IntFieldUpdateOperationsInput | number
+  duration_seconds?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
@@ -515,6 +550,7 @@ export type fight_round_scoresSelect<ExtArgs extends runtime.Types.Extensions.In
   round?: boolean
   competitor1_score?: boolean
   competitor2_score?: boolean
+  duration_seconds?: boolean
   fight?: boolean | Prisma.fightsDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["fight_round_scores"]>
 
@@ -524,6 +560,7 @@ export type fight_round_scoresSelectCreateManyAndReturn<ExtArgs extends runtime.
   round?: boolean
   competitor1_score?: boolean
   competitor2_score?: boolean
+  duration_seconds?: boolean
   fight?: boolean | Prisma.fightsDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["fight_round_scores"]>
 
@@ -533,6 +570,7 @@ export type fight_round_scoresSelectUpdateManyAndReturn<ExtArgs extends runtime.
   round?: boolean
   competitor1_score?: boolean
   competitor2_score?: boolean
+  duration_seconds?: boolean
   fight?: boolean | Prisma.fightsDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["fight_round_scores"]>
 
@@ -542,9 +580,10 @@ export type fight_round_scoresSelectScalar = {
   round?: boolean
   competitor1_score?: boolean
   competitor2_score?: boolean
+  duration_seconds?: boolean
 }
 
-export type fight_round_scoresOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fight_id" | "round" | "competitor1_score" | "competitor2_score", ExtArgs["result"]["fight_round_scores"]>
+export type fight_round_scoresOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fight_id" | "round" | "competitor1_score" | "competitor2_score" | "duration_seconds", ExtArgs["result"]["fight_round_scores"]>
 export type fight_round_scoresInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   fight?: boolean | Prisma.fightsDefaultArgs<ExtArgs>
 }
@@ -566,6 +605,7 @@ export type $fight_round_scoresPayload<ExtArgs extends runtime.Types.Extensions.
     round: number
     competitor1_score: number
     competitor2_score: number
+    duration_seconds: number
   }, ExtArgs["result"]["fight_round_scores"]>
   composites: {}
 }
@@ -995,6 +1035,7 @@ export interface fight_round_scoresFieldRefs {
   readonly round: Prisma.FieldRef<"fight_round_scores", 'Int'>
   readonly competitor1_score: Prisma.FieldRef<"fight_round_scores", 'Int'>
   readonly competitor2_score: Prisma.FieldRef<"fight_round_scores", 'Int'>
+  readonly duration_seconds: Prisma.FieldRef<"fight_round_scores", 'Int'>
 }
     
 

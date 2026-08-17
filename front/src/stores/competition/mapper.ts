@@ -55,6 +55,8 @@ interface RawFight {
   is_finished?: boolean
   rounds?: 1 | 2 | 3
   round_win?: boolean
+  main_round_time?: number
+  additional_round_time?: number
   warnings?: Array<{
     competitor_id: number
     round: number
@@ -63,6 +65,7 @@ interface RawFight {
   round_scores?: Array<{
     competitor1_score: number
     competitor2_score: number
+    duration_seconds?: number
   }>
 }
 
@@ -163,6 +166,10 @@ const mapFight = (
     rounds: fight.rounds ?? rules.rounds,
     roundWin: fight.round_win ?? rules.roundWin
   }
+  const mainRoundTime = fight.main_round_time ?? 0
+  const additionalRoundTime = fight.additional_round_time ?? 0
+  const roundDurationSeconds = (roundNumber: number) =>
+    roundNumber <= fightRules.rounds ? mainRoundTime : additionalRoundTime
   const warnings =
     fight.warnings?.map((warning) => ({
       competitorId: warning.competitor_id,
@@ -170,12 +177,15 @@ const mapFight = (
       reason: warning.reason
     })) ?? []
   const relationRounds =
-    fight.round_scores?.map((score) => ({
+    fight.round_scores?.map((score, index) => ({
       competitor1Score: score.competitor1_score,
-      competitor2Score: score.competitor2_score
+      competitor2Score: score.competitor2_score,
+      durationSeconds: score.duration_seconds ?? roundDurationSeconds(index + 1)
     })) ?? []
   const storedRounds = relationRounds
-  const editableRounds = storedRounds.length ? storedRounds : getInitialRoundScores(fightRules)
+  const editableRounds = storedRounds.length
+    ? storedRounds
+    : getInitialRoundScores(fightRules)
   const scored = evaluateFightWithWarnings(fightRules, {
     competitor1Id: fight.competitor1_id,
     competitor2Id: fight.competitor2_id,
@@ -202,6 +212,8 @@ const mapFight = (
     warnings,
     rounds: fightRules.rounds,
     roundWin: fightRules.roundWin,
+    mainRoundTime,
+    additionalRoundTime,
     isResultValid: Boolean(fight.forfeit_card_id) || scored.evaluation.isValidResult,
     winnerId: fight.winner_id,
     forfeitCardId: fight.forfeit_card_id,

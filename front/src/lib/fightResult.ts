@@ -8,6 +8,7 @@ import {
 export interface SubmittedCompetitionRoundScore {
   competitor1_score: number
   competitor2_score: number
+  duration_seconds?: number
 }
 
 export interface SubmittedCompetitionFightWarning {
@@ -54,11 +55,15 @@ export const getSubmittedRoundScores = (fight: FightData): RoundScore[] => {
   return fight.roundScores.slice(0, requiredRoundCount)
 }
 
+const roundDurationSeconds = (fight: FightData, roundIndex: number) =>
+  roundIndex + 1 <= fight.rounds ? (fight.mainRoundTime ?? 0) : (fight.additionalRoundTime ?? 0)
+
 export const buildSubmittedFightResult = (fight: FightData): SubmittedCompetitionFightResult => ({
   fight_id: fight.id,
-  round_scores: getSubmittedRoundScores(fight).map((score) => ({
+  round_scores: getSubmittedRoundScores(fight).map((score, index) => ({
     competitor1_score: score.competitor1Score,
-    competitor2_score: score.competitor2Score
+    competitor2_score: score.competitor2Score,
+    duration_seconds: score.durationSeconds ?? roundDurationSeconds(fight, index)
   })),
   warnings: (fight.warnings ?? []).map((warning) => ({
     competitor_id: warning.competitorId,

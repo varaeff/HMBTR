@@ -13,6 +13,7 @@ import {
 } from 'class-validator';
 
 const MAX_SCORE = 2_147_483_647;
+const MAX_ROUND_DURATION_SECONDS = 3_599;
 
 export class RoundScoreDto {
   @IsInt()
@@ -24,6 +25,12 @@ export class RoundScoreDto {
   @Min(0)
   @Max(MAX_SCORE)
   competitor2_score: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(MAX_ROUND_DURATION_SECONDS)
+  duration_seconds?: number;
 }
 
 export class FightWarningDto {

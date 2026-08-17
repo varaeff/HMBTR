@@ -79,7 +79,12 @@ export class CompetitionOlympicService {
   ) {
     const nomination = await tx.nominations.findUnique({
       where: { id: params.nominationId },
-      select: { rounds: true, round_win: true },
+      select: {
+        rounds: true,
+        round_win: true,
+        main_round_time: true,
+        additional_round_time: true,
+      },
     });
     if (!nomination) throw new NotFoundException('Nomination not found');
     let fightNumber = await this.getNextFightNumberTx(
@@ -102,6 +107,8 @@ export class CompetitionOlympicService {
           bracket_position: i / 2 + 1,
           rounds: nomination.rounds,
           round_win: nomination.round_win,
+          main_round_time: nomination.main_round_time,
+          additional_round_time: nomination.additional_round_time,
         },
       });
     }
@@ -115,7 +122,12 @@ export class CompetitionOlympicService {
     if (!block) throw new NotFoundException('Block not found');
     const nomination = await tx.nominations.findUnique({
       where: { id: block.nomination_id },
-      select: { rounds: true, round_win: true },
+      select: {
+        rounds: true,
+        round_win: true,
+        main_round_time: true,
+        additional_round_time: true,
+      },
     });
     if (!nomination) throw new NotFoundException('Nomination not found');
 
@@ -217,6 +229,8 @@ export class CompetitionOlympicService {
             is_bronze: true,
             rounds: nomination.rounds,
             round_win: nomination.round_win,
+            main_round_time: nomination.main_round_time,
+            additional_round_time: nomination.additional_round_time,
           },
         });
       }
@@ -235,6 +249,8 @@ export class CompetitionOlympicService {
             bracket_position: 1,
             rounds: nomination.rounds,
             round_win: nomination.round_win,
+            main_round_time: nomination.main_round_time,
+            additional_round_time: nomination.additional_round_time,
           },
         });
       }

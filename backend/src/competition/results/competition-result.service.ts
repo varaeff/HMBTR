@@ -82,7 +82,11 @@ export class CompetitionResultService {
     });
     await this.scoringService.replaceFightRoundScores(
       dto.fight_id,
-      submittedRoundScores(dto),
+      submittedRoundScores(dto, {
+        rounds: fight.rounds,
+        main_round_time: fight.main_round_time ?? 0,
+        additional_round_time: fight.additional_round_time ?? 0,
+      }),
     );
 
     return this.stateReader.getState(fight.tournament_id, fight.nomination_id);

@@ -612,9 +612,10 @@ describe('FightCard', () => {
       global: { plugins: [createPinia(), [I18NextVue, { i18next: instance }]] }
     })
 
-    const inputs = wrapper.findAll('input')
-    expect(inputs).toHaveLength(2)
-    expect(inputs.every((input) => input.attributes('disabled') !== undefined)).toBe(true)
+    const scoreInputs = wrapper.findAll('[data-testid="fight-score-input"]')
+    expect(scoreInputs).toHaveLength(2)
+    expect(scoreInputs.every((input) => input.attributes('disabled') !== undefined)).toBe(true)
+    expect(wrapper.find('input[inputmode="numeric"]:not([data-testid="fight-score-input"])').exists()).toBe(true)
     expect(wrapper.findAll('[data-testid="fight-warning-marker"]')).toHaveLength(3)
   })
 

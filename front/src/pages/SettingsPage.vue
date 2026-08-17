@@ -22,6 +22,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select'
+import RoundTimeInput from '@/components/ui/round-time-input/RoundTimeInput.vue'
 import { AlertWidget } from '@/widgets/AlertWidget'
 import { useCommonDataStore } from '@/stores/commonData'
 import { useSettingsStore } from '@/stores/settings'
@@ -40,6 +41,8 @@ interface NominationDraft {
   is_male: boolean
   rounds: 1 | 2 | 3
   round_win: boolean
+  main_round_time: number
+  additional_round_time: number
 }
 
 interface ApiErrorWithResponse {
@@ -47,6 +50,7 @@ interface ApiErrorWithResponse {
     data?: {
       details?: unknown
       error?: string
+      message?: unknown
     }
     status?: number
   }
@@ -75,7 +79,9 @@ const defaultNominationDraft = (): NominationDraft => ({
   name_en: '',
   is_male: true,
   rounds: 1,
-  round_win: false
+  round_win: false,
+  main_round_time: 0,
+  additional_round_time: 0
 })
 
 const commonDataStore = useCommonDataStore()
@@ -119,7 +125,9 @@ const setNominationDrafts = () => {
       name_en: nomination.name_en,
       is_male: nomination.is_male,
       rounds: nomination.rounds,
-      round_win: nomination.round_win
+      round_win: nomination.round_win,
+      main_round_time: nomination.main_round_time ?? 0,
+      additional_round_time: nomination.additional_round_time ?? 0
     }
   }
 }
@@ -129,8 +137,19 @@ const payloadFromDraft = (draft: NominationDraft): NominationPayload => ({
   name_en: draft.name_en.trim(),
   is_male: draft.is_male,
   rounds: draft.rounds,
-  round_win: draft.rounds === 3 ? draft.round_win : false
+  round_win: draft.rounds === 3 ? draft.round_win : false,
+  main_round_time: draft.main_round_time,
+  additional_round_time: draft.additional_round_time
 })
+
+const nominationPayloadMatches = (nomination: Nomination, payload: NominationPayload) =>
+  payload.name_ru === nomination.name_ru &&
+  payload.name_en === nomination.name_en &&
+  payload.is_male === nomination.is_male &&
+  payload.rounds === nomination.rounds &&
+  payload.round_win === nomination.round_win &&
+  payload.main_round_time === (nomination.main_round_time ?? 0) &&
+  payload.additional_round_time === (nomination.additional_round_time ?? 0)
 
 const setError = (message: string) => {
   errorMessage.value = message
@@ -150,16 +169,31 @@ const isExistingFightConflict = (value: unknown): value is ExistingFightConflict
   'fights_count' in value &&
   typeof value.fights_count === 'number'
 
+const responseDetails = (error: unknown) => {
+  const data = (error as ApiErrorWithResponse).response?.data
+  const message = data?.message
+
+  if (
+    typeof message === 'object' &&
+    message !== null &&
+    'details' in message
+  ) {
+    return message.details
+  }
+
+  return data?.details
+}
+
 const errorText = (error: unknown) => {
   const response = (error as ApiErrorWithResponse).response
-  const details = response?.data?.details
+  const details = responseDetails(error)
   if (typeof details === 'string') return details
   if (Array.isArray(details)) return details.join(', ')
   return response?.data?.error || (error as ApiErrorWithResponse).message || i18next.t('settingsError')
 }
 
 const isNominationSaveConflict = (error: unknown) =>
-  isExistingFightConflict((error as ApiErrorWithResponse).response?.data?.details)
+  isExistingFightConflict(responseDetails(error))
 
 const loadSettings = async () => {
   isLoading.value = true
@@ -190,8 +224,14 @@ const saveNomination = async (nomination: Nomination, confirmExistingFights = fa
   const draft = nominationDrafts[nomination.id]
   if (!draft) return
 
+  const draftPayload = payloadFromDraft(draft)
+  if (!confirmExistingFights && nominationPayloadMatches(nomination, draftPayload)) {
+    setSuccess(i18next.t('settingsSaved'))
+    return
+  }
+
   const payload = {
-    ...payloadFromDraft(draft),
+    ...draftPayload,
     confirm_existing_fights: confirmExistingFights || undefined
   }
 
@@ -201,7 +241,7 @@ const saveNomination = async (nomination: Nomination, confirmExistingFights = fa
     setSuccess(i18next.t('settingsSaved'))
   } catch (error: unknown) {
     if (isNominationSaveConflict(error)) {
-      pendingNominationSave.value = { id: nomination.id, ...payloadFromDraft(draft) }
+      pendingNominationSave.value = { id: nomination.id, ...draftPayload }
       showNominationConfirm.value = true
       return
     }
@@ -222,6 +262,8 @@ const confirmNominationSave = async () => {
       is_male: pending.is_male,
       rounds: pending.rounds,
       round_win: pending.round_win,
+      main_round_time: pending.main_round_time,
+      additional_round_time: pending.additional_round_time,
       confirm_existing_fights: true
     })
     setNominationDrafts()
@@ -394,15 +436,38 @@ onMounted(() => {
             <CardDescription>{{ $t('settingsNominationsDescription') }}</CardDescription>
           </CardHeader>
           <CardContent class="flex flex-col gap-5">
-            <div class="-mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
-              <Table class="min-w-[900px]">
+            <div class="overflow-hidden">
+              <Table
+                class="w-full table-fixed text-xs [&_td]:border-r [&_td]:border-border [&_td]:px-1.5 [&_td]:whitespace-normal [&_th]:border-r [&_th]:border-border [&_th]:px-1.5 [&_th]:text-xs [&_th]:whitespace-normal [&_tr>*:last-child]:border-r-0"
+              >
+                <colgroup>
+                  <col class="w-[18%]" />
+                  <col class="w-[18%]" />
+                  <col class="w-[12%]" />
+                  <col class="w-[8%]" />
+                  <col class="w-[9%]" />
+                  <col class="w-[10%]" />
+                  <col class="w-[10%]" />
+                  <col class="w-[6%]" />
+                  <col class="w-[9%]" />
+                </colgroup>
                 <TableHeader>
                   <TableRow>
                     <TableHead>{{ $t('settingsNominationNameRu') }}</TableHead>
                     <TableHead>{{ $t('settingsNominationNameEn') }}</TableHead>
                     <TableHead>{{ $t('addFighterGenderLabel') }}</TableHead>
-                    <TableHead>{{ $t('settingsNominationRounds') }}</TableHead>
-                    <TableHead>{{ $t('settingsNominationRoundWin') }}</TableHead>
+                    <TableHead class="whitespace-normal leading-tight">
+                      {{ $t('settingsNominationRounds') }}
+                    </TableHead>
+                    <TableHead class="whitespace-normal leading-tight">
+                      {{ $t('settingsNominationRoundWin') }}
+                    </TableHead>
+                    <TableHead class="whitespace-normal leading-tight">
+                      {{ $t('settingsNominationMainRoundTime') }}
+                    </TableHead>
+                    <TableHead class="whitespace-normal leading-tight">
+                      {{ $t('settingsNominationAdditionalRoundTime') }}
+                    </TableHead>
                     <TableHead>{{ $t('settingsNominationUsage') }}</TableHead>
                     <TableHead class="text-right">{{ $t('disciplinaryCardsActions') }}</TableHead>
                   </TableRow>
@@ -418,6 +483,7 @@ onMounted(() => {
                       </TableCell>
                       <TableCell>
                         <NativeSelect
+                          class="h-8 max-w-full text-xs"
                           :model-value="nominationDrafts[nomination.id].is_male ? 'male' : 'female'"
                           @update:model-value="
                             (...args: unknown[]) =>
@@ -434,6 +500,7 @@ onMounted(() => {
                       </TableCell>
                       <TableCell>
                         <NativeSelect
+                          class="h-8 w-16 text-xs"
                           :model-value="String(nominationDrafts[nomination.id].rounds)"
                           @update:model-value="
                             (...args: unknown[]) =>
@@ -457,15 +524,29 @@ onMounted(() => {
                           />
                         </div>
                       </TableCell>
+                      <TableCell>
+                        <RoundTimeInput
+                          v-model="nominationDrafts[nomination.id].main_round_time"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <RoundTimeInput
+                          v-model="nominationDrafts[nomination.id].additional_round_time"
+                        />
+                      </TableCell>
                       <TableCell>{{ nomination.tournaments_count ?? 0 }}</TableCell>
-                      <TableCell class="text-right">
-                        <div class="flex justify-end gap-2">
-                          <Button size="sm" @click="saveNomination(nomination)">
-                            <Save data-icon="inline-start" />
-                            {{ $t('disciplinaryCardsSave') }}
+                      <TableCell class="text-right whitespace-nowrap">
+                        <div class="flex justify-end gap-1">
+                          <Button
+                            size="icon"
+                            :title="$t('disciplinaryCardsSave')"
+                            :aria-label="$t('disciplinaryCardsSave')"
+                            @click="saveNomination(nomination)"
+                          >
+                            <Save />
                           </Button>
                           <Button
-                            size="sm"
+                            size="icon"
                             variant="destructive"
                             :disabled="!nomination.can_delete"
                             :title="
@@ -473,10 +554,10 @@ onMounted(() => {
                                 ? $t('disciplinaryCardsDelete')
                                 : $t('settingsNominationDeleteDisabled')
                             "
+                            :aria-label="$t('disciplinaryCardsDelete')"
                             @click="deleteNomination(nomination)"
                           >
-                            <Trash2 data-icon="inline-start" />
-                            {{ $t('disciplinaryCardsDelete') }}
+                            <Trash2 />
                           </Button>
                         </div>
                       </TableCell>
@@ -486,7 +567,7 @@ onMounted(() => {
               </Table>
             </div>
 
-            <div class="grid grid-cols-1 gap-4 border-t pt-5 md:grid-cols-6">
+            <div class="grid grid-cols-1 gap-4 border-t pt-5 md:grid-cols-8 md:items-end">
               <label class="flex flex-col gap-1 text-sm font-medium md:col-span-2">
                 {{ $t('settingsNominationNameRu') }}
                 <Input v-model="newNomination.name_ru" />
@@ -531,6 +612,14 @@ onMounted(() => {
                   "
                 />
                 {{ $t('settingsNominationRoundWin') }}
+              </label>
+              <label class="flex h-full flex-col justify-end gap-1 text-sm font-medium">
+                {{ $t('settingsNominationMainRoundTime') }}
+                <RoundTimeInput v-model="newNomination.main_round_time" />
+              </label>
+              <label class="flex h-full flex-col justify-end gap-1 text-sm font-medium">
+                {{ $t('settingsNominationAdditionalRoundTime') }}
+                <RoundTimeInput v-model="newNomination.additional_round_time" />
               </label>
               <div class="flex items-end md:col-span-4 md:justify-end">
                 <Button class="w-full md:w-auto" @click="createNomination">

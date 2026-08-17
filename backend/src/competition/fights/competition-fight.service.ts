@@ -304,7 +304,12 @@ export class CompetitionFightService {
   ) {
     const nomination = await tx.nominations.findUnique({
       where: { id: nominationId },
-      select: { rounds: true, round_win: true },
+      select: {
+        rounds: true,
+        round_win: true,
+        main_round_time: true,
+        additional_round_time: true,
+      },
     });
     if (!nomination) throw new NotFoundException('Nomination not found');
     let fightNumber = await this.getNextFightNumberTx(
@@ -336,6 +341,8 @@ export class CompetitionFightService {
               fight_number: fightNumber++,
               rounds: nomination.rounds,
               round_win: nomination.round_win,
+              main_round_time: nomination.main_round_time,
+              additional_round_time: nomination.additional_round_time,
             },
           });
         }
@@ -354,6 +361,8 @@ export class CompetitionFightService {
               fight_number: fightNumber++,
               rounds: nomination.rounds,
               round_win: nomination.round_win,
+              main_round_time: nomination.main_round_time,
+              additional_round_time: nomination.additional_round_time,
             },
           });
         }

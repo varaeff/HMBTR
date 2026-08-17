@@ -10,6 +10,8 @@ export interface ResultFight {
   competitor2_id: number;
   rounds: number | null;
   round_win: boolean | null;
+  main_round_time?: number | null;
+  additional_round_time?: number | null;
   forfeit_card_id: number | null;
   bracket_round?: number | null;
   is_bronze?: boolean | null;
@@ -29,6 +31,8 @@ export interface ResultBlock {
     nomination: {
       rounds: number;
       round_win: boolean;
+      main_round_time?: number;
+      additional_round_time?: number;
     };
   };
   round_states: Array<{
@@ -44,6 +48,11 @@ export type ResultSubmission = SaveCompetitionResultFightDto;
 export interface EvaluatedFightResult {
   fight: ResultFight;
   submission: ResultSubmission;
+  roundTiming: {
+    rounds: number;
+    main_round_time: number;
+    additional_round_time: number;
+  };
   rawEvaluation: ReturnType<
     typeof evaluateSubmittedRawFightScoreForPersistence
   >;

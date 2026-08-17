@@ -91,7 +91,9 @@ const nominations: Nomination[] = [
     name_en: 'Male entered',
     is_male: true,
     rounds: 1,
-    round_win: false
+    round_win: false,
+    main_round_time: 0,
+    additional_round_time: 0
   },
   {
     id: 2,
@@ -99,7 +101,9 @@ const nominations: Nomination[] = [
     name_en: 'Male available',
     is_male: true,
     rounds: 1,
-    round_win: false
+    round_win: false,
+    main_round_time: 0,
+    additional_round_time: 0
   },
   {
     id: 3,
@@ -107,7 +111,9 @@ const nominations: Nomination[] = [
     name_en: 'Female available',
     is_male: false,
     rounds: 1,
-    round_win: false
+    round_win: false,
+    main_round_time: 0,
+    additional_round_time: 0
   }
 ]
 

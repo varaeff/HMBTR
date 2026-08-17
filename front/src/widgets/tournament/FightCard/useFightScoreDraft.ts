@@ -51,6 +51,9 @@ const cloneRoundScores = (scores: RoundScore[]) => scores.map((score) => ({ ...s
 
 const cloneWarnings = (warnings: FightWarning[]) => warnings.map((warning) => ({ ...warning }))
 
+const roundDurationFor = (fight: FightData, roundNumber: number) =>
+  roundNumber <= fight.rounds ? (fight.mainRoundTime ?? 0) : (fight.additionalRoundTime ?? 0)
+
 const initialRoundScoresFor = (fight: FightData) =>
   cloneRoundScores(
     fight.roundScores.length
@@ -144,7 +147,12 @@ export const useFightScoreDraft = ({
           details: resultText.value.slice(detailsStart + 1)
         }
   })
-  const visibleRoundScores = computed(() => roundScores.value)
+  const visibleRoundScores = computed(() =>
+    roundScores.value.map((score, index) => ({
+      ...score,
+      durationSeconds: score.durationSeconds ?? roundDurationFor(fight.value, index + 1)
+    }))
+  )
 
   const emitDraftUpdate = () => {
     emitScoreUpdate({
@@ -241,7 +249,10 @@ export const useFightScoreDraft = ({
       currentEvaluation.requiresTieBreakRound &&
       (allowPendingExtraRoundAppend || !hasPendingExtraRound())
     ) {
-      roundScores.value.push({ competitor1Score: 0, competitor2Score: 0 })
+      roundScores.value.push({
+        competitor1Score: 0,
+        competitor2Score: 0
+      })
       appendedRoundIndex = roundScores.value.length - 1
       didChange = true
     }
@@ -276,6 +287,19 @@ export const useFightScoreDraft = ({
     if (currentValue !== normalizedValue) {
       dismissedExtraRoundWarningRemoval.value = null
       highlightTieBreakRequired.value = false
+      emitDraftUpdate()
+    }
+  }
+
+  const updateRoundTime = (roundIndex: number, durationSeconds: number) => {
+    if (!roundScores.value[roundIndex]) return
+    const currentValue =
+      roundScores.value[roundIndex].durationSeconds ??
+      roundDurationFor(fight.value, roundIndex + 1)
+
+    roundScores.value[roundIndex].durationSeconds = durationSeconds
+
+    if (currentValue !== durationSeconds) {
       emitDraftUpdate()
     }
   }
@@ -444,6 +468,7 @@ export const useFightScoreDraft = ({
     warningMarkers,
     bonusForScore,
     updateScore,
+    updateRoundTime,
     handleBlur,
     canIssueWarning,
     issueWarning,

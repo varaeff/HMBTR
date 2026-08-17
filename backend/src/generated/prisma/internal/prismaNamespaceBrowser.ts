@@ -189,7 +189,9 @@ export const NominationsScalarFieldEnum = {
   name_en: 'name_en',
   is_male: 'is_male',
   rounds: 'rounds',
-  round_win: 'round_win'
+  round_win: 'round_win',
+  main_round_time: 'main_round_time',
+  additional_round_time: 'additional_round_time'
 } as const
 
 export type NominationsScalarFieldEnum = (typeof NominationsScalarFieldEnum)[keyof typeof NominationsScalarFieldEnum]
@@ -261,7 +263,9 @@ export const FightsScalarFieldEnum = {
   is_finished: 'is_finished',
   forfeit_card_id: 'forfeit_card_id',
   rounds: 'rounds',
-  round_win: 'round_win'
+  round_win: 'round_win',
+  main_round_time: 'main_round_time',
+  additional_round_time: 'additional_round_time'
 } as const
 
 export type FightsScalarFieldEnum = (typeof FightsScalarFieldEnum)[keyof typeof FightsScalarFieldEnum]
@@ -272,7 +276,8 @@ export const Fight_round_scoresScalarFieldEnum = {
   fight_id: 'fight_id',
   round: 'round',
   competitor1_score: 'competitor1_score',
-  competitor2_score: 'competitor2_score'
+  competitor2_score: 'competitor2_score',
+  duration_seconds: 'duration_seconds'
 } as const
 
 export type Fight_round_scoresScalarFieldEnum = (typeof Fight_round_scoresScalarFieldEnum)[keyof typeof Fight_round_scoresScalarFieldEnum]

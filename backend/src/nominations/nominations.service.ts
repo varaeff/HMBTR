@@ -31,6 +31,8 @@ export class NominationsService {
       is_male: nomination.is_male,
       rounds: nomination.rounds,
       round_win: nomination.round_win,
+      main_round_time: nomination.main_round_time,
+      additional_round_time: nomination.additional_round_time,
       tournaments_count: nomination._count.tournaments,
       can_delete: nomination._count.tournaments === 0,
     }));
@@ -85,6 +87,12 @@ export class NominationsService {
         ...(dto.is_male !== undefined ? { is_male: dto.is_male } : {}),
         ...(dto.rounds !== undefined ? { rounds: dto.rounds } : {}),
         ...(dto.round_win !== undefined ? { round_win: dto.round_win } : {}),
+        ...(dto.main_round_time !== undefined
+          ? { main_round_time: dto.main_round_time }
+          : {}),
+        ...(dto.additional_round_time !== undefined
+          ? { additional_round_time: dto.additional_round_time }
+          : {}),
       },
     });
   }

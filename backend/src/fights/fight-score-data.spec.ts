@@ -26,8 +26,55 @@ describe('submitted fight scores', () => {
       competitor2_score: 5,
     });
     expect(fightRoundScoreCreateData(score)).toEqual([
-      { round: 1, competitor1_score: 4, competitor2_score: 1 },
-      { round: 2, competitor1_score: 2, competitor2_score: 4 },
+      {
+        round: 1,
+        competitor1_score: 4,
+        competitor2_score: 1,
+        duration_seconds: 0,
+      },
+      {
+        round: 2,
+        competitor1_score: 2,
+        competitor2_score: 4,
+        duration_seconds: 0,
+      },
+    ]);
+  });
+
+  it('fills missing round durations from the fight timing snapshot', () => {
+    const score = {
+      round_scores: [
+        { competitor1_score: 5, competitor2_score: 5 },
+        { competitor1_score: 1, competitor2_score: 0 },
+        { competitor1_score: 2, competitor2_score: 1, duration_seconds: 45 },
+      ],
+    };
+
+    expect(
+      fightRoundScoreCreateData(score, {
+        rounds: 2,
+        main_round_time: 90,
+        additional_round_time: 30,
+      }),
+    ).toEqual([
+      {
+        round: 1,
+        competitor1_score: 5,
+        competitor2_score: 5,
+        duration_seconds: 90,
+      },
+      {
+        round: 2,
+        competitor1_score: 1,
+        competitor2_score: 0,
+        duration_seconds: 90,
+      },
+      {
+        round: 3,
+        competitor1_score: 2,
+        competitor2_score: 1,
+        duration_seconds: 45,
+      },
     ]);
   });
 
@@ -199,8 +246,18 @@ describe('submitted fight scores', () => {
       competitor2_score: 0,
     });
     expect(fightRoundScoreCreateData(score)).toEqual([
-      { round: 1, competitor1_score: 3, competitor2_score: 0 },
-      { round: 2, competitor1_score: 1, competitor2_score: 0 },
+      {
+        round: 1,
+        competitor1_score: 3,
+        competitor2_score: 0,
+        duration_seconds: 0,
+      },
+      {
+        round: 2,
+        competitor1_score: 1,
+        competitor2_score: 0,
+        duration_seconds: 0,
+      },
     ]);
   });
 });

@@ -668,18 +668,21 @@ describe('competition use-case services', () => {
           round: 1,
           competitor1_score: 0,
           competitor2_score: 5,
+          duration_seconds: 0,
         },
         {
           fight_id: 41,
           round: 2,
           competitor1_score: 0,
           competitor2_score: 5,
+          duration_seconds: 0,
         },
         {
           fight_id: 41,
           round: 3,
           competitor1_score: 0,
           competitor2_score: 5,
+          duration_seconds: 0,
         },
       ],
     });
@@ -1932,6 +1935,7 @@ describe('competition use-case services', () => {
           round: 1,
           competitor1_score: 0,
           competitor2_score: 0,
+          duration_seconds: 0,
         },
       ],
     });

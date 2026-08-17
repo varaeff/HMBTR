@@ -6,7 +6,12 @@ import {
   type FightScoringRules,
   type RoundScore,
 } from '@shared/fightScoring';
-import type { SubmittedFightScore } from './fight-score.types';
+import type {
+  FightRoundTimeSnapshot,
+  SubmittedFightScore,
+} from './fight-score.types';
+
+const MAX_ROUND_DURATION_SECONDS = 3_599;
 
 export const scoringRules = (nomination: {
   rounds: number;
@@ -18,11 +23,31 @@ export const scoringRules = (nomination: {
 
 export const submittedRoundScores = (
   score: SubmittedFightScore,
+  timing?: FightRoundTimeSnapshot,
 ): RoundScore[] =>
-  (score.round_scores ?? []).map((round) => ({
-    competitor1Score: round.competitor1_score,
-    competitor2Score: round.competitor2_score,
-  }));
+  (score.round_scores ?? []).map((round, index) => {
+    const durationSeconds =
+      round.duration_seconds ??
+      (timing
+        ? index + 1 <= timing.rounds
+          ? timing.main_round_time
+          : timing.additional_round_time
+        : 0);
+
+    if (
+      !Number.isSafeInteger(durationSeconds) ||
+      durationSeconds < 0 ||
+      durationSeconds > MAX_ROUND_DURATION_SECONDS
+    ) {
+      throw new BadRequestException('Round time must be between 0 and 59:59');
+    }
+
+    return {
+      competitor1Score: round.competitor1_score,
+      competitor2Score: round.competitor2_score,
+      durationSeconds,
+    };
+  });
 
 export const evaluateSubmittedFightScore = (
   rules: FightScoringRules,

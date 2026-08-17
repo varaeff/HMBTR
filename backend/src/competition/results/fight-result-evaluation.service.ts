@@ -34,6 +34,17 @@ export class FightResultEvaluationService {
         round_win:
           fight.round_win ?? block.tournament_nomination.nomination.round_win,
       });
+      const roundTiming = {
+        rounds: fight.rounds ?? block.tournament_nomination.nomination.rounds,
+        main_round_time:
+          fight.main_round_time ??
+          block.tournament_nomination.nomination.main_round_time ??
+          0,
+        additional_round_time:
+          fight.additional_round_time ??
+          block.tournament_nomination.nomination.additional_round_time ??
+          0,
+      };
       const rawEvaluation = evaluateSubmittedRawFightScoreForPersistence(
         rules,
         submission,
@@ -55,6 +66,7 @@ export class FightResultEvaluationService {
         {
           fight,
           submission,
+          roundTiming,
           rawEvaluation,
           resultEvaluation,
           winnerId,

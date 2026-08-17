@@ -87,6 +87,9 @@ const isGroupBlockComplete = computed(
           :activeCardTypes="cards.activeCardTypes"
           :tournamentMarshals="cards.tournamentMarshals"
           :createDisciplinaryCard="cards.createDisciplinaryCard"
+          :show-round-time-toggle="
+            state.block.status === 'ACTIVE' && state.block.lifecycleState === 'FIGHTS_EDITABLE'
+          "
           @update-score="actions.updateFightScore"
           @card-issued="actions.refreshCardsAndCompetition"
         />

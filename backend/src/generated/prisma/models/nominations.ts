@@ -29,11 +29,15 @@ export type AggregateNominations = {
 export type NominationsAvgAggregateOutputType = {
   id: number | null
   rounds: number | null
+  main_round_time: number | null
+  additional_round_time: number | null
 }
 
 export type NominationsSumAggregateOutputType = {
   id: number | null
   rounds: number | null
+  main_round_time: number | null
+  additional_round_time: number | null
 }
 
 export type NominationsMinAggregateOutputType = {
@@ -43,6 +47,8 @@ export type NominationsMinAggregateOutputType = {
   is_male: boolean | null
   rounds: number | null
   round_win: boolean | null
+  main_round_time: number | null
+  additional_round_time: number | null
 }
 
 export type NominationsMaxAggregateOutputType = {
@@ -52,6 +58,8 @@ export type NominationsMaxAggregateOutputType = {
   is_male: boolean | null
   rounds: number | null
   round_win: boolean | null
+  main_round_time: number | null
+  additional_round_time: number | null
 }
 
 export type NominationsCountAggregateOutputType = {
@@ -61,6 +69,8 @@ export type NominationsCountAggregateOutputType = {
   is_male: number
   rounds: number
   round_win: number
+  main_round_time: number
+  additional_round_time: number
   _all: number
 }
 
@@ -68,11 +78,15 @@ export type NominationsCountAggregateOutputType = {
 export type NominationsAvgAggregateInputType = {
   id?: true
   rounds?: true
+  main_round_time?: true
+  additional_round_time?: true
 }
 
 export type NominationsSumAggregateInputType = {
   id?: true
   rounds?: true
+  main_round_time?: true
+  additional_round_time?: true
 }
 
 export type NominationsMinAggregateInputType = {
@@ -82,6 +96,8 @@ export type NominationsMinAggregateInputType = {
   is_male?: true
   rounds?: true
   round_win?: true
+  main_round_time?: true
+  additional_round_time?: true
 }
 
 export type NominationsMaxAggregateInputType = {
@@ -91,6 +107,8 @@ export type NominationsMaxAggregateInputType = {
   is_male?: true
   rounds?: true
   round_win?: true
+  main_round_time?: true
+  additional_round_time?: true
 }
 
 export type NominationsCountAggregateInputType = {
@@ -100,6 +118,8 @@ export type NominationsCountAggregateInputType = {
   is_male?: true
   rounds?: true
   round_win?: true
+  main_round_time?: true
+  additional_round_time?: true
   _all?: true
 }
 
@@ -196,6 +216,8 @@ export type NominationsGroupByOutputType = {
   is_male: boolean
   rounds: number
   round_win: boolean
+  main_round_time: number
+  additional_round_time: number
   _count: NominationsCountAggregateOutputType | null
   _avg: NominationsAvgAggregateOutputType | null
   _sum: NominationsSumAggregateOutputType | null
@@ -228,6 +250,8 @@ export type nominationsWhereInput = {
   is_male?: Prisma.BoolFilter<"nominations"> | boolean
   rounds?: Prisma.IntFilter<"nominations"> | number
   round_win?: Prisma.BoolFilter<"nominations"> | boolean
+  main_round_time?: Prisma.IntFilter<"nominations"> | number
+  additional_round_time?: Prisma.IntFilter<"nominations"> | number
   tournaments?: Prisma.Tournament_nominationsListRelationFilter
   competitors?: Prisma.CompetitorsListRelationFilter
   groups?: Prisma.GroupsListRelationFilter
@@ -243,6 +267,8 @@ export type nominationsOrderByWithRelationInput = {
   is_male?: Prisma.SortOrder
   rounds?: Prisma.SortOrder
   round_win?: Prisma.SortOrder
+  main_round_time?: Prisma.SortOrder
+  additional_round_time?: Prisma.SortOrder
   tournaments?: Prisma.tournament_nominationsOrderByRelationAggregateInput
   competitors?: Prisma.competitorsOrderByRelationAggregateInput
   groups?: Prisma.groupsOrderByRelationAggregateInput
@@ -263,6 +289,8 @@ export type nominationsWhereUniqueInput = Prisma.AtLeast<{
   is_male?: Prisma.BoolFilter<"nominations"> | boolean
   rounds?: Prisma.IntFilter<"nominations"> | number
   round_win?: Prisma.BoolFilter<"nominations"> | boolean
+  main_round_time?: Prisma.IntFilter<"nominations"> | number
+  additional_round_time?: Prisma.IntFilter<"nominations"> | number
   tournaments?: Prisma.Tournament_nominationsListRelationFilter
   competitors?: Prisma.CompetitorsListRelationFilter
   groups?: Prisma.GroupsListRelationFilter
@@ -278,6 +306,8 @@ export type nominationsOrderByWithAggregationInput = {
   is_male?: Prisma.SortOrder
   rounds?: Prisma.SortOrder
   round_win?: Prisma.SortOrder
+  main_round_time?: Prisma.SortOrder
+  additional_round_time?: Prisma.SortOrder
   _count?: Prisma.nominationsCountOrderByAggregateInput
   _avg?: Prisma.nominationsAvgOrderByAggregateInput
   _max?: Prisma.nominationsMaxOrderByAggregateInput
@@ -295,6 +325,8 @@ export type nominationsScalarWhereWithAggregatesInput = {
   is_male?: Prisma.BoolWithAggregatesFilter<"nominations"> | boolean
   rounds?: Prisma.IntWithAggregatesFilter<"nominations"> | number
   round_win?: Prisma.BoolWithAggregatesFilter<"nominations"> | boolean
+  main_round_time?: Prisma.IntWithAggregatesFilter<"nominations"> | number
+  additional_round_time?: Prisma.IntWithAggregatesFilter<"nominations"> | number
 }
 
 export type nominationsCreateInput = {
@@ -303,6 +335,8 @@ export type nominationsCreateInput = {
   is_male?: boolean
   rounds?: number
   round_win?: boolean
+  main_round_time?: number
+  additional_round_time?: number
   tournaments?: Prisma.tournament_nominationsCreateNestedManyWithoutNominationInput
   competitors?: Prisma.competitorsCreateNestedManyWithoutNominationInput
   groups?: Prisma.groupsCreateNestedManyWithoutNominationInput
@@ -318,6 +352,8 @@ export type nominationsUncheckedCreateInput = {
   is_male?: boolean
   rounds?: number
   round_win?: boolean
+  main_round_time?: number
+  additional_round_time?: number
   tournaments?: Prisma.tournament_nominationsUncheckedCreateNestedManyWithoutNominationInput
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutNominationInput
   groups?: Prisma.groupsUncheckedCreateNestedManyWithoutNominationInput
@@ -332,6 +368,8 @@ export type nominationsUpdateInput = {
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  main_round_time?: Prisma.IntFieldUpdateOperationsInput | number
+  additional_round_time?: Prisma.IntFieldUpdateOperationsInput | number
   tournaments?: Prisma.tournament_nominationsUpdateManyWithoutNominationNestedInput
   competitors?: Prisma.competitorsUpdateManyWithoutNominationNestedInput
   groups?: Prisma.groupsUpdateManyWithoutNominationNestedInput
@@ -347,6 +385,8 @@ export type nominationsUncheckedUpdateInput = {
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  main_round_time?: Prisma.IntFieldUpdateOperationsInput | number
+  additional_round_time?: Prisma.IntFieldUpdateOperationsInput | number
   tournaments?: Prisma.tournament_nominationsUncheckedUpdateManyWithoutNominationNestedInput
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutNominationNestedInput
   groups?: Prisma.groupsUncheckedUpdateManyWithoutNominationNestedInput
@@ -362,6 +402,8 @@ export type nominationsCreateManyInput = {
   is_male?: boolean
   rounds?: number
   round_win?: boolean
+  main_round_time?: number
+  additional_round_time?: number
 }
 
 export type nominationsUpdateManyMutationInput = {
@@ -370,6 +412,8 @@ export type nominationsUpdateManyMutationInput = {
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  main_round_time?: Prisma.IntFieldUpdateOperationsInput | number
+  additional_round_time?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type nominationsUncheckedUpdateManyInput = {
@@ -379,6 +423,8 @@ export type nominationsUncheckedUpdateManyInput = {
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  main_round_time?: Prisma.IntFieldUpdateOperationsInput | number
+  additional_round_time?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type nominationsName_ruIs_maleCompoundUniqueInput = {
@@ -398,11 +444,15 @@ export type nominationsCountOrderByAggregateInput = {
   is_male?: Prisma.SortOrder
   rounds?: Prisma.SortOrder
   round_win?: Prisma.SortOrder
+  main_round_time?: Prisma.SortOrder
+  additional_round_time?: Prisma.SortOrder
 }
 
 export type nominationsAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   rounds?: Prisma.SortOrder
+  main_round_time?: Prisma.SortOrder
+  additional_round_time?: Prisma.SortOrder
 }
 
 export type nominationsMaxOrderByAggregateInput = {
@@ -412,6 +462,8 @@ export type nominationsMaxOrderByAggregateInput = {
   is_male?: Prisma.SortOrder
   rounds?: Prisma.SortOrder
   round_win?: Prisma.SortOrder
+  main_round_time?: Prisma.SortOrder
+  additional_round_time?: Prisma.SortOrder
 }
 
 export type nominationsMinOrderByAggregateInput = {
@@ -421,11 +473,15 @@ export type nominationsMinOrderByAggregateInput = {
   is_male?: Prisma.SortOrder
   rounds?: Prisma.SortOrder
   round_win?: Prisma.SortOrder
+  main_round_time?: Prisma.SortOrder
+  additional_round_time?: Prisma.SortOrder
 }
 
 export type nominationsSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   rounds?: Prisma.SortOrder
+  main_round_time?: Prisma.SortOrder
+  additional_round_time?: Prisma.SortOrder
 }
 
 export type NominationsScalarRelationFilter = {
@@ -523,6 +579,8 @@ export type nominationsCreateWithoutTournamentsInput = {
   is_male?: boolean
   rounds?: number
   round_win?: boolean
+  main_round_time?: number
+  additional_round_time?: number
   competitors?: Prisma.competitorsCreateNestedManyWithoutNominationInput
   groups?: Prisma.groupsCreateNestedManyWithoutNominationInput
   fights?: Prisma.fightsCreateNestedManyWithoutNominationInput
@@ -537,6 +595,8 @@ export type nominationsUncheckedCreateWithoutTournamentsInput = {
   is_male?: boolean
   rounds?: number
   round_win?: boolean
+  main_round_time?: number
+  additional_round_time?: number
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutNominationInput
   groups?: Prisma.groupsUncheckedCreateNestedManyWithoutNominationInput
   fights?: Prisma.fightsUncheckedCreateNestedManyWithoutNominationInput
@@ -566,6 +626,8 @@ export type nominationsUpdateWithoutTournamentsInput = {
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  main_round_time?: Prisma.IntFieldUpdateOperationsInput | number
+  additional_round_time?: Prisma.IntFieldUpdateOperationsInput | number
   competitors?: Prisma.competitorsUpdateManyWithoutNominationNestedInput
   groups?: Prisma.groupsUpdateManyWithoutNominationNestedInput
   fights?: Prisma.fightsUpdateManyWithoutNominationNestedInput
@@ -580,6 +642,8 @@ export type nominationsUncheckedUpdateWithoutTournamentsInput = {
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  main_round_time?: Prisma.IntFieldUpdateOperationsInput | number
+  additional_round_time?: Prisma.IntFieldUpdateOperationsInput | number
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutNominationNestedInput
   groups?: Prisma.groupsUncheckedUpdateManyWithoutNominationNestedInput
   fights?: Prisma.fightsUncheckedUpdateManyWithoutNominationNestedInput
@@ -593,6 +657,8 @@ export type nominationsCreateWithoutCompetitorsInput = {
   is_male?: boolean
   rounds?: number
   round_win?: boolean
+  main_round_time?: number
+  additional_round_time?: number
   tournaments?: Prisma.tournament_nominationsCreateNestedManyWithoutNominationInput
   groups?: Prisma.groupsCreateNestedManyWithoutNominationInput
   fights?: Prisma.fightsCreateNestedManyWithoutNominationInput
@@ -607,6 +673,8 @@ export type nominationsUncheckedCreateWithoutCompetitorsInput = {
   is_male?: boolean
   rounds?: number
   round_win?: boolean
+  main_round_time?: number
+  additional_round_time?: number
   tournaments?: Prisma.tournament_nominationsUncheckedCreateNestedManyWithoutNominationInput
   groups?: Prisma.groupsUncheckedCreateNestedManyWithoutNominationInput
   fights?: Prisma.fightsUncheckedCreateNestedManyWithoutNominationInput
@@ -636,6 +704,8 @@ export type nominationsUpdateWithoutCompetitorsInput = {
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  main_round_time?: Prisma.IntFieldUpdateOperationsInput | number
+  additional_round_time?: Prisma.IntFieldUpdateOperationsInput | number
   tournaments?: Prisma.tournament_nominationsUpdateManyWithoutNominationNestedInput
   groups?: Prisma.groupsUpdateManyWithoutNominationNestedInput
   fights?: Prisma.fightsUpdateManyWithoutNominationNestedInput
@@ -650,6 +720,8 @@ export type nominationsUncheckedUpdateWithoutCompetitorsInput = {
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  main_round_time?: Prisma.IntFieldUpdateOperationsInput | number
+  additional_round_time?: Prisma.IntFieldUpdateOperationsInput | number
   tournaments?: Prisma.tournament_nominationsUncheckedUpdateManyWithoutNominationNestedInput
   groups?: Prisma.groupsUncheckedUpdateManyWithoutNominationNestedInput
   fights?: Prisma.fightsUncheckedUpdateManyWithoutNominationNestedInput
@@ -663,6 +735,8 @@ export type nominationsCreateWithoutGroupsInput = {
   is_male?: boolean
   rounds?: number
   round_win?: boolean
+  main_round_time?: number
+  additional_round_time?: number
   tournaments?: Prisma.tournament_nominationsCreateNestedManyWithoutNominationInput
   competitors?: Prisma.competitorsCreateNestedManyWithoutNominationInput
   fights?: Prisma.fightsCreateNestedManyWithoutNominationInput
@@ -677,6 +751,8 @@ export type nominationsUncheckedCreateWithoutGroupsInput = {
   is_male?: boolean
   rounds?: number
   round_win?: boolean
+  main_round_time?: number
+  additional_round_time?: number
   tournaments?: Prisma.tournament_nominationsUncheckedCreateNestedManyWithoutNominationInput
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutNominationInput
   fights?: Prisma.fightsUncheckedCreateNestedManyWithoutNominationInput
@@ -706,6 +782,8 @@ export type nominationsUpdateWithoutGroupsInput = {
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  main_round_time?: Prisma.IntFieldUpdateOperationsInput | number
+  additional_round_time?: Prisma.IntFieldUpdateOperationsInput | number
   tournaments?: Prisma.tournament_nominationsUpdateManyWithoutNominationNestedInput
   competitors?: Prisma.competitorsUpdateManyWithoutNominationNestedInput
   fights?: Prisma.fightsUpdateManyWithoutNominationNestedInput
@@ -720,6 +798,8 @@ export type nominationsUncheckedUpdateWithoutGroupsInput = {
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  main_round_time?: Prisma.IntFieldUpdateOperationsInput | number
+  additional_round_time?: Prisma.IntFieldUpdateOperationsInput | number
   tournaments?: Prisma.tournament_nominationsUncheckedUpdateManyWithoutNominationNestedInput
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutNominationNestedInput
   fights?: Prisma.fightsUncheckedUpdateManyWithoutNominationNestedInput
@@ -733,6 +813,8 @@ export type nominationsCreateWithoutFightsInput = {
   is_male?: boolean
   rounds?: number
   round_win?: boolean
+  main_round_time?: number
+  additional_round_time?: number
   tournaments?: Prisma.tournament_nominationsCreateNestedManyWithoutNominationInput
   competitors?: Prisma.competitorsCreateNestedManyWithoutNominationInput
   groups?: Prisma.groupsCreateNestedManyWithoutNominationInput
@@ -747,6 +829,8 @@ export type nominationsUncheckedCreateWithoutFightsInput = {
   is_male?: boolean
   rounds?: number
   round_win?: boolean
+  main_round_time?: number
+  additional_round_time?: number
   tournaments?: Prisma.tournament_nominationsUncheckedCreateNestedManyWithoutNominationInput
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutNominationInput
   groups?: Prisma.groupsUncheckedCreateNestedManyWithoutNominationInput
@@ -776,6 +860,8 @@ export type nominationsUpdateWithoutFightsInput = {
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  main_round_time?: Prisma.IntFieldUpdateOperationsInput | number
+  additional_round_time?: Prisma.IntFieldUpdateOperationsInput | number
   tournaments?: Prisma.tournament_nominationsUpdateManyWithoutNominationNestedInput
   competitors?: Prisma.competitorsUpdateManyWithoutNominationNestedInput
   groups?: Prisma.groupsUpdateManyWithoutNominationNestedInput
@@ -790,6 +876,8 @@ export type nominationsUncheckedUpdateWithoutFightsInput = {
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  main_round_time?: Prisma.IntFieldUpdateOperationsInput | number
+  additional_round_time?: Prisma.IntFieldUpdateOperationsInput | number
   tournaments?: Prisma.tournament_nominationsUncheckedUpdateManyWithoutNominationNestedInput
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutNominationNestedInput
   groups?: Prisma.groupsUncheckedUpdateManyWithoutNominationNestedInput
@@ -803,6 +891,8 @@ export type nominationsCreateWithoutFighter_ratingsInput = {
   is_male?: boolean
   rounds?: number
   round_win?: boolean
+  main_round_time?: number
+  additional_round_time?: number
   tournaments?: Prisma.tournament_nominationsCreateNestedManyWithoutNominationInput
   competitors?: Prisma.competitorsCreateNestedManyWithoutNominationInput
   groups?: Prisma.groupsCreateNestedManyWithoutNominationInput
@@ -817,6 +907,8 @@ export type nominationsUncheckedCreateWithoutFighter_ratingsInput = {
   is_male?: boolean
   rounds?: number
   round_win?: boolean
+  main_round_time?: number
+  additional_round_time?: number
   tournaments?: Prisma.tournament_nominationsUncheckedCreateNestedManyWithoutNominationInput
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutNominationInput
   groups?: Prisma.groupsUncheckedCreateNestedManyWithoutNominationInput
@@ -846,6 +938,8 @@ export type nominationsUpdateWithoutFighter_ratingsInput = {
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  main_round_time?: Prisma.IntFieldUpdateOperationsInput | number
+  additional_round_time?: Prisma.IntFieldUpdateOperationsInput | number
   tournaments?: Prisma.tournament_nominationsUpdateManyWithoutNominationNestedInput
   competitors?: Prisma.competitorsUpdateManyWithoutNominationNestedInput
   groups?: Prisma.groupsUpdateManyWithoutNominationNestedInput
@@ -860,6 +954,8 @@ export type nominationsUncheckedUpdateWithoutFighter_ratingsInput = {
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  main_round_time?: Prisma.IntFieldUpdateOperationsInput | number
+  additional_round_time?: Prisma.IntFieldUpdateOperationsInput | number
   tournaments?: Prisma.tournament_nominationsUncheckedUpdateManyWithoutNominationNestedInput
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutNominationNestedInput
   groups?: Prisma.groupsUncheckedUpdateManyWithoutNominationNestedInput
@@ -873,6 +969,8 @@ export type nominationsCreateWithoutFighter_rating_historyInput = {
   is_male?: boolean
   rounds?: number
   round_win?: boolean
+  main_round_time?: number
+  additional_round_time?: number
   tournaments?: Prisma.tournament_nominationsCreateNestedManyWithoutNominationInput
   competitors?: Prisma.competitorsCreateNestedManyWithoutNominationInput
   groups?: Prisma.groupsCreateNestedManyWithoutNominationInput
@@ -887,6 +985,8 @@ export type nominationsUncheckedCreateWithoutFighter_rating_historyInput = {
   is_male?: boolean
   rounds?: number
   round_win?: boolean
+  main_round_time?: number
+  additional_round_time?: number
   tournaments?: Prisma.tournament_nominationsUncheckedCreateNestedManyWithoutNominationInput
   competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutNominationInput
   groups?: Prisma.groupsUncheckedCreateNestedManyWithoutNominationInput
@@ -916,6 +1016,8 @@ export type nominationsUpdateWithoutFighter_rating_historyInput = {
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  main_round_time?: Prisma.IntFieldUpdateOperationsInput | number
+  additional_round_time?: Prisma.IntFieldUpdateOperationsInput | number
   tournaments?: Prisma.tournament_nominationsUpdateManyWithoutNominationNestedInput
   competitors?: Prisma.competitorsUpdateManyWithoutNominationNestedInput
   groups?: Prisma.groupsUpdateManyWithoutNominationNestedInput
@@ -930,6 +1032,8 @@ export type nominationsUncheckedUpdateWithoutFighter_rating_historyInput = {
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  main_round_time?: Prisma.IntFieldUpdateOperationsInput | number
+  additional_round_time?: Prisma.IntFieldUpdateOperationsInput | number
   tournaments?: Prisma.tournament_nominationsUncheckedUpdateManyWithoutNominationNestedInput
   competitors?: Prisma.competitorsUncheckedUpdateManyWithoutNominationNestedInput
   groups?: Prisma.groupsUncheckedUpdateManyWithoutNominationNestedInput
@@ -1020,6 +1124,8 @@ export type nominationsSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   is_male?: boolean
   rounds?: boolean
   round_win?: boolean
+  main_round_time?: boolean
+  additional_round_time?: boolean
   tournaments?: boolean | Prisma.nominations$tournamentsArgs<ExtArgs>
   competitors?: boolean | Prisma.nominations$competitorsArgs<ExtArgs>
   groups?: boolean | Prisma.nominations$groupsArgs<ExtArgs>
@@ -1036,6 +1142,8 @@ export type nominationsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   is_male?: boolean
   rounds?: boolean
   round_win?: boolean
+  main_round_time?: boolean
+  additional_round_time?: boolean
 }, ExtArgs["result"]["nominations"]>
 
 export type nominationsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1045,6 +1153,8 @@ export type nominationsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   is_male?: boolean
   rounds?: boolean
   round_win?: boolean
+  main_round_time?: boolean
+  additional_round_time?: boolean
 }, ExtArgs["result"]["nominations"]>
 
 export type nominationsSelectScalar = {
@@ -1054,9 +1164,11 @@ export type nominationsSelectScalar = {
   is_male?: boolean
   rounds?: boolean
   round_win?: boolean
+  main_round_time?: boolean
+  additional_round_time?: boolean
 }
 
-export type nominationsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name_ru" | "name_en" | "is_male" | "rounds" | "round_win", ExtArgs["result"]["nominations"]>
+export type nominationsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name_ru" | "name_en" | "is_male" | "rounds" | "round_win" | "main_round_time" | "additional_round_time", ExtArgs["result"]["nominations"]>
 export type nominationsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tournaments?: boolean | Prisma.nominations$tournamentsArgs<ExtArgs>
   competitors?: boolean | Prisma.nominations$competitorsArgs<ExtArgs>
@@ -1086,6 +1198,8 @@ export type $nominationsPayload<ExtArgs extends runtime.Types.Extensions.Interna
     is_male: boolean
     rounds: number
     round_win: boolean
+    main_round_time: number
+    additional_round_time: number
   }, ExtArgs["result"]["nominations"]>
   composites: {}
 }
@@ -1521,6 +1635,8 @@ export interface nominationsFieldRefs {
   readonly is_male: Prisma.FieldRef<"nominations", 'Boolean'>
   readonly rounds: Prisma.FieldRef<"nominations", 'Int'>
   readonly round_win: Prisma.FieldRef<"nominations", 'Boolean'>
+  readonly main_round_time: Prisma.FieldRef<"nominations", 'Int'>
+  readonly additional_round_time: Prisma.FieldRef<"nominations", 'Int'>
 }
     
 

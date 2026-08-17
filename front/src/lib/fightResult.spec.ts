@@ -126,7 +126,7 @@ describe('buildSubmittedFightResult', () => {
 
     expect(payload).toEqual({
       fight_id: fight.id,
-      round_scores: [{ competitor1_score: 5, competitor2_score: 3 }],
+      round_scores: [{ competitor1_score: 5, competitor2_score: 3, duration_seconds: 0 }],
       warnings: [{ competitor_id: 101, round: 1, reason: 'Holding' }]
     })
     expect('competitor1_score' in payload).toBe(false)
@@ -139,9 +139,11 @@ describe('buildSubmittedFightResult', () => {
       competitor2Id: 202,
       rounds: 1,
       roundWin: false,
+      mainRoundTime: 90,
+      additionalRoundTime: 30,
       roundScores: [
         { competitor1Score: 3, competitor2Score: 0 },
-        { competitor1Score: 1, competitor2Score: 0 }
+        { competitor1Score: 1, competitor2Score: 0, durationSeconds: 45 }
       ],
       warnings: [{ competitorId: 101, round: 1, reason: 'Holding' }]
     })
@@ -149,8 +151,8 @@ describe('buildSubmittedFightResult', () => {
     const payload = buildSubmittedFightResult(fight)
 
     expect(payload.round_scores).toEqual([
-      { competitor1_score: 3, competitor2_score: 0 },
-      { competitor1_score: 1, competitor2_score: 0 }
+      { competitor1_score: 3, competitor2_score: 0, duration_seconds: 90 },
+      { competitor1_score: 1, competitor2_score: 0, duration_seconds: 45 }
     ])
     expect(payload.warnings).toEqual([{ competitor_id: 101, round: 1, reason: 'Holding' }])
   })
