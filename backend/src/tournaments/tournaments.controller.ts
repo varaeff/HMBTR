@@ -51,6 +51,12 @@ const assertCanManageTournamentMarshals = (req: RequestWithUser) => {
   }
 };
 
+const assertCanEditTournamentCompetition = (req: RequestWithUser) => {
+  if (!req.user.is_admin && !req.user.is_organizer) {
+    throw new ForbiddenException('Organizer or administrator access required');
+  }
+};
+
 @Controller(API_ROUTES.TOURNAMENTS.ROOT)
 export class TournamentsController {
   constructor(private readonly tournamentsService: TournamentsService) {}
@@ -152,6 +158,19 @@ export class TournamentsController {
   @Post(API_ROUTES.TOURNAMENTS.NOMINATION + '/update')
   updateNomination(@Body() updateNominationDto: UpdateNominationDto) {
     return this.tournamentsService.updateNomination(updateNominationDto);
+  }
+
+  @Delete(API_ROUTES.TOURNAMENTS.NOMINATION + '/:tournamentId/:nominationId')
+  deleteNomination(
+    @Param('tournamentId', ParseIntPipe) tournamentId: number,
+    @Param('nominationId', ParseIntPipe) nominationId: number,
+    @Req() req: RequestWithUser,
+  ) {
+    assertCanEditTournamentCompetition(req);
+    return this.tournamentsService.deleteNomination(
+      tournamentId,
+      nominationId,
+    );
   }
 
   @Patch(API_ROUTES.TOURNAMENTS.NOMINATION + '/stage')

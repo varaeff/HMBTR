@@ -14,6 +14,7 @@ const props = defineProps<{
   hasBlocks: boolean
   hasAccess: boolean
   canCloseRegistration?: boolean
+  canDeleteNomination?: boolean
   closeRegistrationHint?: string
   activeCardTypes?: ActiveCardTypes
 }>()
@@ -21,6 +22,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'close'): Promise<void> | void
   (e: 'remove-competitor', fighterId: number): Promise<void> | void
+  (e: 'delete-nomination'): Promise<void> | void
 }>()
 
 const { i18next } = useTranslation()
@@ -56,10 +58,33 @@ const removeCompetitor = async (fighterId: number) => {
     isPending.value = false
   }
 }
+
+const deleteNomination = async () => {
+  try {
+    isPending.value = true
+    await emit('delete-nomination')
+  } finally {
+    isPending.value = false
+  }
+}
 </script>
 
 <template>
-  <div class="flex flex-col gap-2">
+  <div
+    v-if="!competitors.length && props.canDeleteNomination"
+    class="flex justify-center"
+  >
+    <Button
+      :disabled="isPending"
+      variant="destructive"
+      size="sm"
+      @click="deleteNomination"
+    >
+      {{ $t('tournamentPageDeleteNominationButton') }}
+    </Button>
+  </div>
+
+  <div v-else class="flex flex-col gap-2">
     <div
       v-for="(competitor, index) in competitors"
       :key="competitor.id"

@@ -35,6 +35,7 @@ interface TournamentNominationStore {
     nominationId: number,
     isOpen: boolean
   ): Promise<void>
+  deleteTournamentNomination(tournamentId: number, nominationId: number): Promise<void>
 }
 
 interface CompetitionWorkflowStore {
@@ -153,6 +154,26 @@ export const useTournamentCompetitionActions = ({
     await tournamentsListStore.updateTournamentNomination(tournamentId.value, activeTab.value, true)
     competitionStore.setRegistrationOpen(true)
     setCurrentNominationOpen(true)
+  }
+
+  const deleteNomination = async () => {
+    const deletedNominationId = activeTab.value
+    const nextNominationId =
+      tournament.value?.nominations.find(
+        (nomination) => nomination.nomination_id !== deletedNominationId
+      )?.nomination_id ?? 0
+
+    await tournamentsListStore.deleteTournamentNomination(tournamentId.value, deletedNominationId)
+
+    if (tournament.value) {
+      tournament.value.nominations = tournament.value.nominations.filter(
+        (nomination) => nomination.nomination_id !== deletedNominationId
+      )
+    }
+
+    if (nextNominationId && activeTab.value === deletedNominationId) {
+      activeTab.value = nextNominationId
+    }
   }
 
   const removeCompetitor = async (fighterId: number, nominationId: number) => {
@@ -459,6 +480,7 @@ export const useTournamentCompetitionActions = ({
   return {
     closeRegistration,
     openRegistration,
+    deleteNomination,
     removeCompetitor,
     createGroupBlock,
     createOlympicBlock,

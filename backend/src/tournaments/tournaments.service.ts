@@ -46,6 +46,10 @@ export class TournamentsService {
     return this.nominations.updateNomination(dto);
   }
 
+  async deleteNomination(tournamentId: number, nominationId: number) {
+    return this.nominations.deleteNomination(tournamentId, nominationId);
+  }
+
   async updateNominationStage(dto: UpdateNominationStageDto) {
     return this.nominations.updateNominationStage(dto);
   }

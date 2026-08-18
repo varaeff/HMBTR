@@ -64,6 +64,7 @@ const nominationTabsActions = computed<TournamentNominationTabsActions>(() => ({
   closeRegistration: props.page.actions.closeRegistration,
   removeCompetitor: props.page.actions.removeCompetitor,
   openRegistration: props.page.actions.openRegistration,
+  deleteNomination: props.page.actions.deleteNomination,
   createGroupBlock: props.page.actions.createGroupBlock,
   createOlympicBlock: props.page.actions.createOlympicBlock,
   generateGroupFights: props.page.actions.generateGroupFights,

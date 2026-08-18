@@ -59,6 +59,47 @@ export class TournamentNominationService {
     });
   }
 
+  async deleteNomination(tournamentId: number, nominationId: number) {
+    return this.prisma.$transaction(async (tx) => {
+      const nomination = await tx.tournament_nominations.findFirst({
+        where: {
+          tournament_id: tournamentId,
+          nomination_id: nominationId,
+        },
+      });
+
+      if (!nomination) throw new NotFoundException('Nomination not found');
+
+      const [nominationCount, competitorCount] = await Promise.all([
+        tx.tournament_nominations.count({
+          where: { tournament_id: tournamentId },
+        }),
+        tx.competitors.count({
+          where: {
+            tournament_id: tournamentId,
+            nomination_id: nominationId,
+          },
+        }),
+      ]);
+
+      if (nominationCount <= 1) {
+        throw new BadRequestException(
+          'Cannot delete the only tournament nomination',
+        );
+      }
+
+      if (competitorCount > 0) {
+        throw new BadRequestException(
+          'Cannot delete nomination with registered competitors',
+        );
+      }
+
+      return tx.tournament_nominations.delete({
+        where: { id: nomination.id },
+      });
+    });
+  }
+
   async updateNominationStage(dto: UpdateNominationStageDto) {
     const nomination = await this.prisma.tournament_nominations.findUnique({
       where: { id: dto.nomination_id },

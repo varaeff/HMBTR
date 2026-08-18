@@ -30,6 +30,10 @@ export const API_ROUTES = {
     BY_ID: (id: string | number) => `/tournaments/${id}`,
     MARSHALS_BY_TOURNAMENT: (id: string | number) =>
       `/tournaments/${id}/marshals`,
+    NOMINATION_BY_TOURNAMENT_AND_NOMINATION: (
+      tournamentId: string | number,
+      nominationId: string | number,
+    ) => `/tournaments/nominations/${tournamentId}/${nominationId}`,
     FINISH_MARSHALS: (id: string | number) =>
       `/tournaments/${id}/marshals/finish`,
     TOURNAMENT_MARSHAL_BY_ID: (id: string | number) =>

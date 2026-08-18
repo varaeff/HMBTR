@@ -150,6 +150,7 @@ export interface TournamentNominationTabsActions {
   closeRegistration(): void
   removeCompetitor(fighterId: number, nominationId: number): void
   openRegistration(): void
+  deleteNomination(): void
   createGroupBlock(): void
   createOlympicBlock(includeThirdPlaces?: boolean): void
   generateGroupFights(blockId: number): void

@@ -38,6 +38,7 @@ describe('TournamentsService', () => {
       $transaction: jest.fn(),
       competitors: {
         findMany: jest.fn(),
+        count: jest.fn(),
       },
       competition_blocks: {
         findMany: jest.fn(),
@@ -48,7 +49,9 @@ describe('TournamentsService', () => {
       },
       tournament_nominations: {
         findFirst: jest.fn(),
+        count: jest.fn(),
         update: jest.fn(),
+        delete: jest.fn(),
       },
       tournaments: {
         findUnique: jest.fn(),
@@ -64,6 +67,9 @@ describe('TournamentsService', () => {
         delete: jest.fn(),
       },
     };
+    prisma.$transaction.mockImplementation(
+      async <T>(callback: (tx: typeof prisma) => Promise<T>) => callback(prisma),
+    );
     const prismaService = prisma as unknown as PrismaService;
     const crud = new TournamentCrudService(prismaService);
     const nominations = new TournamentNominationService(prismaService);
@@ -166,6 +172,88 @@ describe('TournamentsService', () => {
         is_open: false,
       }),
     ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('deletes an empty tournament nomination when another nomination remains', async () => {
+    const { prisma, service } = createService();
+    prisma.tournament_nominations.findFirst.mockResolvedValue({
+      id: 42,
+      tournament_id: 31,
+      nomination_id: 5,
+    });
+    prisma.tournament_nominations.count.mockResolvedValue(2);
+    prisma.competitors.count.mockResolvedValue(0);
+    prisma.tournament_nominations.delete.mockResolvedValue({
+      id: 42,
+      tournament_id: 31,
+      nomination_id: 5,
+    });
+
+    await expect(service.deleteNomination(31, 5)).resolves.toMatchObject({
+      id: 42,
+      nomination_id: 5,
+    });
+
+    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+    expect(prisma.tournament_nominations.findFirst).toHaveBeenCalledWith({
+      where: { tournament_id: 31, nomination_id: 5 },
+    });
+    expect(prisma.tournament_nominations.count).toHaveBeenCalledWith({
+      where: { tournament_id: 31 },
+    });
+    expect(prisma.competitors.count).toHaveBeenCalledWith({
+      where: { tournament_id: 31, nomination_id: 5 },
+    });
+    expect(prisma.tournament_nominations.delete).toHaveBeenCalledWith({
+      where: { id: 42 },
+    });
+  });
+
+  it('rejects deleting a tournament nomination pair that does not exist', async () => {
+    const { prisma, service } = createService();
+    prisma.tournament_nominations.findFirst.mockResolvedValue(null);
+
+    await expect(service.deleteNomination(31, 5)).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
+
+    expect(prisma.tournament_nominations.count).not.toHaveBeenCalled();
+    expect(prisma.competitors.count).not.toHaveBeenCalled();
+    expect(prisma.tournament_nominations.delete).not.toHaveBeenCalled();
+  });
+
+  it('rejects deleting the only tournament nomination', async () => {
+    const { prisma, service } = createService();
+    prisma.tournament_nominations.findFirst.mockResolvedValue({
+      id: 42,
+      tournament_id: 31,
+      nomination_id: 5,
+    });
+    prisma.tournament_nominations.count.mockResolvedValue(1);
+    prisma.competitors.count.mockResolvedValue(0);
+
+    await expect(service.deleteNomination(31, 5)).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
+
+    expect(prisma.tournament_nominations.delete).not.toHaveBeenCalled();
+  });
+
+  it('rejects deleting a tournament nomination with registered competitors', async () => {
+    const { prisma, service } = createService();
+    prisma.tournament_nominations.findFirst.mockResolvedValue({
+      id: 42,
+      tournament_id: 31,
+      nomination_id: 5,
+    });
+    prisma.tournament_nominations.count.mockResolvedValue(2);
+    prisma.competitors.count.mockResolvedValue(1);
+
+    await expect(service.deleteNomination(31, 5)).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
+
+    expect(prisma.tournament_nominations.delete).not.toHaveBeenCalled();
   });
 
   it('registers a marshal while tournament marshal and fighter registration are open', async () => {

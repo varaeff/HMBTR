@@ -140,6 +140,7 @@
   "tournamentPageFightersSelectLabel": "Add Fighters",
   "tournamentPageRegisteredFighters": "Registered fighters",
   "tournamentPageRemoveCompetitorButton": "Remove",
+  "tournamentPageDeleteNominationButton": "Delete nomination",
   "tournamentPageCloseRegistrationButton": "Close registration",
   "tournamentPageOpenRegistrationButton": "Open registration",
   "tournamentPageAddJudgesHint": "Register judges for the tournament",

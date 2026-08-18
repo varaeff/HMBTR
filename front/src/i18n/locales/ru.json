@@ -121,6 +121,7 @@
   "tournamentPageFightersSelectLabel": "Добавление бойцов",
   "tournamentPageRegisteredFighters": "Зарегистрированные бойцы",
   "tournamentPageRemoveCompetitorButton": "Убрать",
+  "tournamentPageDeleteNominationButton": "Удалить номинацию",
   "tournamentPageCloseRegistrationButton": "Закрыть регистрацию",
   "tournamentPageOpenRegistrationButton": "Открыть регистрацию",
   "tournamentPageAddJudgesHint": "Зарегистрируйте судей на турнир",

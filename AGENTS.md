@@ -44,6 +44,7 @@
 - Code and tests remain the only source of truth for implementation details.
 - OpenSpec artifacts should reference relevant project skills by name instead
   of copying their implementation guidance into specs or designs.
+- Write all OpenSpec artifacts in English.
 - Before finalizing an OpenSpec design or applying an OpenSpec change, identify
   and read the relevant project skills named by the proposal or design.
 - If an OpenSpec proposal or design conflicts with project skills or the current

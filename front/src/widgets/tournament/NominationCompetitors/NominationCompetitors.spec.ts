@@ -16,6 +16,7 @@ const createI18n = async () => {
       en: {
         translation: {
           tournamentPageCloseRegistrationButton: 'Close registration',
+          tournamentPageDeleteNominationButton: 'Delete nomination',
           tournamentPageRegistrationClosed: 'Registration closed',
           tournamentPageRemoveCompetitorButton: 'Remove',
           disciplinaryCardsReasonAUTO_RED_THREE_YELLOWS_CROSS_TOURNAMENT:
@@ -25,6 +26,7 @@ const createI18n = async () => {
       ru: {
         translation: {
           tournamentPageCloseRegistrationButton: 'Close registration',
+          tournamentPageDeleteNominationButton: 'Delete nomination',
           tournamentPageRegistrationClosed: 'Registration closed',
           tournamentPageRemoveCompetitorButton: 'Remove',
           disciplinaryCardsReasonAUTO_RED_THREE_YELLOWS_CROSS_TOURNAMENT:
@@ -191,6 +193,86 @@ describe('NominationCompetitors', () => {
     await wrapper.find('button').trigger('click')
 
     expect(wrapper.emitted('remove-competitor')).toEqual([[competitor.id]])
+
+    wrapper.unmount()
+  })
+
+  it('shows delete nomination action for an empty deletable nomination', async () => {
+    const instance = await createI18n()
+
+    const wrapper = mount(NominationCompetitors, {
+      props: {
+        competitors: [],
+        activeTab: 1,
+        isOpen: true,
+        hasBlocks: false,
+        hasAccess: true,
+        canDeleteNomination: true
+      },
+      global: {
+        plugins: [[I18NextVue, { i18next: instance }]],
+        stubs: {
+          Button: { template: '<button v-bind="$attrs"><slot /></button>' },
+          CardStatusIcon: true
+        }
+      }
+    })
+
+    expect(wrapper.text()).toContain('Delete nomination')
+
+    wrapper.unmount()
+  })
+
+  it('does not show delete nomination action when an empty nomination is not deletable', async () => {
+    const instance = await createI18n()
+
+    const wrapper = mount(NominationCompetitors, {
+      props: {
+        competitors: [],
+        activeTab: 1,
+        isOpen: true,
+        hasBlocks: false,
+        hasAccess: true,
+        canDeleteNomination: false
+      },
+      global: {
+        plugins: [[I18NextVue, { i18next: instance }]],
+        stubs: {
+          Button: { template: '<button v-bind="$attrs"><slot /></button>' },
+          CardStatusIcon: true
+        }
+      }
+    })
+
+    expect(wrapper.text()).not.toContain('Delete nomination')
+
+    wrapper.unmount()
+  })
+
+  it('emits delete nomination when the empty-state action is clicked', async () => {
+    const instance = await createI18n()
+
+    const wrapper = mount(NominationCompetitors, {
+      props: {
+        competitors: [],
+        activeTab: 1,
+        isOpen: true,
+        hasBlocks: false,
+        hasAccess: true,
+        canDeleteNomination: true
+      },
+      global: {
+        plugins: [[I18NextVue, { i18next: instance }]],
+        stubs: {
+          Button: { template: '<button v-bind="$attrs"><slot /></button>' },
+          CardStatusIcon: true
+        }
+      }
+    })
+
+    await wrapper.find('button').trigger('click')
+
+    expect(wrapper.emitted('delete-nomination')).toEqual([[]])
 
     wrapper.unmount()
   })

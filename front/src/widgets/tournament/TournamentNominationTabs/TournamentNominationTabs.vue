@@ -42,6 +42,17 @@ const competitorsListOpenModel = computed({
   set: (value: boolean) => props.actions.setCompetitorsListOpen(value)
 })
 
+const canDeleteCurrentNomination = computed(
+  () =>
+    props.permissions.canEditCompetition &&
+    props.state.nominationCompetitors.length === 0 &&
+    props.state.tournamentNominations.all.length > 1
+)
+
+const showCompetitorsSection = computed(
+  () => props.state.nominationCompetitors.length > 0 || canDeleteCurrentNomination.value
+)
+
 const blockState = (block: CompetitionBlock): TournamentCompetitionBlockState => ({
   block,
   title: props.actions.blockTitle(block),
@@ -122,7 +133,7 @@ const blockActions = (block: CompetitionBlock): TournamentCompetitionBlockAction
         <CompetitionPodium :placements="state.placements" />
 
         <CollapsibleSection
-          v-if="state.nominationCompetitors.length"
+          v-if="showCompetitorsSection"
           :title="$t('tournamentPageRegisteredFighters')"
           v-model:isOpen="competitorsListOpenModel"
         >
@@ -134,8 +145,10 @@ const blockActions = (block: CompetitionBlock): TournamentCompetitionBlockAction
             :hasBlocks="state.blocks.length > 0"
             :activeCardTypes="cards.activeCardTypes"
             :canCloseRegistration="state.hasTournamentMarshals"
+            :canDeleteNomination="canDeleteCurrentNomination"
             :closeRegistrationHint="$t('tournamentPageAddJudgesHint')"
             @close="actions.closeRegistration"
+            @delete-nomination="actions.deleteNomination"
             @remove-competitor="
               (fighterId) => actions.removeCompetitor(fighterId, state.activeTab)
             "

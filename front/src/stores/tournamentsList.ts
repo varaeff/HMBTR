@@ -140,6 +140,22 @@ export const useTournamentsListStore = defineStore({
       nomination && (nomination.is_open = isOpen)
     },
 
+    async deleteTournamentNomination(tournamentId: number, nominationId: number) {
+      await http.delete(
+        API_ROUTES.TOURNAMENTS.NOMINATION_BY_TOURNAMENT_AND_NOMINATION(
+          tournamentId,
+          nominationId
+        )
+      )
+
+      const tournament = this.tournaments.find((item) => item.id === tournamentId)
+      if (tournament) {
+        tournament.nominations = tournament.nominations.filter(
+          (nomination) => nomination.nomination_id !== nominationId
+        )
+      }
+    },
+
     clearSearchString() {
       clearListSearch(this)
     },
