@@ -52,8 +52,13 @@ defineProps<{
       </span>
     </template>
     <div v-if="showRoundTimes" class="mt-1 grid gap-0.5 text-xs text-muted-foreground">
-      <div v-for="(round, index) in roundScores" :key="index">
-        R{{ index + 1 }} {{ $t('fightRoundTimeLabel') }}
+      <div
+        v-for="(round, index) in roundScores"
+        :key="index"
+        data-testid="fight-round-time-display"
+      >
+        <span v-if="roundScores.length > 1" class="mr-1">R{{ index + 1 }}</span
+        >{{ $t('fightRoundTimeLabel') }}
         {{ formatRoundTime(round.durationSeconds ?? 0) }}
       </div>
     </div>

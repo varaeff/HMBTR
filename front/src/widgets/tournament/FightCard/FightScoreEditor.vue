@@ -75,7 +75,7 @@ const selectInputContent = (event: Event) => {
     <div
       v-for="(round, roundIndex) in visibleRoundScores"
       :key="roundIndex"
-      class="grid grid-cols-[1.75rem_3.5rem_2.25rem_auto_3.5rem_2.25rem] items-center gap-2"
+      class="grid grid-cols-[1.75rem_3.5rem_2.25rem_auto_3.5rem_2.25rem_auto] items-center gap-2"
     >
       <span class="text-xs font-semibold text-muted-foreground">R{{ roundIndex + 1 }}</span>
       <input
@@ -135,7 +135,8 @@ const selectInputContent = (event: Event) => {
       </span>
       <label
         v-if="showRoundTimes"
-        class="col-span-full ml-9 flex items-center gap-2 text-xs font-medium text-muted-foreground sm:col-span-2 sm:ml-0"
+        data-testid="fight-round-time-editor"
+        class="ml-2 flex items-center gap-2 whitespace-nowrap text-xs font-medium text-muted-foreground"
       >
         {{ $t('fightRoundTimeLabel') }}
         <RoundTimeInput
