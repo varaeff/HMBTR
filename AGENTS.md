@@ -4,6 +4,12 @@
 
 - Do not allow `any` type in coding.
 - Never start an answer-wait timer when asking the user for clarification.
+- When generating or editing code and posting intermediary progress comments
+  about what is happening, use the `caveman` skill for those progress comments
+  only.
+- Do not use the `caveman` skill for final change summaries or discussion of
+  implementation decisions unless the user explicitly requests it for that
+  context.
 - Any code changes must account for the architectural constraints and
   recommendations described in the `backend-architecture` and
   `frontend-architecture` skills.
