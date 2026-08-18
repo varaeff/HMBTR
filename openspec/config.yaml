@@ -1,0 +1,51 @@
+schema: spec-driven
+
+context: |
+  HMBTR is a tournament-management system with a Vue 3/Vite/TypeScript frontend,
+  a NestJS/TypeScript/Prisma/PostgreSQL backend, shared TypeScript contracts in
+  shared/, and Docker Compose deployment.
+
+  Read AGENTS.md before planning or applying changes. Existing project skills in
+  .agents/skills/ are reusable implementation knowledge and must not be replaced
+  by OpenSpec artifacts. Use OpenSpec specs for observable behavior, OpenSpec
+  changes for scoped feature/change planning, and code/tests as the only source
+  of truth for implementation details.
+
+  Do not introduce explicit TypeScript any. Prefer existing project patterns and
+  keep route, DTO, API, store, widget, and shared-contract changes scoped to the
+  requested behavior.
+
+rules:
+  proposal:
+    - Include a "Relevant project skills" section naming the HMBTR skills that
+      should guide design and apply work.
+    - Describe user-visible scope and non-goals; avoid implementation file
+      inventories unless they clarify risk.
+  specs:
+    - Describe observable behavior only. Do not include implementation plans,
+      file paths, service boundaries, framework details, or validation commands.
+    - Keep requirements phrased as system behavior with concrete scenarios.
+  design:
+    - Reference relevant project skills by name instead of copying their
+      implementation guidance.
+    - Capture only change-specific technical decisions, tradeoffs, affected
+      boundaries, and risks.
+  tasks:
+    - Keep tasks as implementation steps for the scoped change, not as general
+      architecture documentation.
+    - Include focused validation tasks chosen with the minimal-validation skill.
+
+operations:
+  apply:
+    guidance:
+      - Read the OpenSpec artifacts and every relevant project skill named in
+        the proposal or design before editing implementation code.
+      - Apply backend-architecture or frontend-architecture when the touched
+        surface enters those areas.
+      - Use minimal-validation and docs/validation-policy.md to select the
+        smallest sufficient checks.
+  archive:
+    guidance:
+      - Sync delta specs into main specs when appropriate.
+      - Update project skills only for reusable architecture, domain, or
+        workflow knowledge discovered during the change.

@@ -30,6 +30,29 @@
    - generated intermediate artifacts
    - session-specific data
 
+## OpenSpec Responsibility Boundaries
+
+- Use OpenSpec to capture non-trivial feature/change work before implementation:
+  requirements, observable behavior, scope, change-specific design decisions,
+  and implementation tasks.
+- OpenSpec specifications describe observable system behavior and requirements.
+- OpenSpec changes describe a scoped feature or change: intent, affected
+  capabilities, design decisions, delta requirements, and implementation tasks.
+- Existing project skills in `.agents/skills/` remain the reusable source for
+  architecture, domain conventions, implementation patterns, validation
+  strategy, and recurring project workflows.
+- Code and tests remain the only source of truth for implementation details.
+- OpenSpec artifacts should reference relevant project skills by name instead
+  of copying their implementation guidance into specs or designs.
+- Before finalizing an OpenSpec design or applying an OpenSpec change, identify
+  and read the relevant project skills named by the proposal or design.
+- If an OpenSpec proposal or design conflicts with project skills or the current
+  code architecture, report the conflict explicitly instead of silently choosing
+  one side.
+- After archiving an OpenSpec change, update project skills only when the work
+  produced reusable architecture or domain knowledge. Do not update skills for
+  one-off feature history.
+
 ## Required Engineering Workflow
 
 For every non-trivial implementation task, automatically execute this workflow.
