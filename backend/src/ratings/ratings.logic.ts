@@ -17,6 +17,7 @@ export interface RatingFight {
   winnerFighterId: number | null;
   isFinished: boolean;
   forfeitCardId: number | null;
+  forfeitWithdrawalId?: number | null;
 }
 
 export interface RatingCalculationResult {
@@ -60,7 +61,12 @@ export const calculateNominationRatings = (
   }
 
   for (const fight of fights) {
-    if (!fight.isFinished || !fight.winnerFighterId || fight.forfeitCardId) {
+    if (
+      !fight.isFinished ||
+      !fight.winnerFighterId ||
+      fight.forfeitCardId ||
+      fight.forfeitWithdrawalId
+    ) {
       continue;
     }
 

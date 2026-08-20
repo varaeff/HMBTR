@@ -16,6 +16,7 @@ const createI18n = async () => {
           disciplinaryCardsIssueAction: 'Issue card',
           disciplinaryCardsReasonAUTO_RED_TWO_YELLOWS_SAME_TOURNAMENT:
             'Automatic red for 2 yellows',
+          fighterWithdrawalMarkerTitle: 'Fighter withdrew: {{reason}}',
           fightWarningIssueAction: 'Issue warning',
           fightWarningRemoveAction: 'Remove warning'
         }
@@ -62,8 +63,11 @@ describe('FightParticipantLabel', () => {
         warningMarkers: [],
         warningTitle: '',
         canOpenMenu: false,
+        canIssueCard: false,
         canIssueWarning: false,
-        canRemoveWarnings: false
+        canRemoveWarnings: false,
+        canWithdraw: false,
+        canCancelWithdrawal: false
       },
       global: {
         plugins: [[I18NextVue, { i18next: instance }]],
@@ -74,6 +78,47 @@ describe('FightParticipantLabel', () => {
     })
 
     expect(wrapper.find('[title="Cup: Automatic red for 2 yellows"]').exists()).toBe(true)
+
+    wrapper.unmount()
+  })
+
+  it('renders withdrawal marker with the reason tooltip', async () => {
+    const instance = await createI18n()
+
+    const wrapper = mount(FightParticipantLabel, {
+      props: {
+        surname: 'Fighter',
+        fighter,
+        withdrawal: {
+          id: 9,
+          competitorId: 101,
+          reason: 'injury',
+          isExcused: true,
+          source: 'FIGHT',
+          sourceFightId: 7
+        },
+        warningMarkers: [],
+        warningTitle: '',
+        canOpenMenu: false,
+        canIssueCard: false,
+        canIssueWarning: false,
+        canRemoveWarnings: false,
+        canWithdraw: false,
+        canCancelWithdrawal: false
+      },
+      global: {
+        plugins: [[I18NextVue, { i18next: instance }]]
+      }
+    })
+
+    const marker = wrapper.find('[title="Fighter withdrew: injury"]')
+    const icon = marker.find('svg')
+
+    expect(marker.exists()).toBe(true)
+    expect(marker.element.tagName).toBe('SPAN')
+    expect(icon.attributes('class')).toContain('h-[19px]')
+    expect(icon.attributes('class')).toContain('w-[19px]')
+    expect(icon.attributes('stroke-width')).toBe('3')
 
     wrapper.unmount()
   })

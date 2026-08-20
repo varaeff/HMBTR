@@ -238,6 +238,7 @@ export type competitorsWhereInput = {
   groups?: Prisma.Group_competitorsListRelationFilter
   bracket_slots?: Prisma.Bracket_slotsListRelationFilter
   placements?: Prisma.Competition_placementsListRelationFilter
+  withdrawals?: Prisma.Fighter_withdrawalsListRelationFilter
   fights_as_f1?: Prisma.FightsListRelationFilter
   fights_as_f2?: Prisma.FightsListRelationFilter
   fights_won?: Prisma.FightsListRelationFilter
@@ -256,6 +257,7 @@ export type competitorsOrderByWithRelationInput = {
   groups?: Prisma.group_competitorsOrderByRelationAggregateInput
   bracket_slots?: Prisma.bracket_slotsOrderByRelationAggregateInput
   placements?: Prisma.competition_placementsOrderByRelationAggregateInput
+  withdrawals?: Prisma.fighter_withdrawalsOrderByRelationAggregateInput
   fights_as_f1?: Prisma.fightsOrderByRelationAggregateInput
   fights_as_f2?: Prisma.fightsOrderByRelationAggregateInput
   fights_won?: Prisma.fightsOrderByRelationAggregateInput
@@ -277,6 +279,7 @@ export type competitorsWhereUniqueInput = Prisma.AtLeast<{
   groups?: Prisma.Group_competitorsListRelationFilter
   bracket_slots?: Prisma.Bracket_slotsListRelationFilter
   placements?: Prisma.Competition_placementsListRelationFilter
+  withdrawals?: Prisma.Fighter_withdrawalsListRelationFilter
   fights_as_f1?: Prisma.FightsListRelationFilter
   fights_as_f2?: Prisma.FightsListRelationFilter
   fights_won?: Prisma.FightsListRelationFilter
@@ -315,6 +318,7 @@ export type competitorsCreateInput = {
   groups?: Prisma.group_competitorsCreateNestedManyWithoutCompetitorInput
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
@@ -330,6 +334,7 @@ export type competitorsUncheckedCreateInput = {
   groups?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutCompetitorInput
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
@@ -344,6 +349,7 @@ export type competitorsUpdateInput = {
   groups?: Prisma.group_competitorsUpdateManyWithoutCompetitorNestedInput
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
@@ -359,6 +365,7 @@ export type competitorsUncheckedUpdateInput = {
   groups?: Prisma.group_competitorsUncheckedUpdateManyWithoutCompetitorNestedInput
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
@@ -629,6 +636,20 @@ export type competitorsUpdateOneWithoutFights_wonNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.competitorsUpdateToOneWithWhereWithoutFights_wonInput, Prisma.competitorsUpdateWithoutFights_wonInput>, Prisma.competitorsUncheckedUpdateWithoutFights_wonInput>
 }
 
+export type competitorsCreateNestedOneWithoutWithdrawalsInput = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutWithdrawalsInput, Prisma.competitorsUncheckedCreateWithoutWithdrawalsInput>
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutWithdrawalsInput
+  connect?: Prisma.competitorsWhereUniqueInput
+}
+
+export type competitorsUpdateOneRequiredWithoutWithdrawalsNestedInput = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutWithdrawalsInput, Prisma.competitorsUncheckedCreateWithoutWithdrawalsInput>
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutWithdrawalsInput
+  upsert?: Prisma.competitorsUpsertWithoutWithdrawalsInput
+  connect?: Prisma.competitorsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.competitorsUpdateToOneWithWhereWithoutWithdrawalsInput, Prisma.competitorsUpdateWithoutWithdrawalsInput>, Prisma.competitorsUncheckedUpdateWithoutWithdrawalsInput>
+}
+
 export type competitorsCreateNestedOneWithoutFight_warningsInput = {
   create?: Prisma.XOR<Prisma.competitorsCreateWithoutFight_warningsInput, Prisma.competitorsUncheckedCreateWithoutFight_warningsInput>
   connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutFight_warningsInput
@@ -678,6 +699,7 @@ export type competitorsCreateWithoutFighterInput = {
   groups?: Prisma.group_competitorsCreateNestedManyWithoutCompetitorInput
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
@@ -692,6 +714,7 @@ export type competitorsUncheckedCreateWithoutFighterInput = {
   groups?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutCompetitorInput
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
@@ -742,6 +765,7 @@ export type competitorsCreateWithoutTournamentInput = {
   groups?: Prisma.group_competitorsCreateNestedManyWithoutCompetitorInput
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
@@ -756,6 +780,7 @@ export type competitorsUncheckedCreateWithoutTournamentInput = {
   groups?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutCompetitorInput
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
@@ -795,6 +820,7 @@ export type competitorsCreateWithoutNominationInput = {
   groups?: Prisma.group_competitorsCreateNestedManyWithoutCompetitorInput
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
@@ -809,6 +835,7 @@ export type competitorsUncheckedCreateWithoutNominationInput = {
   groups?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutCompetitorInput
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
@@ -848,6 +875,7 @@ export type competitorsCreateWithoutGroupsInput = {
   nomination: Prisma.nominationsCreateNestedOneWithoutCompetitorsInput
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
@@ -862,6 +890,7 @@ export type competitorsUncheckedCreateWithoutGroupsInput = {
   stage?: number
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
@@ -891,6 +920,7 @@ export type competitorsUpdateWithoutGroupsInput = {
   nomination?: Prisma.nominationsUpdateOneRequiredWithoutCompetitorsNestedInput
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
@@ -905,6 +935,7 @@ export type competitorsUncheckedUpdateWithoutGroupsInput = {
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
@@ -919,6 +950,7 @@ export type competitorsCreateWithoutFights_as_f1Input = {
   groups?: Prisma.group_competitorsCreateNestedManyWithoutCompetitorInput
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
   fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
   fight_warnings?: Prisma.fight_warningsCreateNestedManyWithoutCompetitorInput
@@ -933,6 +965,7 @@ export type competitorsUncheckedCreateWithoutFights_as_f1Input = {
   groups?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutCompetitorInput
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
   fight_warnings?: Prisma.fight_warningsUncheckedCreateNestedManyWithoutCompetitorInput
@@ -951,6 +984,7 @@ export type competitorsCreateWithoutFights_as_f2Input = {
   groups?: Prisma.group_competitorsCreateNestedManyWithoutCompetitorInput
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
   fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
   fight_warnings?: Prisma.fight_warningsCreateNestedManyWithoutCompetitorInput
@@ -965,6 +999,7 @@ export type competitorsUncheckedCreateWithoutFights_as_f2Input = {
   groups?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutCompetitorInput
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
   fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
   fight_warnings?: Prisma.fight_warningsUncheckedCreateNestedManyWithoutCompetitorInput
@@ -983,6 +1018,7 @@ export type competitorsCreateWithoutFights_wonInput = {
   groups?: Prisma.group_competitorsCreateNestedManyWithoutCompetitorInput
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
   fight_warnings?: Prisma.fight_warningsCreateNestedManyWithoutCompetitorInput
@@ -997,6 +1033,7 @@ export type competitorsUncheckedCreateWithoutFights_wonInput = {
   groups?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutCompetitorInput
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
   fight_warnings?: Prisma.fight_warningsUncheckedCreateNestedManyWithoutCompetitorInput
@@ -1026,6 +1063,7 @@ export type competitorsUpdateWithoutFights_as_f1Input = {
   groups?: Prisma.group_competitorsUpdateManyWithoutCompetitorNestedInput
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
   fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
   fight_warnings?: Prisma.fight_warningsUpdateManyWithoutCompetitorNestedInput
@@ -1040,6 +1078,7 @@ export type competitorsUncheckedUpdateWithoutFights_as_f1Input = {
   groups?: Prisma.group_competitorsUncheckedUpdateManyWithoutCompetitorNestedInput
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
   fight_warnings?: Prisma.fight_warningsUncheckedUpdateManyWithoutCompetitorNestedInput
@@ -1064,6 +1103,7 @@ export type competitorsUpdateWithoutFights_as_f2Input = {
   groups?: Prisma.group_competitorsUpdateManyWithoutCompetitorNestedInput
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
   fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
   fight_warnings?: Prisma.fight_warningsUpdateManyWithoutCompetitorNestedInput
@@ -1078,6 +1118,7 @@ export type competitorsUncheckedUpdateWithoutFights_as_f2Input = {
   groups?: Prisma.group_competitorsUncheckedUpdateManyWithoutCompetitorNestedInput
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
   fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
   fight_warnings?: Prisma.fight_warningsUncheckedUpdateManyWithoutCompetitorNestedInput
@@ -1102,6 +1143,7 @@ export type competitorsUpdateWithoutFights_wonInput = {
   groups?: Prisma.group_competitorsUpdateManyWithoutCompetitorNestedInput
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
   fight_warnings?: Prisma.fight_warningsUpdateManyWithoutCompetitorNestedInput
@@ -1116,8 +1158,83 @@ export type competitorsUncheckedUpdateWithoutFights_wonInput = {
   groups?: Prisma.group_competitorsUncheckedUpdateManyWithoutCompetitorNestedInput
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
+  fight_warnings?: Prisma.fight_warningsUncheckedUpdateManyWithoutCompetitorNestedInput
+}
+
+export type competitorsCreateWithoutWithdrawalsInput = {
+  stage?: number
+  fighter: Prisma.fightersCreateNestedOneWithoutCompetitorsInput
+  tournament: Prisma.tournamentsCreateNestedOneWithoutCompetitorsInput
+  nomination: Prisma.nominationsCreateNestedOneWithoutCompetitorsInput
+  groups?: Prisma.group_competitorsCreateNestedManyWithoutCompetitorInput
+  bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
+  placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
+  fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
+  fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
+  fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
+  fight_warnings?: Prisma.fight_warningsCreateNestedManyWithoutCompetitorInput
+}
+
+export type competitorsUncheckedCreateWithoutWithdrawalsInput = {
+  id?: number
+  fighter_id: number
+  tournament_id: number
+  nomination_id: number
+  stage?: number
+  groups?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutCompetitorInput
+  bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
+  placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
+  fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
+  fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
+  fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
+  fight_warnings?: Prisma.fight_warningsUncheckedCreateNestedManyWithoutCompetitorInput
+}
+
+export type competitorsCreateOrConnectWithoutWithdrawalsInput = {
+  where: Prisma.competitorsWhereUniqueInput
+  create: Prisma.XOR<Prisma.competitorsCreateWithoutWithdrawalsInput, Prisma.competitorsUncheckedCreateWithoutWithdrawalsInput>
+}
+
+export type competitorsUpsertWithoutWithdrawalsInput = {
+  update: Prisma.XOR<Prisma.competitorsUpdateWithoutWithdrawalsInput, Prisma.competitorsUncheckedUpdateWithoutWithdrawalsInput>
+  create: Prisma.XOR<Prisma.competitorsCreateWithoutWithdrawalsInput, Prisma.competitorsUncheckedCreateWithoutWithdrawalsInput>
+  where?: Prisma.competitorsWhereInput
+}
+
+export type competitorsUpdateToOneWithWhereWithoutWithdrawalsInput = {
+  where?: Prisma.competitorsWhereInput
+  data: Prisma.XOR<Prisma.competitorsUpdateWithoutWithdrawalsInput, Prisma.competitorsUncheckedUpdateWithoutWithdrawalsInput>
+}
+
+export type competitorsUpdateWithoutWithdrawalsInput = {
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter?: Prisma.fightersUpdateOneRequiredWithoutCompetitorsNestedInput
+  tournament?: Prisma.tournamentsUpdateOneRequiredWithoutCompetitorsNestedInput
+  nomination?: Prisma.nominationsUpdateOneRequiredWithoutCompetitorsNestedInput
+  groups?: Prisma.group_competitorsUpdateManyWithoutCompetitorNestedInput
+  bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
+  placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
+  fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
+  fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
+  fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
+  fight_warnings?: Prisma.fight_warningsUpdateManyWithoutCompetitorNestedInput
+}
+
+export type competitorsUncheckedUpdateWithoutWithdrawalsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  groups?: Prisma.group_competitorsUncheckedUpdateManyWithoutCompetitorNestedInput
+  bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
+  placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
+  fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
+  fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
+  fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
   fight_warnings?: Prisma.fight_warningsUncheckedUpdateManyWithoutCompetitorNestedInput
 }
 
@@ -1129,6 +1246,7 @@ export type competitorsCreateWithoutFight_warningsInput = {
   groups?: Prisma.group_competitorsCreateNestedManyWithoutCompetitorInput
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
@@ -1143,6 +1261,7 @@ export type competitorsUncheckedCreateWithoutFight_warningsInput = {
   groups?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutCompetitorInput
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
@@ -1172,6 +1291,7 @@ export type competitorsUpdateWithoutFight_warningsInput = {
   groups?: Prisma.group_competitorsUpdateManyWithoutCompetitorNestedInput
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
@@ -1186,6 +1306,7 @@ export type competitorsUncheckedUpdateWithoutFight_warningsInput = {
   groups?: Prisma.group_competitorsUncheckedUpdateManyWithoutCompetitorNestedInput
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
@@ -1198,6 +1319,7 @@ export type competitorsCreateWithoutBracket_slotsInput = {
   nomination: Prisma.nominationsCreateNestedOneWithoutCompetitorsInput
   groups?: Prisma.group_competitorsCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
@@ -1212,6 +1334,7 @@ export type competitorsUncheckedCreateWithoutBracket_slotsInput = {
   stage?: number
   groups?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
@@ -1241,6 +1364,7 @@ export type competitorsUpdateWithoutBracket_slotsInput = {
   nomination?: Prisma.nominationsUpdateOneRequiredWithoutCompetitorsNestedInput
   groups?: Prisma.group_competitorsUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
@@ -1255,6 +1379,7 @@ export type competitorsUncheckedUpdateWithoutBracket_slotsInput = {
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   groups?: Prisma.group_competitorsUncheckedUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
@@ -1268,6 +1393,7 @@ export type competitorsCreateWithoutPlacementsInput = {
   nomination: Prisma.nominationsCreateNestedOneWithoutCompetitorsInput
   groups?: Prisma.group_competitorsCreateNestedManyWithoutCompetitorInput
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
@@ -1282,6 +1408,7 @@ export type competitorsUncheckedCreateWithoutPlacementsInput = {
   stage?: number
   groups?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutCompetitorInput
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
@@ -1311,6 +1438,7 @@ export type competitorsUpdateWithoutPlacementsInput = {
   nomination?: Prisma.nominationsUpdateOneRequiredWithoutCompetitorsNestedInput
   groups?: Prisma.group_competitorsUpdateManyWithoutCompetitorNestedInput
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
@@ -1325,6 +1453,7 @@ export type competitorsUncheckedUpdateWithoutPlacementsInput = {
   stage?: Prisma.IntFieldUpdateOperationsInput | number
   groups?: Prisma.group_competitorsUncheckedUpdateManyWithoutCompetitorNestedInput
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
@@ -1345,6 +1474,7 @@ export type competitorsUpdateWithoutFighterInput = {
   groups?: Prisma.group_competitorsUpdateManyWithoutCompetitorNestedInput
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
@@ -1359,6 +1489,7 @@ export type competitorsUncheckedUpdateWithoutFighterInput = {
   groups?: Prisma.group_competitorsUncheckedUpdateManyWithoutCompetitorNestedInput
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
@@ -1386,6 +1517,7 @@ export type competitorsUpdateWithoutTournamentInput = {
   groups?: Prisma.group_competitorsUpdateManyWithoutCompetitorNestedInput
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
@@ -1400,6 +1532,7 @@ export type competitorsUncheckedUpdateWithoutTournamentInput = {
   groups?: Prisma.group_competitorsUncheckedUpdateManyWithoutCompetitorNestedInput
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
@@ -1427,6 +1560,7 @@ export type competitorsUpdateWithoutNominationInput = {
   groups?: Prisma.group_competitorsUpdateManyWithoutCompetitorNestedInput
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
@@ -1441,6 +1575,7 @@ export type competitorsUncheckedUpdateWithoutNominationInput = {
   groups?: Prisma.group_competitorsUncheckedUpdateManyWithoutCompetitorNestedInput
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
@@ -1463,6 +1598,7 @@ export type CompetitorsCountOutputType = {
   groups: number
   bracket_slots: number
   placements: number
+  withdrawals: number
   fights_as_f1: number
   fights_as_f2: number
   fights_won: number
@@ -1473,6 +1609,7 @@ export type CompetitorsCountOutputTypeSelect<ExtArgs extends runtime.Types.Exten
   groups?: boolean | CompetitorsCountOutputTypeCountGroupsArgs
   bracket_slots?: boolean | CompetitorsCountOutputTypeCountBracket_slotsArgs
   placements?: boolean | CompetitorsCountOutputTypeCountPlacementsArgs
+  withdrawals?: boolean | CompetitorsCountOutputTypeCountWithdrawalsArgs
   fights_as_f1?: boolean | CompetitorsCountOutputTypeCountFights_as_f1Args
   fights_as_f2?: boolean | CompetitorsCountOutputTypeCountFights_as_f2Args
   fights_won?: boolean | CompetitorsCountOutputTypeCountFights_wonArgs
@@ -1508,6 +1645,13 @@ export type CompetitorsCountOutputTypeCountBracket_slotsArgs<ExtArgs extends run
  */
 export type CompetitorsCountOutputTypeCountPlacementsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.competition_placementsWhereInput
+}
+
+/**
+ * CompetitorsCountOutputType without action
+ */
+export type CompetitorsCountOutputTypeCountWithdrawalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.fighter_withdrawalsWhereInput
 }
 
 /**
@@ -1551,6 +1695,7 @@ export type competitorsSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   groups?: boolean | Prisma.competitors$groupsArgs<ExtArgs>
   bracket_slots?: boolean | Prisma.competitors$bracket_slotsArgs<ExtArgs>
   placements?: boolean | Prisma.competitors$placementsArgs<ExtArgs>
+  withdrawals?: boolean | Prisma.competitors$withdrawalsArgs<ExtArgs>
   fights_as_f1?: boolean | Prisma.competitors$fights_as_f1Args<ExtArgs>
   fights_as_f2?: boolean | Prisma.competitors$fights_as_f2Args<ExtArgs>
   fights_won?: boolean | Prisma.competitors$fights_wonArgs<ExtArgs>
@@ -1596,6 +1741,7 @@ export type competitorsInclude<ExtArgs extends runtime.Types.Extensions.Internal
   groups?: boolean | Prisma.competitors$groupsArgs<ExtArgs>
   bracket_slots?: boolean | Prisma.competitors$bracket_slotsArgs<ExtArgs>
   placements?: boolean | Prisma.competitors$placementsArgs<ExtArgs>
+  withdrawals?: boolean | Prisma.competitors$withdrawalsArgs<ExtArgs>
   fights_as_f1?: boolean | Prisma.competitors$fights_as_f1Args<ExtArgs>
   fights_as_f2?: boolean | Prisma.competitors$fights_as_f2Args<ExtArgs>
   fights_won?: boolean | Prisma.competitors$fights_wonArgs<ExtArgs>
@@ -1622,6 +1768,7 @@ export type $competitorsPayload<ExtArgs extends runtime.Types.Extensions.Interna
     groups: Prisma.$group_competitorsPayload<ExtArgs>[]
     bracket_slots: Prisma.$bracket_slotsPayload<ExtArgs>[]
     placements: Prisma.$competition_placementsPayload<ExtArgs>[]
+    withdrawals: Prisma.$fighter_withdrawalsPayload<ExtArgs>[]
     fights_as_f1: Prisma.$fightsPayload<ExtArgs>[]
     fights_as_f2: Prisma.$fightsPayload<ExtArgs>[]
     fights_won: Prisma.$fightsPayload<ExtArgs>[]
@@ -2033,6 +2180,7 @@ export interface Prisma__competitorsClient<T, Null = never, ExtArgs extends runt
   groups<T extends Prisma.competitors$groupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competitors$groupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$group_competitorsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   bracket_slots<T extends Prisma.competitors$bracket_slotsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competitors$bracket_slotsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$bracket_slotsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   placements<T extends Prisma.competitors$placementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competitors$placementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$competition_placementsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  withdrawals<T extends Prisma.competitors$withdrawalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competitors$withdrawalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fighter_withdrawalsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   fights_as_f1<T extends Prisma.competitors$fights_as_f1Args<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competitors$fights_as_f1Args<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fightsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   fights_as_f2<T extends Prisma.competitors$fights_as_f2Args<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competitors$fights_as_f2Args<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fightsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   fights_won<T extends Prisma.competitors$fights_wonArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competitors$fights_wonArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fightsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2536,6 +2684,30 @@ export type competitors$placementsArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.Competition_placementsScalarFieldEnum | Prisma.Competition_placementsScalarFieldEnum[]
+}
+
+/**
+ * competitors.withdrawals
+ */
+export type competitors$withdrawalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the fighter_withdrawals
+   */
+  select?: Prisma.fighter_withdrawalsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the fighter_withdrawals
+   */
+  omit?: Prisma.fighter_withdrawalsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.fighter_withdrawalsInclude<ExtArgs> | null
+  where?: Prisma.fighter_withdrawalsWhereInput
+  orderBy?: Prisma.fighter_withdrawalsOrderByWithRelationInput | Prisma.fighter_withdrawalsOrderByWithRelationInput[]
+  cursor?: Prisma.fighter_withdrawalsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Fighter_withdrawalsScalarFieldEnum | Prisma.Fighter_withdrawalsScalarFieldEnum[]
 }
 
 /**

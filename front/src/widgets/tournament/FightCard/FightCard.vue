@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { tData } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -11,9 +11,15 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
-import type { FightData, Fighter, TournamentMarshal } from '@/model'
+import type { ActiveWithdrawalSummary, FightData, Fighter, TournamentMarshal } from '@/model'
 import type { FightWarning, RoundScore } from '@shared/fightScoring'
-import type { ActiveCardTypes, CreateDisciplinaryCardAction } from '@/widgets/tournament/types'
+import type {
+  ActiveCardTypes,
+  CancelWithdrawalAction,
+  CreateDisciplinaryCardAction,
+  CreateFightWithdrawalAction
+} from '@/widgets/tournament/types'
+import FightWithdrawalDialog from './FightWithdrawalDialog.vue'
 import FightParticipantLabel from './FightParticipantLabel.vue'
 import FightResultDisplay from './FightResultDisplay.vue'
 import FightScoreEditor from './FightScoreEditor.vue'
@@ -32,6 +38,8 @@ const props = defineProps<{
   activeCardTypes?: ActiveCardTypes
   tournamentMarshals?: TournamentMarshal[]
   createDisciplinaryCard?: CreateDisciplinaryCardAction
+  createWithdrawal?: CreateFightWithdrawalAction
+  cancelWithdrawal?: CancelWithdrawalAction
   showRoundTimes?: boolean
 }>()
 
@@ -44,6 +52,7 @@ const emit = defineEmits<{
     }
   ): void
   (e: 'card-issued'): void
+  (e: 'withdrawal-changed'): void
 }>()
 
 const { i18next } = useTranslation()
@@ -56,6 +65,11 @@ const fighter1Surname = computed(() => tData(props.fight.fighter1.surname, curre
 const fighter2Surname = computed(() => tData(props.fight.fighter2.surname, currentLanguage.value))
 const fighter1CardTypes = computed(() => props.activeCardTypes?.[props.fight.fighter1.id] ?? [])
 const fighter2CardTypes = computed(() => props.activeCardTypes?.[props.fight.fighter2.id] ?? [])
+const fighter1CompetitorId = computed(() => props.fight.competitor1Id ?? props.fight.fighter1.id)
+const fighter2CompetitorId = computed(() => props.fight.competitor2Id ?? props.fight.fighter2.id)
+const canIssueCardAction = computed(
+  () => Boolean(props.canIssueCards && props.createDisciplinaryCard) && !props.fight.isFinished
+)
 const cardDate = computed(() => props.cardDate ?? new Date().toISOString().slice(0, 10))
 const {
   canEdit,
@@ -127,6 +141,58 @@ const openIssueDialog = (fighter: Fighter) => {
 
   openIssueCardDialog(fighter)
 }
+
+const withdrawalDialogOpen = ref(false)
+const withdrawalFighter = ref<Fighter | null>(null)
+const withdrawalCompetitorId = ref<number | null>(null)
+const withdrawalReason = ref('')
+const withdrawalIsExcused = ref(false)
+const isSavingWithdrawal = ref(false)
+
+const canWithdrawSide = (withdrawal?: ActiveWithdrawalSummary | null) =>
+  Boolean(props.createWithdrawal && props.hasAccess && !props.fight.isFinished && !withdrawal)
+
+const canOpenParticipantMenu = (withdrawal?: ActiveWithdrawalSummary | null) =>
+  canOpenFighterMenu.value ||
+  canWithdrawSide(withdrawal) ||
+  Boolean(props.cancelWithdrawal && withdrawal)
+
+const openWithdrawalDialog = (fighter: Fighter, competitorId: number) => {
+  if (!props.createWithdrawal || !props.hasAccess || props.fight.isFinished) return
+
+  withdrawalFighter.value = fighter
+  withdrawalCompetitorId.value = competitorId
+  withdrawalReason.value = ''
+  withdrawalIsExcused.value = false
+  withdrawalDialogOpen.value = true
+}
+
+const saveWithdrawal = async () => {
+  if (!props.createWithdrawal || withdrawalCompetitorId.value === null) return
+  const reason = withdrawalReason.value.trim()
+  if (!reason) return
+
+  isSavingWithdrawal.value = true
+  try {
+    await props.createWithdrawal({
+      fightId: props.fight.id,
+      competitorId: withdrawalCompetitorId.value,
+      reason,
+      isExcused: withdrawalIsExcused.value
+    })
+    withdrawalDialogOpen.value = false
+    emit('withdrawal-changed')
+  } finally {
+    isSavingWithdrawal.value = false
+  }
+}
+
+const cancelExistingWithdrawal = async (withdrawal: ActiveWithdrawalSummary) => {
+  if (!props.cancelWithdrawal) return
+
+  await props.cancelWithdrawal(withdrawal.id)
+  emit('withdrawal-changed')
+}
 </script>
 
 <template>
@@ -138,28 +204,40 @@ const openIssueDialog = (fighter: Fighter) => {
         :surname="fighter1Surname"
         :fighter="fight.fighter1"
         :card-types="fighter1CardTypes"
+        :withdrawal="fight.fighter1Withdrawal"
         :warning-markers="warningMarkers(1)"
         :warning-title="warningTitle"
-        :can-open-menu="canOpenFighterMenu"
+        :can-open-menu="canOpenParticipantMenu(fight.fighter1Withdrawal)"
+        :can-issue-card="canIssueCardAction"
         :can-issue-warning="canIssueWarning(1)"
         :can-remove-warnings="canRemoveWarnings"
+        :can-withdraw="canWithdrawSide(fight.fighter1Withdrawal)"
+        :can-cancel-withdrawal="Boolean(cancelWithdrawal && fight.fighter1Withdrawal)"
         @issue-card="openIssueDialog"
         @issue-warning="issueWarning(1)"
         @remove-warning="removeWarningAtIndex"
+        @withdraw-fighter="openWithdrawalDialog($event, fighter1CompetitorId)"
+        @cancel-withdrawal="cancelExistingWithdrawal"
       />
       <span class="px-2">-</span>
       <FightParticipantLabel
         :surname="fighter2Surname"
         :fighter="fight.fighter2"
         :card-types="fighter2CardTypes"
+        :withdrawal="fight.fighter2Withdrawal"
         :warning-markers="warningMarkers(2)"
         :warning-title="warningTitle"
-        :can-open-menu="canOpenFighterMenu"
+        :can-open-menu="canOpenParticipantMenu(fight.fighter2Withdrawal)"
+        :can-issue-card="canIssueCardAction"
         :can-issue-warning="canIssueWarning(2)"
         :can-remove-warnings="canRemoveWarnings"
+        :can-withdraw="canWithdrawSide(fight.fighter2Withdrawal)"
+        :can-cancel-withdrawal="Boolean(cancelWithdrawal && fight.fighter2Withdrawal)"
         @issue-card="openIssueDialog"
         @issue-warning="issueWarning(2)"
         @remove-warning="removeWarningAtIndex"
+        @withdraw-fighter="openWithdrawalDialog($event, fighter2CompetitorId)"
+        @cancel-withdrawal="cancelExistingWithdrawal"
       />
     </div>
 
@@ -203,6 +281,15 @@ const openIssueDialog = (fighter: Fighter) => {
     :tournament-marshals="tournamentMarshals ?? []"
     :is-issuing="isIssuing"
     @issue="issueCard"
+  />
+
+  <FightWithdrawalDialog
+    v-model:open="withdrawalDialogOpen"
+    v-model:reason="withdrawalReason"
+    v-model:isExcused="withdrawalIsExcused"
+    :fighter="withdrawalFighter"
+    :is-saving="isSavingWithdrawal"
+    @save="saveWithdrawal"
   />
 
   <Dialog v-model:open="extraRoundWarningRemovalDialogOpen">

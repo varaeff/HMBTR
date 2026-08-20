@@ -13,6 +13,7 @@ export interface ResultFight {
   main_round_time?: number | null;
   additional_round_time?: number | null;
   forfeit_card_id: number | null;
+  forfeit_withdrawal_id: number | null;
   bracket_round?: number | null;
   is_bronze?: boolean | null;
 }

@@ -4,6 +4,7 @@ import { useTranslation } from 'i18next-vue'
 import { Button } from '@/components/ui/button'
 import { tData } from '@/lib/utils'
 import { CardStatusIcon, formatActiveDisciplinaryCardTitle } from '@/widgets/tournament/DisciplinaryCards'
+import WithdrawalStatusIcon from '@/widgets/tournament/WithdrawalStatusIcon.vue'
 import type { ActiveDisciplinaryCardSummary, BracketSlot } from '@/model'
 import type { ActiveCardTypes } from '@/widgets/tournament/types'
 
@@ -77,6 +78,7 @@ const dropOnSlot = (targetPosition: number) => {
             >
               <CardStatusIcon :type="card" :showTitle="false" />
             </span>
+            <WithdrawalStatusIcon :withdrawal="slot.fighter.withdrawal" />
           </div>
           <div class="mt-1 text-muted-foreground">
             {{ tData(slot.fighter.city)

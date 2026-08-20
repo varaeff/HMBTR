@@ -38,8 +38,10 @@ export class TournamentReportFightScoreFormatter {
     );
     const evaluation = evaluateFightScore(rules, adjusted.roundScores);
 
+    const isTechnicalForfeit =
+      fight.forfeit_card_id !== null || fight.forfeit_withdrawal_id !== null;
     const displayEvaluation =
-      fight.forfeit_card_id !== null
+      isTechnicalForfeit
         ? {
             ...evaluation,
             competitor1Total: fight.competitor1_score,
@@ -48,13 +50,13 @@ export class TournamentReportFightScoreFormatter {
         : evaluation;
 
     const score =
-      warnings.length && fight.forfeit_card_id === null
+      warnings.length && !isTechnicalForfeit
         ? this.formatFightWarningScore(rules, displayEvaluation, adjusted)
         : formatFightResult(
             rules,
             displayEvaluation,
             rounds,
-            fight.forfeit_card_id !== null,
+            isTechnicalForfeit,
           );
     const warningSummary =
       warnings.length > 0 ? `, ${copy.warning} x ${warnings.length}` : '';
@@ -63,7 +65,7 @@ export class TournamentReportFightScoreFormatter {
   }
 
   getEffectiveFightAggregateScore(fight: TournamentReportFight) {
-    if (fight.forfeit_card_id !== null) {
+    if (fight.forfeit_card_id !== null || fight.forfeit_withdrawal_id !== null) {
       return {
         competitor1Score: fight.competitor1_score,
         competitor2Score: fight.competitor2_score,

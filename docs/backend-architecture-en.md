@@ -323,14 +323,14 @@ Facade:
 Internal services:
 
 - `ResultSubmissionValidator` - validates block/fight ownership, duplicates, fixed state, and completeness;
-- `FightResultEvaluationService` - builds raw/effective evaluations, determines winner, handles warning bonuses and red-card forfeits;
+- `FightResultEvaluationService` - builds raw/effective evaluations, determines winner, handles warning bonuses and server-generated forfeits;
 - `FightResultPersistenceService` - persists fight scores, round-score snapshots, and warnings;
 - `ResultFixationService` - fixes group/Olympic result transitions and starts Olympic progression;
 - `result-types.ts` - local structural result types.
 
 Important scoring flow rule: editable/fixed fight submissions must send `round_scores`, not aggregate `competitor1_score` / `competitor2_score`. Aggregate scores are calculated from round snapshots.
 
-Red-card forfeits are server-generated results: they are required in complete submissions, but regular result flow must not re-evaluate or overwrite them.
+Red-card and withdrawal forfeits are server-generated results: they are required in complete submissions, but regular result flow must not re-evaluate or overwrite them.
 
 ### Scoring
 
@@ -343,7 +343,7 @@ Owns:
 - effective aggregate score;
 - warning bonuses;
 - round score snapshot replacement;
-- red-card forfeit score shape.
+- server-generated technical-forfeit score shape.
 
 Low-level scoring algorithms live in shared logic; this service integrates those algorithms with Prisma persistence.
 
@@ -363,7 +363,7 @@ Internal services:
 - `AdvancementService` - advancing competitor selection and active-red exclusion;
 - `TieResolutionService` - manual placements persistence and group block transition to `RESULTS_FIXED`.
 
-Active-red rule: fighters with active red cards remain visible in standings stats, but are excluded from advancement and tie checks where this affects later progression. Ties that affect advancement are broken by fewer active yellow cards from the current tournament, then effective score diff including yellow penalties; unresolved equality remains manual.
+Active-red and withdrawal rule: fighters with active red cards or active nomination withdrawals remain visible in standings stats, but are excluded from advancement and tie checks where this affects later progression. Ties that affect advancement are broken by fewer active yellow cards from the current tournament, then effective score diff including yellow penalties; unresolved equality remains manual.
 
 ### Olympic
 
@@ -421,6 +421,22 @@ Internal services:
 - `red-card-policy.ts` - pure policy functions.
 
 Competition owns card consequences for fights and brackets. Disciplinary-cards owns issuing, editing, and deleting cards.
+
+### Withdrawals Inside Competition
+
+Folder: `competition/withdrawals`
+
+- `CompetitionWithdrawalService`
+
+Owns nomination-scoped no-show and fight-card withdrawals:
+
+- creation and cancelation validation;
+- active withdrawal state and source metadata;
+- generated technical forfeits linked through `forfeit_withdrawal_id`;
+- exclusion of withdrawn competitors from advancement while preserving standings visibility;
+- cleanup of fight-sourced withdrawals when their source fights are deleted by lifecycle rollback/cancel flows.
+
+Pre-block no-show withdrawals are not tied to a source fight and should survive fight rollback so consequences can be reapplied after fights are regenerated. Fight-card withdrawals are tied to a source fight; lifecycle deletion must remove those withdrawals and reset their generated forfeits before deleting fights.
 
 ## Disciplinary Cards
 

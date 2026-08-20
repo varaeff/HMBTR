@@ -39,6 +39,8 @@ Prefer task names over vague names:
 - `lifecycle/*` for rollback/cancel/backward flows.
 - `finish/*` for finalization and completion workflows.
 - `red-cards/*` or similar domain folders for domain side effects and policy.
+- `withdrawals/*` for nomination-scoped no-show/fight withdrawal state,
+  withdrawal-generated forfeits, and withdrawal cancelation/cleanup policy.
 - `reports/*` for report orchestration, storage/cache, read-model queries, markdown/PDF formatting, and report-specific normalization.
 
 ## Report And Read-Model Services

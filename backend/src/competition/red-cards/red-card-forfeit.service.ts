@@ -104,6 +104,7 @@ export class RedCardForfeitService {
           ),
           winner_id: firstLoses ? fight.competitor2_id : fight.competitor1_id,
           is_finished: true,
+          forfeit_withdrawal_id: null,
           forfeit_card_id: firstLoses
             ? firstApplicableRed?.id
             : secondApplicableRed?.id,
@@ -272,6 +273,7 @@ export class RedCardForfeitService {
         ),
         winner_id: firstLoses ? fight.competitor2_id : fight.competitor1_id,
         is_finished: true,
+        forfeit_withdrawal_id: null,
         forfeit_card_id: forfeitCard?.id ?? null,
       },
     });

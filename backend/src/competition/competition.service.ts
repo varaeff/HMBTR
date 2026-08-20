@@ -6,7 +6,10 @@ import type {
 } from './competition-internal.types';
 import { CompetitionRedCardService } from './competition-red-card.service';
 import { CreateCompetitionBlockDto } from './dto/create-competition-block.dto';
+import { CancelWithdrawalDto } from './dto/cancel-withdrawal.dto';
 import { CompetitionLifecycleDto } from './dto/competition-lifecycle.dto';
+import { CreateFightWithdrawalDto } from './dto/create-fight-withdrawal.dto';
+import { CreateNoShowWithdrawalDto } from './dto/create-no-show-withdrawal.dto';
 import { FinishCompetitionDto } from './dto/finish-competition.dto';
 import { GenerateGroupFightsDto } from './dto/generate-group-fights.dto';
 import { GenerateOlympicFightsDto } from './dto/generate-olympic-fights.dto';
@@ -21,6 +24,7 @@ import { CompetitionOlympicProgressService } from './olympic/competition-olympic
 import { CompetitionRankingsService } from './rankings/competition-rankings.service';
 import { CompetitionResultService } from './results/competition-result.service';
 import { CompetitionStateReader } from './state/competition-state.reader';
+import { CompetitionWithdrawalService } from './withdrawals/competition-withdrawal.service';
 
 export type { PendingTieResult, PendingTieScope };
 
@@ -36,6 +40,7 @@ export class CompetitionService {
     private readonly finishService: CompetitionFinishService,
     private readonly redCardService: CompetitionRedCardService,
     private readonly olympicProgressService: CompetitionOlympicProgressService,
+    private readonly withdrawalService: CompetitionWithdrawalService,
   ) {}
 
   getState(tournamentId: number, nominationId: number) {
@@ -120,5 +125,24 @@ export class CompetitionService {
 
   progressOlympicBlock(blockId: number) {
     return this.olympicProgressService.progressOlympicBlock(blockId);
+  }
+
+  async createNoShowWithdrawal(dto: CreateNoShowWithdrawalDto) {
+    await this.withdrawalService.createNoShow(dto);
+    return this.stateReader.getState(dto.tournament_id, dto.nomination_id);
+  }
+
+  async createFightWithdrawal(dto: CreateFightWithdrawalDto) {
+    await this.withdrawalService.createFromFight(dto);
+    const fight = await this.stateReader.getFightContext(dto.fight_id);
+    return this.stateReader.getState(fight.tournament_id, fight.nomination_id);
+  }
+
+  async cancelWithdrawal(dto: CancelWithdrawalDto) {
+    const context = await this.stateReader.getWithdrawalContext(
+      dto.withdrawal_id,
+    );
+    await this.withdrawalService.cancel(dto);
+    return this.stateReader.getState(context.tournament_id, context.nomination_id);
   }
 }

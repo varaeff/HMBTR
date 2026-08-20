@@ -45,6 +45,14 @@ interface CompetitionWorkflowStore {
   deleteCompetitor(competitorId: number): Promise<void>
   createGroupBlock(): Promise<void>
   createOlympicBlock(includeThirdPlaces?: boolean): Promise<void>
+  createNoShowWithdrawal(competitorId: number): Promise<void>
+  createFightWithdrawal(payload: {
+    fightId: number
+    competitorId: number
+    reason: string
+    isExcused: boolean
+  }): Promise<void>
+  cancelWithdrawal(withdrawalId: number): Promise<void>
   updateGlobalScore(payload: {
     fightId: number
     fightNumber: number
@@ -184,6 +192,27 @@ export const useTournamentCompetitionActions = ({
     if (competitor) {
       await competitionStore.deleteCompetitor(competitor.id)
     }
+  }
+
+  const createNoShowWithdrawal = async (competitorId: number) => {
+    try {
+      await competitionStore.createNoShowWithdrawal(competitorId)
+    } finally {
+      await refreshCardsAndCompetition()
+    }
+  }
+
+  const createFightWithdrawal = async (payload: {
+    fightId: number
+    competitorId: number
+    reason: string
+    isExcused: boolean
+  }) => {
+    await competitionStore.createFightWithdrawal(payload)
+  }
+
+  const cancelWithdrawal = async (withdrawalId: number) => {
+    await competitionStore.cancelWithdrawal(withdrawalId)
   }
 
   const createGroupBlock = () => {
@@ -482,6 +511,7 @@ export const useTournamentCompetitionActions = ({
     openRegistration,
     deleteNomination,
     removeCompetitor,
+    createNoShowWithdrawal,
     createGroupBlock,
     createOlympicBlock,
     updateFightScore,
@@ -502,6 +532,8 @@ export const useTournamentCompetitionActions = ({
     rollbackBlock,
     refreshCardsAndCompetition,
     createDisciplinaryCard,
+    createFightWithdrawal,
+    cancelWithdrawal,
     updateDisciplinaryCard,
     deleteDisciplinaryCard,
     blockTitle,

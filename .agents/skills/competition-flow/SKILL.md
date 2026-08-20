@@ -63,7 +63,7 @@ Keep domain rules in backend logic helpers, not in Vue components. The frontend 
 - Group blocks persist `lifecycle_state`: `FORMATION_EDITABLE`, `FIGHTS_EDITABLE`, or `RESULTS_FIXED`.
 - Olympic blocks persist one `competition_round_states` row per round with independent pair and result fixation.
 - The explicit result-recording action submits every fight score for the stage/round, validates them together, fixes the results, and advances an Olympic bracket when applicable.
-- Persisted card forfeits remain server-authoritative during result recording:
+- Persisted card and withdrawal forfeits remain server-authoritative during result recording:
   require their fight ids in the complete stage/round submission, but do not
   validate client score drafts for them or overwrite their generated result.
 - Group result recording persists complete scores but leaves results editable when a ranking tie must be resolved. Resolving the final required group-placement tie automatically transitions the block to `RESULTS_FIXED`; no second result-recording action is required.
@@ -73,9 +73,9 @@ Keep domain rules in backend logic helpers, not in Vue components. The frontend 
 - Only backward lifecycle transitions require confirmation. Use `AlertWidget` with a destructive confirmation action and a neutral cancel action.
 - A later block or round must be deleted before the previous result fixation can be canceled.
 - Rolling back a pending/downstream Olympic round also cancels the immediately previous round's result fixation in the same transaction, preserving that previous round's scores and cards so they are editable after one backward action.
-- When a group or Olympic result is unfixed directly, or when an Olympic downstream round rollback unfixes the previous round, clear `is_finished` and `winner_id` only on non-forfeit fights. Red-card forfeits remain server-generated fixed results.
+- When a group or Olympic result is unfixed directly, or when an Olympic downstream round rollback unfixes the previous round, clear `is_finished` and `winner_id` only on non-forfeit fights. Red-card and withdrawal forfeits remain server-generated fixed results.
 - Canceling result fixation preserves scores and cards but clears manual group tie ordering.
-- Canceling fight/pair fixation deletes fights and attached cards, resets card-driven forfeits, and renumbers remaining fights.
+- Canceling fight/pair fixation deletes fights and attached cards, deletes fight-sourced withdrawals tied to the deleted fights, resets generated card/withdrawal forfeits, and renumbers remaining fights.
 - Rolling back the first block restores stage `0` and reopens fighter registration. Format selection remains unavailable until registration is explicitly closed again.
 - Competition state responses include `tournamentNomination.is_open`; map it into Pinia and use it as the current nomination's server-authoritative registration state. Do not rely on child lifecycle events to infer whether rollback reopened registration.
 - Closing fighter registration for a nomination requires at least one marshal
@@ -114,7 +114,7 @@ Keep domain rules in backend logic helpers, not in Vue components. The frontend 
 - If base rounds are tied, append extra rounds until the first non-draw extra round determines a winner. This applies to both total-score and round-win nominations.
 - Aggregate scores always sum every played round, including extra rounds, and remain the source for group point difference.
 - Group wins, Olympic advancement, ratings, and other outcome logic use persisted `winner_id`, never aggregate score comparison.
-- Red-card forfeits in round-win nominations persist `X:0`, where `X` is the
+- Server-generated red-card and withdrawal forfeits in round-win nominations persist `X:0`, where `X` is the
   normal-round count, plus `5:0` for the opponent in every normal round.
   Other forfeits keep the aggregate `10:0` summary and use `winner_id`.
 - Persisted round details live only in `fight_round_scores`.
@@ -182,6 +182,14 @@ Keep domain rules in backend logic helpers, not in Vue components. The frontend 
   fights are generated, including fixed pairs and final/bronze fights created
   by progression.
 - Keep red-carded fighters visible in group standings, but exclude active-red competitors before advancement selection and advancement-related tie detection.
+- Keep withdrawn fighters visible in nomination registration, groups, fight
+  cards, and group standings. Exclude active withdrawn competitors before
+  advancement selection and advancement-related tie detection.
+- Pre-block no-show withdrawals have no source fight and survive fight rollback;
+  reapply them after regenerated fights appear. Fight-card withdrawals are tied
+  to a source fight; when rollback/cancel physically deletes that source fight,
+  delete the withdrawal and reset its generated technical losses before deleting
+  fights.
 - When a red-card semifinal forfeit completes both semifinals, progress the Olympic block immediately and reapply forfeits so a newly created bronze fight involving that fighter is fixed at `0:10`.
 - If both fighters in the same fight have active red cards, resolve the server-generated forfeit winner by fewer active yellow cards from the current tournament, then effective score diff in the current nomination including yellow penalties. If still equal, expose a manual pending conflict instead of choosing by card date/id.
 

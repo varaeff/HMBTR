@@ -134,6 +134,10 @@ Complex widgets should keep pure view derivation and local UI state near the com
 - `FightCard` has colocated scoring and warning presentation helpers and tests;
 - `OlympicBracket` has colocated view derivation and presentational subcomponents;
 - `DisciplinaryCards` has table and status presentation with focused tests.
+- Tournament withdrawal UI stays in tournament widgets: `FightCard` owns the
+  withdrawal dialog/menu presentation, and shared withdrawal markers are small
+  domain presentation components reused by registration lists, groups, and
+  fight labels.
 
 Widgets that display or edit already-loaded tournament competition data should receive data through props and emit typed action payloads upward. Store calls should usually stay in page orchestration or store facades unless the widget is an accepted nested flow.
 
@@ -211,6 +215,11 @@ The competition store is a slice folder:
 Callers should import the competition store from `@/stores/competition`, not from private slice files.
 
 Competition state includes `pendingTie` for unresolved backend ordering decisions. The frontend stores the server scope and identifiers, including `fightId` for Olympic double-red conflicts, and sends them back through the typed `resolveTie` command instead of deriving hidden fallback winners client-side.
+
+Competition state also carries active withdrawal summaries and technical-forfeit
+source fields. Widgets should render those fields from the mapped read model and
+emit no-show, fight-withdrawal, and cancel-withdrawal requests upward; command
+execution and state refresh remain in the competition store/page orchestration.
 
 ### API Layer
 

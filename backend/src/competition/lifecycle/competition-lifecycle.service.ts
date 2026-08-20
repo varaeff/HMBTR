@@ -20,6 +20,7 @@ import { CompetitionLifecycleDto } from '../dto/competition-lifecycle.dto';
 import { CompetitionFightService } from '../fights/competition-fight.service';
 import { CompetitionFinishService } from '../finish/competition-finish.service';
 import { CompetitionStateReader } from '../state/competition-state.reader';
+import { CompetitionWithdrawalService } from '../withdrawals/competition-withdrawal.service';
 
 @Injectable()
 export class CompetitionLifecycleService {
@@ -29,6 +30,7 @@ export class CompetitionLifecycleService {
     private readonly fightService: CompetitionFightService,
     private readonly finishService: CompetitionFinishService,
     private readonly redCardService: CompetitionRedCardService,
+    private readonly withdrawalService: CompetitionWithdrawalService,
   ) {}
 
   async cancelResultsFixation(dto: CompetitionLifecycleDto) {
@@ -66,7 +68,11 @@ export class CompetitionLifecycleService {
           },
         });
         await tx.fights.updateMany({
-          where: { block_id: block.id, forfeit_card_id: null },
+          where: {
+            block_id: block.id,
+            forfeit_card_id: null,
+            forfeit_withdrawal_id: null,
+          },
           data: { is_finished: false, winner_id: null },
         });
         const transition = await tx.competition_blocks.updateMany({
@@ -96,6 +102,7 @@ export class CompetitionLifecycleService {
           block_id: block.id,
           bracket_round: round,
           forfeit_card_id: null,
+          forfeit_withdrawal_id: null,
         },
         data: { is_finished: false, winner_id: null },
       });
@@ -124,6 +131,10 @@ export class CompetitionLifecycleService {
       }
       await this.prisma.$transaction(async (tx) => {
         await this.redCardService.resetForfeitsForDeletedFightsTx(tx, block.id);
+        await this.withdrawalService.resetForfeitsForDeletedFightsTx(
+          tx,
+          block.id,
+        );
         await tx.fights.deleteMany({ where: { block_id: block.id } });
         await tx.competition_placements.deleteMany({
           where: { block_id: block.id },
@@ -151,6 +162,12 @@ export class CompetitionLifecycleService {
           tx,
           block.id,
           round,
+        );
+        await this.withdrawalService.resetForfeitsForDeletedFightsTx(
+          tx,
+          block.id,
+          round,
+          { includeCurrentRoundBronze: false },
         );
         await tx.fights.deleteMany({
           where: {
@@ -228,6 +245,11 @@ export class CompetitionLifecycleService {
           block.id,
           round,
         );
+        await this.withdrawalService.resetForfeitsForDeletedFightsTx(
+          tx,
+          block.id,
+          round,
+        );
         await tx.fights.deleteMany({
           where: {
             block_id: block.id,
@@ -253,6 +275,7 @@ export class CompetitionLifecycleService {
             block_id: block.id,
             bracket_round: round - 1,
             forfeit_card_id: null,
+            forfeit_withdrawal_id: null,
           },
           data: { is_finished: false, winner_id: null },
         });
@@ -282,6 +305,10 @@ export class CompetitionLifecycleService {
       }
       await this.prisma.$transaction(async (tx) => {
         await this.redCardService.resetForfeitsForDeletedFightsTx(tx, block.id);
+        await this.withdrawalService.resetForfeitsForDeletedFightsTx(
+          tx,
+          block.id,
+        );
         await tx.competition_blocks.delete({ where: { id: block.id } });
         const previous = await tx.competition_blocks.findFirst({
           where: { tournament_nomination_id: block.tournament_nomination_id },
@@ -330,6 +357,7 @@ export class CompetitionLifecycleService {
         winner_id: true,
         is_finished: true,
         forfeit_card_id: true,
+        forfeit_withdrawal_id: true,
       },
     });
 
@@ -337,7 +365,9 @@ export class CompetitionLifecycleService {
       fights.length > 0 &&
       fights.every(
         (fight) =>
-          fight.is_finished && fight.winner_id && fight.forfeit_card_id,
+          fight.is_finished &&
+          fight.winner_id &&
+          (fight.forfeit_card_id || fight.forfeit_withdrawal_id),
       )
     );
   }
@@ -353,5 +383,6 @@ export class CompetitionLifecycleService {
     );
     await this.finishService.resetRatingState(block.tournament_nomination_id);
     await this.redCardService.applyRedCardForfeits(block.tournament_id);
+    await this.withdrawalService.applyWithdrawalForfeits(block.tournament_id);
   }
 }

@@ -81,6 +81,8 @@ const blockCards = computed<TournamentCompetitionBlockCards>(() => ({
   activeCardTypes: props.cards.activeCardTypes,
   tournamentMarshals: props.cards.tournamentMarshals,
   createDisciplinaryCard: props.cards.createDisciplinaryCard,
+  createWithdrawal: props.actions.createFightWithdrawal,
+  cancelWithdrawal: props.actions.cancelWithdrawal,
   attachedCardCountByFightId: props.cards.attachedCardCountByFightId
 }))
 
@@ -152,6 +154,7 @@ const blockActions = (block: CompetitionBlock): TournamentCompetitionBlockAction
             @remove-competitor="
               (fighterId) => actions.removeCompetitor(fighterId, state.activeTab)
             "
+            @no-show-competitor="actions.createNoShowWithdrawal"
           />
         </CollapsibleSection>
 

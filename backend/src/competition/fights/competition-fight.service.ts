@@ -23,6 +23,7 @@ import { GenerateOlympicFightsDto } from '../dto/generate-olympic-fights.dto';
 import { SwapBracketSlotsDto } from '../dto/swap-bracket-slots.dto';
 import { CompetitionOlympicService } from '../olympic/competition-olympic.service';
 import { CompetitionStateReader } from '../state/competition-state.reader';
+import { CompetitionWithdrawalService } from '../withdrawals/competition-withdrawal.service';
 
 @Injectable()
 export class CompetitionFightService {
@@ -31,6 +32,7 @@ export class CompetitionFightService {
     private readonly stateReader: CompetitionStateReader,
     private readonly olympicService: CompetitionOlympicService,
     private readonly redCardService: CompetitionRedCardService,
+    private readonly withdrawalService: CompetitionWithdrawalService,
   ) {}
 
   async generateGroupFights(dto: GenerateGroupFightsDto) {
@@ -155,6 +157,7 @@ export class CompetitionFightService {
     });
 
     await this.redCardService.applyRedCardForfeits(block.tournament_id);
+    await this.withdrawalService.applyWithdrawalForfeits(block.tournament_id);
 
     return this.stateReader.getState(block.tournament_id, block.nomination_id);
   }
@@ -227,6 +230,7 @@ export class CompetitionFightService {
     });
 
     await this.redCardService.applyRedCardForfeits(block.tournament_id);
+    await this.withdrawalService.applyWithdrawalForfeits(block.tournament_id);
 
     return this.stateReader.getState(block.tournament_id, block.nomination_id);
   }

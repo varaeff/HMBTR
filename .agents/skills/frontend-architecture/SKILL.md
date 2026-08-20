@@ -37,6 +37,10 @@ The same rule applies to disciplinary-card operations inside tournament
 widgets: card list/edit/delete/issue UI may own draft state and payload
 construction, but Pinia store calls belong to page/composable orchestration and
 are passed down as typed action props.
+The same tournament-widget boundary applies to fighter withdrawals: fight-card
+dialogs, context-menu actions, and withdrawal markers render from props and emit
+typed no-show, fight-withdrawal, and cancel-withdrawal payloads upward; store
+commands and competition-state refresh stay in page/store orchestration.
 When the route shell would need to pass a very wide competition prop/event
 contract, introduce a domain workspace widget such as
 `widgets/tournament/TournamentCompetitionWorkspace`. The workspace may adapt the

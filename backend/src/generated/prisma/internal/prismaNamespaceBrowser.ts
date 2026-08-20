@@ -65,6 +65,7 @@ export const ModelName = {
   groups: 'groups',
   group_competitors: 'group_competitors',
   fights: 'fights',
+  fighter_withdrawals: 'fighter_withdrawals',
   fight_round_scores: 'fight_round_scores',
   fight_warnings: 'fight_warnings',
   disciplinary_cards: 'disciplinary_cards',
@@ -262,6 +263,7 @@ export const FightsScalarFieldEnum = {
   is_bronze: 'is_bronze',
   is_finished: 'is_finished',
   forfeit_card_id: 'forfeit_card_id',
+  forfeit_withdrawal_id: 'forfeit_withdrawal_id',
   rounds: 'rounds',
   round_win: 'round_win',
   main_round_time: 'main_round_time',
@@ -269,6 +271,26 @@ export const FightsScalarFieldEnum = {
 } as const
 
 export type FightsScalarFieldEnum = (typeof FightsScalarFieldEnum)[keyof typeof FightsScalarFieldEnum]
+
+
+export const Fighter_withdrawalsScalarFieldEnum = {
+  id: 'id',
+  tournament_nomination_id: 'tournament_nomination_id',
+  tournament_id: 'tournament_id',
+  nomination_id: 'nomination_id',
+  competitor_id: 'competitor_id',
+  source: 'source',
+  source_fight_id: 'source_fight_id',
+  source_block_id: 'source_block_id',
+  source_fight_number: 'source_fight_number',
+  reason: 'reason',
+  is_excused: 'is_excused',
+  active: 'active',
+  created_at: 'created_at',
+  canceled_at: 'canceled_at'
+} as const
+
+export type Fighter_withdrawalsScalarFieldEnum = (typeof Fighter_withdrawalsScalarFieldEnum)[keyof typeof Fighter_withdrawalsScalarFieldEnum]
 
 
 export const Fight_round_scoresScalarFieldEnum = {

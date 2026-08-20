@@ -30,6 +30,7 @@ import { RedCardConsequencesService } from './red-cards/red-card-consequences.se
 import { RedCardForfeitService } from './red-cards/red-card-forfeit.service';
 import { RedCardRegistrationService } from './red-cards/red-card-registration.service';
 import { RedCardStorageService } from './red-cards/red-card-storage.service';
+import { CompetitionWithdrawalService } from './withdrawals/competition-withdrawal.service';
 import type { PrismaService } from '../prisma/prisma.service';
 
 type CreatedFight = {
@@ -65,6 +66,28 @@ type DisciplinaryCardCreateParams = {
   select: { id: true };
 };
 
+const createWithdrawalServiceMock = () =>
+  ({
+    applyWithdrawalForfeits: jest.fn().mockResolvedValue(undefined),
+    resetForfeitsForDeletedFightsTx: jest.fn().mockResolvedValue(undefined),
+    getActiveWithdrawalCompetitorIdsTx: jest
+      .fn()
+      .mockResolvedValue(new Set<number>()),
+    getActiveWithdrawalsForTournamentNominationTx: jest
+      .fn()
+      .mockResolvedValue([]),
+    excludeActiveWithdrawalCompetitors: <T extends { competitorId: number }>(
+      ranked: T[],
+      activeWithdrawalCompetitorIds: Set<number>,
+    ) =>
+      ranked.filter(
+        (competitor) =>
+          !activeWithdrawalCompetitorIds.has(competitor.competitorId),
+      ),
+    getPendingDoubleWithdrawalTieTx: jest.fn().mockResolvedValue(null),
+    resolveDoubleWithdrawalForfeitTx: jest.fn().mockResolvedValue(false),
+  }) as unknown as CompetitionWithdrawalService;
+
 const createResultService = (
   prisma: PrismaService,
   olympicService: CompetitionOlympicService = new CompetitionOlympicService(),
@@ -85,6 +108,7 @@ const createResultService = (
       } as unknown as CompetitionStateReader,
       scoringService,
       redCardService,
+      createWithdrawalServiceMock(),
       new ResultSubmissionValidator(),
       new FightResultEvaluationService(),
       new FightResultPersistenceService(scoringService),
@@ -170,6 +194,7 @@ describe('competition use-case services', () => {
     const service = new CompetitionStateReader(
       prisma as unknown as PrismaService,
       rankingsService,
+      createWithdrawalServiceMock(),
     );
 
     const state = await service.getState(31, 5);
@@ -269,6 +294,9 @@ describe('competition use-case services', () => {
       },
     };
     const prisma = {
+      competition_blocks: {
+        findUnique: jest.fn().mockResolvedValue({ tournament_id: 31 }),
+      },
       $transaction: jest.fn(
         async (callback: (transaction: typeof tx) => Promise<void>) =>
           callback(tx),
@@ -277,6 +305,7 @@ describe('competition use-case services', () => {
     const service = new CompetitionOlympicProgressService(
       prisma as unknown as PrismaService,
       new CompetitionOlympicService(),
+      createWithdrawalServiceMock(),
     );
 
     await service.progressOlympicBlock(9);
@@ -372,6 +401,9 @@ describe('competition use-case services', () => {
       },
     };
     const prisma = {
+      competition_blocks: {
+        findUnique: jest.fn().mockResolvedValue({ tournament_id: 31 }),
+      },
       $transaction: jest.fn(
         async (callback: (transaction: typeof tx) => Promise<void>) =>
           callback(tx),
@@ -380,6 +412,7 @@ describe('competition use-case services', () => {
     const service = new CompetitionOlympicProgressService(
       prisma as unknown as PrismaService,
       new CompetitionOlympicService(),
+      createWithdrawalServiceMock(),
     );
 
     await service.progressOlympicBlock(9);
@@ -971,6 +1004,7 @@ describe('competition use-case services', () => {
       pendingTieService,
       groupRankingReader,
       redCardService,
+      createWithdrawalServiceMock(),
     );
 
     const advancers = await service.getAdvancingCompetitorsTx(tx, 9);
@@ -1025,6 +1059,7 @@ describe('competition use-case services', () => {
       redCardService,
       {} as RedCardStorageService,
       {} as TieBreakerService,
+      createWithdrawalServiceMock(),
     );
 
     const pendingTie = await service.getPendingTieTx(tx, 9, 2);
@@ -1146,6 +1181,7 @@ describe('competition use-case services', () => {
       redCardService,
       {} as RedCardStorageService,
       {} as TieBreakerService,
+      createWithdrawalServiceMock(),
     );
 
     const pendingTie = await service.getPendingTieTx(
@@ -1183,6 +1219,7 @@ describe('competition use-case services', () => {
       redCardService,
       {} as RedCardStorageService,
       {} as TieBreakerService,
+      createWithdrawalServiceMock(),
     );
     const rankedGroups = [
       {
@@ -1257,6 +1294,7 @@ describe('competition use-case services', () => {
       redCardService,
       {} as RedCardStorageService,
       {} as TieBreakerService,
+      createWithdrawalServiceMock(),
     );
     const rankedGroups = [
       {
@@ -1364,6 +1402,7 @@ describe('competition use-case services', () => {
         resetRatingState: jest.fn().mockResolvedValue(undefined),
       } as unknown as CompetitionFinishService,
       redCardService,
+      createWithdrawalServiceMock(),
     );
 
     await service.rollback({ block_id: 9, round: 2 });
@@ -1376,9 +1415,79 @@ describe('competition use-case services', () => {
       data: { results_fixed: false },
     });
     expect(tx.fights.updateMany).toHaveBeenCalledWith({
-      where: { block_id: 9, bracket_round: 1, forfeit_card_id: null },
+      where: {
+        block_id: 9,
+        bracket_round: 1,
+        forfeit_card_id: null,
+        forfeit_withdrawal_id: null,
+      },
       data: { is_finished: false, winner_id: null },
     });
+  });
+
+  it('cleans fight-sourced withdrawals before deleting canceled group fights', async () => {
+    const events: string[] = [];
+    const tx = {
+      competition_placements: {
+        deleteMany: jest.fn(),
+      },
+      fights: {
+        deleteMany: jest.fn().mockImplementation(async () => {
+          events.push('delete-fights');
+          return { count: 2 };
+        }),
+      },
+      competition_blocks: {
+        updateMany: jest.fn().mockResolvedValue({ count: 1 }),
+      },
+    };
+    const prisma = {
+      competition_blocks: {
+        findUnique: jest.fn().mockResolvedValue({
+          id: 9,
+          type: 'GROUP',
+          status: 'ACTIVE',
+          lifecycle_state: 'FIGHTS_EDITABLE',
+          tournament_id: 31,
+          nomination_id: 5,
+          tournament_nomination_id: 15,
+          tournament_nomination: { is_finished: false },
+          round_states: [],
+        }),
+      },
+      $transaction: jest.fn(
+        async (callback: (transaction: typeof tx) => Promise<void>) =>
+          callback(tx),
+      ),
+    };
+    const withdrawalService = createWithdrawalServiceMock();
+    const resetWithdrawals = jest
+      .spyOn(withdrawalService, 'resetForfeitsForDeletedFightsTx')
+      .mockImplementation(async () => {
+        events.push('reset-withdrawals');
+      });
+    const service = new CompetitionLifecycleService(
+      prisma as unknown as PrismaService,
+      {
+        getState: jest.fn().mockResolvedValue({ blocks: [] }),
+      } as unknown as CompetitionStateReader,
+      {
+        renumberNominationFights: jest.fn().mockResolvedValue(undefined),
+      } as unknown as CompetitionFightService,
+      {
+        resetRatingState: jest.fn().mockResolvedValue(undefined),
+      } as unknown as CompetitionFinishService,
+      {
+        resetForfeitsForDeletedFightsTx: jest.fn().mockResolvedValue(undefined),
+        applyRedCardForfeits: jest.fn().mockResolvedValue(undefined),
+      } as unknown as CompetitionRedCardService,
+      withdrawalService,
+    );
+
+    await service.cancelFightsFixation({ block_id: 9 });
+
+    expect(resetWithdrawals).toHaveBeenCalledWith(tx, 9);
+    expect(events).toEqual(['reset-withdrawals', 'delete-fights']);
   });
 
   it('recreates inactive cross-tournament red when deleting a same-tournament automatic red restores three active yellows', async () => {
@@ -1542,12 +1651,17 @@ describe('competition use-case services', () => {
         resetForfeitsForDeletedFightsTx: jest.fn().mockResolvedValue(undefined),
         applyRedCardForfeits: jest.fn().mockResolvedValue(undefined),
       } as unknown as CompetitionRedCardService,
+      createWithdrawalServiceMock(),
     );
 
     await service.cancelResultsFixation({ block_id: 9 });
 
     expect(tx.fights.updateMany).toHaveBeenCalledWith({
-      where: { block_id: 9, forfeit_card_id: null },
+      where: {
+        block_id: 9,
+        forfeit_card_id: null,
+        forfeit_withdrawal_id: null,
+      },
       data: { is_finished: false, winner_id: null },
     });
   });
@@ -1591,12 +1705,18 @@ describe('competition use-case services', () => {
         resetForfeitsForDeletedFightsTx: jest.fn().mockResolvedValue(undefined),
         applyRedCardForfeits: jest.fn().mockResolvedValue(undefined),
       } as unknown as CompetitionRedCardService,
+      createWithdrawalServiceMock(),
     );
 
     await service.cancelResultsFixation({ block_id: 10, round: 1 });
 
     expect(prisma.fights.updateMany).toHaveBeenCalledWith({
-      where: { block_id: 10, bracket_round: 1, forfeit_card_id: null },
+      where: {
+        block_id: 10,
+        bracket_round: 1,
+        forfeit_card_id: null,
+        forfeit_withdrawal_id: null,
+      },
       data: { is_finished: false, winner_id: null },
     });
   });
@@ -1646,6 +1766,7 @@ describe('competition use-case services', () => {
       {
         applyRedCardConsequences: jest.fn().mockResolvedValue(undefined),
       } as unknown as CompetitionRedCardService,
+      createWithdrawalServiceMock(),
     );
 
     await service.resolveTies({

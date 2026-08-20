@@ -89,4 +89,34 @@ describe('mapCompetitionState', () => {
     expect(secondFighter.city).toBe('7')
     expect(secondFighter.club).toBe('3')
   })
+
+  it('attaches active withdrawals to groups and fight participants', () => {
+    const mapped = mapCompetitionState({
+      ...competitionState(),
+      activeWithdrawals: [
+        {
+          id: 9,
+          competitor_id: 501,
+          reason: 'неявка',
+          is_excused: false,
+          source: 'NO_SHOW',
+          source_fight_id: null
+        }
+      ]
+    })
+
+    expect(mapped.activeWithdrawals).toEqual([
+      {
+        id: 9,
+        competitorId: 501,
+        reason: 'неявка',
+        isExcused: false,
+        source: 'NO_SHOW',
+        sourceFightId: null
+      }
+    ])
+    expect(mapped.blocks[0].groups[0].fighters[0].withdrawal?.reason).toBe('неявка')
+    expect(mapped.blocks[0].fights[0].fighter1Withdrawal?.reason).toBe('неявка')
+    expect(mapped.blocks[0].fights[0].fighter2Withdrawal).toBeNull()
+  })
 })

@@ -7,7 +7,9 @@ import { hasEditableRoundTimeInputs } from '@/widgets/tournament/fightRoundTimeV
 import type { BlockData, TournamentMarshal } from '@/model'
 import type {
   ActiveCardTypes,
+  CancelWithdrawalAction,
   CreateDisciplinaryCardAction,
+  CreateFightWithdrawalAction,
   FightScoreDraftUpdate,
   FightScoreUpdatePayload
 } from '@/widgets/tournament/types'
@@ -20,6 +22,8 @@ const props = defineProps<{
   activeCardTypes?: ActiveCardTypes
   tournamentMarshals?: TournamentMarshal[]
   createDisciplinaryCard?: CreateDisciplinaryCardAction
+  createWithdrawal?: CreateFightWithdrawalAction
+  cancelWithdrawal?: CancelWithdrawalAction
   blockId?: number
   blocksData: BlockData[]
   showRoundTimeToggle?: boolean
@@ -27,6 +31,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'card-issued'): void
+  (e: 'withdrawal-changed'): void
   (e: 'update-score', payload: FightScoreUpdatePayload): void
 }>()
 
@@ -104,9 +109,12 @@ const handleScoreUpdate = (
           :activeCardTypes="activeCardTypes"
           :tournamentMarshals="tournamentMarshals"
           :createDisciplinaryCard="createDisciplinaryCard"
+          :createWithdrawal="createWithdrawal"
+          :cancelWithdrawal="cancelWithdrawal"
           :show-round-times="isRoundTimesVisible(block)"
           @update:score="(scores) => handleScoreUpdate(fight.id, fight.number, scores)"
           @card-issued="emit('card-issued')"
+          @withdrawal-changed="emit('withdrawal-changed')"
         />
       </div>
     </div>

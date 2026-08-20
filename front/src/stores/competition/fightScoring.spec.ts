@@ -60,7 +60,7 @@ describe('evaluateFightWithWarnings', () => {
         fighter2Score: 10,
         roundScores: [{ competitor1Score: 0, competitor2Score: 10 }],
         warnings: [{ competitorId: 202, round: 1, reason: 'Holding' }],
-        forfeitCardId: 99
+        isTechnicalForfeit: true
       }
     )
 

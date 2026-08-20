@@ -57,6 +57,7 @@ export class GroupRankingReader {
         competitor1Score: fight.competitor1_score,
         competitor2Score: fight.competitor2_score,
         forfeitCardId: fight.forfeit_card_id,
+        forfeitWithdrawalId: fight.forfeit_withdrawal_id,
         rules: scoringRules(fight),
         roundScores: this.scoringService.getPersistedRoundScores(fight),
         warnings: fight.warnings.map((warning) => ({

@@ -7,7 +7,9 @@ import { hasEditableRoundTimeInputs } from '@/widgets/tournament/fightRoundTimeV
 import type { FightData, TournamentMarshal } from '@/model'
 import type {
   ActiveCardTypes,
+  CancelWithdrawalAction,
   CreateDisciplinaryCardAction,
+  CreateFightWithdrawalAction,
   FightScoreUpdatePayload
 } from '@/widgets/tournament/types'
 
@@ -24,6 +26,8 @@ const props = withDefaults(
     activeCardTypes?: ActiveCardTypes
     tournamentMarshals?: TournamentMarshal[]
     createDisciplinaryCard?: CreateDisciplinaryCardAction
+    createWithdrawal?: CreateFightWithdrawalAction
+    cancelWithdrawal?: CancelWithdrawalAction
     showLifecycle?: boolean
     showActions?: boolean
     canUseBackwardActions?: boolean
@@ -49,6 +53,7 @@ const props = withDefaults(
 const emit = defineEmits<{
   (e: 'update-score', payload: FightScoreUpdatePayload): void
   (e: 'card-issued'): void
+  (e: 'withdrawal-changed'): void
   (e: 'fix-results', round: number, fights: FightData[]): void
   (e: 'cancel-results-fixation', round: number): void
   (e: 'cancel-pair-fixation', round: number): void
@@ -98,9 +103,12 @@ const updateScore = (
         :activeCardTypes="activeCardTypes"
         :tournamentMarshals="tournamentMarshals"
         :createDisciplinaryCard="createDisciplinaryCard"
+        :createWithdrawal="createWithdrawal"
+        :cancelWithdrawal="cancelWithdrawal"
         :show-round-times="showRoundTimes"
         @update:score="(scores) => updateScore(fight, scores)"
         @card-issued="emit('card-issued')"
+        @withdrawal-changed="emit('withdrawal-changed')"
       />
     </div>
     <div v-if="showActions" class="flex flex-wrap justify-center gap-3 pt-2">

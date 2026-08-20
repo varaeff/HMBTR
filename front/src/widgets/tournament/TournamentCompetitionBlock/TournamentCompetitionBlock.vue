@@ -87,11 +87,14 @@ const isGroupBlockComplete = computed(
           :activeCardTypes="cards.activeCardTypes"
           :tournamentMarshals="cards.tournamentMarshals"
           :createDisciplinaryCard="cards.createDisciplinaryCard"
+          :createWithdrawal="cards.createWithdrawal"
+          :cancelWithdrawal="cards.cancelWithdrawal"
           :show-round-time-toggle="
             state.block.status === 'ACTIVE' && state.block.lifecycleState === 'FIGHTS_EDITABLE'
           "
           @update-score="actions.updateFightScore"
           @card-issued="actions.refreshCardsAndCompetition"
+          @withdrawal-changed="actions.refreshCardsAndCompetition"
         />
         <div
           v-if="
@@ -145,9 +148,12 @@ const isGroupBlockComplete = computed(
         :activeCardTypes="cards.activeCardTypes"
         :tournamentMarshals="cards.tournamentMarshals"
         :createDisciplinaryCard="cards.createDisciplinaryCard"
+        :createWithdrawal="cards.createWithdrawal"
+        :cancelWithdrawal="cards.cancelWithdrawal"
         :attachedCardCountByFightId="cards.attachedCardCountByFightId"
         :isFixingPairs="state.isOlympicPairsFixing"
         @card-issued="actions.refreshCardsAndCompetition"
+        @withdrawal-changed="actions.refreshCardsAndCompetition"
         @update-score="actions.updateFightScore"
         @swap-slots="actions.swapOlympicSlots"
         @fix-pairs="actions.fixOlympicPairs"

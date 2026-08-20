@@ -14,8 +14,13 @@ export const assertSingleTransition = (count: number) => {
 export const getGroupLetter = (index: number) =>
   String.fromCharCode(65 + index);
 
-export const isForfeitFight = (fight?: { forfeit_card_id?: number | null }) =>
-  fight?.forfeit_card_id !== null && fight?.forfeit_card_id !== undefined;
+export const isForfeitFight = (fight?: {
+  forfeit_card_id?: number | null;
+  forfeit_withdrawal_id?: number | null;
+}) =>
+  (fight?.forfeit_card_id !== null && fight?.forfeit_card_id !== undefined) ||
+  (fight?.forfeit_withdrawal_id !== null &&
+    fight?.forfeit_withdrawal_id !== undefined);
 
 export const emptyFightScoreData = {
   competitor1_score: 0,
@@ -23,6 +28,7 @@ export const emptyFightScoreData = {
   winner_id: null,
   is_finished: false,
   forfeit_card_id: null,
+  forfeit_withdrawal_id: null,
 };
 
 export const isFightResultsFixed = (fight: {

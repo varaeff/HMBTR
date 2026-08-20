@@ -11,13 +11,14 @@ import {
 } from '../../fights/fight-score-data';
 import { PrismaService } from '../../prisma/prisma.service';
 import { BLOCK_GROUP, STATUS_ACTIVE } from '../competition.constants';
-import { isFightResultsFixed } from '../competition.helpers';
+import { isFightResultsFixed, isForfeitFight } from '../competition.helpers';
 import { CompetitionRedCardService } from '../competition-red-card.service';
 import { CompetitionLifecycleDto } from '../dto/competition-lifecycle.dto';
 import { SaveCompetitionResultsDto } from '../dto/save-competition-results.dto';
 import { UpdateCompetitionScoreDto } from '../dto/update-competition-score.dto';
 import { CompetitionScoringService } from '../scoring/competition-scoring.service';
 import { CompetitionStateReader } from '../state/competition-state.reader';
+import { CompetitionWithdrawalService } from '../withdrawals/competition-withdrawal.service';
 import { FightResultEvaluationService } from './fight-result-evaluation.service';
 import { FightResultPersistenceService } from './fight-result-persistence.service';
 import { ResultFixationService } from './result-fixation.service';
@@ -30,6 +31,7 @@ export class CompetitionResultService {
     private readonly stateReader: CompetitionStateReader,
     private readonly scoringService: CompetitionScoringService,
     private readonly redCardService: CompetitionRedCardService,
+    private readonly withdrawalService: CompetitionWithdrawalService,
     private readonly validator: ResultSubmissionValidator,
     private readonly evaluator: FightResultEvaluationService,
     private readonly persistence: FightResultPersistenceService,
@@ -58,6 +60,9 @@ export class CompetitionResultService {
     }
     if (isFightResultsFixed({ ...fight, block: fight.block })) {
       throw new BadRequestException('Fight results are fixed');
+    }
+    if (isForfeitFight(fight)) {
+      throw new BadRequestException('Fight is a technical forfeit');
     }
 
     const evaluation = evaluateSubmittedFightScore(
@@ -158,6 +163,7 @@ export class CompetitionResultService {
       await this.fixation.fixOlympicRoundTx(tx, block, plan);
     });
     await this.redCardService.applyRedCardForfeits(block.tournament_id);
+    await this.withdrawalService.applyWithdrawalForfeits(block.tournament_id);
     return this.stateReader.getState(block.tournament_id, block.nomination_id);
   }
 }

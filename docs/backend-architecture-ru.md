@@ -422,6 +422,22 @@ Forfeits от красных карточек являются результа�
 
 Модуль соревнований владеет последствиями карточек для боев и сетки. Модуль дисциплинарных карточек владеет выпуском, редактированием и удалением карточек.
 
+### Withdrawals Inside Competition
+
+Folder: `competition/withdrawals`
+
+- `CompetitionWithdrawalService`
+
+Owns nomination-scoped no-show and fight-card withdrawals:
+
+- creation and cancelation validation;
+- active withdrawal state and source metadata;
+- generated technical forfeits linked through `forfeit_withdrawal_id`;
+- exclusion of withdrawn competitors from advancement while preserving standings visibility;
+- cleanup of fight-sourced withdrawals when their source fights are deleted by lifecycle rollback/cancel flows.
+
+Pre-block no-show withdrawals are not tied to a source fight and should survive fight rollback so consequences can be reapplied after fights are regenerated. Fight-card withdrawals are tied to a source fight; lifecycle deletion must remove those withdrawals and reset their generated forfeits before deleting fights.
+
 ## Disciplinary Cards
 
 Папка: `backend/src/disciplinary-cards`

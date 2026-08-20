@@ -53,6 +53,46 @@ export const deleteCompetitor = async (competitorId: number) => {
   await http.delete(`${API_ROUTES.COMPETITORS.ROOT}/${competitorId}`)
 }
 
+export const createNoShowWithdrawal = async (
+  tournamentId: number,
+  nominationId: number,
+  competitorId: number
+) => {
+  const { data } = await http.post<RawCompetitionState>(API_ROUTES.COMPETITION.WITHDRAWAL_NO_SHOW, {
+    tournament_id: tournamentId,
+    nomination_id: nominationId,
+    competitor_id: competitorId
+  })
+  return data
+}
+
+export const createFightWithdrawal = async ({
+  fightId,
+  competitorId,
+  reason,
+  isExcused
+}: {
+  fightId: number
+  competitorId: number
+  reason: string
+  isExcused: boolean
+}) => {
+  const { data } = await http.post<RawCompetitionState>(API_ROUTES.COMPETITION.WITHDRAWAL_FIGHT, {
+    fight_id: fightId,
+    competitor_id: competitorId,
+    reason,
+    is_excused: isExcused
+  })
+  return data
+}
+
+export const cancelWithdrawal = async (withdrawalId: number) => {
+  const { data } = await http.post<RawCompetitionState>(API_ROUTES.COMPETITION.WITHDRAWAL_CANCEL, {
+    withdrawal_id: withdrawalId
+  })
+  return data
+}
+
 export const createGroupBlock = async (tournamentId: number, nominationId: number) => {
   const { data } = await http.post<RawCompetitionState>(API_ROUTES.COMPETITION.GROUP_BLOCK, {
     tournament_id: tournamentId,

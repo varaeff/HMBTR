@@ -46,6 +46,7 @@ export type TournamentReportFight = {
   competitor2_score: number;
   winner_id: number | null;
   forfeit_card_id: number | null;
+  forfeit_withdrawal_id: number | null;
   bracket_round: number | null;
   bracket_position: number | null;
   is_bronze: boolean;

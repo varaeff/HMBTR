@@ -9,12 +9,14 @@ import {
 } from '../competition.constants';
 import type { PrismaTx } from '../competition-internal.types';
 import { CompetitionRankingsService } from '../rankings/competition-rankings.service';
+import { CompetitionWithdrawalService } from '../withdrawals/competition-withdrawal.service';
 
 @Injectable()
 export class CompetitionStateReader {
   constructor(
     private readonly prisma: PrismaService,
     private readonly rankingsService: CompetitionRankingsService,
+    private readonly withdrawalService: CompetitionWithdrawalService,
   ) {}
 
   async getState(tournamentId: number, nominationId: number) {
@@ -80,6 +82,11 @@ export class CompetitionStateReader {
         },
       },
     });
+    const activeWithdrawals =
+      await this.withdrawalService.getActiveWithdrawalsForTournamentNominationTx(
+        this.prisma,
+        tournamentNomination.id,
+      );
     const activeBlock = blocks.find((block) => block.status === STATUS_ACTIVE);
     const activeGroupsCount =
       activeBlock?.type === BLOCK_GROUP ? activeBlock.groups.length : 0;
@@ -110,6 +117,7 @@ export class CompetitionStateReader {
       tournamentNomination,
       blocks,
       placements,
+      activeWithdrawals,
       activeBlockId: activeBlock?.id ?? null,
       isFinished: tournamentNomination.is_finished,
       pendingTie,
@@ -174,5 +182,23 @@ export class CompetitionStateReader {
 
   async getTournamentNominationId(tournamentId: number, nominationId: number) {
     return (await this.getTournamentNomination(tournamentId, nominationId)).id;
+  }
+
+  async getFightContext(fightId: number) {
+    const fight = await this.prisma.fights.findUnique({
+      where: { id: fightId },
+      select: { tournament_id: true, nomination_id: true },
+    });
+    if (!fight) throw new NotFoundException('Fight not found');
+    return fight;
+  }
+
+  async getWithdrawalContext(withdrawalId: number) {
+    const withdrawal = await this.prisma.fighter_withdrawals.findUnique({
+      where: { id: withdrawalId },
+      select: { tournament_id: true, nomination_id: true },
+    });
+    if (!withdrawal) throw new NotFoundException('Withdrawal not found');
+    return withdrawal;
   }
 }

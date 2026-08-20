@@ -10,7 +10,10 @@ import {
 import { API_ROUTES } from '@shared/routes';
 import { Public } from '../auth/decorators/public.decorator';
 import { CompetitionService } from './competition.service';
+import { CancelWithdrawalDto } from './dto/cancel-withdrawal.dto';
 import { CreateCompetitionBlockDto } from './dto/create-competition-block.dto';
+import { CreateFightWithdrawalDto } from './dto/create-fight-withdrawal.dto';
+import { CreateNoShowWithdrawalDto } from './dto/create-no-show-withdrawal.dto';
 import { FinishCompetitionDto } from './dto/finish-competition.dto';
 import { GenerateGroupFightsDto } from './dto/generate-group-fights.dto';
 import { GenerateOlympicFightsDto } from './dto/generate-olympic-fights.dto';
@@ -84,5 +87,20 @@ export class CompetitionController {
   @Post('lifecycle/rollback')
   rollback(@Body() dto: CompetitionLifecycleDto) {
     return this.competitionService.rollback(dto);
+  }
+
+  @Post('withdrawals/no-show')
+  createNoShowWithdrawal(@Body() dto: CreateNoShowWithdrawalDto) {
+    return this.competitionService.createNoShowWithdrawal(dto);
+  }
+
+  @Post('withdrawals/fight')
+  createFightWithdrawal(@Body() dto: CreateFightWithdrawalDto) {
+    return this.competitionService.createFightWithdrawal(dto);
+  }
+
+  @Post('withdrawals/cancel')
+  cancelWithdrawal(@Body() dto: CancelWithdrawalDto) {
+    return this.competitionService.cancelWithdrawal(dto);
   }
 }

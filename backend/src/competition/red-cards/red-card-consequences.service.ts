@@ -3,6 +3,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { BLOCK_OLYMPIC, STATUS_ACTIVE } from '../competition.constants';
 import type { PrismaTx } from '../competition-internal.types';
 import { CompetitionOlympicService } from '../olympic/competition-olympic.service';
+import { CompetitionWithdrawalService } from '../withdrawals/competition-withdrawal.service';
 import { RedCardForfeitService } from './red-card-forfeit.service';
 import { RedCardStorageService } from './red-card-storage.service';
 
@@ -13,6 +14,7 @@ export class RedCardConsequencesService {
     private readonly storageService: RedCardStorageService,
     private readonly forfeitService: RedCardForfeitService,
     private readonly olympicService: CompetitionOlympicService,
+    private readonly withdrawalService: CompetitionWithdrawalService,
   ) {}
 
   async applyRedCardForfeits(tournamentId: number) {
@@ -46,6 +48,7 @@ export class RedCardConsequencesService {
     }
 
     await this.forfeitService.applyRedCardForfeitsPass(tournamentId, checkDate);
+    await this.withdrawalService.applyWithdrawalForfeits(tournamentId);
     for (const block of olympicBlocks) {
       await this.prisma.$transaction((tx) =>
         this.fixCompletedForfeitOlympicRoundsTx(tx, block.id),
@@ -82,13 +85,16 @@ export class RedCardConsequencesService {
           winner_id: true,
           is_finished: true,
           forfeit_card_id: true,
+          forfeit_withdrawal_id: true,
         },
       });
       if (
         !fights.length ||
         fights.some(
           (fight) =>
-            !fight.is_finished || !fight.winner_id || !fight.forfeit_card_id,
+            !fight.is_finished ||
+            !fight.winner_id ||
+            (!fight.forfeit_card_id && !fight.forfeit_withdrawal_id),
         )
       ) {
         continue;

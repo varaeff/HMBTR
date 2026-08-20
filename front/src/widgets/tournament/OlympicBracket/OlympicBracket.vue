@@ -8,7 +8,9 @@ import type {
 } from '@/model'
 import type {
   ActiveCardTypes,
+  CancelWithdrawalAction,
   CreateDisciplinaryCardAction,
+  CreateFightWithdrawalAction,
   FightScoreUpdatePayload,
   OlympicRoundPayload,
   OlympicRoundResultsPayload,
@@ -35,12 +37,15 @@ const props = defineProps<{
   activeCardTypes?: ActiveCardTypes
   tournamentMarshals?: TournamentMarshal[]
   createDisciplinaryCard?: CreateDisciplinaryCardAction
+  createWithdrawal?: CreateFightWithdrawalAction
+  cancelWithdrawal?: CancelWithdrawalAction
   attachedCardCountByFightId?: Record<number, number>
   isFixingPairs: boolean
 }>()
 
 const emit = defineEmits<{
   (e: 'card-issued'): void
+  (e: 'withdrawal-changed'): void
   (e: 'update-score', payload: FightScoreUpdatePayload): void
   (e: 'swap-slots', payload: OlympicSlotSwapPayload): void
   (e: 'fix-pairs', blockId: number): void
@@ -118,6 +123,8 @@ const swapSlots = (sourcePosition: number, targetPosition: number) => {
         :activeCardTypes="activeCardTypes"
         :tournamentMarshals="tournamentMarshals"
         :createDisciplinaryCard="createDisciplinaryCard"
+        :createWithdrawal="createWithdrawal"
+        :cancelWithdrawal="cancelWithdrawal"
         :showActions="(hasAccess || canUseBackwardActions) && isLatestRound(round.round)"
         :canUseBackwardActions="canUseBackwardActions"
         :canRecordResults="canRecordFights(round.fights)"
@@ -130,6 +137,7 @@ const swapSlots = (sourcePosition: number, targetPosition: number) => {
         "
         @update-score="(payload) => emit('update-score', payload)"
         @card-issued="emit('card-issued')"
+        @withdrawal-changed="emit('withdrawal-changed')"
         @fix-results="fixRoundResults"
         @cancel-results-fixation="cancelRoundResultsFixation"
         @cancel-pair-fixation="cancelPairFixation"
@@ -149,9 +157,12 @@ const swapSlots = (sourcePosition: number, targetPosition: number) => {
         :activeCardTypes="activeCardTypes"
         :tournamentMarshals="tournamentMarshals"
         :createDisciplinaryCard="createDisciplinaryCard"
+        :createWithdrawal="createWithdrawal"
+        :cancelWithdrawal="cancelWithdrawal"
         :showLifecycle="false"
         @update-score="(payload) => emit('update-score', payload)"
         @card-issued="emit('card-issued')"
+        @withdrawal-changed="emit('withdrawal-changed')"
       />
 
       <OlympicRoundSection
@@ -168,6 +179,8 @@ const swapSlots = (sourcePosition: number, targetPosition: number) => {
         :activeCardTypes="activeCardTypes"
         :tournamentMarshals="tournamentMarshals"
         :createDisciplinaryCard="createDisciplinaryCard"
+        :createWithdrawal="createWithdrawal"
+        :cancelWithdrawal="cancelWithdrawal"
         :showActions="
           (hasAccess || canUseBackwardActions) && isLatestRound(view.finalRound.round)
         "
@@ -178,6 +191,7 @@ const swapSlots = (sourcePosition: number, targetPosition: number) => {
         fixButtonKey="tournamentPageFixFinalResults"
         @update-score="(payload) => emit('update-score', payload)"
         @card-issued="emit('card-issued')"
+        @withdrawal-changed="emit('withdrawal-changed')"
         @fix-results="fixRoundResults"
         @cancel-results-fixation="cancelRoundResultsFixation"
         @rollback-round="rollbackRound"

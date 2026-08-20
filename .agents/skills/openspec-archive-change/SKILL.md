@@ -153,6 +153,18 @@ Archive a completed change in the experimental workflow.
    - Whether specs were synced (if applicable)
    - Note about any warnings (incomplete artifacts/tasks)
 
+7. **Run post-archive knowledge review**
+
+   After archiving, always run both follow-up review procedures:
+   - update architecture files in `docs/` when the archived work changed
+     architecture, ownership boundaries, cross-layer contracts, or reusable
+     system behavior;
+   - update project skills when the archived work produced reusable
+     architecture, domain, workflow, or implementation knowledge.
+
+   If either review finds no necessary update, state that explicitly. Do not
+   add one-off feature history to skills.
+
 **Output On Success**
 
 ```markdown
@@ -164,6 +176,8 @@ Archive a completed change in the experimental workflow.
 **Specs:** <"✓ Synced to main specs" only if the step 4 verification passed; otherwise "No delta specs" or "Sync skipped">
 
 <"All artifacts complete. All tasks complete." — or, if archived with warnings, list them instead (e.g. "Archived with 2 incomplete tasks")>
+
+**Post-Archive Review:** <docs updated / no docs update needed>; <skills updated / no skills update needed>
 ```
 
 **Guardrails**

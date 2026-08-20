@@ -3,10 +3,11 @@ import type {
   CompetitionPlacement,
   CreateDisciplinaryCardPayload,
   ActiveDisciplinaryCardSummary,
+  ActiveWithdrawalSummary,
   DisciplinaryCard,
-  Fighter,
   FightData,
   Group,
+  NominationCompetitor,
   Nomination,
   PendingTie,
   Tournament,
@@ -29,6 +30,20 @@ export type UpdateDisciplinaryCardAction = (
 ) => Promise<DisciplinaryCard>
 
 export type DeleteDisciplinaryCardAction = (id: number) => Promise<void>
+
+export interface CreateFightWithdrawalPayload {
+  fightId: number
+  competitorId: number
+  reason: string
+  isExcused: boolean
+}
+
+export type CreateNoShowWithdrawalAction = (competitorId: number) => Promise<void>
+export type CreateFightWithdrawalAction = (
+  payload: CreateFightWithdrawalPayload
+) => Promise<void>
+export type CancelWithdrawalAction = (withdrawalId: number) => Promise<void>
+export type ActiveWithdrawalTypes = Partial<Record<number, ActiveWithdrawalSummary>>
 
 export interface TournamentBlockDisplayProps {
   canEditCompetition: boolean
@@ -76,6 +91,8 @@ export interface TournamentCompetitionBlockCards {
   activeCardTypes: ActiveCardTypes
   tournamentMarshals: TournamentMarshal[]
   createDisciplinaryCard: CreateDisciplinaryCardAction
+  createWithdrawal: CreateFightWithdrawalAction
+  cancelWithdrawal: CancelWithdrawalAction
   attachedCardCountByFightId: Record<number, number>
 }
 
@@ -110,7 +127,7 @@ export interface TournamentNominationTabsState {
   tournamentNominations: TournamentNominations
   isNominationLoading: boolean
   placements: CompetitionPlacement[]
-  nominationCompetitors: Fighter[]
+  nominationCompetitors: NominationCompetitor[]
   isCompetitorsListOpen: boolean
   isCurrentNominationOpen: boolean
   hasTournamentMarshals: boolean
@@ -160,6 +177,9 @@ export interface TournamentNominationTabsActions {
   cancelGroupResultsFixation(blockId: number): void
   finishCompetition(): void
   refreshCardsAndCompetition(): void
+  createNoShowWithdrawal: CreateNoShowWithdrawalAction
+  createFightWithdrawal: CreateFightWithdrawalAction
+  cancelWithdrawal: CancelWithdrawalAction
   setBlockIsOpen(block: CompetitionBlock, isOpen: boolean): void
   updateFightScore(payload: FightScoreUpdatePayload): void
   updateGroups(groups: Group[]): void

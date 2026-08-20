@@ -50,9 +50,14 @@
 - If an OpenSpec proposal or design conflicts with project skills or the current
   code architecture, report the conflict explicitly instead of silently choosing
   one side.
-- After archiving an OpenSpec change, update project skills only when the work
-  produced reusable architecture or domain knowledge. Do not update skills for
-  one-off feature history.
+- After archiving an OpenSpec change, always run both post-archive knowledge
+  review procedures:
+  - update architecture files in `docs/` when the archived work changed
+    architecture, boundaries, or reusable system behavior;
+  - update project skills only when the work produced reusable architecture,
+    domain, or workflow knowledge.
+  If no update is needed for either procedure, state that explicitly. Do not
+  update skills for one-off feature history.
 
 ## Required Engineering Workflow
 

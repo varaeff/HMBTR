@@ -4,6 +4,7 @@ import { useTranslation } from 'i18next-vue'
 import { tData } from '@/lib/utils'
 import { Table, TableHeader, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import { CardStatusIcon, formatActiveDisciplinaryCardTitle } from '@/widgets/tournament/DisciplinaryCards'
+import WithdrawalStatusIcon from '@/widgets/tournament/WithdrawalStatusIcon.vue'
 import type { ActiveDisciplinaryCardSummary, GroupFighter, Group } from '@/model'
 import type { ActiveCardTypes } from '@/widgets/tournament/types'
 
@@ -149,8 +150,8 @@ const hasGroupRedCard = (group: Group, fighter: GroupFighter) =>
             ]"
           >
             <TableCell class="w-px text-muted-foreground">{{ fIdx + 1 }}.</TableCell>
-            <TableCell class="font-medium"
-              ><span class="inline-flex items-center gap-1">
+            <TableCell class="font-medium">
+              <span class="inline-flex items-center gap-1">
                 {{ tData(fighter.surname) }} {{ tData(fighter.name) }}
                 <span
                   v-for="card in activeCardTypes?.[fighter.id] ?? []"
@@ -159,8 +160,10 @@ const hasGroupRedCard = (group: Group, fighter: GroupFighter) =>
                   class="inline-flex"
                 >
                   <CardStatusIcon :type="card" :showTitle="false" />
-                </span> </span
-            ></TableCell>
+                </span>
+                <WithdrawalStatusIcon :withdrawal="fighter.withdrawal" />
+              </span>
+            </TableCell>
             <TableCell v-if="props.isFixed" class="font-bold text-center">
               {{ fighter.wins }}
             </TableCell>

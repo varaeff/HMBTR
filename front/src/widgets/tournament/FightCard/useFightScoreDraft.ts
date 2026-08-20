@@ -90,7 +90,7 @@ export const useFightScoreDraft = ({
     applyFightWarningBonuses(rules.value, warningContext.value, roundScores.value)
   )
   const evaluation = computed<FightScoreEvaluation>(() =>
-    fight.value.forfeitCardId
+    fight.value.isTechnicalForfeit
       ? evaluateFightScore(rules.value, roundScores.value)
       : {
           ...evaluateFightScore(rules.value, warningAdjustedScore.value.roundScores),
@@ -104,7 +104,7 @@ export const useFightScoreDraft = ({
         }
   )
   const hasWarningTechnicalLoss = computed(
-    () => !fight.value.forfeitCardId && Boolean(warningAdjustedScore.value.technicalLoserSide)
+    () => !fight.value.isTechnicalForfeit && Boolean(warningAdjustedScore.value.technicalLoserSide)
   )
   const canEdit = computed(() => hasAccess.value && !fight.value.isFinished)
   const canEditScores = computed(() => canEdit.value && !hasWarningTechnicalLoss.value)
@@ -113,7 +113,7 @@ export const useFightScoreDraft = ({
   const resultText = computed(() =>
     formatFightResult(
       rules.value,
-      fight.value.forfeitCardId
+      fight.value.isTechnicalForfeit
         ? {
             ...evaluation.value,
             competitor1Total: fight.value.fighter1Score,
@@ -121,12 +121,12 @@ export const useFightScoreDraft = ({
           }
         : evaluation.value,
       roundScores.value,
-      Boolean(fight.value.forfeitCardId)
+      Boolean(fight.value.isTechnicalForfeit)
     )
   )
   const hasWarnings = computed(() => warnings.value.length > 0)
   const warningResultScore = computed<FightWarningResultScore | null>(() => {
-    if (!hasWarnings.value || fight.value.forfeitCardId) return null
+    if (!hasWarnings.value || fight.value.isTechnicalForfeit) return null
 
     const leading = fight.value.roundWin
       ? `${evaluation.value.competitor1RoundWins}:${evaluation.value.competitor2RoundWins}`
@@ -162,7 +162,7 @@ export const useFightScoreDraft = ({
   }
 
   const effectiveRoundScoresFor = (scores: RoundScore[]) =>
-    fight.value.forfeitCardId
+    fight.value.isTechnicalForfeit
       ? cloneRoundScores(scores)
       : applyFightWarningBonuses(rules.value, warningContext.value, scores).roundScores
 

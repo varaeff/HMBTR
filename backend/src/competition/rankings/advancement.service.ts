@@ -8,6 +8,7 @@ import type { RankedGroup } from '../competition.logic';
 import { BLOCK_GROUP } from '../competition.constants';
 import type { GroupRankings, PrismaTx } from '../competition-internal.types';
 import { CompetitionRedCardService } from '../competition-red-card.service';
+import { CompetitionWithdrawalService } from '../withdrawals/competition-withdrawal.service';
 import { GroupRankingReader } from './group-ranking.reader';
 import { PendingTieService } from './pending-tie.service';
 
@@ -17,6 +18,7 @@ export class AdvancementService {
     private readonly pendingTieService: PendingTieService,
     private readonly groupRankingReader: GroupRankingReader,
     private readonly redCardService: CompetitionRedCardService,
+    private readonly withdrawalService: CompetitionWithdrawalService,
   ) {}
 
   async getAdvancingCompetitorsTx(
@@ -52,6 +54,11 @@ export class AdvancementService {
     const rankedGroups: RankedGroup[] = [];
     const activeRedCompetitorIds =
       await this.redCardService.getActiveRedCompetitorIdsTx(tx, blockId);
+    const activeWithdrawalCompetitorIds =
+      await this.withdrawalService.getActiveWithdrawalCompetitorIdsTx(
+        tx,
+        blockId,
+      );
     for (const group of groups) {
       const rankings = await this.groupRankingReader.getGroupRankingsTx(
         tx,
@@ -59,9 +66,12 @@ export class AdvancementService {
         group.id,
       );
       // Active-red competitors remain in standings, but cannot advance.
-      const ranked = this.redCardService.excludeActiveRedCompetitors(
-        rankCompetitors(rankings.stats, rankings.manualOrder),
-        activeRedCompetitorIds,
+      const ranked = this.withdrawalService.excludeActiveWithdrawalCompetitors(
+        this.redCardService.excludeActiveRedCompetitors(
+          rankCompetitors(rankings.stats, rankings.manualOrder),
+          activeRedCompetitorIds,
+        ),
+        activeWithdrawalCompetitorIds,
       );
       rankedGroups.push({ name: group.name, ranked });
     }
@@ -79,6 +89,7 @@ export class AdvancementService {
           thirdPlaceManualOrder,
           new Map<string, GroupRankings>(),
           activeRedCompetitorIds,
+          activeWithdrawalCompetitorIds,
         );
       if (olympicThirdPlaceTie) {
         throw new BadRequestException(

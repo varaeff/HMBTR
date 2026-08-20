@@ -6,6 +6,8 @@ import type {
   Competitor,
   FightData,
   Group,
+  ActiveWithdrawalSummary,
+  NominationCompetitor,
   PendingTie
 } from '@/model/competition'
 import { useFightersListStore } from '@/stores/fightersList'
@@ -24,6 +26,7 @@ interface CompetitionState {
   blocks: CompetitionBlock[]
   activeBlockId: number | null
   placements: CompetitionPlacement[]
+  activeWithdrawals: ActiveWithdrawalSummary[]
   pendingTie: PendingTie | null
   isFinished: boolean
   isRegistrationOpen: boolean | null
@@ -47,6 +50,7 @@ export const useCompetitionStore = defineStore({
     blocks: [],
     activeBlockId: null,
     placements: [],
+    activeWithdrawals: [],
     pendingTie: null,
     isFinished: false,
     isRegistrationOpen: null,
@@ -65,6 +69,7 @@ export const useCompetitionStore = defineStore({
       this.blocks = []
       this.activeBlockId = null
       this.placements = []
+      this.activeWithdrawals = []
       this.pendingTie = null
       this.isFinished = false
       this.isRegistrationOpen = null
@@ -86,6 +91,7 @@ export const useCompetitionStore = defineStore({
       this.blocks = mapped.blocks
       this.activeBlockId = mapped.activeBlockId
       this.placements = mapped.placements
+      this.activeWithdrawals = mapped.activeWithdrawals
       this.pendingTie = mapped.pendingTie
       this.isFinished = mapped.isFinished
       this.isRegistrationOpen = mapped.isRegistrationOpen
@@ -133,6 +139,30 @@ export const useCompetitionStore = defineStore({
       if (index !== -1) {
         this.tournamentCompetitors.splice(index, 1)
       }
+    },
+
+    async createNoShowWithdrawal(competitorId: number) {
+      const data = await competitionCommands.createNoShowWithdrawal(
+        this.tournamentId,
+        this.nominationId,
+        competitorId
+      )
+      this.applyCompetitionState(data)
+    },
+
+    async createFightWithdrawal(payload: {
+      fightId: number
+      competitorId: number
+      reason: string
+      isExcused: boolean
+    }) {
+      const data = await competitionCommands.createFightWithdrawal(payload)
+      this.applyCompetitionState(data)
+    },
+
+    async cancelWithdrawal(withdrawalId: number) {
+      const data = await competitionCommands.cancelWithdrawal(withdrawalId)
+      this.applyCompetitionState(data)
     },
 
     async createGroupBlock() {
@@ -267,21 +297,41 @@ export const useCompetitionStore = defineStore({
 
     getPlacements: (state) => state.placements,
 
+    getActiveWithdrawals: (state) => state.activeWithdrawals,
+
     getIsFinished: (state) => state.isFinished,
 
     getIsRegistrationOpen: (state) => state.isRegistrationOpen,
 
     getPendingTie: (state) => state.pendingTie,
 
-    getNominationFighters: (state) => {
+    getNominationFighters: (state): NominationCompetitor[] => {
       const fightersStore = useFightersListStore()
-      const currentNominationFighterIds = new Set(
-        state.tournamentCompetitors
-          .filter((c) => c.nomination_id === state.nominationId)
-          .map((c) => c.fighter_id)
+      const withdrawalByCompetitorId = new Map(
+        state.activeWithdrawals.map((withdrawal) => [withdrawal.competitorId, withdrawal])
       )
 
-      return fightersStore.fightersList.filter((f) => currentNominationFighterIds.has(f.id))
+      return state.tournamentCompetitors
+        .filter((competitor) => competitor.nomination_id === state.nominationId)
+        .map((competitor) => {
+          const fighter = fightersStore.getFighterById(competitor.fighter_id)
+
+          return {
+            ...(fighter ?? {
+              id: competitor.fighter_id,
+              name: '',
+              surname: '',
+              patronymic: undefined,
+              birthday: null,
+              country: '',
+              city: '',
+              club: undefined,
+              pic: undefined
+            }),
+            competitorId: competitor.id,
+            withdrawal: withdrawalByCompetitorId.get(competitor.id) ?? null
+          }
+        })
     }
   }
 })

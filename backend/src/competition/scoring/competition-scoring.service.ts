@@ -32,10 +32,11 @@ export class CompetitionScoringService {
     competitor2Score: number;
     roundScores: RoundScore[];
     forfeitCardId: number | null;
+    forfeitWithdrawalId?: number | null;
     rules: FightScoringRules;
     warnings: Array<{ competitorId: number; round: number; reason: string }>;
   }) {
-    if (params.forfeitCardId !== null) {
+    if (params.forfeitCardId !== null || params.forfeitWithdrawalId) {
       return {
         competitor1Score: params.competitor1Score,
         competitor2Score: params.competitor2Score,
@@ -78,7 +79,7 @@ export class CompetitionScoringService {
     });
   }
 
-  getRedCardForfeitScoreData(
+  getTechnicalForfeitScoreData(
     rounds: number,
     roundWin: boolean,
     firstLoses: boolean,
@@ -91,7 +92,7 @@ export class CompetitionScoringService {
     };
   }
 
-  getRedCardForfeitRoundScores(
+  getTechnicalForfeitRoundScores(
     rounds: number,
     roundWin: boolean,
     firstLoses: boolean,
@@ -101,5 +102,21 @@ export class CompetitionScoringService {
       competitor1Score: roundWin && !firstLoses ? winnerRoundScore : 0,
       competitor2Score: roundWin && firstLoses ? winnerRoundScore : 0,
     }));
+  }
+
+  getRedCardForfeitScoreData(
+    rounds: number,
+    roundWin: boolean,
+    firstLoses: boolean,
+  ) {
+    return this.getTechnicalForfeitScoreData(rounds, roundWin, firstLoses);
+  }
+
+  getRedCardForfeitRoundScores(
+    rounds: number,
+    roundWin: boolean,
+    firstLoses: boolean,
+  ): RoundScore[] {
+    return this.getTechnicalForfeitRoundScores(rounds, roundWin, firstLoses);
   }
 }

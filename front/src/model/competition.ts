@@ -1,8 +1,23 @@
 import type { Fighter } from '@/model/fighter'
 import type { RoundScore } from '@shared/fightScoring'
 
+export interface ActiveWithdrawalSummary {
+  id: number
+  competitorId: number
+  reason: string
+  isExcused: boolean
+  source: 'NO_SHOW' | 'FIGHT' | string
+  sourceFightId?: number | null
+}
+
+export interface NominationCompetitor extends Fighter {
+  competitorId: number
+  withdrawal?: ActiveWithdrawalSummary | null
+}
+
 export interface GroupFighter extends Fighter {
   competitorId?: number
+  withdrawal?: ActiveWithdrawalSummary | null
   wins: number
   diff: number
 }
@@ -35,6 +50,10 @@ export interface FightData {
   isResultValid: boolean
   winnerId?: number | null
   forfeitCardId?: number | null
+  forfeitWithdrawalId?: number | null
+  isTechnicalForfeit?: boolean
+  fighter1Withdrawal?: ActiveWithdrawalSummary | null
+  fighter2Withdrawal?: ActiveWithdrawalSummary | null
   bracketRound?: number
   bracketPosition?: number
   isBronze?: boolean

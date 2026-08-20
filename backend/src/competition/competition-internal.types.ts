@@ -51,6 +51,7 @@ export interface RedCardForfeitFight {
   is_bronze: boolean | null;
   is_finished: boolean;
   forfeit_card_id: number | null;
+  forfeit_withdrawal_id?: number | null;
   rounds: number;
   round_win: boolean;
   block: {
@@ -65,4 +66,23 @@ export interface RedCardForfeitFight {
       results_fixed: boolean;
     }>;
   } | null;
+}
+
+export interface ActiveWithdrawal {
+  id: number;
+  tournament_nomination_id: number;
+  tournament_id: number;
+  nomination_id: number;
+  competitor_id: number;
+  source: string;
+  source_fight_id: number | null;
+  source_block_id: number | null;
+  source_fight_number: number | null;
+  reason: string;
+  is_excused: boolean;
+}
+
+export interface WithdrawalForfeitFight extends RedCardForfeitFight {
+  competitor1_id: number;
+  competitor2_id: number;
 }

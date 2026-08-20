@@ -44,6 +44,10 @@ describe('fightRoundTimeVisibility', () => {
     expect(hasEditableRoundTimeInput(fight({ forfeitCardId: 5 }))).toBe(false)
   })
 
+  it('hides the round-time toggle for withdrawal forfeits', () => {
+    expect(hasEditableRoundTimeInput(fight({ forfeitWithdrawalId: 9 }))).toBe(false)
+  })
+
   it('hides the round-time toggle for warning technical defeats', () => {
     expect(
       hasEditableRoundTimeInput(

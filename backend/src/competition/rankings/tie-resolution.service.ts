@@ -18,6 +18,7 @@ import { assertSingleTransition } from '../competition.helpers';
 import { CompetitionRedCardService } from '../competition-red-card.service';
 import type { PrismaTx } from '../competition-internal.types';
 import { ResolveTiesDto } from '../dto/resolve-ties.dto';
+import { CompetitionWithdrawalService } from '../withdrawals/competition-withdrawal.service';
 import { PendingTieService } from './pending-tie.service';
 
 @Injectable()
@@ -26,6 +27,7 @@ export class TieResolutionService {
     private readonly prisma: PrismaService,
     private readonly pendingTieService: PendingTieService,
     private readonly redCardService: CompetitionRedCardService,
+    private readonly withdrawalService: CompetitionWithdrawalService,
   ) {}
 
   async resolveTies(dto: ResolveTiesDto) {
@@ -76,6 +78,7 @@ export class TieResolutionService {
     });
     if (tieScope === SCOPE_OLYMPIC_DOUBLE_RED) {
       await this.redCardService.applyRedCardConsequences(dto.tournament_id);
+      await this.withdrawalService.applyWithdrawalForfeits(dto.tournament_id);
     }
   }
 
@@ -91,6 +94,14 @@ export class TieResolutionService {
     if (winnerCompetitorId === undefined) {
       throw new BadRequestException('Winner is required');
     }
+
+    const resolvedWithdrawal =
+      await this.withdrawalService.resolveDoubleWithdrawalForfeitTx(
+        tx,
+        dto.fight_id,
+        winnerCompetitorId,
+      );
+    if (resolvedWithdrawal) return;
 
     await this.redCardService.resolveDoubleRedForfeitTx(
       tx,

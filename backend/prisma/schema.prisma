@@ -105,6 +105,7 @@ model tournaments {
   fights                 fights[]
   reports                tournament_reports[]
   disciplinary_cards     disciplinary_cards[]
+  fighter_withdrawals    fighter_withdrawals[]
   fighter_rating_history fighter_nomination_rating_history[]
   marshals               tournament_marshals[]
 }
@@ -160,6 +161,7 @@ model tournament_nominations {
   nomination     nominations                         @relation(fields: [nomination_id], references: [id], onDelete: Cascade)
   blocks         competition_blocks[]
   placements     competition_placements[]
+  withdrawals    fighter_withdrawals[]
   rating_history fighter_nomination_rating_history[]
 
   @@index([tournament_id, nomination_id])
@@ -178,6 +180,7 @@ model competitors {
   groups        group_competitors[]
   bracket_slots bracket_slots[]
   placements    competition_placements[]
+  withdrawals   fighter_withdrawals[]
 
   // Связи для таблицы боев (кто участвовал)
   fights_as_f1   fights[]         @relation("Fighter1")
@@ -232,6 +235,7 @@ model fights {
   is_bronze             Boolean @default(false)
   is_finished           Boolean @default(false)
   forfeit_card_id       Int?
+  forfeit_withdrawal_id Int?
   rounds                Int     @default(1)
   round_win             Boolean @default(false)
   main_round_time       Int     @default(0)
@@ -249,10 +253,41 @@ model fights {
   disciplinary_cards disciplinary_cards[]
   warnings           fight_warnings[]
   round_scores       fight_round_scores[]
+  forfeit_withdrawal fighter_withdrawals? @relation("WithdrawalForfeitFight", fields: [forfeit_withdrawal_id], references: [id], onDelete: SetNull)
+  source_withdrawals fighter_withdrawals[] @relation("WithdrawalSourceFight")
 
   @@index([forfeit_card_id])
+  @@index([forfeit_withdrawal_id])
   @@index([block_id, fight_number])
   @@index([tournament_id, nomination_id, is_finished])
+}
+
+model fighter_withdrawals {
+  id                       Int       @id @default(autoincrement())
+  tournament_nomination_id Int
+  tournament_id            Int
+  nomination_id            Int
+  competitor_id            Int
+  source                   String    @db.VarChar(16)
+  source_fight_id          Int?
+  source_block_id          Int?
+  source_fight_number      Int?
+  reason                   String    @db.Text
+  is_excused               Boolean   @default(false)
+  active                   Boolean   @default(true)
+  created_at               DateTime  @default(now())
+  canceled_at              DateTime?
+
+  tournament_nomination tournament_nominations @relation(fields: [tournament_nomination_id], references: [id], onDelete: Cascade)
+  tournament            tournaments            @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
+  competitor            competitors            @relation(fields: [competitor_id], references: [id], onDelete: Cascade)
+  source_fight          fights?                @relation("WithdrawalSourceFight", fields: [source_fight_id], references: [id], onDelete: SetNull)
+  forfeited_fights      fights[]               @relation("WithdrawalForfeitFight")
+
+  @@index([tournament_nomination_id, active])
+  @@index([tournament_id, nomination_id, active])
+  @@index([competitor_id, active])
+  @@index([source_fight_id])
 }
 
 model fight_round_scores {

@@ -264,6 +264,7 @@ export type tournament_nominationsWhereInput = {
   nomination?: Prisma.XOR<Prisma.NominationsScalarRelationFilter, Prisma.nominationsWhereInput>
   blocks?: Prisma.Competition_blocksListRelationFilter
   placements?: Prisma.Competition_placementsListRelationFilter
+  withdrawals?: Prisma.Fighter_withdrawalsListRelationFilter
   rating_history?: Prisma.Fighter_nomination_rating_historyListRelationFilter
 }
 
@@ -281,6 +282,7 @@ export type tournament_nominationsOrderByWithRelationInput = {
   nomination?: Prisma.nominationsOrderByWithRelationInput
   blocks?: Prisma.competition_blocksOrderByRelationAggregateInput
   placements?: Prisma.competition_placementsOrderByRelationAggregateInput
+  withdrawals?: Prisma.fighter_withdrawalsOrderByRelationAggregateInput
   rating_history?: Prisma.fighter_nomination_rating_historyOrderByRelationAggregateInput
 }
 
@@ -301,6 +303,7 @@ export type tournament_nominationsWhereUniqueInput = Prisma.AtLeast<{
   nomination?: Prisma.XOR<Prisma.NominationsScalarRelationFilter, Prisma.nominationsWhereInput>
   blocks?: Prisma.Competition_blocksListRelationFilter
   placements?: Prisma.Competition_placementsListRelationFilter
+  withdrawals?: Prisma.Fighter_withdrawalsListRelationFilter
   rating_history?: Prisma.Fighter_nomination_rating_historyListRelationFilter
 }, "id">
 
@@ -347,6 +350,7 @@ export type tournament_nominationsCreateInput = {
   nomination: Prisma.nominationsCreateNestedOneWithoutTournamentsInput
   blocks?: Prisma.competition_blocksCreateNestedManyWithoutTournament_nominationInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutTournament_nominationInput
+  withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournament_nominationInput
   rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournament_nominationInput
 }
 
@@ -362,6 +366,7 @@ export type tournament_nominationsUncheckedCreateInput = {
   rating_error?: string | null
   blocks?: Prisma.competition_blocksUncheckedCreateNestedManyWithoutTournament_nominationInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutTournament_nominationInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournament_nominationInput
   rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournament_nominationInput
 }
 
@@ -376,6 +381,7 @@ export type tournament_nominationsUpdateInput = {
   nomination?: Prisma.nominationsUpdateOneRequiredWithoutTournamentsNestedInput
   blocks?: Prisma.competition_blocksUpdateManyWithoutTournament_nominationNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutTournament_nominationNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournament_nominationNestedInput
   rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournament_nominationNestedInput
 }
 
@@ -391,6 +397,7 @@ export type tournament_nominationsUncheckedUpdateInput = {
   rating_error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   blocks?: Prisma.competition_blocksUncheckedUpdateManyWithoutTournament_nominationNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournament_nominationNestedInput
   rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournament_nominationNestedInput
 }
 
@@ -576,6 +583,20 @@ export type tournament_nominationsUncheckedUpdateManyWithoutNominationNestedInpu
   deleteMany?: Prisma.tournament_nominationsScalarWhereInput | Prisma.tournament_nominationsScalarWhereInput[]
 }
 
+export type tournament_nominationsCreateNestedOneWithoutWithdrawalsInput = {
+  create?: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutWithdrawalsInput, Prisma.tournament_nominationsUncheckedCreateWithoutWithdrawalsInput>
+  connectOrCreate?: Prisma.tournament_nominationsCreateOrConnectWithoutWithdrawalsInput
+  connect?: Prisma.tournament_nominationsWhereUniqueInput
+}
+
+export type tournament_nominationsUpdateOneRequiredWithoutWithdrawalsNestedInput = {
+  create?: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutWithdrawalsInput, Prisma.tournament_nominationsUncheckedCreateWithoutWithdrawalsInput>
+  connectOrCreate?: Prisma.tournament_nominationsCreateOrConnectWithoutWithdrawalsInput
+  upsert?: Prisma.tournament_nominationsUpsertWithoutWithdrawalsInput
+  connect?: Prisma.tournament_nominationsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.tournament_nominationsUpdateToOneWithWhereWithoutWithdrawalsInput, Prisma.tournament_nominationsUpdateWithoutWithdrawalsInput>, Prisma.tournament_nominationsUncheckedUpdateWithoutWithdrawalsInput>
+}
+
 export type tournament_nominationsCreateNestedOneWithoutRating_historyInput = {
   create?: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutRating_historyInput, Prisma.tournament_nominationsUncheckedCreateWithoutRating_historyInput>
   connectOrCreate?: Prisma.tournament_nominationsCreateOrConnectWithoutRating_historyInput
@@ -628,6 +649,7 @@ export type tournament_nominationsCreateWithoutTournamentInput = {
   nomination: Prisma.nominationsCreateNestedOneWithoutTournamentsInput
   blocks?: Prisma.competition_blocksCreateNestedManyWithoutTournament_nominationInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutTournament_nominationInput
+  withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournament_nominationInput
   rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournament_nominationInput
 }
 
@@ -642,6 +664,7 @@ export type tournament_nominationsUncheckedCreateWithoutTournamentInput = {
   rating_error?: string | null
   blocks?: Prisma.competition_blocksUncheckedCreateNestedManyWithoutTournament_nominationInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutTournament_nominationInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournament_nominationInput
   rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournament_nominationInput
 }
 
@@ -696,6 +719,7 @@ export type tournament_nominationsCreateWithoutNominationInput = {
   tournament: Prisma.tournamentsCreateNestedOneWithoutNominationsInput
   blocks?: Prisma.competition_blocksCreateNestedManyWithoutTournament_nominationInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutTournament_nominationInput
+  withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournament_nominationInput
   rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournament_nominationInput
 }
 
@@ -710,6 +734,7 @@ export type tournament_nominationsUncheckedCreateWithoutNominationInput = {
   rating_error?: string | null
   blocks?: Prisma.competition_blocksUncheckedCreateNestedManyWithoutTournament_nominationInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutTournament_nominationInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournament_nominationInput
   rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournament_nominationInput
 }
 
@@ -739,6 +764,80 @@ export type tournament_nominationsUpdateManyWithWhereWithoutNominationInput = {
   data: Prisma.XOR<Prisma.tournament_nominationsUpdateManyMutationInput, Prisma.tournament_nominationsUncheckedUpdateManyWithoutNominationInput>
 }
 
+export type tournament_nominationsCreateWithoutWithdrawalsInput = {
+  is_open?: boolean
+  is_finished?: boolean
+  stage?: number
+  rating_status?: string
+  rating_calculated_at?: Date | string | null
+  rating_error?: string | null
+  tournament: Prisma.tournamentsCreateNestedOneWithoutNominationsInput
+  nomination: Prisma.nominationsCreateNestedOneWithoutTournamentsInput
+  blocks?: Prisma.competition_blocksCreateNestedManyWithoutTournament_nominationInput
+  placements?: Prisma.competition_placementsCreateNestedManyWithoutTournament_nominationInput
+  rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournament_nominationInput
+}
+
+export type tournament_nominationsUncheckedCreateWithoutWithdrawalsInput = {
+  id?: number
+  tournament_id: number
+  nomination_id: number
+  is_open?: boolean
+  is_finished?: boolean
+  stage?: number
+  rating_status?: string
+  rating_calculated_at?: Date | string | null
+  rating_error?: string | null
+  blocks?: Prisma.competition_blocksUncheckedCreateNestedManyWithoutTournament_nominationInput
+  placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutTournament_nominationInput
+  rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournament_nominationInput
+}
+
+export type tournament_nominationsCreateOrConnectWithoutWithdrawalsInput = {
+  where: Prisma.tournament_nominationsWhereUniqueInput
+  create: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutWithdrawalsInput, Prisma.tournament_nominationsUncheckedCreateWithoutWithdrawalsInput>
+}
+
+export type tournament_nominationsUpsertWithoutWithdrawalsInput = {
+  update: Prisma.XOR<Prisma.tournament_nominationsUpdateWithoutWithdrawalsInput, Prisma.tournament_nominationsUncheckedUpdateWithoutWithdrawalsInput>
+  create: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutWithdrawalsInput, Prisma.tournament_nominationsUncheckedCreateWithoutWithdrawalsInput>
+  where?: Prisma.tournament_nominationsWhereInput
+}
+
+export type tournament_nominationsUpdateToOneWithWhereWithoutWithdrawalsInput = {
+  where?: Prisma.tournament_nominationsWhereInput
+  data: Prisma.XOR<Prisma.tournament_nominationsUpdateWithoutWithdrawalsInput, Prisma.tournament_nominationsUncheckedUpdateWithoutWithdrawalsInput>
+}
+
+export type tournament_nominationsUpdateWithoutWithdrawalsInput = {
+  is_open?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  rating_status?: Prisma.StringFieldUpdateOperationsInput | string
+  rating_calculated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rating_error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tournament?: Prisma.tournamentsUpdateOneRequiredWithoutNominationsNestedInput
+  nomination?: Prisma.nominationsUpdateOneRequiredWithoutTournamentsNestedInput
+  blocks?: Prisma.competition_blocksUpdateManyWithoutTournament_nominationNestedInput
+  placements?: Prisma.competition_placementsUpdateManyWithoutTournament_nominationNestedInput
+  rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournament_nominationNestedInput
+}
+
+export type tournament_nominationsUncheckedUpdateWithoutWithdrawalsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  is_open?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  rating_status?: Prisma.StringFieldUpdateOperationsInput | string
+  rating_calculated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rating_error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blocks?: Prisma.competition_blocksUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournament_nominationNestedInput
+}
+
 export type tournament_nominationsCreateWithoutRating_historyInput = {
   is_open?: boolean
   is_finished?: boolean
@@ -750,6 +849,7 @@ export type tournament_nominationsCreateWithoutRating_historyInput = {
   nomination: Prisma.nominationsCreateNestedOneWithoutTournamentsInput
   blocks?: Prisma.competition_blocksCreateNestedManyWithoutTournament_nominationInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutTournament_nominationInput
+  withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournament_nominationInput
 }
 
 export type tournament_nominationsUncheckedCreateWithoutRating_historyInput = {
@@ -764,6 +864,7 @@ export type tournament_nominationsUncheckedCreateWithoutRating_historyInput = {
   rating_error?: string | null
   blocks?: Prisma.competition_blocksUncheckedCreateNestedManyWithoutTournament_nominationInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutTournament_nominationInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournament_nominationInput
 }
 
 export type tournament_nominationsCreateOrConnectWithoutRating_historyInput = {
@@ -793,6 +894,7 @@ export type tournament_nominationsUpdateWithoutRating_historyInput = {
   nomination?: Prisma.nominationsUpdateOneRequiredWithoutTournamentsNestedInput
   blocks?: Prisma.competition_blocksUpdateManyWithoutTournament_nominationNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutTournament_nominationNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournament_nominationNestedInput
 }
 
 export type tournament_nominationsUncheckedUpdateWithoutRating_historyInput = {
@@ -807,6 +909,7 @@ export type tournament_nominationsUncheckedUpdateWithoutRating_historyInput = {
   rating_error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   blocks?: Prisma.competition_blocksUncheckedUpdateManyWithoutTournament_nominationNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournament_nominationNestedInput
 }
 
 export type tournament_nominationsCreateWithoutBlocksInput = {
@@ -819,6 +922,7 @@ export type tournament_nominationsCreateWithoutBlocksInput = {
   tournament: Prisma.tournamentsCreateNestedOneWithoutNominationsInput
   nomination: Prisma.nominationsCreateNestedOneWithoutTournamentsInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutTournament_nominationInput
+  withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournament_nominationInput
   rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournament_nominationInput
 }
 
@@ -833,6 +937,7 @@ export type tournament_nominationsUncheckedCreateWithoutBlocksInput = {
   rating_calculated_at?: Date | string | null
   rating_error?: string | null
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutTournament_nominationInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournament_nominationInput
   rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournament_nominationInput
 }
 
@@ -862,6 +967,7 @@ export type tournament_nominationsUpdateWithoutBlocksInput = {
   tournament?: Prisma.tournamentsUpdateOneRequiredWithoutNominationsNestedInput
   nomination?: Prisma.nominationsUpdateOneRequiredWithoutTournamentsNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutTournament_nominationNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournament_nominationNestedInput
   rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournament_nominationNestedInput
 }
 
@@ -876,6 +982,7 @@ export type tournament_nominationsUncheckedUpdateWithoutBlocksInput = {
   rating_calculated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rating_error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournament_nominationNestedInput
   rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournament_nominationNestedInput
 }
 
@@ -889,6 +996,7 @@ export type tournament_nominationsCreateWithoutPlacementsInput = {
   tournament: Prisma.tournamentsCreateNestedOneWithoutNominationsInput
   nomination: Prisma.nominationsCreateNestedOneWithoutTournamentsInput
   blocks?: Prisma.competition_blocksCreateNestedManyWithoutTournament_nominationInput
+  withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournament_nominationInput
   rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournament_nominationInput
 }
 
@@ -903,6 +1011,7 @@ export type tournament_nominationsUncheckedCreateWithoutPlacementsInput = {
   rating_calculated_at?: Date | string | null
   rating_error?: string | null
   blocks?: Prisma.competition_blocksUncheckedCreateNestedManyWithoutTournament_nominationInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournament_nominationInput
   rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournament_nominationInput
 }
 
@@ -932,6 +1041,7 @@ export type tournament_nominationsUpdateWithoutPlacementsInput = {
   tournament?: Prisma.tournamentsUpdateOneRequiredWithoutNominationsNestedInput
   nomination?: Prisma.nominationsUpdateOneRequiredWithoutTournamentsNestedInput
   blocks?: Prisma.competition_blocksUpdateManyWithoutTournament_nominationNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournament_nominationNestedInput
   rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournament_nominationNestedInput
 }
 
@@ -946,6 +1056,7 @@ export type tournament_nominationsUncheckedUpdateWithoutPlacementsInput = {
   rating_calculated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rating_error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   blocks?: Prisma.competition_blocksUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournament_nominationNestedInput
   rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournament_nominationNestedInput
 }
 
@@ -970,6 +1081,7 @@ export type tournament_nominationsUpdateWithoutTournamentInput = {
   nomination?: Prisma.nominationsUpdateOneRequiredWithoutTournamentsNestedInput
   blocks?: Prisma.competition_blocksUpdateManyWithoutTournament_nominationNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutTournament_nominationNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournament_nominationNestedInput
   rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournament_nominationNestedInput
 }
 
@@ -984,6 +1096,7 @@ export type tournament_nominationsUncheckedUpdateWithoutTournamentInput = {
   rating_error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   blocks?: Prisma.competition_blocksUncheckedUpdateManyWithoutTournament_nominationNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournament_nominationNestedInput
   rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournament_nominationNestedInput
 }
 
@@ -1019,6 +1132,7 @@ export type tournament_nominationsUpdateWithoutNominationInput = {
   tournament?: Prisma.tournamentsUpdateOneRequiredWithoutNominationsNestedInput
   blocks?: Prisma.competition_blocksUpdateManyWithoutTournament_nominationNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutTournament_nominationNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournament_nominationNestedInput
   rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournament_nominationNestedInput
 }
 
@@ -1033,6 +1147,7 @@ export type tournament_nominationsUncheckedUpdateWithoutNominationInput = {
   rating_error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   blocks?: Prisma.competition_blocksUncheckedUpdateManyWithoutTournament_nominationNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournament_nominationNestedInput
   rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournament_nominationNestedInput
 }
 
@@ -1055,12 +1170,14 @@ export type tournament_nominationsUncheckedUpdateManyWithoutNominationInput = {
 export type Tournament_nominationsCountOutputType = {
   blocks: number
   placements: number
+  withdrawals: number
   rating_history: number
 }
 
 export type Tournament_nominationsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   blocks?: boolean | Tournament_nominationsCountOutputTypeCountBlocksArgs
   placements?: boolean | Tournament_nominationsCountOutputTypeCountPlacementsArgs
+  withdrawals?: boolean | Tournament_nominationsCountOutputTypeCountWithdrawalsArgs
   rating_history?: boolean | Tournament_nominationsCountOutputTypeCountRating_historyArgs
 }
 
@@ -1091,6 +1208,13 @@ export type Tournament_nominationsCountOutputTypeCountPlacementsArgs<ExtArgs ext
 /**
  * Tournament_nominationsCountOutputType without action
  */
+export type Tournament_nominationsCountOutputTypeCountWithdrawalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.fighter_withdrawalsWhereInput
+}
+
+/**
+ * Tournament_nominationsCountOutputType without action
+ */
 export type Tournament_nominationsCountOutputTypeCountRating_historyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.fighter_nomination_rating_historyWhereInput
 }
@@ -1110,6 +1234,7 @@ export type tournament_nominationsSelect<ExtArgs extends runtime.Types.Extension
   nomination?: boolean | Prisma.nominationsDefaultArgs<ExtArgs>
   blocks?: boolean | Prisma.tournament_nominations$blocksArgs<ExtArgs>
   placements?: boolean | Prisma.tournament_nominations$placementsArgs<ExtArgs>
+  withdrawals?: boolean | Prisma.tournament_nominations$withdrawalsArgs<ExtArgs>
   rating_history?: boolean | Prisma.tournament_nominations$rating_historyArgs<ExtArgs>
   _count?: boolean | Prisma.Tournament_nominationsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tournament_nominations"]>
@@ -1160,6 +1285,7 @@ export type tournament_nominationsInclude<ExtArgs extends runtime.Types.Extensio
   nomination?: boolean | Prisma.nominationsDefaultArgs<ExtArgs>
   blocks?: boolean | Prisma.tournament_nominations$blocksArgs<ExtArgs>
   placements?: boolean | Prisma.tournament_nominations$placementsArgs<ExtArgs>
+  withdrawals?: boolean | Prisma.tournament_nominations$withdrawalsArgs<ExtArgs>
   rating_history?: boolean | Prisma.tournament_nominations$rating_historyArgs<ExtArgs>
   _count?: boolean | Prisma.Tournament_nominationsCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1179,6 +1305,7 @@ export type $tournament_nominationsPayload<ExtArgs extends runtime.Types.Extensi
     nomination: Prisma.$nominationsPayload<ExtArgs>
     blocks: Prisma.$competition_blocksPayload<ExtArgs>[]
     placements: Prisma.$competition_placementsPayload<ExtArgs>[]
+    withdrawals: Prisma.$fighter_withdrawalsPayload<ExtArgs>[]
     rating_history: Prisma.$fighter_nomination_rating_historyPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1589,6 +1716,7 @@ export interface Prisma__tournament_nominationsClient<T, Null = never, ExtArgs e
   nomination<T extends Prisma.nominationsDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.nominationsDefaultArgs<ExtArgs>>): Prisma.Prisma__nominationsClient<runtime.Types.Result.GetResult<Prisma.$nominationsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   blocks<T extends Prisma.tournament_nominations$blocksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournament_nominations$blocksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$competition_blocksPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   placements<T extends Prisma.tournament_nominations$placementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournament_nominations$placementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$competition_placementsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  withdrawals<T extends Prisma.tournament_nominations$withdrawalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournament_nominations$withdrawalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fighter_withdrawalsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   rating_history<T extends Prisma.tournament_nominations$rating_historyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournament_nominations$rating_historyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fighter_nomination_rating_historyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2069,6 +2197,30 @@ export type tournament_nominations$placementsArgs<ExtArgs extends runtime.Types.
   take?: number
   skip?: number
   distinct?: Prisma.Competition_placementsScalarFieldEnum | Prisma.Competition_placementsScalarFieldEnum[]
+}
+
+/**
+ * tournament_nominations.withdrawals
+ */
+export type tournament_nominations$withdrawalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the fighter_withdrawals
+   */
+  select?: Prisma.fighter_withdrawalsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the fighter_withdrawals
+   */
+  omit?: Prisma.fighter_withdrawalsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.fighter_withdrawalsInclude<ExtArgs> | null
+  where?: Prisma.fighter_withdrawalsWhereInput
+  orderBy?: Prisma.fighter_withdrawalsOrderByWithRelationInput | Prisma.fighter_withdrawalsOrderByWithRelationInput[]
+  cursor?: Prisma.fighter_withdrawalsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Fighter_withdrawalsScalarFieldEnum | Prisma.Fighter_withdrawalsScalarFieldEnum[]
 }
 
 /**

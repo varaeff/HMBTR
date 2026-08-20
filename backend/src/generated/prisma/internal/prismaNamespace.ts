@@ -398,6 +398,7 @@ export const ModelName = {
   groups: 'groups',
   group_competitors: 'group_competitors',
   fights: 'fights',
+  fighter_withdrawals: 'fighter_withdrawals',
   fight_round_scores: 'fight_round_scores',
   fight_warnings: 'fight_warnings',
   disciplinary_cards: 'disciplinary_cards',
@@ -426,7 +427,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "countries" | "cities" | "clubs" | "fighters" | "marshals" | "marshals_categories" | "tournaments" | "tournament_marshals" | "nominations" | "tournament_nominations" | "competitors" | "groups" | "group_competitors" | "fights" | "fight_round_scores" | "fight_warnings" | "disciplinary_cards" | "red_card_yellow_sources" | "disciplinary_card_settings" | "fighter_nomination_ratings" | "fighter_nomination_rating_history" | "competition_blocks" | "competition_round_states" | "bracket_slots" | "competition_placements" | "tournament_reports" | "users"
+    modelProps: "countries" | "cities" | "clubs" | "fighters" | "marshals" | "marshals_categories" | "tournaments" | "tournament_marshals" | "nominations" | "tournament_nominations" | "competitors" | "groups" | "group_competitors" | "fights" | "fighter_withdrawals" | "fight_round_scores" | "fight_warnings" | "disciplinary_cards" | "red_card_yellow_sources" | "disciplinary_card_settings" | "fighter_nomination_ratings" | "fighter_nomination_rating_history" | "competition_blocks" | "competition_round_states" | "bracket_slots" | "competition_placements" | "tournament_reports" | "users"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1463,6 +1464,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.fightsCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.FightsCountAggregateOutputType> | number
+        }
+      }
+    }
+    fighter_withdrawals: {
+      payload: Prisma.$fighter_withdrawalsPayload<ExtArgs>
+      fields: Prisma.fighter_withdrawalsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.fighter_withdrawalsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_withdrawalsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.fighter_withdrawalsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_withdrawalsPayload>
+        }
+        findFirst: {
+          args: Prisma.fighter_withdrawalsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_withdrawalsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.fighter_withdrawalsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_withdrawalsPayload>
+        }
+        findMany: {
+          args: Prisma.fighter_withdrawalsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_withdrawalsPayload>[]
+        }
+        create: {
+          args: Prisma.fighter_withdrawalsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_withdrawalsPayload>
+        }
+        createMany: {
+          args: Prisma.fighter_withdrawalsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.fighter_withdrawalsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_withdrawalsPayload>[]
+        }
+        delete: {
+          args: Prisma.fighter_withdrawalsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_withdrawalsPayload>
+        }
+        update: {
+          args: Prisma.fighter_withdrawalsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_withdrawalsPayload>
+        }
+        deleteMany: {
+          args: Prisma.fighter_withdrawalsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.fighter_withdrawalsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.fighter_withdrawalsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_withdrawalsPayload>[]
+        }
+        upsert: {
+          args: Prisma.fighter_withdrawalsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$fighter_withdrawalsPayload>
+        }
+        aggregate: {
+          args: Prisma.Fighter_withdrawalsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFighter_withdrawals>
+        }
+        groupBy: {
+          args: Prisma.fighter_withdrawalsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Fighter_withdrawalsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.fighter_withdrawalsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Fighter_withdrawalsCountAggregateOutputType> | number
         }
       }
     }
@@ -2633,6 +2708,7 @@ export const FightsScalarFieldEnum = {
   is_bronze: 'is_bronze',
   is_finished: 'is_finished',
   forfeit_card_id: 'forfeit_card_id',
+  forfeit_withdrawal_id: 'forfeit_withdrawal_id',
   rounds: 'rounds',
   round_win: 'round_win',
   main_round_time: 'main_round_time',
@@ -2640,6 +2716,26 @@ export const FightsScalarFieldEnum = {
 } as const
 
 export type FightsScalarFieldEnum = (typeof FightsScalarFieldEnum)[keyof typeof FightsScalarFieldEnum]
+
+
+export const Fighter_withdrawalsScalarFieldEnum = {
+  id: 'id',
+  tournament_nomination_id: 'tournament_nomination_id',
+  tournament_id: 'tournament_id',
+  nomination_id: 'nomination_id',
+  competitor_id: 'competitor_id',
+  source: 'source',
+  source_fight_id: 'source_fight_id',
+  source_block_id: 'source_block_id',
+  source_fight_number: 'source_fight_number',
+  reason: 'reason',
+  is_excused: 'is_excused',
+  active: 'active',
+  created_at: 'created_at',
+  canceled_at: 'canceled_at'
+} as const
+
+export type Fighter_withdrawalsScalarFieldEnum = (typeof Fighter_withdrawalsScalarFieldEnum)[keyof typeof Fighter_withdrawalsScalarFieldEnum]
 
 
 export const Fight_round_scoresScalarFieldEnum = {
@@ -3035,6 +3131,7 @@ export type GlobalOmitConfig = {
   groups?: Prisma.groupsOmit
   group_competitors?: Prisma.group_competitorsOmit
   fights?: Prisma.fightsOmit
+  fighter_withdrawals?: Prisma.fighter_withdrawalsOmit
   fight_round_scores?: Prisma.fight_round_scoresOmit
   fight_warnings?: Prisma.fight_warningsOmit
   disciplinary_cards?: Prisma.disciplinary_cardsOmit

@@ -14,7 +14,7 @@ interface FightScoreSource {
   fighter2Score: number
   roundScores: RoundScore[]
   warnings?: FightWarning[]
-  forfeitCardId?: number | null
+  isTechnicalForfeit?: boolean
 }
 
 export interface FightScoreDraft {
@@ -26,7 +26,7 @@ export const evaluateFightWithWarnings = (
   rules: FightScoringRules,
   fight: FightScoreSource
 ) => {
-  if (fight.forfeitCardId) {
+  if (fight.isTechnicalForfeit) {
     const evaluation = evaluateFightScore(
       rules,
       fight.roundScores.length
@@ -83,7 +83,7 @@ export const applyFightScoreDraft = (fight: FightData, draft: FightScoreDraft) =
       fighter2Score: fight.fighter2Score,
       roundScores,
       warnings,
-      forfeitCardId: fight.forfeitCardId
+      isTechnicalForfeit: fight.isTechnicalForfeit
     }
   )
 

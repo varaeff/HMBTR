@@ -27,6 +27,7 @@ import {
   getApplicableRedForFight,
 } from '../red-cards/red-card-policy';
 import { RedCardStorageService } from '../red-cards/red-card-storage.service';
+import { CompetitionWithdrawalService } from '../withdrawals/competition-withdrawal.service';
 import { GroupRankingReader } from './group-ranking.reader';
 import { TieBreakerService } from './tie-breaker.service';
 
@@ -38,6 +39,7 @@ export class PendingTieService {
     private readonly redCardService: CompetitionRedCardService,
     private readonly redCardStorageService: RedCardStorageService,
     private readonly tieBreakerService: TieBreakerService,
+    private readonly withdrawalService: CompetitionWithdrawalService,
   ) {}
 
   getPendingTie(
@@ -65,6 +67,11 @@ export class PendingTieService {
     });
     const activeRedCompetitorIds =
       await this.redCardService.getActiveRedCompetitorIdsTx(tx, blockId);
+    const activeWithdrawalCompetitorIds =
+      await this.withdrawalService.getActiveWithdrawalCompetitorIdsTx(
+        tx,
+        blockId,
+      );
 
     for (const group of groups) {
       try {
@@ -73,10 +80,14 @@ export class PendingTieService {
           blockId,
           group.id,
         );
-        const ranked = this.redCardService.excludeActiveRedCompetitors(
-          rankCompetitors(rankings.stats, rankings.manualOrder),
-          activeRedCompetitorIds,
-        );
+        const ranked =
+          this.withdrawalService.excludeActiveWithdrawalCompetitors(
+            this.redCardService.excludeActiveRedCompetitors(
+              rankCompetitors(rankings.stats, rankings.manualOrder),
+              activeRedCompetitorIds,
+            ),
+            activeWithdrawalCompetitorIds,
+          );
         const unresolved = findTieForPlaces(ranked, places).filter(
           (competitorId) => !rankings.manualOrder.includes(competitorId),
         );
@@ -122,6 +133,11 @@ export class PendingTieService {
     const groupRankings = new Map<string, GroupRankings>();
     const activeRedCompetitorIds =
       await this.redCardService.getActiveRedCompetitorIdsTx(tx, blockId);
+    const activeWithdrawalCompetitorIds =
+      await this.withdrawalService.getActiveWithdrawalCompetitorIdsTx(
+        tx,
+        blockId,
+      );
 
     for (const group of groups) {
       try {
@@ -130,10 +146,14 @@ export class PendingTieService {
           blockId,
           group.id,
         );
-        const ranked = this.redCardService.excludeActiveRedCompetitors(
-          rankCompetitors(rankings.stats, rankings.manualOrder),
-          activeRedCompetitorIds,
-        );
+        const ranked =
+          this.withdrawalService.excludeActiveWithdrawalCompetitors(
+            this.redCardService.excludeActiveRedCompetitors(
+              rankCompetitors(rankings.stats, rankings.manualOrder),
+              activeRedCompetitorIds,
+            ),
+            activeWithdrawalCompetitorIds,
+          );
         rankedGroups.push({ name: group.name, ranked });
         groupRankings.set(group.name, rankings);
       } catch {
@@ -153,6 +173,7 @@ export class PendingTieService {
       thirdPlaceManualOrder,
       groupRankings,
       activeRedCompetitorIds,
+      activeWithdrawalCompetitorIds,
     );
   }
 
@@ -163,6 +184,7 @@ export class PendingTieService {
     thirdPlaceManualOrder: number[],
     cachedGroupRankings = new Map<string, GroupRankings>(),
     activeRedCompetitorIds = new Set<number>(),
+    activeWithdrawalCompetitorIds = new Set<number>(),
   ): Promise<PendingTieResult | null> {
     const shortfall = getOlympicThirdPlaceShortfall(rankedGroups);
     if (shortfall <= 0) return null;
@@ -212,9 +234,12 @@ export class PendingTieService {
           blockId,
           group.id,
         ));
-      const ranked = this.redCardService.excludeActiveRedCompetitors(
-        rankCompetitors(rankings.stats, rankings.manualOrder),
-        activeRedCompetitorIds,
+      const ranked = this.withdrawalService.excludeActiveWithdrawalCompetitors(
+        this.redCardService.excludeActiveRedCompetitors(
+          rankCompetitors(rankings.stats, rankings.manualOrder),
+          activeRedCompetitorIds,
+        ),
+        activeWithdrawalCompetitorIds,
       );
       const unresolved = findTieForPlaces(ranked, 3).filter(
         (competitorId) => !rankings.manualOrder.includes(competitorId),
@@ -246,10 +271,6 @@ export class PendingTieService {
     tx: PrismaTx,
     blockId: number,
   ): Promise<PendingTieResult | null> {
-    if (!(await this.redCardStorageService.disciplinaryCardStorageExists())) {
-      return null;
-    }
-
     const block = await tx.competition_blocks.findUnique({
       where: { id: blockId },
       include: {
@@ -288,63 +309,77 @@ export class PendingTieService {
     });
     if (!fights.length) return null;
 
-    const checkDate = await this.tieBreakerService.getTournamentCheckDateTx(
-      tx,
-      block.tournament_id,
-    );
-    const fighterIds = [
-      ...new Set(
-        fights.flatMap((fight) => [
-          fight.competitor1.fighter_id,
-          fight.competitor2.fighter_id,
-        ]),
-      ),
-    ];
-    const activeReds = await this.redCardStorageService.getActiveRedCards(
-      fighterIds,
-      checkDate,
-    );
-
-    for (const fight of fights) {
-      if (!canApplyRedCardForfeitToFight(fight)) continue;
-
-      const firstRed = getApplicableRedForFight(
-        fight,
-        activeReds.filter(
-          (card) => card.fighter_id === fight.competitor1.fighter_id,
+    if (await this.redCardStorageService.disciplinaryCardStorageExists()) {
+      const checkDate = await this.tieBreakerService.getTournamentCheckDateTx(
+        tx,
+        block.tournament_id,
+      );
+      const fighterIds = [
+        ...new Set(
+          fights.flatMap((fight) => [
+            fight.competitor1.fighter_id,
+            fight.competitor2.fighter_id,
+          ]),
         ),
+      ];
+      const activeReds = await this.redCardStorageService.getActiveRedCards(
+        fighterIds,
+        checkDate,
       );
-      const secondRed = getApplicableRedForFight(
-        fight,
-        activeReds.filter(
-          (card) => card.fighter_id === fight.competitor2.fighter_id,
-        ),
-      );
-      if (!firstRed || !secondRed) continue;
 
-      const metrics = await this.tieBreakerService.getMetricsTx(tx, {
-        tournamentId: fight.tournament_id,
-        nominationId: fight.nomination_id,
-        competitorIds: [fight.competitor1_id, fight.competitor2_id],
-        excludeFightId: fight.id,
-      });
-      const firstMetric = metrics.get(fight.competitor1_id);
-      const secondMetric = metrics.get(fight.competitor2_id);
-      if (!firstMetric || !secondMetric) continue;
+      for (const fight of fights) {
+        if (!canApplyRedCardForfeitToFight(fight)) continue;
 
-      const decision = this.tieBreakerService.resolvePair(
-        firstMetric,
-        secondMetric,
-      );
-      if (decision.winnerCompetitorId === null) {
-        return {
-          blockId,
-          groupId: null,
-          fightId: fight.id,
+        const firstRed = getApplicableRedForFight(
+          fight,
+          activeReds.filter(
+            (card) => card.fighter_id === fight.competitor1.fighter_id,
+          ),
+        );
+        const secondRed = getApplicableRedForFight(
+          fight,
+          activeReds.filter(
+            (card) => card.fighter_id === fight.competitor2.fighter_id,
+          ),
+        );
+        if (!firstRed || !secondRed) continue;
+
+        const metrics = await this.tieBreakerService.getMetricsTx(tx, {
+          tournamentId: fight.tournament_id,
+          nominationId: fight.nomination_id,
           competitorIds: [fight.competitor1_id, fight.competitor2_id],
-          scope: SCOPE_OLYMPIC_DOUBLE_RED,
-        };
+          excludeFightId: fight.id,
+        });
+        const firstMetric = metrics.get(fight.competitor1_id);
+        const secondMetric = metrics.get(fight.competitor2_id);
+        if (!firstMetric || !secondMetric) continue;
+
+        const decision = this.tieBreakerService.resolvePair(
+          firstMetric,
+          secondMetric,
+        );
+        if (decision.winnerCompetitorId === null) {
+          return {
+            blockId,
+            groupId: null,
+            fightId: fight.id,
+            competitorIds: [fight.competitor1_id, fight.competitor2_id],
+            scope: SCOPE_OLYMPIC_DOUBLE_RED,
+          };
+        }
       }
+    }
+
+    const doubleWithdrawal =
+      await this.withdrawalService.getPendingDoubleWithdrawalTieTx(tx, blockId);
+    if (doubleWithdrawal) {
+      return {
+        blockId,
+        groupId: null,
+        fightId: doubleWithdrawal.fightId,
+        competitorIds: doubleWithdrawal.competitorIds,
+        scope: SCOPE_OLYMPIC_DOUBLE_RED,
+      };
     }
 
     return null;

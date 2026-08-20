@@ -109,6 +109,7 @@ export class RatingCalculationReader {
       }),
       isFinished: fight.is_finished,
       forfeitCardId: fight.forfeit_card_id,
+      forfeitWithdrawalId: fight.forfeit_withdrawal_id,
     }));
   }
 

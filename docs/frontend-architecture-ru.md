@@ -134,6 +134,10 @@ Widget - это доменный UI-модуль с бизнес-смыслом.
 - `FightCard` содержит рядом helpers и тесты для счета и предупреждений;
 - `OlympicBracket` содержит рядом построение view-модели и презентационные подкомпоненты;
 - `DisciplinaryCards` содержит таблицу, отображение статуса и сфокусированные тесты.
+- UI снятия бойца остается в tournament widgets: `FightCard` владеет
+  отображением диалога и пунктов меню снятия, а общие маркеры снятия являются
+  небольшими доменными презентационными компонентами для списков регистрации,
+  групп и подписей бойцов в карточках боев.
 
 Widgets, которые показывают или редактируют уже загруженные данные соревнования, должны получать данные через props и поднимать типизированные payloads действий наверх через emits. Вызовы stores обычно должны оставаться в оркестрации страницы или store facades, если только widget не является явно принятым вложенным сценарием.
 
@@ -211,6 +215,12 @@ Competition store оформлен как slice folder:
 Внешний код должен импортировать competition store из `@/stores/competition`, а не из приватных файлов slice.
 
 Competition state включает `pendingTie` для нерешенных backend-решений о порядке участников. Frontend хранит scope и идентификаторы, полученные от сервера, включая `fightId` для Olympic double-red conflicts, и отправляет их обратно через типизированную команду `resolveTie`, не вычисляя скрытых fallback-победителей на клиенте.
+
+Competition state также содержит summaries активных снятий и поля источника
+technical forfeit. Widgets должны отображать эти поля из mapped read model и
+поднимать no-show, fight-withdrawal и cancel-withdrawal запросы наверх;
+выполнение commands и refresh competition state остаются в competition
+store/page orchestration.
 
 ### Слой API
 

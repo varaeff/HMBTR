@@ -23,7 +23,11 @@ const hasWarningTechnicalLoss = (fight: FightData) => {
 }
 
 export const hasEditableRoundTimeInput = (fight: FightData) =>
-  !fight.isFinished && !fight.forfeitCardId && !hasWarningTechnicalLoss(fight)
+  !fight.isFinished &&
+  !fight.isTechnicalForfeit &&
+  !fight.forfeitCardId &&
+  !fight.forfeitWithdrawalId &&
+  !hasWarningTechnicalLoss(fight)
 
 export const hasEditableRoundTimeInputs = (fights: FightData[]) =>
   fights.some(hasEditableRoundTimeInput)

@@ -4,11 +4,12 @@ import { useTranslation } from 'i18next-vue'
 import { tData } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { CardStatusIcon, formatActiveDisciplinaryCardTitle } from '@/widgets/tournament/DisciplinaryCards'
-import type { Fighter } from '@/model'
+import WithdrawalStatusIcon from '@/widgets/tournament/WithdrawalStatusIcon.vue'
+import type { NominationCompetitor } from '@/model'
 import type { ActiveCardTypes } from '@/widgets/tournament/types'
 
 const props = defineProps<{
-  competitors: Fighter[]
+  competitors: NominationCompetitor[]
   activeTab: number
   isOpen: boolean
   hasBlocks: boolean
@@ -22,6 +23,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'close'): Promise<void> | void
   (e: 'remove-competitor', fighterId: number): Promise<void> | void
+  (e: 'no-show-competitor', competitorId: number): Promise<void> | void
   (e: 'delete-nomination'): Promise<void> | void
 }>()
 
@@ -54,6 +56,15 @@ const removeCompetitor = async (fighterId: number) => {
   try {
     isPending.value = true
     await emit('remove-competitor', fighterId)
+  } finally {
+    isPending.value = false
+  }
+}
+
+const markNoShow = async (competitorId: number) => {
+  try {
+    isPending.value = true
+    await emit('no-show-competitor', competitorId)
   } finally {
     isPending.value = false
   }
@@ -103,6 +114,7 @@ const deleteNomination = async () => {
             >
               <CardStatusIcon :type="card" :showTitle="false" />
             </span>
+            <WithdrawalStatusIcon :withdrawal="competitor.withdrawal" />
           </div>
           <div class="text-muted-foreground">
             {{ localizedData(competitor.city) }} {{ localizedData(competitor.club) }}
@@ -117,6 +129,15 @@ const deleteNomination = async () => {
           @click="removeCompetitor(competitor.id)"
         >
           {{ $t('tournamentPageRemoveCompetitorButton') }}
+        </Button>
+        <Button
+          v-else-if="hasAccess && !isOpen && !hasBlocks && !competitor.withdrawal"
+          :disabled="isPending"
+          variant="outline"
+          size="sm"
+          @click="markNoShow(competitor.competitorId)"
+        >
+          {{ $t('fighterWithdrawalNoShowButton') }}
         </Button>
       </div>
     </div>

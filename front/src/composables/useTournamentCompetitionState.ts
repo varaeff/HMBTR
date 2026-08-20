@@ -3,14 +3,14 @@ import { areFightResultsReady } from '@/lib/fightResult'
 import type {
   CompetitionBlock,
   CompetitionPlacement,
-  Fighter,
+  NominationCompetitor,
   PendingTie,
   Tournament,
   TournamentNomination
 } from '@/model'
 
 interface CompetitionReadStore {
-  getNominationFighters: Fighter[]
+  getNominationFighters: NominationCompetitor[]
   getBlocks: CompetitionBlock[]
   getActiveBlock: CompetitionBlock | null
   getPlacements: CompetitionPlacement[]

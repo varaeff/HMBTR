@@ -6,6 +6,7 @@ import type {
   FightData,
   Group,
   GroupFighter,
+  ActiveWithdrawalSummary,
   PendingTie
 } from '@/model/competition'
 import type { Fighter } from '@/model/fighter'
@@ -49,6 +50,7 @@ interface RawFight {
   competitor2_score: number
   winner_id?: number | null
   forfeit_card_id?: number | null
+  forfeit_withdrawal_id?: number | null
   bracket_round?: number
   bracket_position?: number
   is_bronze?: boolean
@@ -67,6 +69,15 @@ interface RawFight {
     competitor2_score: number
     duration_seconds?: number
   }>
+}
+
+interface RawWithdrawal {
+  id: number
+  competitor_id: number
+  reason: string
+  is_excused: boolean
+  source: ActiveWithdrawalSummary['source']
+  source_fight_id?: number | null
 }
 
 interface RawGroupPlacement {
@@ -128,6 +139,7 @@ export interface RawCompetitionState {
   activeBlockId?: number | null
   pendingTie?: PendingTie | null
   isFinished?: boolean
+  activeWithdrawals?: RawWithdrawal[]
 }
 
 const createFallbackFighter = (rawFighter?: RawFighter | null): Fighter => ({
@@ -144,7 +156,8 @@ const createFallbackFighter = (rawFighter?: RawFighter | null): Fighter => ({
 
 const groupFighterFromCompetitor = (
   competitor: RawCompetitor,
-  options: CompetitionMapperOptions
+  options: CompetitionMapperOptions,
+  withdrawalByCompetitorId: Map<number, ActiveWithdrawalSummary> = new Map()
 ): GroupFighter => {
   const fighter =
     options.resolveFighterById?.(competitor.fighter_id) ?? createFallbackFighter(competitor.fighter)
@@ -152,6 +165,7 @@ const groupFighterFromCompetitor = (
   return {
     ...fighter,
     competitorId: competitor.id,
+    withdrawal: withdrawalByCompetitorId.get(competitor.id) ?? null,
     wins: 0,
     diff: 0
   }
@@ -160,8 +174,10 @@ const groupFighterFromCompetitor = (
 const mapFight = (
   fight: RawFight,
   rules: FightScoringRules,
-  options: CompetitionMapperOptions
+  options: CompetitionMapperOptions,
+  withdrawalByCompetitorId: Map<number, ActiveWithdrawalSummary>
 ): FightData => {
+  const isTechnicalForfeit = Boolean(fight.forfeit_card_id || fight.forfeit_withdrawal_id)
   const fightRules: FightScoringRules = {
     rounds: fight.rounds ?? rules.rounds,
     roundWin: fight.round_win ?? rules.roundWin
@@ -193,15 +209,15 @@ const mapFight = (
     fighter2Score: fight.competitor2_score,
     roundScores: editableRounds,
     warnings,
-    forfeitCardId: fight.forfeit_card_id
+    isTechnicalForfeit
   })
 
   return {
     id: fight.id,
     number: fight.fight_number,
     groupId: fight.group_id,
-    fighter1: groupFighterFromCompetitor(fight.competitor1, options),
-    fighter2: groupFighterFromCompetitor(fight.competitor2, options),
+    fighter1: groupFighterFromCompetitor(fight.competitor1, options, withdrawalByCompetitorId),
+    fighter2: groupFighterFromCompetitor(fight.competitor2, options, withdrawalByCompetitorId),
     competitor1Id: fight.competitor1_id,
     competitor2Id: fight.competitor2_id,
     fighter1Score: fight.competitor1_score,
@@ -214,9 +230,13 @@ const mapFight = (
     roundWin: fightRules.roundWin,
     mainRoundTime,
     additionalRoundTime,
-    isResultValid: Boolean(fight.forfeit_card_id) || scored.evaluation.isValidResult,
+    isResultValid: isTechnicalForfeit || scored.evaluation.isValidResult,
     winnerId: fight.winner_id,
     forfeitCardId: fight.forfeit_card_id,
+    forfeitWithdrawalId: fight.forfeit_withdrawal_id,
+    isTechnicalForfeit,
+    fighter1Withdrawal: withdrawalByCompetitorId.get(fight.competitor1_id ?? fight.competitor1.id) ?? null,
+    fighter2Withdrawal: withdrawalByCompetitorId.get(fight.competitor2_id ?? fight.competitor2.id) ?? null,
     bracketRound: fight.bracket_round,
     bracketPosition: fight.bracket_position,
     isBronze: fight.is_bronze,
@@ -260,12 +280,25 @@ export const mapCompetitionState = (
     rounds: (payload.tournamentNomination?.nomination?.rounds ?? 1) as FightScoringRules['rounds'],
     roundWin: payload.tournamentNomination?.nomination?.round_win ?? false
   }
+  const activeWithdrawals: ActiveWithdrawalSummary[] = (payload.activeWithdrawals ?? []).map(
+    (withdrawal) => ({
+      id: withdrawal.id,
+      competitorId: withdrawal.competitor_id,
+      reason: withdrawal.reason,
+      isExcused: withdrawal.is_excused,
+      source: withdrawal.source,
+      sourceFightId: withdrawal.source_fight_id ?? null
+    })
+  )
+  const withdrawalByCompetitorId = new Map(
+    activeWithdrawals.map((withdrawal) => [withdrawal.competitorId, withdrawal])
+  )
   const blocks: CompetitionBlock[] = (payload.blocks ?? []).map((block) => {
     const groups: Group[] = (block.groups ?? []).map((group) => ({
       id: group.id,
       letter: group.name,
       fighters: (group.fighters ?? []).map((gf) =>
-        groupFighterFromCompetitor(gf.competitor, options)
+        groupFighterFromCompetitor(gf.competitor, options, withdrawalByCompetitorId)
       ),
       placements: (group.placements ?? []).map((placement) => ({
         place: placement.place,
@@ -273,7 +306,7 @@ export const mapCompetitionState = (
       }))
     }))
     const fights = (block.fights ?? []).map((rawFight) => {
-      const fight = mapFight(rawFight, scoringRules, options)
+      const fight = mapFight(rawFight, scoringRules, options, withdrawalByCompetitorId)
       const draft = drafts[String(fight.id)]
 
       if (draft && !fight.isFinished) {
@@ -287,7 +320,7 @@ export const mapCompetitionState = (
       competitorId: slot.competitor_id,
       seedPosition: slot.seed_position,
       slotPosition: slot.slot_position,
-      fighter: groupFighterFromCompetitor(slot.competitor, options)
+      fighter: groupFighterFromCompetitor(slot.competitor, options, withdrawalByCompetitorId)
     }))
 
     if (block.type === 'GROUP') {
@@ -315,12 +348,13 @@ export const mapCompetitionState = (
   const placements: CompetitionPlacement[] = (payload.placements ?? []).map((placement) => ({
     place: placement.place,
     competitorId: placement.competitor_id,
-    fighter: groupFighterFromCompetitor(placement.competitor, options)
+    fighter: groupFighterFromCompetitor(placement.competitor, options, withdrawalByCompetitorId)
   }))
 
   return {
     blocks,
     placements,
+    activeWithdrawals,
     activeBlockId: payload.activeBlockId ?? null,
     pendingTie: payload.pendingTie ?? null,
     isFinished: Boolean(payload.isFinished),

@@ -125,5 +125,8 @@ export const API_ROUTES = {
     ROLLBACK: "/competition/lifecycle/rollback",
     RESOLVE_TIES: "/competition/resolve-ties",
     FINISH: "/competition/finish",
+    WITHDRAWAL_NO_SHOW: "/competition/withdrawals/no-show",
+    WITHDRAWAL_FIGHT: "/competition/withdrawals/fight",
+    WITHDRAWAL_CANCEL: "/competition/withdrawals/cancel",
   },
 } as const;

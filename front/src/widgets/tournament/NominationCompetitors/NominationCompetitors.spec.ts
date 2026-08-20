@@ -4,7 +4,7 @@ import { nextTick } from 'vue'
 import i18next from 'i18next'
 import I18NextVue from 'i18next-vue'
 import NominationCompetitors from './NominationCompetitors.vue'
-import type { ActiveDisciplinaryCardSummary, Fighter } from '@/model'
+import type { ActiveDisciplinaryCardSummary, NominationCompetitor } from '@/model'
 
 const createI18n = async () => {
   const instance = i18next.createInstance()
@@ -19,6 +19,8 @@ const createI18n = async () => {
           tournamentPageDeleteNominationButton: 'Delete nomination',
           tournamentPageRegistrationClosed: 'Registration closed',
           tournamentPageRemoveCompetitorButton: 'Remove',
+          fighterWithdrawalNoShowButton: 'No-show',
+          fighterWithdrawalMarkerTitle: 'Fighter withdrew: {{reason}}',
           disciplinaryCardsReasonAUTO_RED_THREE_YELLOWS_CROSS_TOURNAMENT:
             'Automatic red for 3 active yellow cards'
         }
@@ -29,6 +31,8 @@ const createI18n = async () => {
           tournamentPageDeleteNominationButton: 'Delete nomination',
           tournamentPageRegistrationClosed: 'Registration closed',
           tournamentPageRemoveCompetitorButton: 'Remove',
+          fighterWithdrawalNoShowButton: 'Неявка',
+          fighterWithdrawalMarkerTitle: 'боец снят: {{reason}}',
           disciplinaryCardsReasonAUTO_RED_THREE_YELLOWS_CROSS_TOURNAMENT:
             '\u0410\u0432\u0442\u043e\u043c\u0430\u0442\u0438\u0447\u0435\u0441\u043a\u0430\u044f \u043a\u0440\u0430\u0441\u043d\u0430\u044f \u0437\u0430 3 \u0430\u043a\u0442\u0438\u0432\u043d\u044b\u0435 \u0436\u0435\u043b\u0442\u044b\u0435'
         }
@@ -39,8 +43,9 @@ const createI18n = async () => {
   return instance
 }
 
-const competitor: Fighter = {
+const competitor: NominationCompetitor = {
   id: 1,
+  competitorId: 101,
   name: '\u0418\u0432\u0430\u043d',
   surname: '\u0418\u0432\u0430\u043d\u043e\u0432',
   birthday: null,
@@ -193,6 +198,71 @@ describe('NominationCompetitors', () => {
     await wrapper.find('button').trigger('click')
 
     expect(wrapper.emitted('remove-competitor')).toEqual([[competitor.id]])
+
+    wrapper.unmount()
+  })
+
+  it('emits competitor id when no-show action is clicked after registration closes', async () => {
+    const instance = await createI18n()
+
+    const wrapper = mount(NominationCompetitors, {
+      props: {
+        competitors: [competitor],
+        activeTab: 1,
+        isOpen: false,
+        hasBlocks: false,
+        hasAccess: true
+      },
+      global: {
+        plugins: [[I18NextVue, { i18next: instance }]],
+        stubs: {
+          Button: { template: '<button v-bind="$attrs"><slot /></button>' },
+          CardStatusIcon: true
+        }
+      }
+    })
+
+    await wrapper.find('button').trigger('click')
+
+    expect(wrapper.emitted('no-show-competitor')).toEqual([[competitor.competitorId]])
+
+    wrapper.unmount()
+  })
+
+  it('renders withdrawal marker on withdrawn registered fighters', async () => {
+    const instance = await createI18n()
+
+    const wrapper = mount(NominationCompetitors, {
+      props: {
+        competitors: [
+          {
+            ...competitor,
+            withdrawal: {
+              id: 9,
+              competitorId: competitor.competitorId,
+              reason: 'неявка',
+              isExcused: false,
+              source: 'NO_SHOW',
+              sourceFightId: null
+            }
+          }
+        ],
+        activeTab: 1,
+        isOpen: false,
+        hasBlocks: false,
+        hasAccess: true
+      },
+      global: {
+        plugins: [[I18NextVue, { i18next: instance }]],
+        stubs: {
+          Button: { template: '<button v-bind="$attrs"><slot /></button>' },
+          CardStatusIcon: true
+        }
+      }
+    })
+
+    expect(wrapper.find('[title="боец снят: неявка"]').exists()).toBe(true)
+    expect(wrapper.text()).not.toContain('Неявка')
 
     wrapper.unmount()
   })

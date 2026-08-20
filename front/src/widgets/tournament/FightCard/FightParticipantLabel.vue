@@ -9,24 +9,31 @@ import {
   ContextMenuTrigger
 } from '@/components/ui/context-menu'
 import { CardStatusIcon, formatActiveDisciplinaryCardTitle } from '@/widgets/tournament/DisciplinaryCards'
-import type { ActiveDisciplinaryCardSummary, Fighter } from '@/model'
+import WithdrawalStatusIcon from '@/widgets/tournament/WithdrawalStatusIcon.vue'
+import type { ActiveDisciplinaryCardSummary, ActiveWithdrawalSummary, Fighter } from '@/model'
 import type { FightWarningMarker } from './types'
 
 const props = defineProps<{
   surname: string
   fighter: Fighter
   cardTypes?: ActiveDisciplinaryCardSummary[]
+  withdrawal?: ActiveWithdrawalSummary | null
   warningMarkers: FightWarningMarker[]
   warningTitle: string
   canOpenMenu: boolean
   canIssueWarning: boolean
   canRemoveWarnings: boolean
+  canIssueCard: boolean
+  canWithdraw: boolean
+  canCancelWithdrawal: boolean
 }>()
 
 const emit = defineEmits<{
   (e: 'issue-card', fighter: Fighter): void
   (e: 'issue-warning'): void
   (e: 'remove-warning', warningIndex: number): void
+  (e: 'withdraw-fighter', fighter: Fighter): void
+  (e: 'cancel-withdrawal', withdrawal: ActiveWithdrawalSummary): void
 }>()
 
 const { i18next } = useTranslation()
@@ -49,14 +56,24 @@ const cardTitle = (card: ActiveDisciplinaryCardSummary) =>
           >
             <CardStatusIcon :type="card" :showTitle="false" />
           </span>
+          <WithdrawalStatusIcon :withdrawal="withdrawal" />
         </span>
       </ContextMenuTrigger>
       <ContextMenuContent>
-        <ContextMenuItem @select="emit('issue-card', props.fighter)">
+        <ContextMenuItem v-if="canIssueCard" @select="emit('issue-card', props.fighter)">
           {{ $t('disciplinaryCardsIssueAction') }}
         </ContextMenuItem>
         <ContextMenuItem v-if="canIssueWarning" @select="emit('issue-warning')">
           {{ $t('fightWarningIssueAction') }}
+        </ContextMenuItem>
+        <ContextMenuItem v-if="canWithdraw" @select="emit('withdraw-fighter', props.fighter)">
+          {{ $t('fighterWithdrawalAction') }}
+        </ContextMenuItem>
+        <ContextMenuItem
+          v-if="canCancelWithdrawal && withdrawal"
+          @select="emit('cancel-withdrawal', withdrawal)"
+        >
+          {{ $t('fighterWithdrawalCancelAction') }}
         </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
@@ -71,6 +88,7 @@ const cardTitle = (card: ActiveDisciplinaryCardSummary) =>
       >
         <CardStatusIcon :type="card" :showTitle="false" />
       </span>
+      <WithdrawalStatusIcon :withdrawal="withdrawal" />
     </span>
 
     <span

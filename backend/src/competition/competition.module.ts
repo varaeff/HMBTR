@@ -23,6 +23,7 @@ import { ResultSubmissionValidator } from './results/result-submission.validator
 import { CompetitionScoringService } from './scoring/competition-scoring.service';
 import { CompetitionService } from './competition.service';
 import { CompetitionStateReader } from './state/competition-state.reader';
+import { CompetitionWithdrawalService } from './withdrawals/competition-withdrawal.service';
 import { RedCardConsequencesService } from './red-cards/red-card-consequences.service';
 import { RedCardForfeitService } from './red-cards/red-card-forfeit.service';
 import { RedCardRegistrationService } from './red-cards/red-card-registration.service';
@@ -45,6 +46,7 @@ import { RedCardStorageService } from './red-cards/red-card-storage.service';
     CompetitionResultService,
     CompetitionScoringService,
     CompetitionStateReader,
+    CompetitionWithdrawalService,
     FightResultEvaluationService,
     FightResultPersistenceService,
     GroupRankingReader,
