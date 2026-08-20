@@ -6,6 +6,7 @@ import type {
   Group,
   PendingTie
 } from '@/model/competition'
+import type { RussiaHmbTournamentNominationRating } from '@/model/rating'
 import { buildSubmittedFightResult } from '@/lib/fightResult'
 import { API_ROUTES } from '@shared/routes'
 import type { RawCompetitionState } from './mapper'
@@ -171,6 +172,22 @@ export const finishCompetition = async (tournamentId: number, nominationId: numb
     tournament_id: tournamentId,
     nomination_id: nominationId
   })
+  return data
+}
+
+export const calculateRussiaHmbRating = async (
+  tournamentId: number,
+  nominationId: number,
+  coefficient: 1 | 2 | 4
+) => {
+  const { data } = await http.post<RussiaHmbTournamentNominationRating>(
+    API_ROUTES.RATINGS.RUSSIA_HMB_CALCULATE,
+    {
+      tournament_id: tournamentId,
+      nomination_id: nominationId,
+      coefficient
+    }
+  )
   return data
 }
 

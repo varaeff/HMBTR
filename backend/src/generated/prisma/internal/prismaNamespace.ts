@@ -406,6 +406,8 @@ export const ModelName = {
   disciplinary_card_settings: 'disciplinary_card_settings',
   fighter_nomination_ratings: 'fighter_nomination_ratings',
   fighter_nomination_rating_history: 'fighter_nomination_rating_history',
+  russia_hmb_rating_calculations: 'russia_hmb_rating_calculations',
+  russia_hmb_rating_results: 'russia_hmb_rating_results',
   competition_blocks: 'competition_blocks',
   competition_round_states: 'competition_round_states',
   bracket_slots: 'bracket_slots',
@@ -427,7 +429,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "countries" | "cities" | "clubs" | "fighters" | "marshals" | "marshals_categories" | "tournaments" | "tournament_marshals" | "nominations" | "tournament_nominations" | "competitors" | "groups" | "group_competitors" | "fights" | "fighter_withdrawals" | "fight_round_scores" | "fight_warnings" | "disciplinary_cards" | "red_card_yellow_sources" | "disciplinary_card_settings" | "fighter_nomination_ratings" | "fighter_nomination_rating_history" | "competition_blocks" | "competition_round_states" | "bracket_slots" | "competition_placements" | "tournament_reports" | "users"
+    modelProps: "countries" | "cities" | "clubs" | "fighters" | "marshals" | "marshals_categories" | "tournaments" | "tournament_marshals" | "nominations" | "tournament_nominations" | "competitors" | "groups" | "group_competitors" | "fights" | "fighter_withdrawals" | "fight_round_scores" | "fight_warnings" | "disciplinary_cards" | "red_card_yellow_sources" | "disciplinary_card_settings" | "fighter_nomination_ratings" | "fighter_nomination_rating_history" | "russia_hmb_rating_calculations" | "russia_hmb_rating_results" | "competition_blocks" | "competition_round_states" | "bracket_slots" | "competition_placements" | "tournament_reports" | "users"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2059,6 +2061,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    russia_hmb_rating_calculations: {
+      payload: Prisma.$russia_hmb_rating_calculationsPayload<ExtArgs>
+      fields: Prisma.russia_hmb_rating_calculationsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.russia_hmb_rating_calculationsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$russia_hmb_rating_calculationsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.russia_hmb_rating_calculationsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$russia_hmb_rating_calculationsPayload>
+        }
+        findFirst: {
+          args: Prisma.russia_hmb_rating_calculationsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$russia_hmb_rating_calculationsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.russia_hmb_rating_calculationsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$russia_hmb_rating_calculationsPayload>
+        }
+        findMany: {
+          args: Prisma.russia_hmb_rating_calculationsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$russia_hmb_rating_calculationsPayload>[]
+        }
+        create: {
+          args: Prisma.russia_hmb_rating_calculationsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$russia_hmb_rating_calculationsPayload>
+        }
+        createMany: {
+          args: Prisma.russia_hmb_rating_calculationsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.russia_hmb_rating_calculationsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$russia_hmb_rating_calculationsPayload>[]
+        }
+        delete: {
+          args: Prisma.russia_hmb_rating_calculationsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$russia_hmb_rating_calculationsPayload>
+        }
+        update: {
+          args: Prisma.russia_hmb_rating_calculationsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$russia_hmb_rating_calculationsPayload>
+        }
+        deleteMany: {
+          args: Prisma.russia_hmb_rating_calculationsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.russia_hmb_rating_calculationsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.russia_hmb_rating_calculationsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$russia_hmb_rating_calculationsPayload>[]
+        }
+        upsert: {
+          args: Prisma.russia_hmb_rating_calculationsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$russia_hmb_rating_calculationsPayload>
+        }
+        aggregate: {
+          args: Prisma.Russia_hmb_rating_calculationsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRussia_hmb_rating_calculations>
+        }
+        groupBy: {
+          args: Prisma.russia_hmb_rating_calculationsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Russia_hmb_rating_calculationsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.russia_hmb_rating_calculationsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Russia_hmb_rating_calculationsCountAggregateOutputType> | number
+        }
+      }
+    }
+    russia_hmb_rating_results: {
+      payload: Prisma.$russia_hmb_rating_resultsPayload<ExtArgs>
+      fields: Prisma.russia_hmb_rating_resultsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.russia_hmb_rating_resultsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$russia_hmb_rating_resultsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.russia_hmb_rating_resultsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$russia_hmb_rating_resultsPayload>
+        }
+        findFirst: {
+          args: Prisma.russia_hmb_rating_resultsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$russia_hmb_rating_resultsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.russia_hmb_rating_resultsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$russia_hmb_rating_resultsPayload>
+        }
+        findMany: {
+          args: Prisma.russia_hmb_rating_resultsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$russia_hmb_rating_resultsPayload>[]
+        }
+        create: {
+          args: Prisma.russia_hmb_rating_resultsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$russia_hmb_rating_resultsPayload>
+        }
+        createMany: {
+          args: Prisma.russia_hmb_rating_resultsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.russia_hmb_rating_resultsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$russia_hmb_rating_resultsPayload>[]
+        }
+        delete: {
+          args: Prisma.russia_hmb_rating_resultsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$russia_hmb_rating_resultsPayload>
+        }
+        update: {
+          args: Prisma.russia_hmb_rating_resultsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$russia_hmb_rating_resultsPayload>
+        }
+        deleteMany: {
+          args: Prisma.russia_hmb_rating_resultsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.russia_hmb_rating_resultsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.russia_hmb_rating_resultsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$russia_hmb_rating_resultsPayload>[]
+        }
+        upsert: {
+          args: Prisma.russia_hmb_rating_resultsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$russia_hmb_rating_resultsPayload>
+        }
+        aggregate: {
+          args: Prisma.Russia_hmb_rating_resultsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRussia_hmb_rating_results>
+        }
+        groupBy: {
+          args: Prisma.russia_hmb_rating_resultsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Russia_hmb_rating_resultsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.russia_hmb_rating_resultsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Russia_hmb_rating_resultsCountAggregateOutputType> | number
+        }
+      }
+    }
     competition_blocks: {
       payload: Prisma.$competition_blocksPayload<ExtArgs>
       fields: Prisma.competition_blocksFieldRefs
@@ -2836,6 +2986,40 @@ export const Fighter_nomination_rating_historyScalarFieldEnum = {
 export type Fighter_nomination_rating_historyScalarFieldEnum = (typeof Fighter_nomination_rating_historyScalarFieldEnum)[keyof typeof Fighter_nomination_rating_historyScalarFieldEnum]
 
 
+export const Russia_hmb_rating_calculationsScalarFieldEnum = {
+  id: 'id',
+  tournament_nomination_id: 'tournament_nomination_id',
+  tournament_id: 'tournament_id',
+  nomination_id: 'nomination_id',
+  event_year: 'event_year',
+  coefficient: 'coefficient',
+  calculated_by_user_id: 'calculated_by_user_id',
+  calculated_at: 'calculated_at'
+} as const
+
+export type Russia_hmb_rating_calculationsScalarFieldEnum = (typeof Russia_hmb_rating_calculationsScalarFieldEnum)[keyof typeof Russia_hmb_rating_calculationsScalarFieldEnum]
+
+
+export const Russia_hmb_rating_resultsScalarFieldEnum = {
+  id: 'id',
+  calculation_id: 'calculation_id',
+  tournament_nomination_id: 'tournament_nomination_id',
+  tournament_id: 'tournament_id',
+  nomination_id: 'nomination_id',
+  fighter_id: 'fighter_id',
+  competitor_id: 'competitor_id',
+  points: 'points',
+  qc_points: 'qc_points',
+  qn_points: 'qn_points',
+  qm_points: 'qm_points',
+  yellow_cards_count: 'yellow_cards_count',
+  active_red_cards_count: 'active_red_cards_count',
+  no_show_penalty_count: 'no_show_penalty_count'
+} as const
+
+export type Russia_hmb_rating_resultsScalarFieldEnum = (typeof Russia_hmb_rating_resultsScalarFieldEnum)[keyof typeof Russia_hmb_rating_resultsScalarFieldEnum]
+
+
 export const Competition_blocksScalarFieldEnum = {
   id: 'id',
   tournament_nomination_id: 'tournament_nomination_id',
@@ -3139,6 +3323,8 @@ export type GlobalOmitConfig = {
   disciplinary_card_settings?: Prisma.disciplinary_card_settingsOmit
   fighter_nomination_ratings?: Prisma.fighter_nomination_ratingsOmit
   fighter_nomination_rating_history?: Prisma.fighter_nomination_rating_historyOmit
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsOmit
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsOmit
   competition_blocks?: Prisma.competition_blocksOmit
   competition_round_states?: Prisma.competition_round_statesOmit
   bracket_slots?: Prisma.bracket_slotsOmit

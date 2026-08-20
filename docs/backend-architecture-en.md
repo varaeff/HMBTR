@@ -522,7 +522,9 @@ Responsibilities:
 - leaderboard;
 - fighter rating profile;
 - rating calculation after tournament finish;
-- rating/history persistence.
+- rating/history persistence;
+- Russia HMB rating calculation, saved nomination results, yearly public
+  leaderboards, and fighter profile summaries.
 
 ### Public Boundary
 
@@ -538,10 +540,20 @@ Responsibilities:
 - `calculation/RatingCalculationReader` - completed tournament/fight data for calculation;
 - `calculation/RatingCalculationService` - rating calculation use case and transaction orchestration;
 - `calculation/RatingPersistenceService` - rating/history persistence;
+- `russia-hmb/RussiaHmbRatingService` - Russia HMB rating facade for
+  calculation and public read models;
+- `russia-hmb/RussiaHmbRatingReader` - completed nomination, fight,
+  placement, withdrawal, and card read model for Russia HMB calculation;
+- `russia-hmb/RussiaHmbRatingPersistence` - one-time Russia HMB calculation
+  and per-fighter result persistence;
+- `russia-hmb-rating.logic.ts` - pure Russia HMB point formula;
 - `ratings.logic.ts` - pure rating algorithms;
 - `ratings-internal.types.ts` - local rating types and `PrismaTx`.
 
-Ratings should not know competition lifecycle details beyond persisted final/completed data needed for calculation.
+Ratings should not know competition lifecycle details beyond persisted
+final/completed data needed for calculation. Elo and Russia HMB ratings are
+separate rating systems: Russia HMB reads finalized competition, cards, and
+withdrawals, but must not mutate Elo tables or Elo calculation status.
 
 ## Fight Score Helpers
 

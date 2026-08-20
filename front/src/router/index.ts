@@ -52,7 +52,13 @@ const router = createRouter({
     {
       path: '/ratings',
       name: 'ratings',
-      component: () => import('@/pages/RatingPage.vue')
+      component: () => import('@/pages/RatingPage.vue'),
+      meta: { requiresAuth: true, requiresAnyRole: true }
+    },
+    {
+      path: '/russia-hmb-ratings',
+      name: 'russia-hmb-ratings',
+      component: () => import('@/pages/RussiaHmbRatingPage.vue')
     },
     {
       path: '/tournament/:id',
@@ -107,15 +113,19 @@ router.beforeEach(async (to, from, next) => {
   const isAdmin = authStore.isAdmin
   const isOrganizer = authStore.isOrganizer
   const isSecretary = authStore.isSecretary
+  const hasAnyRole = authStore.hasAnyRole
 
   const requiresAuth = to.meta.requiresAuth === true
   const requiresAdmin = to.meta.requiresAdmin === true
   const requiresOrganizer = to.meta.requiresOrganizer === true
   const requiresMarshalManager = to.meta.requiresMarshalManager === true
+  const requiresAnyRole = to.meta.requiresAnyRole === true
 
   if (isAdmin) {
     return next()
   } else if (requiresAuth && !isAuth) {
+    next({ name: 'forbidden' })
+  } else if (requiresAnyRole && !hasAnyRole) {
     next({ name: 'forbidden' })
   } else if (requiresAdmin && !isAdmin) {
     next({ name: 'forbidden' })

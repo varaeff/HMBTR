@@ -266,6 +266,8 @@ export type tournament_nominationsWhereInput = {
   placements?: Prisma.Competition_placementsListRelationFilter
   withdrawals?: Prisma.Fighter_withdrawalsListRelationFilter
   rating_history?: Prisma.Fighter_nomination_rating_historyListRelationFilter
+  russia_hmb_rating_calculation?: Prisma.XOR<Prisma.Russia_hmb_rating_calculationsNullableScalarRelationFilter, Prisma.russia_hmb_rating_calculationsWhereInput> | null
+  russia_hmb_rating_results?: Prisma.Russia_hmb_rating_resultsListRelationFilter
 }
 
 export type tournament_nominationsOrderByWithRelationInput = {
@@ -284,6 +286,8 @@ export type tournament_nominationsOrderByWithRelationInput = {
   placements?: Prisma.competition_placementsOrderByRelationAggregateInput
   withdrawals?: Prisma.fighter_withdrawalsOrderByRelationAggregateInput
   rating_history?: Prisma.fighter_nomination_rating_historyOrderByRelationAggregateInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsOrderByWithRelationInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsOrderByRelationAggregateInput
 }
 
 export type tournament_nominationsWhereUniqueInput = Prisma.AtLeast<{
@@ -305,6 +309,8 @@ export type tournament_nominationsWhereUniqueInput = Prisma.AtLeast<{
   placements?: Prisma.Competition_placementsListRelationFilter
   withdrawals?: Prisma.Fighter_withdrawalsListRelationFilter
   rating_history?: Prisma.Fighter_nomination_rating_historyListRelationFilter
+  russia_hmb_rating_calculation?: Prisma.XOR<Prisma.Russia_hmb_rating_calculationsNullableScalarRelationFilter, Prisma.russia_hmb_rating_calculationsWhereInput> | null
+  russia_hmb_rating_results?: Prisma.Russia_hmb_rating_resultsListRelationFilter
 }, "id">
 
 export type tournament_nominationsOrderByWithAggregationInput = {
@@ -352,6 +358,8 @@ export type tournament_nominationsCreateInput = {
   placements?: Prisma.competition_placementsCreateNestedManyWithoutTournament_nominationInput
   withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournament_nominationInput
   rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournament_nominationInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsCreateNestedOneWithoutTournament_nominationInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutTournament_nominationInput
 }
 
 export type tournament_nominationsUncheckedCreateInput = {
@@ -368,6 +376,8 @@ export type tournament_nominationsUncheckedCreateInput = {
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutTournament_nominationInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournament_nominationInput
   rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournament_nominationInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUncheckedCreateNestedOneWithoutTournament_nominationInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutTournament_nominationInput
 }
 
 export type tournament_nominationsUpdateInput = {
@@ -383,6 +393,8 @@ export type tournament_nominationsUpdateInput = {
   placements?: Prisma.competition_placementsUpdateManyWithoutTournament_nominationNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournament_nominationNestedInput
   rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournament_nominationNestedInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUpdateOneWithoutTournament_nominationNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutTournament_nominationNestedInput
 }
 
 export type tournament_nominationsUncheckedUpdateInput = {
@@ -399,6 +411,8 @@ export type tournament_nominationsUncheckedUpdateInput = {
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutTournament_nominationNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournament_nominationNestedInput
   rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUncheckedUpdateOneWithoutTournament_nominationNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutTournament_nominationNestedInput
 }
 
 export type tournament_nominationsCreateManyInput = {
@@ -611,6 +625,34 @@ export type tournament_nominationsUpdateOneRequiredWithoutRating_historyNestedIn
   update?: Prisma.XOR<Prisma.XOR<Prisma.tournament_nominationsUpdateToOneWithWhereWithoutRating_historyInput, Prisma.tournament_nominationsUpdateWithoutRating_historyInput>, Prisma.tournament_nominationsUncheckedUpdateWithoutRating_historyInput>
 }
 
+export type tournament_nominationsCreateNestedOneWithoutRussia_hmb_rating_calculationInput = {
+  create?: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutRussia_hmb_rating_calculationInput, Prisma.tournament_nominationsUncheckedCreateWithoutRussia_hmb_rating_calculationInput>
+  connectOrCreate?: Prisma.tournament_nominationsCreateOrConnectWithoutRussia_hmb_rating_calculationInput
+  connect?: Prisma.tournament_nominationsWhereUniqueInput
+}
+
+export type tournament_nominationsUpdateOneRequiredWithoutRussia_hmb_rating_calculationNestedInput = {
+  create?: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutRussia_hmb_rating_calculationInput, Prisma.tournament_nominationsUncheckedCreateWithoutRussia_hmb_rating_calculationInput>
+  connectOrCreate?: Prisma.tournament_nominationsCreateOrConnectWithoutRussia_hmb_rating_calculationInput
+  upsert?: Prisma.tournament_nominationsUpsertWithoutRussia_hmb_rating_calculationInput
+  connect?: Prisma.tournament_nominationsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.tournament_nominationsUpdateToOneWithWhereWithoutRussia_hmb_rating_calculationInput, Prisma.tournament_nominationsUpdateWithoutRussia_hmb_rating_calculationInput>, Prisma.tournament_nominationsUncheckedUpdateWithoutRussia_hmb_rating_calculationInput>
+}
+
+export type tournament_nominationsCreateNestedOneWithoutRussia_hmb_rating_resultsInput = {
+  create?: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutRussia_hmb_rating_resultsInput, Prisma.tournament_nominationsUncheckedCreateWithoutRussia_hmb_rating_resultsInput>
+  connectOrCreate?: Prisma.tournament_nominationsCreateOrConnectWithoutRussia_hmb_rating_resultsInput
+  connect?: Prisma.tournament_nominationsWhereUniqueInput
+}
+
+export type tournament_nominationsUpdateOneRequiredWithoutRussia_hmb_rating_resultsNestedInput = {
+  create?: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutRussia_hmb_rating_resultsInput, Prisma.tournament_nominationsUncheckedCreateWithoutRussia_hmb_rating_resultsInput>
+  connectOrCreate?: Prisma.tournament_nominationsCreateOrConnectWithoutRussia_hmb_rating_resultsInput
+  upsert?: Prisma.tournament_nominationsUpsertWithoutRussia_hmb_rating_resultsInput
+  connect?: Prisma.tournament_nominationsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.tournament_nominationsUpdateToOneWithWhereWithoutRussia_hmb_rating_resultsInput, Prisma.tournament_nominationsUpdateWithoutRussia_hmb_rating_resultsInput>, Prisma.tournament_nominationsUncheckedUpdateWithoutRussia_hmb_rating_resultsInput>
+}
+
 export type tournament_nominationsCreateNestedOneWithoutBlocksInput = {
   create?: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutBlocksInput, Prisma.tournament_nominationsUncheckedCreateWithoutBlocksInput>
   connectOrCreate?: Prisma.tournament_nominationsCreateOrConnectWithoutBlocksInput
@@ -651,6 +693,8 @@ export type tournament_nominationsCreateWithoutTournamentInput = {
   placements?: Prisma.competition_placementsCreateNestedManyWithoutTournament_nominationInput
   withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournament_nominationInput
   rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournament_nominationInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsCreateNestedOneWithoutTournament_nominationInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutTournament_nominationInput
 }
 
 export type tournament_nominationsUncheckedCreateWithoutTournamentInput = {
@@ -666,6 +710,8 @@ export type tournament_nominationsUncheckedCreateWithoutTournamentInput = {
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutTournament_nominationInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournament_nominationInput
   rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournament_nominationInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUncheckedCreateNestedOneWithoutTournament_nominationInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutTournament_nominationInput
 }
 
 export type tournament_nominationsCreateOrConnectWithoutTournamentInput = {
@@ -721,6 +767,8 @@ export type tournament_nominationsCreateWithoutNominationInput = {
   placements?: Prisma.competition_placementsCreateNestedManyWithoutTournament_nominationInput
   withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournament_nominationInput
   rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournament_nominationInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsCreateNestedOneWithoutTournament_nominationInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutTournament_nominationInput
 }
 
 export type tournament_nominationsUncheckedCreateWithoutNominationInput = {
@@ -736,6 +784,8 @@ export type tournament_nominationsUncheckedCreateWithoutNominationInput = {
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutTournament_nominationInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournament_nominationInput
   rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournament_nominationInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUncheckedCreateNestedOneWithoutTournament_nominationInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutTournament_nominationInput
 }
 
 export type tournament_nominationsCreateOrConnectWithoutNominationInput = {
@@ -776,6 +826,8 @@ export type tournament_nominationsCreateWithoutWithdrawalsInput = {
   blocks?: Prisma.competition_blocksCreateNestedManyWithoutTournament_nominationInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutTournament_nominationInput
   rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournament_nominationInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsCreateNestedOneWithoutTournament_nominationInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutTournament_nominationInput
 }
 
 export type tournament_nominationsUncheckedCreateWithoutWithdrawalsInput = {
@@ -791,6 +843,8 @@ export type tournament_nominationsUncheckedCreateWithoutWithdrawalsInput = {
   blocks?: Prisma.competition_blocksUncheckedCreateNestedManyWithoutTournament_nominationInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutTournament_nominationInput
   rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournament_nominationInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUncheckedCreateNestedOneWithoutTournament_nominationInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutTournament_nominationInput
 }
 
 export type tournament_nominationsCreateOrConnectWithoutWithdrawalsInput = {
@@ -821,6 +875,8 @@ export type tournament_nominationsUpdateWithoutWithdrawalsInput = {
   blocks?: Prisma.competition_blocksUpdateManyWithoutTournament_nominationNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutTournament_nominationNestedInput
   rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournament_nominationNestedInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUpdateOneWithoutTournament_nominationNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutTournament_nominationNestedInput
 }
 
 export type tournament_nominationsUncheckedUpdateWithoutWithdrawalsInput = {
@@ -836,6 +892,8 @@ export type tournament_nominationsUncheckedUpdateWithoutWithdrawalsInput = {
   blocks?: Prisma.competition_blocksUncheckedUpdateManyWithoutTournament_nominationNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutTournament_nominationNestedInput
   rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUncheckedUpdateOneWithoutTournament_nominationNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutTournament_nominationNestedInput
 }
 
 export type tournament_nominationsCreateWithoutRating_historyInput = {
@@ -850,6 +908,8 @@ export type tournament_nominationsCreateWithoutRating_historyInput = {
   blocks?: Prisma.competition_blocksCreateNestedManyWithoutTournament_nominationInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutTournament_nominationInput
   withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournament_nominationInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsCreateNestedOneWithoutTournament_nominationInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutTournament_nominationInput
 }
 
 export type tournament_nominationsUncheckedCreateWithoutRating_historyInput = {
@@ -865,6 +925,8 @@ export type tournament_nominationsUncheckedCreateWithoutRating_historyInput = {
   blocks?: Prisma.competition_blocksUncheckedCreateNestedManyWithoutTournament_nominationInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutTournament_nominationInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournament_nominationInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUncheckedCreateNestedOneWithoutTournament_nominationInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutTournament_nominationInput
 }
 
 export type tournament_nominationsCreateOrConnectWithoutRating_historyInput = {
@@ -895,6 +957,8 @@ export type tournament_nominationsUpdateWithoutRating_historyInput = {
   blocks?: Prisma.competition_blocksUpdateManyWithoutTournament_nominationNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutTournament_nominationNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournament_nominationNestedInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUpdateOneWithoutTournament_nominationNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutTournament_nominationNestedInput
 }
 
 export type tournament_nominationsUncheckedUpdateWithoutRating_historyInput = {
@@ -910,6 +974,172 @@ export type tournament_nominationsUncheckedUpdateWithoutRating_historyInput = {
   blocks?: Prisma.competition_blocksUncheckedUpdateManyWithoutTournament_nominationNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutTournament_nominationNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUncheckedUpdateOneWithoutTournament_nominationNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutTournament_nominationNestedInput
+}
+
+export type tournament_nominationsCreateWithoutRussia_hmb_rating_calculationInput = {
+  is_open?: boolean
+  is_finished?: boolean
+  stage?: number
+  rating_status?: string
+  rating_calculated_at?: Date | string | null
+  rating_error?: string | null
+  tournament: Prisma.tournamentsCreateNestedOneWithoutNominationsInput
+  nomination: Prisma.nominationsCreateNestedOneWithoutTournamentsInput
+  blocks?: Prisma.competition_blocksCreateNestedManyWithoutTournament_nominationInput
+  placements?: Prisma.competition_placementsCreateNestedManyWithoutTournament_nominationInput
+  withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournament_nominationInput
+  rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournament_nominationInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutTournament_nominationInput
+}
+
+export type tournament_nominationsUncheckedCreateWithoutRussia_hmb_rating_calculationInput = {
+  id?: number
+  tournament_id: number
+  nomination_id: number
+  is_open?: boolean
+  is_finished?: boolean
+  stage?: number
+  rating_status?: string
+  rating_calculated_at?: Date | string | null
+  rating_error?: string | null
+  blocks?: Prisma.competition_blocksUncheckedCreateNestedManyWithoutTournament_nominationInput
+  placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutTournament_nominationInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournament_nominationInput
+  rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournament_nominationInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutTournament_nominationInput
+}
+
+export type tournament_nominationsCreateOrConnectWithoutRussia_hmb_rating_calculationInput = {
+  where: Prisma.tournament_nominationsWhereUniqueInput
+  create: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutRussia_hmb_rating_calculationInput, Prisma.tournament_nominationsUncheckedCreateWithoutRussia_hmb_rating_calculationInput>
+}
+
+export type tournament_nominationsUpsertWithoutRussia_hmb_rating_calculationInput = {
+  update: Prisma.XOR<Prisma.tournament_nominationsUpdateWithoutRussia_hmb_rating_calculationInput, Prisma.tournament_nominationsUncheckedUpdateWithoutRussia_hmb_rating_calculationInput>
+  create: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutRussia_hmb_rating_calculationInput, Prisma.tournament_nominationsUncheckedCreateWithoutRussia_hmb_rating_calculationInput>
+  where?: Prisma.tournament_nominationsWhereInput
+}
+
+export type tournament_nominationsUpdateToOneWithWhereWithoutRussia_hmb_rating_calculationInput = {
+  where?: Prisma.tournament_nominationsWhereInput
+  data: Prisma.XOR<Prisma.tournament_nominationsUpdateWithoutRussia_hmb_rating_calculationInput, Prisma.tournament_nominationsUncheckedUpdateWithoutRussia_hmb_rating_calculationInput>
+}
+
+export type tournament_nominationsUpdateWithoutRussia_hmb_rating_calculationInput = {
+  is_open?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  rating_status?: Prisma.StringFieldUpdateOperationsInput | string
+  rating_calculated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rating_error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tournament?: Prisma.tournamentsUpdateOneRequiredWithoutNominationsNestedInput
+  nomination?: Prisma.nominationsUpdateOneRequiredWithoutTournamentsNestedInput
+  blocks?: Prisma.competition_blocksUpdateManyWithoutTournament_nominationNestedInput
+  placements?: Prisma.competition_placementsUpdateManyWithoutTournament_nominationNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournament_nominationNestedInput
+  rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournament_nominationNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutTournament_nominationNestedInput
+}
+
+export type tournament_nominationsUncheckedUpdateWithoutRussia_hmb_rating_calculationInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  is_open?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  rating_status?: Prisma.StringFieldUpdateOperationsInput | string
+  rating_calculated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rating_error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blocks?: Prisma.competition_blocksUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutTournament_nominationNestedInput
+}
+
+export type tournament_nominationsCreateWithoutRussia_hmb_rating_resultsInput = {
+  is_open?: boolean
+  is_finished?: boolean
+  stage?: number
+  rating_status?: string
+  rating_calculated_at?: Date | string | null
+  rating_error?: string | null
+  tournament: Prisma.tournamentsCreateNestedOneWithoutNominationsInput
+  nomination: Prisma.nominationsCreateNestedOneWithoutTournamentsInput
+  blocks?: Prisma.competition_blocksCreateNestedManyWithoutTournament_nominationInput
+  placements?: Prisma.competition_placementsCreateNestedManyWithoutTournament_nominationInput
+  withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournament_nominationInput
+  rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournament_nominationInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsCreateNestedOneWithoutTournament_nominationInput
+}
+
+export type tournament_nominationsUncheckedCreateWithoutRussia_hmb_rating_resultsInput = {
+  id?: number
+  tournament_id: number
+  nomination_id: number
+  is_open?: boolean
+  is_finished?: boolean
+  stage?: number
+  rating_status?: string
+  rating_calculated_at?: Date | string | null
+  rating_error?: string | null
+  blocks?: Prisma.competition_blocksUncheckedCreateNestedManyWithoutTournament_nominationInput
+  placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutTournament_nominationInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournament_nominationInput
+  rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournament_nominationInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUncheckedCreateNestedOneWithoutTournament_nominationInput
+}
+
+export type tournament_nominationsCreateOrConnectWithoutRussia_hmb_rating_resultsInput = {
+  where: Prisma.tournament_nominationsWhereUniqueInput
+  create: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutRussia_hmb_rating_resultsInput, Prisma.tournament_nominationsUncheckedCreateWithoutRussia_hmb_rating_resultsInput>
+}
+
+export type tournament_nominationsUpsertWithoutRussia_hmb_rating_resultsInput = {
+  update: Prisma.XOR<Prisma.tournament_nominationsUpdateWithoutRussia_hmb_rating_resultsInput, Prisma.tournament_nominationsUncheckedUpdateWithoutRussia_hmb_rating_resultsInput>
+  create: Prisma.XOR<Prisma.tournament_nominationsCreateWithoutRussia_hmb_rating_resultsInput, Prisma.tournament_nominationsUncheckedCreateWithoutRussia_hmb_rating_resultsInput>
+  where?: Prisma.tournament_nominationsWhereInput
+}
+
+export type tournament_nominationsUpdateToOneWithWhereWithoutRussia_hmb_rating_resultsInput = {
+  where?: Prisma.tournament_nominationsWhereInput
+  data: Prisma.XOR<Prisma.tournament_nominationsUpdateWithoutRussia_hmb_rating_resultsInput, Prisma.tournament_nominationsUncheckedUpdateWithoutRussia_hmb_rating_resultsInput>
+}
+
+export type tournament_nominationsUpdateWithoutRussia_hmb_rating_resultsInput = {
+  is_open?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  rating_status?: Prisma.StringFieldUpdateOperationsInput | string
+  rating_calculated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rating_error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tournament?: Prisma.tournamentsUpdateOneRequiredWithoutNominationsNestedInput
+  nomination?: Prisma.nominationsUpdateOneRequiredWithoutTournamentsNestedInput
+  blocks?: Prisma.competition_blocksUpdateManyWithoutTournament_nominationNestedInput
+  placements?: Prisma.competition_placementsUpdateManyWithoutTournament_nominationNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournament_nominationNestedInput
+  rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournament_nominationNestedInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUpdateOneWithoutTournament_nominationNestedInput
+}
+
+export type tournament_nominationsUncheckedUpdateWithoutRussia_hmb_rating_resultsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  is_open?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_finished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  rating_status?: Prisma.StringFieldUpdateOperationsInput | string
+  rating_calculated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rating_error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blocks?: Prisma.competition_blocksUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUncheckedUpdateOneWithoutTournament_nominationNestedInput
 }
 
 export type tournament_nominationsCreateWithoutBlocksInput = {
@@ -924,6 +1154,8 @@ export type tournament_nominationsCreateWithoutBlocksInput = {
   placements?: Prisma.competition_placementsCreateNestedManyWithoutTournament_nominationInput
   withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournament_nominationInput
   rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournament_nominationInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsCreateNestedOneWithoutTournament_nominationInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutTournament_nominationInput
 }
 
 export type tournament_nominationsUncheckedCreateWithoutBlocksInput = {
@@ -939,6 +1171,8 @@ export type tournament_nominationsUncheckedCreateWithoutBlocksInput = {
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutTournament_nominationInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournament_nominationInput
   rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournament_nominationInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUncheckedCreateNestedOneWithoutTournament_nominationInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutTournament_nominationInput
 }
 
 export type tournament_nominationsCreateOrConnectWithoutBlocksInput = {
@@ -969,6 +1203,8 @@ export type tournament_nominationsUpdateWithoutBlocksInput = {
   placements?: Prisma.competition_placementsUpdateManyWithoutTournament_nominationNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournament_nominationNestedInput
   rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournament_nominationNestedInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUpdateOneWithoutTournament_nominationNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutTournament_nominationNestedInput
 }
 
 export type tournament_nominationsUncheckedUpdateWithoutBlocksInput = {
@@ -984,6 +1220,8 @@ export type tournament_nominationsUncheckedUpdateWithoutBlocksInput = {
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutTournament_nominationNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournament_nominationNestedInput
   rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUncheckedUpdateOneWithoutTournament_nominationNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutTournament_nominationNestedInput
 }
 
 export type tournament_nominationsCreateWithoutPlacementsInput = {
@@ -998,6 +1236,8 @@ export type tournament_nominationsCreateWithoutPlacementsInput = {
   blocks?: Prisma.competition_blocksCreateNestedManyWithoutTournament_nominationInput
   withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournament_nominationInput
   rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournament_nominationInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsCreateNestedOneWithoutTournament_nominationInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutTournament_nominationInput
 }
 
 export type tournament_nominationsUncheckedCreateWithoutPlacementsInput = {
@@ -1013,6 +1253,8 @@ export type tournament_nominationsUncheckedCreateWithoutPlacementsInput = {
   blocks?: Prisma.competition_blocksUncheckedCreateNestedManyWithoutTournament_nominationInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournament_nominationInput
   rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournament_nominationInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUncheckedCreateNestedOneWithoutTournament_nominationInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutTournament_nominationInput
 }
 
 export type tournament_nominationsCreateOrConnectWithoutPlacementsInput = {
@@ -1043,6 +1285,8 @@ export type tournament_nominationsUpdateWithoutPlacementsInput = {
   blocks?: Prisma.competition_blocksUpdateManyWithoutTournament_nominationNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournament_nominationNestedInput
   rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournament_nominationNestedInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUpdateOneWithoutTournament_nominationNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutTournament_nominationNestedInput
 }
 
 export type tournament_nominationsUncheckedUpdateWithoutPlacementsInput = {
@@ -1058,6 +1302,8 @@ export type tournament_nominationsUncheckedUpdateWithoutPlacementsInput = {
   blocks?: Prisma.competition_blocksUncheckedUpdateManyWithoutTournament_nominationNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournament_nominationNestedInput
   rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUncheckedUpdateOneWithoutTournament_nominationNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutTournament_nominationNestedInput
 }
 
 export type tournament_nominationsCreateManyTournamentInput = {
@@ -1083,6 +1329,8 @@ export type tournament_nominationsUpdateWithoutTournamentInput = {
   placements?: Prisma.competition_placementsUpdateManyWithoutTournament_nominationNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournament_nominationNestedInput
   rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournament_nominationNestedInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUpdateOneWithoutTournament_nominationNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutTournament_nominationNestedInput
 }
 
 export type tournament_nominationsUncheckedUpdateWithoutTournamentInput = {
@@ -1098,6 +1346,8 @@ export type tournament_nominationsUncheckedUpdateWithoutTournamentInput = {
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutTournament_nominationNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournament_nominationNestedInput
   rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUncheckedUpdateOneWithoutTournament_nominationNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutTournament_nominationNestedInput
 }
 
 export type tournament_nominationsUncheckedUpdateManyWithoutTournamentInput = {
@@ -1134,6 +1384,8 @@ export type tournament_nominationsUpdateWithoutNominationInput = {
   placements?: Prisma.competition_placementsUpdateManyWithoutTournament_nominationNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournament_nominationNestedInput
   rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournament_nominationNestedInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUpdateOneWithoutTournament_nominationNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutTournament_nominationNestedInput
 }
 
 export type tournament_nominationsUncheckedUpdateWithoutNominationInput = {
@@ -1149,6 +1401,8 @@ export type tournament_nominationsUncheckedUpdateWithoutNominationInput = {
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutTournament_nominationNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournament_nominationNestedInput
   rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournament_nominationNestedInput
+  russia_hmb_rating_calculation?: Prisma.russia_hmb_rating_calculationsUncheckedUpdateOneWithoutTournament_nominationNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutTournament_nominationNestedInput
 }
 
 export type tournament_nominationsUncheckedUpdateManyWithoutNominationInput = {
@@ -1172,6 +1426,7 @@ export type Tournament_nominationsCountOutputType = {
   placements: number
   withdrawals: number
   rating_history: number
+  russia_hmb_rating_results: number
 }
 
 export type Tournament_nominationsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1179,6 +1434,7 @@ export type Tournament_nominationsCountOutputTypeSelect<ExtArgs extends runtime.
   placements?: boolean | Tournament_nominationsCountOutputTypeCountPlacementsArgs
   withdrawals?: boolean | Tournament_nominationsCountOutputTypeCountWithdrawalsArgs
   rating_history?: boolean | Tournament_nominationsCountOutputTypeCountRating_historyArgs
+  russia_hmb_rating_results?: boolean | Tournament_nominationsCountOutputTypeCountRussia_hmb_rating_resultsArgs
 }
 
 /**
@@ -1219,6 +1475,13 @@ export type Tournament_nominationsCountOutputTypeCountRating_historyArgs<ExtArgs
   where?: Prisma.fighter_nomination_rating_historyWhereInput
 }
 
+/**
+ * Tournament_nominationsCountOutputType without action
+ */
+export type Tournament_nominationsCountOutputTypeCountRussia_hmb_rating_resultsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.russia_hmb_rating_resultsWhereInput
+}
+
 
 export type tournament_nominationsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1236,6 +1499,8 @@ export type tournament_nominationsSelect<ExtArgs extends runtime.Types.Extension
   placements?: boolean | Prisma.tournament_nominations$placementsArgs<ExtArgs>
   withdrawals?: boolean | Prisma.tournament_nominations$withdrawalsArgs<ExtArgs>
   rating_history?: boolean | Prisma.tournament_nominations$rating_historyArgs<ExtArgs>
+  russia_hmb_rating_calculation?: boolean | Prisma.tournament_nominations$russia_hmb_rating_calculationArgs<ExtArgs>
+  russia_hmb_rating_results?: boolean | Prisma.tournament_nominations$russia_hmb_rating_resultsArgs<ExtArgs>
   _count?: boolean | Prisma.Tournament_nominationsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tournament_nominations"]>
 
@@ -1287,6 +1552,8 @@ export type tournament_nominationsInclude<ExtArgs extends runtime.Types.Extensio
   placements?: boolean | Prisma.tournament_nominations$placementsArgs<ExtArgs>
   withdrawals?: boolean | Prisma.tournament_nominations$withdrawalsArgs<ExtArgs>
   rating_history?: boolean | Prisma.tournament_nominations$rating_historyArgs<ExtArgs>
+  russia_hmb_rating_calculation?: boolean | Prisma.tournament_nominations$russia_hmb_rating_calculationArgs<ExtArgs>
+  russia_hmb_rating_results?: boolean | Prisma.tournament_nominations$russia_hmb_rating_resultsArgs<ExtArgs>
   _count?: boolean | Prisma.Tournament_nominationsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type tournament_nominationsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1307,6 +1574,8 @@ export type $tournament_nominationsPayload<ExtArgs extends runtime.Types.Extensi
     placements: Prisma.$competition_placementsPayload<ExtArgs>[]
     withdrawals: Prisma.$fighter_withdrawalsPayload<ExtArgs>[]
     rating_history: Prisma.$fighter_nomination_rating_historyPayload<ExtArgs>[]
+    russia_hmb_rating_calculation: Prisma.$russia_hmb_rating_calculationsPayload<ExtArgs> | null
+    russia_hmb_rating_results: Prisma.$russia_hmb_rating_resultsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1718,6 +1987,8 @@ export interface Prisma__tournament_nominationsClient<T, Null = never, ExtArgs e
   placements<T extends Prisma.tournament_nominations$placementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournament_nominations$placementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$competition_placementsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   withdrawals<T extends Prisma.tournament_nominations$withdrawalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournament_nominations$withdrawalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fighter_withdrawalsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   rating_history<T extends Prisma.tournament_nominations$rating_historyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournament_nominations$rating_historyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fighter_nomination_rating_historyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  russia_hmb_rating_calculation<T extends Prisma.tournament_nominations$russia_hmb_rating_calculationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournament_nominations$russia_hmb_rating_calculationArgs<ExtArgs>>): Prisma.Prisma__russia_hmb_rating_calculationsClient<runtime.Types.Result.GetResult<Prisma.$russia_hmb_rating_calculationsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  russia_hmb_rating_results<T extends Prisma.tournament_nominations$russia_hmb_rating_resultsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournament_nominations$russia_hmb_rating_resultsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$russia_hmb_rating_resultsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2245,6 +2516,49 @@ export type tournament_nominations$rating_historyArgs<ExtArgs extends runtime.Ty
   take?: number
   skip?: number
   distinct?: Prisma.Fighter_nomination_rating_historyScalarFieldEnum | Prisma.Fighter_nomination_rating_historyScalarFieldEnum[]
+}
+
+/**
+ * tournament_nominations.russia_hmb_rating_calculation
+ */
+export type tournament_nominations$russia_hmb_rating_calculationArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the russia_hmb_rating_calculations
+   */
+  select?: Prisma.russia_hmb_rating_calculationsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the russia_hmb_rating_calculations
+   */
+  omit?: Prisma.russia_hmb_rating_calculationsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.russia_hmb_rating_calculationsInclude<ExtArgs> | null
+  where?: Prisma.russia_hmb_rating_calculationsWhereInput
+}
+
+/**
+ * tournament_nominations.russia_hmb_rating_results
+ */
+export type tournament_nominations$russia_hmb_rating_resultsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the russia_hmb_rating_results
+   */
+  select?: Prisma.russia_hmb_rating_resultsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the russia_hmb_rating_results
+   */
+  omit?: Prisma.russia_hmb_rating_resultsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.russia_hmb_rating_resultsInclude<ExtArgs> | null
+  where?: Prisma.russia_hmb_rating_resultsWhereInput
+  orderBy?: Prisma.russia_hmb_rating_resultsOrderByWithRelationInput | Prisma.russia_hmb_rating_resultsOrderByWithRelationInput[]
+  cursor?: Prisma.russia_hmb_rating_resultsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Russia_hmb_rating_resultsScalarFieldEnum | Prisma.Russia_hmb_rating_resultsScalarFieldEnum[]
 }
 
 /**

@@ -1,6 +1,7 @@
 import type {
   CompetitionBlock,
   CompetitionPlacement,
+  CompetitionRussiaHmbRating,
   CreateDisciplinaryCardPayload,
   ActiveDisciplinaryCardSummary,
   ActiveWithdrawalSummary,
@@ -136,6 +137,7 @@ export interface TournamentNominationTabsState {
   pendingTie: PendingTie | null
   activeOlympicFinalResultsFixed: boolean
   nominationFinished: boolean
+  russiaHmbRating: CompetitionRussiaHmbRating
 }
 
 export interface TournamentNominationTabsPermissions {
@@ -143,6 +145,7 @@ export interface TournamentNominationTabsPermissions {
   canUseCompetitionBackwardActions: boolean
   canManageCards: boolean
   canIssueCards: boolean
+  canCalculateRussiaHmbRating: boolean
 }
 
 export interface TournamentNominationTabsCompetitionOptions {
@@ -176,6 +179,7 @@ export interface TournamentNominationTabsActions {
   cancelGroupFightsFixation(blockId: number): void
   cancelGroupResultsFixation(blockId: number): void
   finishCompetition(): void
+  calculateRussiaHmbRating(coefficient: 1 | 2 | 4): Promise<void>
   refreshCardsAndCompetition(): void
   createNoShowWithdrawal: CreateNoShowWithdrawalAction
   createFightWithdrawal: CreateFightWithdrawalAction

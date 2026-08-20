@@ -62,6 +62,7 @@ model fighters {
   disciplinary_cards        disciplinary_cards[]
   nomination_ratings        fighter_nomination_ratings[]
   nomination_rating_history fighter_nomination_rating_history[]
+  russia_hmb_rating_results russia_hmb_rating_results[]
 }
 
 model marshals {
@@ -107,6 +108,8 @@ model tournaments {
   disciplinary_cards     disciplinary_cards[]
   fighter_withdrawals    fighter_withdrawals[]
   fighter_rating_history fighter_nomination_rating_history[]
+  russia_hmb_rating_calculations russia_hmb_rating_calculations[]
+  russia_hmb_rating_results      russia_hmb_rating_results[]
   marshals               tournament_marshals[]
 }
 
@@ -139,6 +142,8 @@ model nominations {
   fights                 fights[]
   fighter_ratings        fighter_nomination_ratings[]
   fighter_rating_history fighter_nomination_rating_history[]
+  russia_hmb_rating_calculations russia_hmb_rating_calculations[]
+  russia_hmb_rating_results      russia_hmb_rating_results[]
 
   @@unique([name_ru, is_male])
   @@unique([name_en, is_male])
@@ -163,6 +168,8 @@ model tournament_nominations {
   placements     competition_placements[]
   withdrawals    fighter_withdrawals[]
   rating_history fighter_nomination_rating_history[]
+  russia_hmb_rating_calculation russia_hmb_rating_calculations?
+  russia_hmb_rating_results     russia_hmb_rating_results[]
 
   @@index([tournament_id, nomination_id])
 }
@@ -181,6 +188,7 @@ model competitors {
   bracket_slots bracket_slots[]
   placements    competition_placements[]
   withdrawals   fighter_withdrawals[]
+  russia_hmb_rating_results russia_hmb_rating_results[]
 
   // Связи для таблицы боев (кто участвовал)
   fights_as_f1   fights[]         @relation("Fighter1")
@@ -411,6 +419,58 @@ model fighter_nomination_rating_history {
   @@index([fighter_id, created_at])
 }
 
+model russia_hmb_rating_calculations {
+  id                       Int      @id @default(autoincrement())
+  tournament_nomination_id Int      @unique
+  tournament_id            Int
+  nomination_id            Int
+  event_year               Int
+  coefficient              Int
+  calculated_by_user_id    Int?
+  calculated_at            DateTime @default(now())
+
+  tournament_nomination tournament_nominations    @relation(fields: [tournament_nomination_id], references: [id], onDelete: Cascade)
+  tournament            tournaments               @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
+  nomination            nominations               @relation(fields: [nomination_id], references: [id], onDelete: Cascade)
+  calculated_by         users?                    @relation(fields: [calculated_by_user_id], references: [id], onDelete: SetNull)
+  results               russia_hmb_rating_results[]
+
+  @@index([event_year, nomination_id])
+  @@index([tournament_id, nomination_id])
+  @@index([calculated_by_user_id])
+}
+
+model russia_hmb_rating_results {
+  id                       Int @id @default(autoincrement())
+  calculation_id           Int
+  tournament_nomination_id Int
+  tournament_id            Int
+  nomination_id            Int
+  fighter_id               Int
+  competitor_id            Int
+  points                   Int
+  qc_points                Int @default(0)
+  qn_points                Int @default(0)
+  qm_points                Int @default(0)
+  yellow_cards_count       Int @default(0)
+  active_red_cards_count   Int @default(0)
+  no_show_penalty_count    Int @default(0)
+
+  calculation           russia_hmb_rating_calculations @relation(fields: [calculation_id], references: [id], onDelete: Cascade)
+  tournament_nomination tournament_nominations         @relation(fields: [tournament_nomination_id], references: [id], onDelete: Cascade)
+  tournament            tournaments                    @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
+  nomination            nominations                    @relation(fields: [nomination_id], references: [id], onDelete: Cascade)
+  fighter               fighters                       @relation(fields: [fighter_id], references: [id], onDelete: Cascade)
+  competitor            competitors                    @relation(fields: [competitor_id], references: [id], onDelete: Cascade)
+
+  @@unique([calculation_id, fighter_id])
+  @@unique([tournament_nomination_id, fighter_id])
+  @@index([nomination_id, fighter_id])
+  @@index([fighter_id])
+  @@index([tournament_id, nomination_id])
+  @@index([points])
+}
+
 model competition_blocks {
   id                       Int      @id @default(autoincrement())
   tournament_nomination_id Int
@@ -504,4 +564,5 @@ model users {
   is_secretary Boolean  @default(false)
   refreshToken String?  @db.Text
   createdAt    DateTime @default(now())
+  russia_hmb_rating_calculations russia_hmb_rating_calculations[]
 }

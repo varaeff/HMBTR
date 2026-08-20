@@ -7,6 +7,9 @@ import { RatingLeaderboardService } from './leaderboard/rating-leaderboard.servi
 import { FighterRatingProfileService } from './profile/fighter-rating-profile.service';
 import { RatingsController } from './ratings.controller';
 import { RatingsService } from './ratings.service';
+import { RussiaHmbRatingPersistence } from './russia-hmb/russia-hmb-rating-persistence.service';
+import { RussiaHmbRatingReader } from './russia-hmb/russia-hmb-rating-reader.service';
+import { RussiaHmbRatingService } from './russia-hmb/russia-hmb-rating.service';
 
 @Module({
   imports: [PrismaModule],
@@ -17,6 +20,9 @@ import { RatingsService } from './ratings.service';
     RatingCalculationService,
     RatingLeaderboardService,
     RatingPersistenceService,
+    RussiaHmbRatingPersistence,
+    RussiaHmbRatingReader,
+    RussiaHmbRatingService,
     RatingsService,
   ],
   exports: [RatingsService],

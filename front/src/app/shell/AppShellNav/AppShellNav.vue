@@ -28,7 +28,7 @@ const LoginWidget = defineAsyncComponent(() => import('@/features/auth/LoginWidg
 
 const { isDark, toggleTheme } = useTheme()
 const authStore = useAuthStore()
-const { isAuthenticated, isAdmin } = storeToRefs(authStore)
+const { isAuthenticated, isAdmin, hasAnyRole } = storeToRefs(authStore)
 
 const links = [
   {
@@ -50,7 +50,12 @@ const links = [
   },
   {
     title: 'menuRatingLink',
-    url: '/ratings'
+    url: '/ratings',
+    roleOnly: true
+  },
+  {
+    title: 'menuRussiaHmbRatingLink',
+    url: '/russia-hmb-ratings'
   },
   {
     title: 'menuUsersLink',
@@ -90,7 +95,7 @@ const links = [
               <SheetClose
                 v-for="link in links"
                 :key="link.url"
-                v-show="!link.adminOnly || isAdmin"
+                v-show="(!link.adminOnly || isAdmin) && (!link.roleOnly || hasAnyRole)"
                 as-child
               >
                 <RouterLink
@@ -114,7 +119,7 @@ const links = [
           <NavigationMenuItem
             v-for="link in links"
             :key="link.url"
-            v-show="!link.adminOnly || isAdmin"
+            v-show="(!link.adminOnly || isAdmin) && (!link.roleOnly || hasAnyRole)"
           >
             <NavigationMenuLink as-child :class="navigationMenuTriggerStyle()">
               <RouterLink :to="link.url">{{ $t(link.title) }}</RouterLink>

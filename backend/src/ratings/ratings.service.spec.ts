@@ -249,6 +249,9 @@ describe('FighterRatingProfileService', () => {
             { nomination_id: 20, fighter_id: 1 },
           ]),
       },
+      russia_hmb_rating_results: {
+        findMany: jest.fn().mockResolvedValue([]),
+      },
       fighters: {
         findUnique: jest.fn().mockResolvedValue({ id: 1 }),
       },
@@ -276,7 +279,9 @@ describe('FighterRatingProfileService', () => {
       },
     } as unknown as PrismaService);
 
-    await expect(service.findFighterProfile(1)).resolves.toMatchObject({
+    await expect(
+      service.findFighterProfile(1, { includeEloRatings: true }),
+    ).resolves.toMatchObject({
       fights: {
         total: { fights: 1, wins: 1 },
         by_nomination: [

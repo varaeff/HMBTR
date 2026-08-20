@@ -166,6 +166,7 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
   const canEditCompetition = computed(() => canEdit && !nominationFinished.value)
   const canUseCompetitionBackwardActions = computed(() => canEdit)
   const canManageCards = computed(() => hasMarshalManageAccess())
+  const canCalculateRussiaHmbRating = computed(() => hasMarshalManageAccess())
   const canIssueCards = computed(() => hasTournamentMarshalAccess())
   const canManageTournamentMarshals = computed(() => hasTournamentMarshalAccess())
   const hasOpenFighterRegistration = computed(() => tournamentNominations.value.open.length > 0)
@@ -315,6 +316,7 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
       canEditCompetition,
       canUseCompetitionBackwardActions,
       canManageCards,
+      canCalculateRussiaHmbRating,
       canIssueCards,
       canManageTournamentMarshals
     }),
@@ -336,6 +338,7 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
       blocks,
       activeBlock,
       placements,
+      russiaHmbRating: computed(() => competitionStore.getRussiaHmbRating),
       pendingTie,
       hasBlockingGroupAdvancementTie,
       olympicCompetitorIds,
@@ -359,6 +362,9 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
       setCompetitorsListOpen,
       setCardsOpen,
       ...competitionActions,
+      calculateRussiaHmbRating: async (coefficient: 1 | 2 | 4) => {
+        await competitionStore.calculateRussiaHmbRating(coefficient)
+      },
       getBlockIsOpen,
       setBlockIsOpen,
       getRedCardGroupFighterKeys,

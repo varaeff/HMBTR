@@ -522,7 +522,9 @@ Pre-block no-show withdrawals are not tied to a source fight and should survive 
 - таблица лидеров;
 - профиль рейтинга бойца;
 - расчет рейтинга после завершения турнира;
-- сохранение рейтинга и истории.
+- сохранение рейтинга и истории;
+- расчет рейтинга ИСБ России, сохраненные результаты номинации, публичные
+  годовые таблицы лидеров и сводки для профиля бойца.
 
 ### Публичная Граница
 
@@ -538,10 +540,20 @@ Pre-block no-show withdrawals are not tied to a source fight and should survive 
 - `calculation/RatingCalculationReader` - чтение данных завершенного турнира и боев для расчета;
 - `calculation/RatingCalculationService` - сценарий расчета рейтинга и orchestration транзакции;
 - `calculation/RatingPersistenceService` - сохранение рейтинга и истории;
+- `russia-hmb/RussiaHmbRatingService` - facade рейтинга ИСБ России для
+  расчета и публичных read models;
+- `russia-hmb/RussiaHmbRatingReader` - read model завершенной номинации,
+  боев, мест, снятий и карточек для расчета ИСБ России;
+- `russia-hmb/RussiaHmbRatingPersistence` - one-time сохранение расчета ИСБ
+  России и результатов бойцов;
+- `russia-hmb-rating.logic.ts` - чистая формула очков ИСБ России;
 - `ratings.logic.ts` - чистые алгоритмы рейтинга;
 - `ratings-internal.types.ts` - локальные типы рейтинга и `PrismaTx`.
 
 Ratings не должен знать детали жизненного цикла соревнования сверх сохраненных финальных/завершенных данных, нужных для расчета.
+Elo и ИСБ России - отдельные рейтинговые системы: ИСБ читает завершенные
+соревнования, карточки и снятия, но не должен менять таблицы или статус
+расчета Elo.
 
 ## Helpers Счета Боёв
 

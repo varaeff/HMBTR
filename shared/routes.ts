@@ -109,6 +109,23 @@ export const API_ROUTES = {
       `/ratings/nomination/${nominationId}`,
     BY_FIGHTER_PROFILE: (fighterId: string | number) =>
       `/ratings/fighter/${fighterId}/profile`,
+    BY_FIGHTER_ELO_PROFILE: (fighterId: string | number) =>
+      `/ratings/fighter/${fighterId}/profile/elo`,
+    RUSSIA_HMB_ROOT: "ratings/russia-hmb",
+    RUSSIA_HMB_CALCULATE: "/ratings/russia-hmb/calculate",
+    RUSSIA_HMB_TOURNAMENT_NOMINATION: (
+      tournamentId: string | number,
+      nominationId: string | number,
+    ) => `/ratings/russia-hmb/tournament/${tournamentId}/${nominationId}`,
+    RUSSIA_HMB_YEARS: "/ratings/russia-hmb/years",
+    RUSSIA_HMB_NOMINATIONS_BY_YEAR: (year: string | number) =>
+      `/ratings/russia-hmb/years/${year}/nominations`,
+    RUSSIA_HMB_LEADERBOARD: (
+      year: string | number,
+      nominationId: string | number,
+    ) => `/ratings/russia-hmb/years/${year}/nomination/${nominationId}`,
+    RUSSIA_HMB_FIGHTER_PROFILE: (fighterId: string | number) =>
+      `/ratings/russia-hmb/fighter/${fighterId}/profile`,
   },
   COMPETITION: {
     ROOT: "competition",

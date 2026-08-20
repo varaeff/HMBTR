@@ -15,7 +15,10 @@ export interface FighterProfileTournament {
   tournament_id: number;
   tournament_name: string;
   event_date: Date | null;
-  nomination: FighterProfileNomination;
+  nominations: Array<{
+    nomination: FighterProfileNomination;
+    russia_hmb_rating_points: number | null;
+  }>;
 }
 
 export interface FighterFightCounter {
@@ -53,6 +56,14 @@ export interface FighterProfileStats {
     by_nomination: FighterNominationFightCounter[];
   };
   ratings: FighterRatingSummary[];
+  russia_hmb_ratings: Array<{
+    year: number;
+    nominations: Array<{
+      nomination: FighterProfileNomination;
+      points: number;
+      tournaments_count: number;
+    }>;
+  }>;
 }
 
 export interface RatingTournamentNomination {

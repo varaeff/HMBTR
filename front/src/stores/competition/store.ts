@@ -3,6 +3,7 @@ import type {
   BlockData,
   CompetitionBlock,
   CompetitionPlacement,
+  CompetitionRussiaHmbRating,
   Competitor,
   FightData,
   Group,
@@ -26,6 +27,7 @@ interface CompetitionState {
   blocks: CompetitionBlock[]
   activeBlockId: number | null
   placements: CompetitionPlacement[]
+  russiaHmbRating: CompetitionRussiaHmbRating
   activeWithdrawals: ActiveWithdrawalSummary[]
   pendingTie: PendingTie | null
   isFinished: boolean
@@ -50,6 +52,7 @@ export const useCompetitionStore = defineStore({
     blocks: [],
     activeBlockId: null,
     placements: [],
+    russiaHmbRating: null,
     activeWithdrawals: [],
     pendingTie: null,
     isFinished: false,
@@ -69,6 +72,7 @@ export const useCompetitionStore = defineStore({
       this.blocks = []
       this.activeBlockId = null
       this.placements = []
+      this.russiaHmbRating = null
       this.activeWithdrawals = []
       this.pendingTie = null
       this.isFinished = false
@@ -91,6 +95,7 @@ export const useCompetitionStore = defineStore({
       this.blocks = mapped.blocks
       this.activeBlockId = mapped.activeBlockId
       this.placements = mapped.placements
+      this.russiaHmbRating = mapped.russiaHmbRating
       this.activeWithdrawals = mapped.activeWithdrawals
       this.pendingTie = mapped.pendingTie
       this.isFinished = mapped.isFinished
@@ -233,6 +238,16 @@ export const useCompetitionStore = defineStore({
       this.applyCompetitionState(data)
     },
 
+    async calculateRussiaHmbRating(coefficient: 1 | 2 | 4) {
+      const rating = await competitionCommands.calculateRussiaHmbRating(
+        this.tournamentId,
+        this.nominationId,
+        coefficient
+      )
+      this.russiaHmbRating = rating
+      return rating
+    },
+
     async fixResults(blockId: number, fights: FightData[], round?: number) {
       const data = await competitionCommands.fixResults(blockId, fights, round)
       clearFightResultDrafts(this.tournamentId, this.nominationId, fights)
@@ -296,6 +311,8 @@ export const useCompetitionStore = defineStore({
         ?.fightsBlocks ?? [],
 
     getPlacements: (state) => state.placements,
+
+    getRussiaHmbRating: (state) => state.russiaHmbRating,
 
     getActiveWithdrawals: (state) => state.activeWithdrawals,
 

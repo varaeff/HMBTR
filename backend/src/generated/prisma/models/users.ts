@@ -272,6 +272,7 @@ export type usersWhereInput = {
   is_secretary?: Prisma.BoolFilter<"users"> | boolean
   refreshToken?: Prisma.StringNullableFilter<"users"> | string | null
   createdAt?: Prisma.DateTimeFilter<"users"> | Date | string
+  russia_hmb_rating_calculations?: Prisma.Russia_hmb_rating_calculationsListRelationFilter
 }
 
 export type usersOrderByWithRelationInput = {
@@ -287,6 +288,7 @@ export type usersOrderByWithRelationInput = {
   is_secretary?: Prisma.SortOrder
   refreshToken?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsOrderByRelationAggregateInput
 }
 
 export type usersWhereUniqueInput = Prisma.AtLeast<{
@@ -305,6 +307,7 @@ export type usersWhereUniqueInput = Prisma.AtLeast<{
   is_secretary?: Prisma.BoolFilter<"users"> | boolean
   refreshToken?: Prisma.StringNullableFilter<"users"> | string | null
   createdAt?: Prisma.DateTimeFilter<"users"> | Date | string
+  russia_hmb_rating_calculations?: Prisma.Russia_hmb_rating_calculationsListRelationFilter
 }, "id" | "username" | "email">
 
 export type usersOrderByWithAggregationInput = {
@@ -357,6 +360,7 @@ export type usersCreateInput = {
   is_secretary?: boolean
   refreshToken?: string | null
   createdAt?: Date | string
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsCreateNestedManyWithoutCalculated_byInput
 }
 
 export type usersUncheckedCreateInput = {
@@ -372,6 +376,7 @@ export type usersUncheckedCreateInput = {
   is_secretary?: boolean
   refreshToken?: string | null
   createdAt?: Date | string
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedCreateNestedManyWithoutCalculated_byInput
 }
 
 export type usersUpdateInput = {
@@ -386,6 +391,7 @@ export type usersUpdateInput = {
   is_secretary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUpdateManyWithoutCalculated_byNestedInput
 }
 
 export type usersUncheckedUpdateInput = {
@@ -401,6 +407,7 @@ export type usersUncheckedUpdateInput = {
   is_secretary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedUpdateManyWithoutCalculated_byNestedInput
 }
 
 export type usersCreateManyInput = {
@@ -445,6 +452,11 @@ export type usersUncheckedUpdateManyInput = {
   is_secretary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type UsersNullableScalarRelationFilter = {
+  is?: Prisma.usersWhereInput | null
+  isNot?: Prisma.usersWhereInput | null
 }
 
 export type usersCountOrderByAggregateInput = {
@@ -500,6 +512,125 @@ export type usersSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
 }
 
+export type usersCreateNestedOneWithoutRussia_hmb_rating_calculationsInput = {
+  create?: Prisma.XOR<Prisma.usersCreateWithoutRussia_hmb_rating_calculationsInput, Prisma.usersUncheckedCreateWithoutRussia_hmb_rating_calculationsInput>
+  connectOrCreate?: Prisma.usersCreateOrConnectWithoutRussia_hmb_rating_calculationsInput
+  connect?: Prisma.usersWhereUniqueInput
+}
+
+export type usersUpdateOneWithoutRussia_hmb_rating_calculationsNestedInput = {
+  create?: Prisma.XOR<Prisma.usersCreateWithoutRussia_hmb_rating_calculationsInput, Prisma.usersUncheckedCreateWithoutRussia_hmb_rating_calculationsInput>
+  connectOrCreate?: Prisma.usersCreateOrConnectWithoutRussia_hmb_rating_calculationsInput
+  upsert?: Prisma.usersUpsertWithoutRussia_hmb_rating_calculationsInput
+  disconnect?: Prisma.usersWhereInput | boolean
+  delete?: Prisma.usersWhereInput | boolean
+  connect?: Prisma.usersWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.usersUpdateToOneWithWhereWithoutRussia_hmb_rating_calculationsInput, Prisma.usersUpdateWithoutRussia_hmb_rating_calculationsInput>, Prisma.usersUncheckedUpdateWithoutRussia_hmb_rating_calculationsInput>
+}
+
+export type usersCreateWithoutRussia_hmb_rating_calculationsInput = {
+  username: string
+  password: string
+  surname: string
+  name: string
+  patronymic?: string | null
+  email?: string | null
+  is_admin?: boolean
+  is_organizer?: boolean
+  is_secretary?: boolean
+  refreshToken?: string | null
+  createdAt?: Date | string
+}
+
+export type usersUncheckedCreateWithoutRussia_hmb_rating_calculationsInput = {
+  id?: number
+  username: string
+  password: string
+  surname: string
+  name: string
+  patronymic?: string | null
+  email?: string | null
+  is_admin?: boolean
+  is_organizer?: boolean
+  is_secretary?: boolean
+  refreshToken?: string | null
+  createdAt?: Date | string
+}
+
+export type usersCreateOrConnectWithoutRussia_hmb_rating_calculationsInput = {
+  where: Prisma.usersWhereUniqueInput
+  create: Prisma.XOR<Prisma.usersCreateWithoutRussia_hmb_rating_calculationsInput, Prisma.usersUncheckedCreateWithoutRussia_hmb_rating_calculationsInput>
+}
+
+export type usersUpsertWithoutRussia_hmb_rating_calculationsInput = {
+  update: Prisma.XOR<Prisma.usersUpdateWithoutRussia_hmb_rating_calculationsInput, Prisma.usersUncheckedUpdateWithoutRussia_hmb_rating_calculationsInput>
+  create: Prisma.XOR<Prisma.usersCreateWithoutRussia_hmb_rating_calculationsInput, Prisma.usersUncheckedCreateWithoutRussia_hmb_rating_calculationsInput>
+  where?: Prisma.usersWhereInput
+}
+
+export type usersUpdateToOneWithWhereWithoutRussia_hmb_rating_calculationsInput = {
+  where?: Prisma.usersWhereInput
+  data: Prisma.XOR<Prisma.usersUpdateWithoutRussia_hmb_rating_calculationsInput, Prisma.usersUncheckedUpdateWithoutRussia_hmb_rating_calculationsInput>
+}
+
+export type usersUpdateWithoutRussia_hmb_rating_calculationsInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  surname?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  patronymic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_admin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_organizer?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_secretary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type usersUncheckedUpdateWithoutRussia_hmb_rating_calculationsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  surname?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  patronymic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_admin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_organizer?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_secretary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+
+/**
+ * Count Type UsersCountOutputType
+ */
+
+export type UsersCountOutputType = {
+  russia_hmb_rating_calculations: number
+}
+
+export type UsersCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  russia_hmb_rating_calculations?: boolean | UsersCountOutputTypeCountRussia_hmb_rating_calculationsArgs
+}
+
+/**
+ * UsersCountOutputType without action
+ */
+export type UsersCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UsersCountOutputType
+   */
+  select?: Prisma.UsersCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * UsersCountOutputType without action
+ */
+export type UsersCountOutputTypeCountRussia_hmb_rating_calculationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.russia_hmb_rating_calculationsWhereInput
+}
 
 
 export type usersSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -515,6 +646,8 @@ export type usersSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   is_secretary?: boolean
   refreshToken?: boolean
   createdAt?: boolean
+  russia_hmb_rating_calculations?: boolean | Prisma.users$russia_hmb_rating_calculationsArgs<ExtArgs>
+  _count?: boolean | Prisma.UsersCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["users"]>
 
 export type usersSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -563,10 +696,18 @@ export type usersSelectScalar = {
 }
 
 export type usersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "password" | "surname" | "name" | "patronymic" | "email" | "is_admin" | "is_organizer" | "is_secretary" | "refreshToken" | "createdAt", ExtArgs["result"]["users"]>
+export type usersInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  russia_hmb_rating_calculations?: boolean | Prisma.users$russia_hmb_rating_calculationsArgs<ExtArgs>
+  _count?: boolean | Prisma.UsersCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type usersIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type usersIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $usersPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "users"
-  objects: {}
+  objects: {
+    russia_hmb_rating_calculations: Prisma.$russia_hmb_rating_calculationsPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     username: string
@@ -974,6 +1115,7 @@ readonly fields: usersFieldRefs;
  */
 export interface Prisma__usersClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  russia_hmb_rating_calculations<T extends Prisma.users$russia_hmb_rating_calculationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.users$russia_hmb_rating_calculationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$russia_hmb_rating_calculationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1032,6 +1174,10 @@ export type usersFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Interna
    */
   omit?: Prisma.usersOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.usersInclude<ExtArgs> | null
+  /**
    * Filter, which users to fetch.
    */
   where: Prisma.usersWhereUniqueInput
@@ -1050,6 +1196,10 @@ export type usersFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensions.
    */
   omit?: Prisma.usersOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.usersInclude<ExtArgs> | null
+  /**
    * Filter, which users to fetch.
    */
   where: Prisma.usersWhereUniqueInput
@@ -1067,6 +1217,10 @@ export type usersFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Omit specific fields from the users
    */
   omit?: Prisma.usersOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.usersInclude<ExtArgs> | null
   /**
    * Filter, which users to fetch.
    */
@@ -1116,6 +1270,10 @@ export type usersFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.usersOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.usersInclude<ExtArgs> | null
+  /**
    * Filter, which users to fetch.
    */
   where?: Prisma.usersWhereInput
@@ -1164,6 +1322,10 @@ export type usersFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   omit?: Prisma.usersOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.usersInclude<ExtArgs> | null
+  /**
    * Filter, which users to fetch.
    */
   where?: Prisma.usersWhereInput
@@ -1206,6 +1368,10 @@ export type usersCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the users
    */
   omit?: Prisma.usersOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.usersInclude<ExtArgs> | null
   /**
    * The data needed to create a users.
    */
@@ -1254,6 +1420,10 @@ export type usersUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the users
    */
   omit?: Prisma.usersOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.usersInclude<ExtArgs> | null
   /**
    * The data needed to update a users.
    */
@@ -1321,6 +1491,10 @@ export type usersUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    */
   omit?: Prisma.usersOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.usersInclude<ExtArgs> | null
+  /**
    * The filter to search for the users to update in case it exists.
    */
   where: Prisma.usersWhereUniqueInput
@@ -1347,6 +1521,10 @@ export type usersDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    */
   omit?: Prisma.usersOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.usersInclude<ExtArgs> | null
+  /**
    * Filter which users to delete.
    */
   where: Prisma.usersWhereUniqueInput
@@ -1367,6 +1545,30 @@ export type usersDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
 }
 
 /**
+ * users.russia_hmb_rating_calculations
+ */
+export type users$russia_hmb_rating_calculationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the russia_hmb_rating_calculations
+   */
+  select?: Prisma.russia_hmb_rating_calculationsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the russia_hmb_rating_calculations
+   */
+  omit?: Prisma.russia_hmb_rating_calculationsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.russia_hmb_rating_calculationsInclude<ExtArgs> | null
+  where?: Prisma.russia_hmb_rating_calculationsWhereInput
+  orderBy?: Prisma.russia_hmb_rating_calculationsOrderByWithRelationInput | Prisma.russia_hmb_rating_calculationsOrderByWithRelationInput[]
+  cursor?: Prisma.russia_hmb_rating_calculationsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Russia_hmb_rating_calculationsScalarFieldEnum | Prisma.Russia_hmb_rating_calculationsScalarFieldEnum[]
+}
+
+/**
  * users without action
  */
 export type usersDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1378,4 +1580,8 @@ export type usersDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Omit specific fields from the users
    */
   omit?: Prisma.usersOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.usersInclude<ExtArgs> | null
 }

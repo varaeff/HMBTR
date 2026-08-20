@@ -1,7 +1,15 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useTranslation } from 'i18next-vue'
 import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
+import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { CollapsibleSection } from '@/components/ui/collapsible-section'
 import { CompetitionPodium } from '@/widgets/tournament/CompetitionPodium'
@@ -21,6 +29,7 @@ import type {
   TournamentNominationTabsPermissions,
   TournamentNominationTabsState
 } from '@/widgets/tournament/types'
+import { tData } from '@/lib/utils'
 
 const props = defineProps<{
   state: TournamentNominationTabsState
@@ -31,6 +40,9 @@ const props = defineProps<{
 }>()
 
 const { i18next } = useTranslation()
+const isRussiaHmbDialogOpen = ref(false)
+const isRussiaHmbCalculating = ref(false)
+const selectedRussiaHmbCoefficient = ref<'1' | '2' | '4'>('1')
 
 const activeTabModel = computed({
   get: () => props.state.activeTab,
@@ -52,6 +64,33 @@ const canDeleteCurrentNomination = computed(
 const showCompetitorsSection = computed(
   () => props.state.nominationCompetitors.length > 0 || canDeleteCurrentNomination.value
 )
+
+const canShowRussiaHmbAction = computed(
+  () =>
+    props.state.nominationFinished &&
+    (Boolean(props.state.russiaHmbRating) || props.permissions.canCalculateRussiaHmbRating)
+)
+
+const coefficientValue = () => {
+  if (selectedRussiaHmbCoefficient.value === '2') return 2
+  if (selectedRussiaHmbCoefficient.value === '4') return 4
+  return 1
+}
+
+const fighterName = (result: NonNullable<TournamentNominationTabsState['russiaHmbRating']>['results'][number]) =>
+  [result.fighter.surname, result.fighter.name, result.fighter.patronymic]
+    .filter((part): part is string => Boolean(part))
+    .map((part) => tData(part, i18next.language))
+    .join(' ')
+
+const calculateRussiaHmbRating = async () => {
+  isRussiaHmbCalculating.value = true
+  try {
+    await props.actions.calculateRussiaHmbRating(coefficientValue())
+  } finally {
+    isRussiaHmbCalculating.value = false
+  }
+}
 
 const blockState = (block: CompetitionBlock): TournamentCompetitionBlockState => ({
   block,
@@ -133,6 +172,76 @@ const blockActions = (block: CompetitionBlock): TournamentCompetitionBlockAction
     <TabsContent :key="state.activeTab" :value="state.activeTab" class="mt-0 min-w-0">
       <template v-if="!state.isNominationLoading">
         <CompetitionPodium :placements="state.placements" />
+
+        <div v-if="canShowRussiaHmbAction" class="mb-6 flex justify-center">
+          <Button @click="isRussiaHmbDialogOpen = true">
+            {{
+              state.russiaHmbRating
+                ? $t('tournamentPageRussiaHmbRating')
+                : $t('tournamentPageCalculateRussiaHmbRating')
+            }}
+          </Button>
+        </div>
+
+        <Dialog v-model:open="isRussiaHmbDialogOpen">
+          <DialogContent>
+            <template v-if="state.russiaHmbRating">
+              <DialogHeader>
+                <DialogTitle class="text-center">
+                  {{ $t('tournamentPageRussiaHmbRating') }}
+                </DialogTitle>
+                <p class="text-center text-sm text-muted-foreground">
+                  {{
+                    $t('tournamentPageRussiaHmbNominationCoefficient', {
+                      coefficient: state.russiaHmbRating.calculation.coefficient
+                    })
+                  }}
+                </p>
+              </DialogHeader>
+              <div class="max-h-96 overflow-auto rounded-md border">
+                <div
+                  v-for="(result, index) in state.russiaHmbRating.results"
+                  :key="result.id"
+                  class="grid grid-cols-[3rem_1fr_5rem] items-center gap-3 border-b px-3 py-2 text-sm last:border-b-0"
+                >
+                  <span class="font-medium">{{ index + 1 }}</span>
+                  <span>{{ fighterName(result) }}</span>
+                  <span class="text-right font-semibold">{{ result.points }}</span>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button class="w-full" @click="isRussiaHmbDialogOpen = false">
+                  {{ $t('tournamentPageCloseWindow') }}
+                </Button>
+              </DialogFooter>
+            </template>
+            <template v-else>
+              <div class="flex items-center justify-center gap-3">
+                <label class="text-sm font-medium" for="russia-hmb-coefficient">
+                  {{ $t('tournamentPageRussiaHmbCoefficient') }}
+                </label>
+                <NativeSelect
+                  id="russia-hmb-coefficient"
+                  v-model="selectedRussiaHmbCoefficient"
+                  class="w-24"
+                >
+                  <NativeSelectOption value="1">1</NativeSelectOption>
+                  <NativeSelectOption value="2">2</NativeSelectOption>
+                  <NativeSelectOption value="4">4</NativeSelectOption>
+                </NativeSelect>
+              </div>
+              <DialogFooter>
+                <Button
+                  class="w-full"
+                  :disabled="isRussiaHmbCalculating"
+                  @click="calculateRussiaHmbRating"
+                >
+                  {{ $t('tournamentPageMakeRussiaHmbCalculation') }}
+                </Button>
+              </DialogFooter>
+            </template>
+          </DialogContent>
+        </Dialog>
 
         <CollapsibleSection
           v-if="showCompetitorsSection"

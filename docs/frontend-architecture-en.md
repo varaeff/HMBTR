@@ -370,9 +370,17 @@ Widgets may own local edit drafts and issue-dialog state, but backend mutations 
 
 ## Ratings And Fighter Profiles
 
-Rating API functions live in `api/ratings.ts`. Rating page data is loaded through `useRatingPageData`.
+Rating API functions live in `api/ratings.ts`. Elo rating page data is loaded
+through `useRatingPageData`; Russia HMB rating page data is loaded through
+`useRussiaHmbRatingPageData` and uses public year and nomination filters.
 
-Fighter profile statistics are loaded through `useFighterProfileStats`. `FighterRatingChart` owns rating-history visualization and uses generic chart primitives from `components/ui/chart`.
+Fighter profile statistics are loaded through `useFighterProfileStats`. Public
+profile data includes Russia HMB completed-tournament points and yearly
+summaries. Elo rating summaries are fetched separately only for authenticated
+users with at least one assigned role.
+
+`FighterRatingChart` owns Elo rating-history visualization and uses generic
+chart primitives from `components/ui/chart`.
 
 ## Settings And Administration
 

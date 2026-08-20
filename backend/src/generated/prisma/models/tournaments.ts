@@ -242,6 +242,8 @@ export type tournamentsWhereInput = {
   disciplinary_cards?: Prisma.Disciplinary_cardsListRelationFilter
   fighter_withdrawals?: Prisma.Fighter_withdrawalsListRelationFilter
   fighter_rating_history?: Prisma.Fighter_nomination_rating_historyListRelationFilter
+  russia_hmb_rating_calculations?: Prisma.Russia_hmb_rating_calculationsListRelationFilter
+  russia_hmb_rating_results?: Prisma.Russia_hmb_rating_resultsListRelationFilter
   marshals?: Prisma.Tournament_marshalsListRelationFilter
 }
 
@@ -262,6 +264,8 @@ export type tournamentsOrderByWithRelationInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsOrderByRelationAggregateInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsOrderByRelationAggregateInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyOrderByRelationAggregateInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsOrderByRelationAggregateInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsOrderByRelationAggregateInput
   marshals?: Prisma.tournament_marshalsOrderByRelationAggregateInput
 }
 
@@ -285,6 +289,8 @@ export type tournamentsWhereUniqueInput = Prisma.AtLeast<{
   disciplinary_cards?: Prisma.Disciplinary_cardsListRelationFilter
   fighter_withdrawals?: Prisma.Fighter_withdrawalsListRelationFilter
   fighter_rating_history?: Prisma.Fighter_nomination_rating_historyListRelationFilter
+  russia_hmb_rating_calculations?: Prisma.Russia_hmb_rating_calculationsListRelationFilter
+  russia_hmb_rating_results?: Prisma.Russia_hmb_rating_resultsListRelationFilter
   marshals?: Prisma.Tournament_marshalsListRelationFilter
 }, "id">
 
@@ -328,6 +334,8 @@ export type tournamentsCreateInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutTournamentInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournamentInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutTournamentInput
   marshals?: Prisma.tournament_marshalsCreateNestedManyWithoutTournamentInput
 }
 
@@ -346,6 +354,8 @@ export type tournamentsUncheckedCreateInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutTournamentInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournamentInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutTournamentInput
   marshals?: Prisma.tournament_marshalsUncheckedCreateNestedManyWithoutTournamentInput
 }
 
@@ -363,6 +373,8 @@ export type tournamentsUpdateInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutTournamentNestedInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournamentNestedInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutTournamentNestedInput
   marshals?: Prisma.tournament_marshalsUpdateManyWithoutTournamentNestedInput
 }
 
@@ -381,6 +393,8 @@ export type tournamentsUncheckedUpdateInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutTournamentNestedInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournamentNestedInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutTournamentNestedInput
   marshals?: Prisma.tournament_marshalsUncheckedUpdateManyWithoutTournamentNestedInput
 }
 
@@ -658,6 +672,34 @@ export type tournamentsUpdateOneRequiredWithoutFighter_rating_historyNestedInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.tournamentsUpdateToOneWithWhereWithoutFighter_rating_historyInput, Prisma.tournamentsUpdateWithoutFighter_rating_historyInput>, Prisma.tournamentsUncheckedUpdateWithoutFighter_rating_historyInput>
 }
 
+export type tournamentsCreateNestedOneWithoutRussia_hmb_rating_calculationsInput = {
+  create?: Prisma.XOR<Prisma.tournamentsCreateWithoutRussia_hmb_rating_calculationsInput, Prisma.tournamentsUncheckedCreateWithoutRussia_hmb_rating_calculationsInput>
+  connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutRussia_hmb_rating_calculationsInput
+  connect?: Prisma.tournamentsWhereUniqueInput
+}
+
+export type tournamentsUpdateOneRequiredWithoutRussia_hmb_rating_calculationsNestedInput = {
+  create?: Prisma.XOR<Prisma.tournamentsCreateWithoutRussia_hmb_rating_calculationsInput, Prisma.tournamentsUncheckedCreateWithoutRussia_hmb_rating_calculationsInput>
+  connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutRussia_hmb_rating_calculationsInput
+  upsert?: Prisma.tournamentsUpsertWithoutRussia_hmb_rating_calculationsInput
+  connect?: Prisma.tournamentsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.tournamentsUpdateToOneWithWhereWithoutRussia_hmb_rating_calculationsInput, Prisma.tournamentsUpdateWithoutRussia_hmb_rating_calculationsInput>, Prisma.tournamentsUncheckedUpdateWithoutRussia_hmb_rating_calculationsInput>
+}
+
+export type tournamentsCreateNestedOneWithoutRussia_hmb_rating_resultsInput = {
+  create?: Prisma.XOR<Prisma.tournamentsCreateWithoutRussia_hmb_rating_resultsInput, Prisma.tournamentsUncheckedCreateWithoutRussia_hmb_rating_resultsInput>
+  connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutRussia_hmb_rating_resultsInput
+  connect?: Prisma.tournamentsWhereUniqueInput
+}
+
+export type tournamentsUpdateOneRequiredWithoutRussia_hmb_rating_resultsNestedInput = {
+  create?: Prisma.XOR<Prisma.tournamentsCreateWithoutRussia_hmb_rating_resultsInput, Prisma.tournamentsUncheckedCreateWithoutRussia_hmb_rating_resultsInput>
+  connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutRussia_hmb_rating_resultsInput
+  upsert?: Prisma.tournamentsUpsertWithoutRussia_hmb_rating_resultsInput
+  connect?: Prisma.tournamentsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.tournamentsUpdateToOneWithWhereWithoutRussia_hmb_rating_resultsInput, Prisma.tournamentsUpdateWithoutRussia_hmb_rating_resultsInput>, Prisma.tournamentsUncheckedUpdateWithoutRussia_hmb_rating_resultsInput>
+}
+
 export type tournamentsCreateNestedOneWithoutReportsInput = {
   create?: Prisma.XOR<Prisma.tournamentsCreateWithoutReportsInput, Prisma.tournamentsUncheckedCreateWithoutReportsInput>
   connectOrCreate?: Prisma.tournamentsCreateOrConnectWithoutReportsInput
@@ -685,6 +727,8 @@ export type tournamentsCreateWithoutCountryInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutTournamentInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournamentInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutTournamentInput
   marshals?: Prisma.tournament_marshalsCreateNestedManyWithoutTournamentInput
 }
 
@@ -702,6 +746,8 @@ export type tournamentsUncheckedCreateWithoutCountryInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutTournamentInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournamentInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutTournamentInput
   marshals?: Prisma.tournament_marshalsUncheckedCreateNestedManyWithoutTournamentInput
 }
 
@@ -756,6 +802,8 @@ export type tournamentsCreateWithoutCityInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutTournamentInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournamentInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutTournamentInput
   marshals?: Prisma.tournament_marshalsCreateNestedManyWithoutTournamentInput
 }
 
@@ -773,6 +821,8 @@ export type tournamentsUncheckedCreateWithoutCityInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutTournamentInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournamentInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutTournamentInput
   marshals?: Prisma.tournament_marshalsUncheckedCreateNestedManyWithoutTournamentInput
 }
 
@@ -816,6 +866,8 @@ export type tournamentsCreateWithoutMarshalsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutTournamentInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournamentInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutTournamentInput
 }
 
 export type tournamentsUncheckedCreateWithoutMarshalsInput = {
@@ -833,6 +885,8 @@ export type tournamentsUncheckedCreateWithoutMarshalsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutTournamentInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournamentInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutTournamentInput
 }
 
 export type tournamentsCreateOrConnectWithoutMarshalsInput = {
@@ -865,6 +919,8 @@ export type tournamentsUpdateWithoutMarshalsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutTournamentNestedInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournamentNestedInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutTournamentNestedInput
 }
 
 export type tournamentsUncheckedUpdateWithoutMarshalsInput = {
@@ -882,6 +938,8 @@ export type tournamentsUncheckedUpdateWithoutMarshalsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutTournamentNestedInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournamentNestedInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutTournamentNestedInput
 }
 
 export type tournamentsCreateWithoutNominationsInput = {
@@ -897,6 +955,8 @@ export type tournamentsCreateWithoutNominationsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutTournamentInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournamentInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutTournamentInput
   marshals?: Prisma.tournament_marshalsCreateNestedManyWithoutTournamentInput
 }
 
@@ -914,6 +974,8 @@ export type tournamentsUncheckedCreateWithoutNominationsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutTournamentInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournamentInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutTournamentInput
   marshals?: Prisma.tournament_marshalsUncheckedCreateNestedManyWithoutTournamentInput
 }
 
@@ -946,6 +1008,8 @@ export type tournamentsUpdateWithoutNominationsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutTournamentNestedInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournamentNestedInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutTournamentNestedInput
   marshals?: Prisma.tournament_marshalsUpdateManyWithoutTournamentNestedInput
 }
 
@@ -963,6 +1027,8 @@ export type tournamentsUncheckedUpdateWithoutNominationsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutTournamentNestedInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournamentNestedInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutTournamentNestedInput
   marshals?: Prisma.tournament_marshalsUncheckedUpdateManyWithoutTournamentNestedInput
 }
 
@@ -979,6 +1045,8 @@ export type tournamentsCreateWithoutCompetitorsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutTournamentInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournamentInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutTournamentInput
   marshals?: Prisma.tournament_marshalsCreateNestedManyWithoutTournamentInput
 }
 
@@ -996,6 +1064,8 @@ export type tournamentsUncheckedCreateWithoutCompetitorsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutTournamentInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournamentInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutTournamentInput
   marshals?: Prisma.tournament_marshalsUncheckedCreateNestedManyWithoutTournamentInput
 }
 
@@ -1028,6 +1098,8 @@ export type tournamentsUpdateWithoutCompetitorsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutTournamentNestedInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournamentNestedInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutTournamentNestedInput
   marshals?: Prisma.tournament_marshalsUpdateManyWithoutTournamentNestedInput
 }
 
@@ -1045,6 +1117,8 @@ export type tournamentsUncheckedUpdateWithoutCompetitorsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutTournamentNestedInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournamentNestedInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutTournamentNestedInput
   marshals?: Prisma.tournament_marshalsUncheckedUpdateManyWithoutTournamentNestedInput
 }
 
@@ -1061,6 +1135,8 @@ export type tournamentsCreateWithoutGroupsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutTournamentInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournamentInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutTournamentInput
   marshals?: Prisma.tournament_marshalsCreateNestedManyWithoutTournamentInput
 }
 
@@ -1078,6 +1154,8 @@ export type tournamentsUncheckedCreateWithoutGroupsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutTournamentInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournamentInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutTournamentInput
   marshals?: Prisma.tournament_marshalsUncheckedCreateNestedManyWithoutTournamentInput
 }
 
@@ -1110,6 +1188,8 @@ export type tournamentsUpdateWithoutGroupsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutTournamentNestedInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournamentNestedInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutTournamentNestedInput
   marshals?: Prisma.tournament_marshalsUpdateManyWithoutTournamentNestedInput
 }
 
@@ -1127,6 +1207,8 @@ export type tournamentsUncheckedUpdateWithoutGroupsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutTournamentNestedInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournamentNestedInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutTournamentNestedInput
   marshals?: Prisma.tournament_marshalsUncheckedUpdateManyWithoutTournamentNestedInput
 }
 
@@ -1143,6 +1225,8 @@ export type tournamentsCreateWithoutFightsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutTournamentInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournamentInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutTournamentInput
   marshals?: Prisma.tournament_marshalsCreateNestedManyWithoutTournamentInput
 }
 
@@ -1160,6 +1244,8 @@ export type tournamentsUncheckedCreateWithoutFightsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutTournamentInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournamentInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutTournamentInput
   marshals?: Prisma.tournament_marshalsUncheckedCreateNestedManyWithoutTournamentInput
 }
 
@@ -1192,6 +1278,8 @@ export type tournamentsUpdateWithoutFightsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutTournamentNestedInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournamentNestedInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutTournamentNestedInput
   marshals?: Prisma.tournament_marshalsUpdateManyWithoutTournamentNestedInput
 }
 
@@ -1209,6 +1297,8 @@ export type tournamentsUncheckedUpdateWithoutFightsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutTournamentNestedInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournamentNestedInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutTournamentNestedInput
   marshals?: Prisma.tournament_marshalsUncheckedUpdateManyWithoutTournamentNestedInput
 }
 
@@ -1225,6 +1315,8 @@ export type tournamentsCreateWithoutFighter_withdrawalsInput = {
   reports?: Prisma.tournament_reportsCreateNestedManyWithoutTournamentInput
   disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutTournamentInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutTournamentInput
   marshals?: Prisma.tournament_marshalsCreateNestedManyWithoutTournamentInput
 }
 
@@ -1242,6 +1334,8 @@ export type tournamentsUncheckedCreateWithoutFighter_withdrawalsInput = {
   reports?: Prisma.tournament_reportsUncheckedCreateNestedManyWithoutTournamentInput
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutTournamentInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutTournamentInput
   marshals?: Prisma.tournament_marshalsUncheckedCreateNestedManyWithoutTournamentInput
 }
 
@@ -1274,6 +1368,8 @@ export type tournamentsUpdateWithoutFighter_withdrawalsInput = {
   reports?: Prisma.tournament_reportsUpdateManyWithoutTournamentNestedInput
   disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutTournamentNestedInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutTournamentNestedInput
   marshals?: Prisma.tournament_marshalsUpdateManyWithoutTournamentNestedInput
 }
 
@@ -1291,6 +1387,8 @@ export type tournamentsUncheckedUpdateWithoutFighter_withdrawalsInput = {
   reports?: Prisma.tournament_reportsUncheckedUpdateManyWithoutTournamentNestedInput
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutTournamentNestedInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutTournamentNestedInput
   marshals?: Prisma.tournament_marshalsUncheckedUpdateManyWithoutTournamentNestedInput
 }
 
@@ -1307,6 +1405,8 @@ export type tournamentsCreateWithoutDisciplinary_cardsInput = {
   reports?: Prisma.tournament_reportsCreateNestedManyWithoutTournamentInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournamentInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutTournamentInput
   marshals?: Prisma.tournament_marshalsCreateNestedManyWithoutTournamentInput
 }
 
@@ -1324,6 +1424,8 @@ export type tournamentsUncheckedCreateWithoutDisciplinary_cardsInput = {
   reports?: Prisma.tournament_reportsUncheckedCreateNestedManyWithoutTournamentInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournamentInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutTournamentInput
   marshals?: Prisma.tournament_marshalsUncheckedCreateNestedManyWithoutTournamentInput
 }
 
@@ -1356,6 +1458,8 @@ export type tournamentsUpdateWithoutDisciplinary_cardsInput = {
   reports?: Prisma.tournament_reportsUpdateManyWithoutTournamentNestedInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournamentNestedInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutTournamentNestedInput
   marshals?: Prisma.tournament_marshalsUpdateManyWithoutTournamentNestedInput
 }
 
@@ -1373,6 +1477,8 @@ export type tournamentsUncheckedUpdateWithoutDisciplinary_cardsInput = {
   reports?: Prisma.tournament_reportsUncheckedUpdateManyWithoutTournamentNestedInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournamentNestedInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutTournamentNestedInput
   marshals?: Prisma.tournament_marshalsUncheckedUpdateManyWithoutTournamentNestedInput
 }
 
@@ -1389,6 +1495,8 @@ export type tournamentsCreateWithoutFighter_rating_historyInput = {
   reports?: Prisma.tournament_reportsCreateNestedManyWithoutTournamentInput
   disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutTournamentInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutTournamentInput
   marshals?: Prisma.tournament_marshalsCreateNestedManyWithoutTournamentInput
 }
 
@@ -1406,6 +1514,8 @@ export type tournamentsUncheckedCreateWithoutFighter_rating_historyInput = {
   reports?: Prisma.tournament_reportsUncheckedCreateNestedManyWithoutTournamentInput
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutTournamentInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutTournamentInput
   marshals?: Prisma.tournament_marshalsUncheckedCreateNestedManyWithoutTournamentInput
 }
 
@@ -1438,6 +1548,8 @@ export type tournamentsUpdateWithoutFighter_rating_historyInput = {
   reports?: Prisma.tournament_reportsUpdateManyWithoutTournamentNestedInput
   disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutTournamentNestedInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutTournamentNestedInput
   marshals?: Prisma.tournament_marshalsUpdateManyWithoutTournamentNestedInput
 }
 
@@ -1455,6 +1567,188 @@ export type tournamentsUncheckedUpdateWithoutFighter_rating_historyInput = {
   reports?: Prisma.tournament_reportsUncheckedUpdateManyWithoutTournamentNestedInput
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutTournamentNestedInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutTournamentNestedInput
+  marshals?: Prisma.tournament_marshalsUncheckedUpdateManyWithoutTournamentNestedInput
+}
+
+export type tournamentsCreateWithoutRussia_hmb_rating_calculationsInput = {
+  name: string
+  event_date?: Date | string | null
+  is_marshals_registration_closed?: boolean
+  country: Prisma.countriesCreateNestedOneWithoutTournamentsInput
+  city: Prisma.citiesCreateNestedOneWithoutTournamentsInput
+  nominations?: Prisma.tournament_nominationsCreateNestedManyWithoutTournamentInput
+  competitors?: Prisma.competitorsCreateNestedManyWithoutTournamentInput
+  groups?: Prisma.groupsCreateNestedManyWithoutTournamentInput
+  fights?: Prisma.fightsCreateNestedManyWithoutTournamentInput
+  reports?: Prisma.tournament_reportsCreateNestedManyWithoutTournamentInput
+  disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutTournamentInput
+  fighter_withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournamentInput
+  fighter_rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutTournamentInput
+  marshals?: Prisma.tournament_marshalsCreateNestedManyWithoutTournamentInput
+}
+
+export type tournamentsUncheckedCreateWithoutRussia_hmb_rating_calculationsInput = {
+  id?: number
+  name: string
+  event_date?: Date | string | null
+  country_id: number
+  city_id: number
+  is_marshals_registration_closed?: boolean
+  nominations?: Prisma.tournament_nominationsUncheckedCreateNestedManyWithoutTournamentInput
+  competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutTournamentInput
+  groups?: Prisma.groupsUncheckedCreateNestedManyWithoutTournamentInput
+  fights?: Prisma.fightsUncheckedCreateNestedManyWithoutTournamentInput
+  reports?: Prisma.tournament_reportsUncheckedCreateNestedManyWithoutTournamentInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutTournamentInput
+  fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournamentInput
+  fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutTournamentInput
+  marshals?: Prisma.tournament_marshalsUncheckedCreateNestedManyWithoutTournamentInput
+}
+
+export type tournamentsCreateOrConnectWithoutRussia_hmb_rating_calculationsInput = {
+  where: Prisma.tournamentsWhereUniqueInput
+  create: Prisma.XOR<Prisma.tournamentsCreateWithoutRussia_hmb_rating_calculationsInput, Prisma.tournamentsUncheckedCreateWithoutRussia_hmb_rating_calculationsInput>
+}
+
+export type tournamentsUpsertWithoutRussia_hmb_rating_calculationsInput = {
+  update: Prisma.XOR<Prisma.tournamentsUpdateWithoutRussia_hmb_rating_calculationsInput, Prisma.tournamentsUncheckedUpdateWithoutRussia_hmb_rating_calculationsInput>
+  create: Prisma.XOR<Prisma.tournamentsCreateWithoutRussia_hmb_rating_calculationsInput, Prisma.tournamentsUncheckedCreateWithoutRussia_hmb_rating_calculationsInput>
+  where?: Prisma.tournamentsWhereInput
+}
+
+export type tournamentsUpdateToOneWithWhereWithoutRussia_hmb_rating_calculationsInput = {
+  where?: Prisma.tournamentsWhereInput
+  data: Prisma.XOR<Prisma.tournamentsUpdateWithoutRussia_hmb_rating_calculationsInput, Prisma.tournamentsUncheckedUpdateWithoutRussia_hmb_rating_calculationsInput>
+}
+
+export type tournamentsUpdateWithoutRussia_hmb_rating_calculationsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  is_marshals_registration_closed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  country?: Prisma.countriesUpdateOneRequiredWithoutTournamentsNestedInput
+  city?: Prisma.citiesUpdateOneRequiredWithoutTournamentsNestedInput
+  nominations?: Prisma.tournament_nominationsUpdateManyWithoutTournamentNestedInput
+  competitors?: Prisma.competitorsUpdateManyWithoutTournamentNestedInput
+  groups?: Prisma.groupsUpdateManyWithoutTournamentNestedInput
+  fights?: Prisma.fightsUpdateManyWithoutTournamentNestedInput
+  reports?: Prisma.tournament_reportsUpdateManyWithoutTournamentNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutTournamentNestedInput
+  fighter_withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournamentNestedInput
+  fighter_rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutTournamentNestedInput
+  marshals?: Prisma.tournament_marshalsUpdateManyWithoutTournamentNestedInput
+}
+
+export type tournamentsUncheckedUpdateWithoutRussia_hmb_rating_calculationsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  country_id?: Prisma.IntFieldUpdateOperationsInput | number
+  city_id?: Prisma.IntFieldUpdateOperationsInput | number
+  is_marshals_registration_closed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  nominations?: Prisma.tournament_nominationsUncheckedUpdateManyWithoutTournamentNestedInput
+  competitors?: Prisma.competitorsUncheckedUpdateManyWithoutTournamentNestedInput
+  groups?: Prisma.groupsUncheckedUpdateManyWithoutTournamentNestedInput
+  fights?: Prisma.fightsUncheckedUpdateManyWithoutTournamentNestedInput
+  reports?: Prisma.tournament_reportsUncheckedUpdateManyWithoutTournamentNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutTournamentNestedInput
+  fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournamentNestedInput
+  fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutTournamentNestedInput
+  marshals?: Prisma.tournament_marshalsUncheckedUpdateManyWithoutTournamentNestedInput
+}
+
+export type tournamentsCreateWithoutRussia_hmb_rating_resultsInput = {
+  name: string
+  event_date?: Date | string | null
+  is_marshals_registration_closed?: boolean
+  country: Prisma.countriesCreateNestedOneWithoutTournamentsInput
+  city: Prisma.citiesCreateNestedOneWithoutTournamentsInput
+  nominations?: Prisma.tournament_nominationsCreateNestedManyWithoutTournamentInput
+  competitors?: Prisma.competitorsCreateNestedManyWithoutTournamentInput
+  groups?: Prisma.groupsCreateNestedManyWithoutTournamentInput
+  fights?: Prisma.fightsCreateNestedManyWithoutTournamentInput
+  reports?: Prisma.tournament_reportsCreateNestedManyWithoutTournamentInput
+  disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutTournamentInput
+  fighter_withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournamentInput
+  fighter_rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsCreateNestedManyWithoutTournamentInput
+  marshals?: Prisma.tournament_marshalsCreateNestedManyWithoutTournamentInput
+}
+
+export type tournamentsUncheckedCreateWithoutRussia_hmb_rating_resultsInput = {
+  id?: number
+  name: string
+  event_date?: Date | string | null
+  country_id: number
+  city_id: number
+  is_marshals_registration_closed?: boolean
+  nominations?: Prisma.tournament_nominationsUncheckedCreateNestedManyWithoutTournamentInput
+  competitors?: Prisma.competitorsUncheckedCreateNestedManyWithoutTournamentInput
+  groups?: Prisma.groupsUncheckedCreateNestedManyWithoutTournamentInput
+  fights?: Prisma.fightsUncheckedCreateNestedManyWithoutTournamentInput
+  reports?: Prisma.tournament_reportsUncheckedCreateNestedManyWithoutTournamentInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutTournamentInput
+  fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournamentInput
+  fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedCreateNestedManyWithoutTournamentInput
+  marshals?: Prisma.tournament_marshalsUncheckedCreateNestedManyWithoutTournamentInput
+}
+
+export type tournamentsCreateOrConnectWithoutRussia_hmb_rating_resultsInput = {
+  where: Prisma.tournamentsWhereUniqueInput
+  create: Prisma.XOR<Prisma.tournamentsCreateWithoutRussia_hmb_rating_resultsInput, Prisma.tournamentsUncheckedCreateWithoutRussia_hmb_rating_resultsInput>
+}
+
+export type tournamentsUpsertWithoutRussia_hmb_rating_resultsInput = {
+  update: Prisma.XOR<Prisma.tournamentsUpdateWithoutRussia_hmb_rating_resultsInput, Prisma.tournamentsUncheckedUpdateWithoutRussia_hmb_rating_resultsInput>
+  create: Prisma.XOR<Prisma.tournamentsCreateWithoutRussia_hmb_rating_resultsInput, Prisma.tournamentsUncheckedCreateWithoutRussia_hmb_rating_resultsInput>
+  where?: Prisma.tournamentsWhereInput
+}
+
+export type tournamentsUpdateToOneWithWhereWithoutRussia_hmb_rating_resultsInput = {
+  where?: Prisma.tournamentsWhereInput
+  data: Prisma.XOR<Prisma.tournamentsUpdateWithoutRussia_hmb_rating_resultsInput, Prisma.tournamentsUncheckedUpdateWithoutRussia_hmb_rating_resultsInput>
+}
+
+export type tournamentsUpdateWithoutRussia_hmb_rating_resultsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  is_marshals_registration_closed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  country?: Prisma.countriesUpdateOneRequiredWithoutTournamentsNestedInput
+  city?: Prisma.citiesUpdateOneRequiredWithoutTournamentsNestedInput
+  nominations?: Prisma.tournament_nominationsUpdateManyWithoutTournamentNestedInput
+  competitors?: Prisma.competitorsUpdateManyWithoutTournamentNestedInput
+  groups?: Prisma.groupsUpdateManyWithoutTournamentNestedInput
+  fights?: Prisma.fightsUpdateManyWithoutTournamentNestedInput
+  reports?: Prisma.tournament_reportsUpdateManyWithoutTournamentNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutTournamentNestedInput
+  fighter_withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournamentNestedInput
+  fighter_rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUpdateManyWithoutTournamentNestedInput
+  marshals?: Prisma.tournament_marshalsUpdateManyWithoutTournamentNestedInput
+}
+
+export type tournamentsUncheckedUpdateWithoutRussia_hmb_rating_resultsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  event_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  country_id?: Prisma.IntFieldUpdateOperationsInput | number
+  city_id?: Prisma.IntFieldUpdateOperationsInput | number
+  is_marshals_registration_closed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  nominations?: Prisma.tournament_nominationsUncheckedUpdateManyWithoutTournamentNestedInput
+  competitors?: Prisma.competitorsUncheckedUpdateManyWithoutTournamentNestedInput
+  groups?: Prisma.groupsUncheckedUpdateManyWithoutTournamentNestedInput
+  fights?: Prisma.fightsUncheckedUpdateManyWithoutTournamentNestedInput
+  reports?: Prisma.tournament_reportsUncheckedUpdateManyWithoutTournamentNestedInput
+  disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutTournamentNestedInput
+  fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournamentNestedInput
+  fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedUpdateManyWithoutTournamentNestedInput
   marshals?: Prisma.tournament_marshalsUncheckedUpdateManyWithoutTournamentNestedInput
 }
 
@@ -1471,6 +1765,8 @@ export type tournamentsCreateWithoutReportsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsCreateNestedManyWithoutTournamentInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutTournamentInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutTournamentInput
   marshals?: Prisma.tournament_marshalsCreateNestedManyWithoutTournamentInput
 }
 
@@ -1488,6 +1784,8 @@ export type tournamentsUncheckedCreateWithoutReportsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedCreateNestedManyWithoutTournamentInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutTournamentInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedCreateNestedManyWithoutTournamentInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutTournamentInput
   marshals?: Prisma.tournament_marshalsUncheckedCreateNestedManyWithoutTournamentInput
 }
 
@@ -1520,6 +1818,8 @@ export type tournamentsUpdateWithoutReportsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutTournamentNestedInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournamentNestedInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutTournamentNestedInput
   marshals?: Prisma.tournament_marshalsUpdateManyWithoutTournamentNestedInput
 }
 
@@ -1537,6 +1837,8 @@ export type tournamentsUncheckedUpdateWithoutReportsInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutTournamentNestedInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournamentNestedInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutTournamentNestedInput
   marshals?: Prisma.tournament_marshalsUncheckedUpdateManyWithoutTournamentNestedInput
 }
 
@@ -1561,6 +1863,8 @@ export type tournamentsUpdateWithoutCountryInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutTournamentNestedInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournamentNestedInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutTournamentNestedInput
   marshals?: Prisma.tournament_marshalsUpdateManyWithoutTournamentNestedInput
 }
 
@@ -1578,6 +1882,8 @@ export type tournamentsUncheckedUpdateWithoutCountryInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutTournamentNestedInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournamentNestedInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutTournamentNestedInput
   marshals?: Prisma.tournament_marshalsUncheckedUpdateManyWithoutTournamentNestedInput
 }
 
@@ -1610,6 +1916,8 @@ export type tournamentsUpdateWithoutCityInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUpdateManyWithoutTournamentNestedInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutTournamentNestedInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutTournamentNestedInput
   marshals?: Prisma.tournament_marshalsUpdateManyWithoutTournamentNestedInput
 }
 
@@ -1627,6 +1935,8 @@ export type tournamentsUncheckedUpdateWithoutCityInput = {
   disciplinary_cards?: Prisma.disciplinary_cardsUncheckedUpdateManyWithoutTournamentNestedInput
   fighter_withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutTournamentNestedInput
   fighter_rating_history?: Prisma.fighter_nomination_rating_historyUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsUncheckedUpdateManyWithoutTournamentNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutTournamentNestedInput
   marshals?: Prisma.tournament_marshalsUncheckedUpdateManyWithoutTournamentNestedInput
 }
 
@@ -1652,6 +1962,8 @@ export type TournamentsCountOutputType = {
   disciplinary_cards: number
   fighter_withdrawals: number
   fighter_rating_history: number
+  russia_hmb_rating_calculations: number
+  russia_hmb_rating_results: number
   marshals: number
 }
 
@@ -1664,6 +1976,8 @@ export type TournamentsCountOutputTypeSelect<ExtArgs extends runtime.Types.Exten
   disciplinary_cards?: boolean | TournamentsCountOutputTypeCountDisciplinary_cardsArgs
   fighter_withdrawals?: boolean | TournamentsCountOutputTypeCountFighter_withdrawalsArgs
   fighter_rating_history?: boolean | TournamentsCountOutputTypeCountFighter_rating_historyArgs
+  russia_hmb_rating_calculations?: boolean | TournamentsCountOutputTypeCountRussia_hmb_rating_calculationsArgs
+  russia_hmb_rating_results?: boolean | TournamentsCountOutputTypeCountRussia_hmb_rating_resultsArgs
   marshals?: boolean | TournamentsCountOutputTypeCountMarshalsArgs
 }
 
@@ -1736,6 +2050,20 @@ export type TournamentsCountOutputTypeCountFighter_rating_historyArgs<ExtArgs ex
 /**
  * TournamentsCountOutputType without action
  */
+export type TournamentsCountOutputTypeCountRussia_hmb_rating_calculationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.russia_hmb_rating_calculationsWhereInput
+}
+
+/**
+ * TournamentsCountOutputType without action
+ */
+export type TournamentsCountOutputTypeCountRussia_hmb_rating_resultsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.russia_hmb_rating_resultsWhereInput
+}
+
+/**
+ * TournamentsCountOutputType without action
+ */
 export type TournamentsCountOutputTypeCountMarshalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.tournament_marshalsWhereInput
 }
@@ -1758,6 +2086,8 @@ export type tournamentsSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   disciplinary_cards?: boolean | Prisma.tournaments$disciplinary_cardsArgs<ExtArgs>
   fighter_withdrawals?: boolean | Prisma.tournaments$fighter_withdrawalsArgs<ExtArgs>
   fighter_rating_history?: boolean | Prisma.tournaments$fighter_rating_historyArgs<ExtArgs>
+  russia_hmb_rating_calculations?: boolean | Prisma.tournaments$russia_hmb_rating_calculationsArgs<ExtArgs>
+  russia_hmb_rating_results?: boolean | Prisma.tournaments$russia_hmb_rating_resultsArgs<ExtArgs>
   marshals?: boolean | Prisma.tournaments$marshalsArgs<ExtArgs>
   _count?: boolean | Prisma.TournamentsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tournaments"]>
@@ -1805,6 +2135,8 @@ export type tournamentsInclude<ExtArgs extends runtime.Types.Extensions.Internal
   disciplinary_cards?: boolean | Prisma.tournaments$disciplinary_cardsArgs<ExtArgs>
   fighter_withdrawals?: boolean | Prisma.tournaments$fighter_withdrawalsArgs<ExtArgs>
   fighter_rating_history?: boolean | Prisma.tournaments$fighter_rating_historyArgs<ExtArgs>
+  russia_hmb_rating_calculations?: boolean | Prisma.tournaments$russia_hmb_rating_calculationsArgs<ExtArgs>
+  russia_hmb_rating_results?: boolean | Prisma.tournaments$russia_hmb_rating_resultsArgs<ExtArgs>
   marshals?: boolean | Prisma.tournaments$marshalsArgs<ExtArgs>
   _count?: boolean | Prisma.TournamentsCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1830,6 +2162,8 @@ export type $tournamentsPayload<ExtArgs extends runtime.Types.Extensions.Interna
     disciplinary_cards: Prisma.$disciplinary_cardsPayload<ExtArgs>[]
     fighter_withdrawals: Prisma.$fighter_withdrawalsPayload<ExtArgs>[]
     fighter_rating_history: Prisma.$fighter_nomination_rating_historyPayload<ExtArgs>[]
+    russia_hmb_rating_calculations: Prisma.$russia_hmb_rating_calculationsPayload<ExtArgs>[]
+    russia_hmb_rating_results: Prisma.$russia_hmb_rating_resultsPayload<ExtArgs>[]
     marshals: Prisma.$tournament_marshalsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -2243,6 +2577,8 @@ export interface Prisma__tournamentsClient<T, Null = never, ExtArgs extends runt
   disciplinary_cards<T extends Prisma.tournaments$disciplinary_cardsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournaments$disciplinary_cardsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$disciplinary_cardsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   fighter_withdrawals<T extends Prisma.tournaments$fighter_withdrawalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournaments$fighter_withdrawalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fighter_withdrawalsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   fighter_rating_history<T extends Prisma.tournaments$fighter_rating_historyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournaments$fighter_rating_historyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fighter_nomination_rating_historyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  russia_hmb_rating_calculations<T extends Prisma.tournaments$russia_hmb_rating_calculationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournaments$russia_hmb_rating_calculationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$russia_hmb_rating_calculationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  russia_hmb_rating_results<T extends Prisma.tournaments$russia_hmb_rating_resultsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournaments$russia_hmb_rating_resultsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$russia_hmb_rating_resultsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   marshals<T extends Prisma.tournaments$marshalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.tournaments$marshalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$tournament_marshalsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2864,6 +3200,54 @@ export type tournaments$fighter_rating_historyArgs<ExtArgs extends runtime.Types
   take?: number
   skip?: number
   distinct?: Prisma.Fighter_nomination_rating_historyScalarFieldEnum | Prisma.Fighter_nomination_rating_historyScalarFieldEnum[]
+}
+
+/**
+ * tournaments.russia_hmb_rating_calculations
+ */
+export type tournaments$russia_hmb_rating_calculationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the russia_hmb_rating_calculations
+   */
+  select?: Prisma.russia_hmb_rating_calculationsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the russia_hmb_rating_calculations
+   */
+  omit?: Prisma.russia_hmb_rating_calculationsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.russia_hmb_rating_calculationsInclude<ExtArgs> | null
+  where?: Prisma.russia_hmb_rating_calculationsWhereInput
+  orderBy?: Prisma.russia_hmb_rating_calculationsOrderByWithRelationInput | Prisma.russia_hmb_rating_calculationsOrderByWithRelationInput[]
+  cursor?: Prisma.russia_hmb_rating_calculationsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Russia_hmb_rating_calculationsScalarFieldEnum | Prisma.Russia_hmb_rating_calculationsScalarFieldEnum[]
+}
+
+/**
+ * tournaments.russia_hmb_rating_results
+ */
+export type tournaments$russia_hmb_rating_resultsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the russia_hmb_rating_results
+   */
+  select?: Prisma.russia_hmb_rating_resultsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the russia_hmb_rating_results
+   */
+  omit?: Prisma.russia_hmb_rating_resultsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.russia_hmb_rating_resultsInclude<ExtArgs> | null
+  where?: Prisma.russia_hmb_rating_resultsWhereInput
+  orderBy?: Prisma.russia_hmb_rating_resultsOrderByWithRelationInput | Prisma.russia_hmb_rating_resultsOrderByWithRelationInput[]
+  cursor?: Prisma.russia_hmb_rating_resultsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Russia_hmb_rating_resultsScalarFieldEnum | Prisma.Russia_hmb_rating_resultsScalarFieldEnum[]
 }
 
 /**

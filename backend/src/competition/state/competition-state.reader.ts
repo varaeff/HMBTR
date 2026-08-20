@@ -82,6 +82,31 @@ export class CompetitionStateReader {
         },
       },
     });
+    const russiaHmbRating =
+      await this.prisma.russia_hmb_rating_calculations.findUnique({
+        where: { tournament_nomination_id: tournamentNomination.id },
+        select: {
+          id: true,
+          tournament_nomination_id: true,
+          tournament_id: true,
+          nomination_id: true,
+          event_year: true,
+          coefficient: true,
+          calculated_at: true,
+          results: {
+            orderBy: [{ points: 'desc' }, { fighter_id: 'asc' }],
+            include: {
+              fighter: {
+                include: {
+                  country: true,
+                  city: true,
+                  club: true,
+                },
+              },
+            },
+          },
+        },
+      });
     const activeWithdrawals =
       await this.withdrawalService.getActiveWithdrawalsForTournamentNominationTx(
         this.prisma,
@@ -117,6 +142,7 @@ export class CompetitionStateReader {
       tournamentNomination,
       blocks,
       placements,
+      russiaHmbRating,
       activeWithdrawals,
       activeBlockId: activeBlock?.id ?? null,
       isFinished: tournamentNomination.is_finished,

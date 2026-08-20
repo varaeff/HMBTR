@@ -30,14 +30,16 @@ const nominationTabsState = computed<TournamentNominationTabsState>(() => ({
   activeBlock: props.page.competition.activeBlock,
   pendingTie: props.page.competition.pendingTie,
   activeOlympicFinalResultsFixed: props.page.competition.activeOlympicFinalResultsFixed,
-  nominationFinished: props.page.nomination.nominationFinished
+  nominationFinished: props.page.nomination.nominationFinished,
+  russiaHmbRating: props.page.competition.russiaHmbRating
 }))
 
 const nominationTabsPermissions = computed<TournamentNominationTabsPermissions>(() => ({
   canEditCompetition: props.page.permissions.canEditCompetition,
   canUseCompetitionBackwardActions: props.page.permissions.canUseCompetitionBackwardActions,
   canManageCards: props.page.permissions.canManageCards,
-  canIssueCards: props.page.permissions.canIssueCards
+  canIssueCards: props.page.permissions.canIssueCards,
+  canCalculateRussiaHmbRating: props.page.permissions.canCalculateRussiaHmbRating
 }))
 
 const nominationTabsCompetitionOptions = computed<TournamentNominationTabsCompetitionOptions>(
@@ -73,6 +75,7 @@ const nominationTabsActions = computed<TournamentNominationTabsActions>(() => ({
   cancelGroupFightsFixation: props.page.actions.cancelGroupFightsFixation,
   cancelGroupResultsFixation: props.page.actions.cancelGroupResultsFixation,
   finishCompetition: props.page.actions.finishCompetition,
+  calculateRussiaHmbRating: props.page.actions.calculateRussiaHmbRating,
   refreshCardsAndCompetition: props.page.actions.refreshCardsAndCompetition,
   createNoShowWithdrawal: props.page.actions.createNoShowWithdrawal,
   createFightWithdrawal: props.page.actions.createFightWithdrawal,

@@ -128,6 +128,16 @@ export type fighter_nomination_ratings = Prisma.fighter_nomination_ratingsModel
  */
 export type fighter_nomination_rating_history = Prisma.fighter_nomination_rating_historyModel
 /**
+ * Model russia_hmb_rating_calculations
+ *
+ */
+export type russia_hmb_rating_calculations = Prisma.russia_hmb_rating_calculationsModel
+/**
+ * Model russia_hmb_rating_results
+ *
+ */
+export type russia_hmb_rating_results = Prisma.russia_hmb_rating_resultsModel
+/**
  * Model competition_blocks
  * 
  */

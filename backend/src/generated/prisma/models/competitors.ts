@@ -239,6 +239,7 @@ export type competitorsWhereInput = {
   bracket_slots?: Prisma.Bracket_slotsListRelationFilter
   placements?: Prisma.Competition_placementsListRelationFilter
   withdrawals?: Prisma.Fighter_withdrawalsListRelationFilter
+  russia_hmb_rating_results?: Prisma.Russia_hmb_rating_resultsListRelationFilter
   fights_as_f1?: Prisma.FightsListRelationFilter
   fights_as_f2?: Prisma.FightsListRelationFilter
   fights_won?: Prisma.FightsListRelationFilter
@@ -258,6 +259,7 @@ export type competitorsOrderByWithRelationInput = {
   bracket_slots?: Prisma.bracket_slotsOrderByRelationAggregateInput
   placements?: Prisma.competition_placementsOrderByRelationAggregateInput
   withdrawals?: Prisma.fighter_withdrawalsOrderByRelationAggregateInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsOrderByRelationAggregateInput
   fights_as_f1?: Prisma.fightsOrderByRelationAggregateInput
   fights_as_f2?: Prisma.fightsOrderByRelationAggregateInput
   fights_won?: Prisma.fightsOrderByRelationAggregateInput
@@ -280,6 +282,7 @@ export type competitorsWhereUniqueInput = Prisma.AtLeast<{
   bracket_slots?: Prisma.Bracket_slotsListRelationFilter
   placements?: Prisma.Competition_placementsListRelationFilter
   withdrawals?: Prisma.Fighter_withdrawalsListRelationFilter
+  russia_hmb_rating_results?: Prisma.Russia_hmb_rating_resultsListRelationFilter
   fights_as_f1?: Prisma.FightsListRelationFilter
   fights_as_f2?: Prisma.FightsListRelationFilter
   fights_won?: Prisma.FightsListRelationFilter
@@ -319,6 +322,7 @@ export type competitorsCreateInput = {
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
   withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
@@ -335,6 +339,7 @@ export type competitorsUncheckedCreateInput = {
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
@@ -350,6 +355,7 @@ export type competitorsUpdateInput = {
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
@@ -366,6 +372,7 @@ export type competitorsUncheckedUpdateInput = {
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
@@ -664,6 +671,20 @@ export type competitorsUpdateOneRequiredWithoutFight_warningsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.competitorsUpdateToOneWithWhereWithoutFight_warningsInput, Prisma.competitorsUpdateWithoutFight_warningsInput>, Prisma.competitorsUncheckedUpdateWithoutFight_warningsInput>
 }
 
+export type competitorsCreateNestedOneWithoutRussia_hmb_rating_resultsInput = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutRussia_hmb_rating_resultsInput, Prisma.competitorsUncheckedCreateWithoutRussia_hmb_rating_resultsInput>
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutRussia_hmb_rating_resultsInput
+  connect?: Prisma.competitorsWhereUniqueInput
+}
+
+export type competitorsUpdateOneRequiredWithoutRussia_hmb_rating_resultsNestedInput = {
+  create?: Prisma.XOR<Prisma.competitorsCreateWithoutRussia_hmb_rating_resultsInput, Prisma.competitorsUncheckedCreateWithoutRussia_hmb_rating_resultsInput>
+  connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutRussia_hmb_rating_resultsInput
+  upsert?: Prisma.competitorsUpsertWithoutRussia_hmb_rating_resultsInput
+  connect?: Prisma.competitorsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.competitorsUpdateToOneWithWhereWithoutRussia_hmb_rating_resultsInput, Prisma.competitorsUpdateWithoutRussia_hmb_rating_resultsInput>, Prisma.competitorsUncheckedUpdateWithoutRussia_hmb_rating_resultsInput>
+}
+
 export type competitorsCreateNestedOneWithoutBracket_slotsInput = {
   create?: Prisma.XOR<Prisma.competitorsCreateWithoutBracket_slotsInput, Prisma.competitorsUncheckedCreateWithoutBracket_slotsInput>
   connectOrCreate?: Prisma.competitorsCreateOrConnectWithoutBracket_slotsInput
@@ -700,6 +721,7 @@ export type competitorsCreateWithoutFighterInput = {
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
   withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
@@ -715,6 +737,7 @@ export type competitorsUncheckedCreateWithoutFighterInput = {
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
@@ -766,6 +789,7 @@ export type competitorsCreateWithoutTournamentInput = {
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
   withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
@@ -781,6 +805,7 @@ export type competitorsUncheckedCreateWithoutTournamentInput = {
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
@@ -821,6 +846,7 @@ export type competitorsCreateWithoutNominationInput = {
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
   withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
@@ -836,6 +862,7 @@ export type competitorsUncheckedCreateWithoutNominationInput = {
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
@@ -876,6 +903,7 @@ export type competitorsCreateWithoutGroupsInput = {
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
   withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
@@ -891,6 +919,7 @@ export type competitorsUncheckedCreateWithoutGroupsInput = {
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
@@ -921,6 +950,7 @@ export type competitorsUpdateWithoutGroupsInput = {
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
@@ -936,6 +966,7 @@ export type competitorsUncheckedUpdateWithoutGroupsInput = {
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
@@ -951,6 +982,7 @@ export type competitorsCreateWithoutFights_as_f1Input = {
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
   withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutCompetitorInput
   fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
   fight_warnings?: Prisma.fight_warningsCreateNestedManyWithoutCompetitorInput
@@ -966,6 +998,7 @@ export type competitorsUncheckedCreateWithoutFights_as_f1Input = {
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
   fight_warnings?: Prisma.fight_warningsUncheckedCreateNestedManyWithoutCompetitorInput
@@ -985,6 +1018,7 @@ export type competitorsCreateWithoutFights_as_f2Input = {
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
   withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
   fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
   fight_warnings?: Prisma.fight_warningsCreateNestedManyWithoutCompetitorInput
@@ -1000,6 +1034,7 @@ export type competitorsUncheckedCreateWithoutFights_as_f2Input = {
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
   fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
   fight_warnings?: Prisma.fight_warningsUncheckedCreateNestedManyWithoutCompetitorInput
@@ -1019,6 +1054,7 @@ export type competitorsCreateWithoutFights_wonInput = {
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
   withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
   fight_warnings?: Prisma.fight_warningsCreateNestedManyWithoutCompetitorInput
@@ -1034,6 +1070,7 @@ export type competitorsUncheckedCreateWithoutFights_wonInput = {
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
   fight_warnings?: Prisma.fight_warningsUncheckedCreateNestedManyWithoutCompetitorInput
@@ -1064,6 +1101,7 @@ export type competitorsUpdateWithoutFights_as_f1Input = {
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutCompetitorNestedInput
   fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
   fight_warnings?: Prisma.fight_warningsUpdateManyWithoutCompetitorNestedInput
@@ -1079,6 +1117,7 @@ export type competitorsUncheckedUpdateWithoutFights_as_f1Input = {
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
   fight_warnings?: Prisma.fight_warningsUncheckedUpdateManyWithoutCompetitorNestedInput
@@ -1104,6 +1143,7 @@ export type competitorsUpdateWithoutFights_as_f2Input = {
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
   fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
   fight_warnings?: Prisma.fight_warningsUpdateManyWithoutCompetitorNestedInput
@@ -1119,6 +1159,7 @@ export type competitorsUncheckedUpdateWithoutFights_as_f2Input = {
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
   fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
   fight_warnings?: Prisma.fight_warningsUncheckedUpdateManyWithoutCompetitorNestedInput
@@ -1144,6 +1185,7 @@ export type competitorsUpdateWithoutFights_wonInput = {
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
   fight_warnings?: Prisma.fight_warningsUpdateManyWithoutCompetitorNestedInput
@@ -1159,6 +1201,7 @@ export type competitorsUncheckedUpdateWithoutFights_wonInput = {
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
   fight_warnings?: Prisma.fight_warningsUncheckedUpdateManyWithoutCompetitorNestedInput
@@ -1172,6 +1215,7 @@ export type competitorsCreateWithoutWithdrawalsInput = {
   groups?: Prisma.group_competitorsCreateNestedManyWithoutCompetitorInput
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
@@ -1187,6 +1231,7 @@ export type competitorsUncheckedCreateWithoutWithdrawalsInput = {
   groups?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutCompetitorInput
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
@@ -1217,6 +1262,7 @@ export type competitorsUpdateWithoutWithdrawalsInput = {
   groups?: Prisma.group_competitorsUpdateManyWithoutCompetitorNestedInput
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
@@ -1232,6 +1278,7 @@ export type competitorsUncheckedUpdateWithoutWithdrawalsInput = {
   groups?: Prisma.group_competitorsUncheckedUpdateManyWithoutCompetitorNestedInput
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
@@ -1247,6 +1294,7 @@ export type competitorsCreateWithoutFight_warningsInput = {
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
   withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
@@ -1262,6 +1310,7 @@ export type competitorsUncheckedCreateWithoutFight_warningsInput = {
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
@@ -1292,6 +1341,7 @@ export type competitorsUpdateWithoutFight_warningsInput = {
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
@@ -1307,9 +1357,88 @@ export type competitorsUncheckedUpdateWithoutFight_warningsInput = {
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
+}
+
+export type competitorsCreateWithoutRussia_hmb_rating_resultsInput = {
+  stage?: number
+  fighter: Prisma.fightersCreateNestedOneWithoutCompetitorsInput
+  tournament: Prisma.tournamentsCreateNestedOneWithoutCompetitorsInput
+  nomination: Prisma.nominationsCreateNestedOneWithoutCompetitorsInput
+  groups?: Prisma.group_competitorsCreateNestedManyWithoutCompetitorInput
+  bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
+  placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
+  fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
+  fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
+  fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
+  fight_warnings?: Prisma.fight_warningsCreateNestedManyWithoutCompetitorInput
+}
+
+export type competitorsUncheckedCreateWithoutRussia_hmb_rating_resultsInput = {
+  id?: number
+  fighter_id: number
+  tournament_id: number
+  nomination_id: number
+  stage?: number
+  groups?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutCompetitorInput
+  bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
+  placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
+  fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
+  fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
+  fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
+  fight_warnings?: Prisma.fight_warningsUncheckedCreateNestedManyWithoutCompetitorInput
+}
+
+export type competitorsCreateOrConnectWithoutRussia_hmb_rating_resultsInput = {
+  where: Prisma.competitorsWhereUniqueInput
+  create: Prisma.XOR<Prisma.competitorsCreateWithoutRussia_hmb_rating_resultsInput, Prisma.competitorsUncheckedCreateWithoutRussia_hmb_rating_resultsInput>
+}
+
+export type competitorsUpsertWithoutRussia_hmb_rating_resultsInput = {
+  update: Prisma.XOR<Prisma.competitorsUpdateWithoutRussia_hmb_rating_resultsInput, Prisma.competitorsUncheckedUpdateWithoutRussia_hmb_rating_resultsInput>
+  create: Prisma.XOR<Prisma.competitorsCreateWithoutRussia_hmb_rating_resultsInput, Prisma.competitorsUncheckedCreateWithoutRussia_hmb_rating_resultsInput>
+  where?: Prisma.competitorsWhereInput
+}
+
+export type competitorsUpdateToOneWithWhereWithoutRussia_hmb_rating_resultsInput = {
+  where?: Prisma.competitorsWhereInput
+  data: Prisma.XOR<Prisma.competitorsUpdateWithoutRussia_hmb_rating_resultsInput, Prisma.competitorsUncheckedUpdateWithoutRussia_hmb_rating_resultsInput>
+}
+
+export type competitorsUpdateWithoutRussia_hmb_rating_resultsInput = {
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter?: Prisma.fightersUpdateOneRequiredWithoutCompetitorsNestedInput
+  tournament?: Prisma.tournamentsUpdateOneRequiredWithoutCompetitorsNestedInput
+  nomination?: Prisma.nominationsUpdateOneRequiredWithoutCompetitorsNestedInput
+  groups?: Prisma.group_competitorsUpdateManyWithoutCompetitorNestedInput
+  bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
+  placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
+  fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
+  fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
+  fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
+  fight_warnings?: Prisma.fight_warningsUpdateManyWithoutCompetitorNestedInput
+}
+
+export type competitorsUncheckedUpdateWithoutRussia_hmb_rating_resultsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  fighter_id?: Prisma.IntFieldUpdateOperationsInput | number
+  tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  nomination_id?: Prisma.IntFieldUpdateOperationsInput | number
+  stage?: Prisma.IntFieldUpdateOperationsInput | number
+  groups?: Prisma.group_competitorsUncheckedUpdateManyWithoutCompetitorNestedInput
+  bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
+  placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
+  withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
+  fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
+  fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
+  fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
+  fight_warnings?: Prisma.fight_warningsUncheckedUpdateManyWithoutCompetitorNestedInput
 }
 
 export type competitorsCreateWithoutBracket_slotsInput = {
@@ -1320,6 +1449,7 @@ export type competitorsCreateWithoutBracket_slotsInput = {
   groups?: Prisma.group_competitorsCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsCreateNestedManyWithoutCompetitorInput
   withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
@@ -1335,6 +1465,7 @@ export type competitorsUncheckedCreateWithoutBracket_slotsInput = {
   groups?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutCompetitorInput
   placements?: Prisma.competition_placementsUncheckedCreateNestedManyWithoutCompetitorInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
@@ -1365,6 +1496,7 @@ export type competitorsUpdateWithoutBracket_slotsInput = {
   groups?: Prisma.group_competitorsUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
@@ -1380,6 +1512,7 @@ export type competitorsUncheckedUpdateWithoutBracket_slotsInput = {
   groups?: Prisma.group_competitorsUncheckedUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
@@ -1394,6 +1527,7 @@ export type competitorsCreateWithoutPlacementsInput = {
   groups?: Prisma.group_competitorsCreateNestedManyWithoutCompetitorInput
   bracket_slots?: Prisma.bracket_slotsCreateNestedManyWithoutCompetitorInput
   withdrawals?: Prisma.fighter_withdrawalsCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsCreateNestedManyWithoutWinnerInput
@@ -1409,6 +1543,7 @@ export type competitorsUncheckedCreateWithoutPlacementsInput = {
   groups?: Prisma.group_competitorsUncheckedCreateNestedManyWithoutCompetitorInput
   bracket_slots?: Prisma.bracket_slotsUncheckedCreateNestedManyWithoutCompetitorInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedCreateNestedManyWithoutCompetitorInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedCreateNestedManyWithoutCompetitorInput
   fights_as_f1?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor1Input
   fights_as_f2?: Prisma.fightsUncheckedCreateNestedManyWithoutCompetitor2Input
   fights_won?: Prisma.fightsUncheckedCreateNestedManyWithoutWinnerInput
@@ -1439,6 +1574,7 @@ export type competitorsUpdateWithoutPlacementsInput = {
   groups?: Prisma.group_competitorsUpdateManyWithoutCompetitorNestedInput
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
@@ -1454,6 +1590,7 @@ export type competitorsUncheckedUpdateWithoutPlacementsInput = {
   groups?: Prisma.group_competitorsUncheckedUpdateManyWithoutCompetitorNestedInput
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
@@ -1475,6 +1612,7 @@ export type competitorsUpdateWithoutFighterInput = {
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
@@ -1490,6 +1628,7 @@ export type competitorsUncheckedUpdateWithoutFighterInput = {
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
@@ -1518,6 +1657,7 @@ export type competitorsUpdateWithoutTournamentInput = {
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
@@ -1533,6 +1673,7 @@ export type competitorsUncheckedUpdateWithoutTournamentInput = {
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
@@ -1561,6 +1702,7 @@ export type competitorsUpdateWithoutNominationInput = {
   bracket_slots?: Prisma.bracket_slotsUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUpdateManyWithoutCompetitorNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUpdateManyWithoutWinnerNestedInput
@@ -1576,6 +1718,7 @@ export type competitorsUncheckedUpdateWithoutNominationInput = {
   bracket_slots?: Prisma.bracket_slotsUncheckedUpdateManyWithoutCompetitorNestedInput
   placements?: Prisma.competition_placementsUncheckedUpdateManyWithoutCompetitorNestedInput
   withdrawals?: Prisma.fighter_withdrawalsUncheckedUpdateManyWithoutCompetitorNestedInput
+  russia_hmb_rating_results?: Prisma.russia_hmb_rating_resultsUncheckedUpdateManyWithoutCompetitorNestedInput
   fights_as_f1?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor1NestedInput
   fights_as_f2?: Prisma.fightsUncheckedUpdateManyWithoutCompetitor2NestedInput
   fights_won?: Prisma.fightsUncheckedUpdateManyWithoutWinnerNestedInput
@@ -1599,6 +1742,7 @@ export type CompetitorsCountOutputType = {
   bracket_slots: number
   placements: number
   withdrawals: number
+  russia_hmb_rating_results: number
   fights_as_f1: number
   fights_as_f2: number
   fights_won: number
@@ -1610,6 +1754,7 @@ export type CompetitorsCountOutputTypeSelect<ExtArgs extends runtime.Types.Exten
   bracket_slots?: boolean | CompetitorsCountOutputTypeCountBracket_slotsArgs
   placements?: boolean | CompetitorsCountOutputTypeCountPlacementsArgs
   withdrawals?: boolean | CompetitorsCountOutputTypeCountWithdrawalsArgs
+  russia_hmb_rating_results?: boolean | CompetitorsCountOutputTypeCountRussia_hmb_rating_resultsArgs
   fights_as_f1?: boolean | CompetitorsCountOutputTypeCountFights_as_f1Args
   fights_as_f2?: boolean | CompetitorsCountOutputTypeCountFights_as_f2Args
   fights_won?: boolean | CompetitorsCountOutputTypeCountFights_wonArgs
@@ -1657,6 +1802,13 @@ export type CompetitorsCountOutputTypeCountWithdrawalsArgs<ExtArgs extends runti
 /**
  * CompetitorsCountOutputType without action
  */
+export type CompetitorsCountOutputTypeCountRussia_hmb_rating_resultsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.russia_hmb_rating_resultsWhereInput
+}
+
+/**
+ * CompetitorsCountOutputType without action
+ */
 export type CompetitorsCountOutputTypeCountFights_as_f1Args<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.fightsWhereInput
 }
@@ -1696,6 +1848,7 @@ export type competitorsSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   bracket_slots?: boolean | Prisma.competitors$bracket_slotsArgs<ExtArgs>
   placements?: boolean | Prisma.competitors$placementsArgs<ExtArgs>
   withdrawals?: boolean | Prisma.competitors$withdrawalsArgs<ExtArgs>
+  russia_hmb_rating_results?: boolean | Prisma.competitors$russia_hmb_rating_resultsArgs<ExtArgs>
   fights_as_f1?: boolean | Prisma.competitors$fights_as_f1Args<ExtArgs>
   fights_as_f2?: boolean | Prisma.competitors$fights_as_f2Args<ExtArgs>
   fights_won?: boolean | Prisma.competitors$fights_wonArgs<ExtArgs>
@@ -1742,6 +1895,7 @@ export type competitorsInclude<ExtArgs extends runtime.Types.Extensions.Internal
   bracket_slots?: boolean | Prisma.competitors$bracket_slotsArgs<ExtArgs>
   placements?: boolean | Prisma.competitors$placementsArgs<ExtArgs>
   withdrawals?: boolean | Prisma.competitors$withdrawalsArgs<ExtArgs>
+  russia_hmb_rating_results?: boolean | Prisma.competitors$russia_hmb_rating_resultsArgs<ExtArgs>
   fights_as_f1?: boolean | Prisma.competitors$fights_as_f1Args<ExtArgs>
   fights_as_f2?: boolean | Prisma.competitors$fights_as_f2Args<ExtArgs>
   fights_won?: boolean | Prisma.competitors$fights_wonArgs<ExtArgs>
@@ -1769,6 +1923,7 @@ export type $competitorsPayload<ExtArgs extends runtime.Types.Extensions.Interna
     bracket_slots: Prisma.$bracket_slotsPayload<ExtArgs>[]
     placements: Prisma.$competition_placementsPayload<ExtArgs>[]
     withdrawals: Prisma.$fighter_withdrawalsPayload<ExtArgs>[]
+    russia_hmb_rating_results: Prisma.$russia_hmb_rating_resultsPayload<ExtArgs>[]
     fights_as_f1: Prisma.$fightsPayload<ExtArgs>[]
     fights_as_f2: Prisma.$fightsPayload<ExtArgs>[]
     fights_won: Prisma.$fightsPayload<ExtArgs>[]
@@ -2181,6 +2336,7 @@ export interface Prisma__competitorsClient<T, Null = never, ExtArgs extends runt
   bracket_slots<T extends Prisma.competitors$bracket_slotsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competitors$bracket_slotsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$bracket_slotsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   placements<T extends Prisma.competitors$placementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competitors$placementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$competition_placementsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   withdrawals<T extends Prisma.competitors$withdrawalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competitors$withdrawalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fighter_withdrawalsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  russia_hmb_rating_results<T extends Prisma.competitors$russia_hmb_rating_resultsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competitors$russia_hmb_rating_resultsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$russia_hmb_rating_resultsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   fights_as_f1<T extends Prisma.competitors$fights_as_f1Args<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competitors$fights_as_f1Args<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fightsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   fights_as_f2<T extends Prisma.competitors$fights_as_f2Args<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competitors$fights_as_f2Args<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fightsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   fights_won<T extends Prisma.competitors$fights_wonArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.competitors$fights_wonArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$fightsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2708,6 +2864,30 @@ export type competitors$withdrawalsArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.Fighter_withdrawalsScalarFieldEnum | Prisma.Fighter_withdrawalsScalarFieldEnum[]
+}
+
+/**
+ * competitors.russia_hmb_rating_results
+ */
+export type competitors$russia_hmb_rating_resultsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the russia_hmb_rating_results
+   */
+  select?: Prisma.russia_hmb_rating_resultsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the russia_hmb_rating_results
+   */
+  omit?: Prisma.russia_hmb_rating_resultsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.russia_hmb_rating_resultsInclude<ExtArgs> | null
+  where?: Prisma.russia_hmb_rating_resultsWhereInput
+  orderBy?: Prisma.russia_hmb_rating_resultsOrderByWithRelationInput | Prisma.russia_hmb_rating_resultsOrderByWithRelationInput[]
+  cursor?: Prisma.russia_hmb_rating_resultsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Russia_hmb_rating_resultsScalarFieldEnum | Prisma.Russia_hmb_rating_resultsScalarFieldEnum[]
 }
 
 /**

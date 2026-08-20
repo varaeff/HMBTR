@@ -371,9 +371,18 @@ Widgets могут владеть локальными edit drafts и состо
 
 ## Ratings и профили бойцов
 
-Rating API functions находятся в `api/ratings.ts`. Данные страницы рейтинга загружаются через `useRatingPageData`.
+Rating API functions находятся в `api/ratings.ts`. Данные страницы Elo рейтинга
+загружаются через `useRatingPageData`; данные публичной страницы рейтинга ИСБ
+России загружаются через `useRussiaHmbRatingPageData` и используют фильтры года
+и номинации.
 
-Статистика профиля бойца загружается через `useFighterProfileStats`. `FighterRatingChart` отвечает за визуализацию истории рейтинга и использует generic chart primitives из `components/ui/chart`.
+Статистика профиля бойца загружается через `useFighterProfileStats`. Public
+данные профиля включают очки ИСБ России в завершенных турнирах и годовые
+сводки. Elo summaries загружаются отдельно только для авторизованных
+пользователей с хотя бы одной ролью.
+
+`FighterRatingChart` отвечает за визуализацию истории Elo рейтинга и использует
+generic chart primitives из `components/ui/chart`.
 
 ## Settings и администрирование
 

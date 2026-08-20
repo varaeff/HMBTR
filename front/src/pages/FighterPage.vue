@@ -73,6 +73,9 @@ const {
   isStatsLoading,
   statsError,
   selectedRatingNominationId,
+  selectedRussiaHmbYear,
+  russiaHmbYears,
+  selectedRussiaHmbSummary,
   completedTournamentRows,
   selectedRating,
   loadFighterStats
@@ -175,7 +178,9 @@ const nominationName = (nomination: FighterProfileNomination) =>
 const formatProfileDate = (date: string | null) => dateToString(date ? new Date(date) : null)
 
 const tournamentNominationsText = (row: CompletedTournamentRow) =>
-  row.nominations.map((nomination) => nominationName(nomination)).join(', ')
+  row.nominations.map((item) => nominationName(item.nomination)).join(', ')
+
+const formatRussiaHmbRating = (points: number | null) => points ?? '-'
 
 const updateDisciplinaryCard = async (
   id: number,
@@ -325,8 +330,11 @@ const saveFighter = async () => {
                   <TableRow>
                     <TableHead class="md:w-[38%]">{{ $t('fighterPageTournamentName') }}</TableHead>
                     <TableHead class="w-40">{{ $t('fighterPageTournamentDate') }}</TableHead>
-                    <TableHead class="md:w-[42%]">
+                    <TableHead class="md:w-[32%]">
                       {{ $t('fighterPageTournamentNominations') }}
+                    </TableHead>
+                    <TableHead class="w-32 text-right">
+                      {{ $t('fighterPageRussiaHmbRatingColumn') }}
                     </TableHead>
                   </TableRow>
                 </TableHeader>
@@ -341,8 +349,22 @@ const saveFighter = async () => {
                     <TableCell class="md:whitespace-normal">
                       <span class="md:hidden">{{ tournamentNominationsText(row) }}</span>
                       <span class="hidden md:grid md:gap-1">
-                        <span v-for="nomination in row.nominations" :key="nomination.id">
-                          {{ nominationName(nomination) }}
+                        <span v-for="item in row.nominations" :key="item.nomination.id">
+                          {{ nominationName(item.nomination) }}
+                        </span>
+                      </span>
+                    </TableCell>
+                    <TableCell class="text-right md:whitespace-normal">
+                      <span class="md:hidden">
+                        {{
+                          row.nominations
+                            .map((item) => formatRussiaHmbRating(item.russiaHmbRatingPoints))
+                            .join(', ')
+                        }}
+                      </span>
+                      <span class="hidden md:grid md:gap-1">
+                        <span v-for="item in row.nominations" :key="item.nomination.id">
+                          {{ formatRussiaHmbRating(item.russiaHmbRatingPoints) }}
                         </span>
                       </span>
                     </TableCell>
@@ -385,7 +407,40 @@ const saveFighter = async () => {
             </div>
           </section>
 
-          <section>
+          <section
+            v-if="fighterStats && fighterStats.russia_hmb_ratings.length"
+          >
+            <div class="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <h2 class="text-center text-xl font-semibold md:text-left">
+                {{ $t('fighterPageRussiaHmbRatingTitle') }}
+              </h2>
+              <NativeSelect
+                v-model="selectedRussiaHmbYear"
+                class="w-full md:w-40"
+                :aria-label="$t('russiaHmbRatingPageYear')"
+              >
+                <NativeSelectOption
+                  v-for="year in russiaHmbYears"
+                  :key="year"
+                  :value="String(year)"
+                >
+                  {{ year }}
+                </NativeSelectOption>
+              </NativeSelect>
+            </div>
+            <div class="overflow-hidden rounded-md border">
+              <div
+                v-for="item in selectedRussiaHmbSummary?.nominations ?? []"
+                :key="item.nomination.id"
+                class="flex items-center justify-between border-b p-4 last:border-b-0"
+              >
+                <span>{{ nominationName(item.nomination) }}</span>
+                <span class="font-semibold">{{ item.points }}</span>
+              </div>
+            </div>
+          </section>
+
+          <section v-if="authStore.hasAnyRole">
             <div class="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <h2 class="text-center text-xl font-semibold md:text-left">
                 {{ $t('fighterPageRatingsTitle') }}

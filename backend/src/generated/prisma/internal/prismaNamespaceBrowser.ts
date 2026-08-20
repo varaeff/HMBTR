@@ -73,6 +73,8 @@ export const ModelName = {
   disciplinary_card_settings: 'disciplinary_card_settings',
   fighter_nomination_ratings: 'fighter_nomination_ratings',
   fighter_nomination_rating_history: 'fighter_nomination_rating_history',
+  russia_hmb_rating_calculations: 'russia_hmb_rating_calculations',
+  russia_hmb_rating_results: 'russia_hmb_rating_results',
   competition_blocks: 'competition_blocks',
   competition_round_states: 'competition_round_states',
   bracket_slots: 'bracket_slots',
@@ -389,6 +391,40 @@ export const Fighter_nomination_rating_historyScalarFieldEnum = {
 } as const
 
 export type Fighter_nomination_rating_historyScalarFieldEnum = (typeof Fighter_nomination_rating_historyScalarFieldEnum)[keyof typeof Fighter_nomination_rating_historyScalarFieldEnum]
+
+
+export const Russia_hmb_rating_calculationsScalarFieldEnum = {
+  id: 'id',
+  tournament_nomination_id: 'tournament_nomination_id',
+  tournament_id: 'tournament_id',
+  nomination_id: 'nomination_id',
+  event_year: 'event_year',
+  coefficient: 'coefficient',
+  calculated_by_user_id: 'calculated_by_user_id',
+  calculated_at: 'calculated_at'
+} as const
+
+export type Russia_hmb_rating_calculationsScalarFieldEnum = (typeof Russia_hmb_rating_calculationsScalarFieldEnum)[keyof typeof Russia_hmb_rating_calculationsScalarFieldEnum]
+
+
+export const Russia_hmb_rating_resultsScalarFieldEnum = {
+  id: 'id',
+  calculation_id: 'calculation_id',
+  tournament_nomination_id: 'tournament_nomination_id',
+  tournament_id: 'tournament_id',
+  nomination_id: 'nomination_id',
+  fighter_id: 'fighter_id',
+  competitor_id: 'competitor_id',
+  points: 'points',
+  qc_points: 'qc_points',
+  qn_points: 'qn_points',
+  qm_points: 'qm_points',
+  yellow_cards_count: 'yellow_cards_count',
+  active_red_cards_count: 'active_red_cards_count',
+  no_show_penalty_count: 'no_show_penalty_count'
+} as const
+
+export type Russia_hmb_rating_resultsScalarFieldEnum = (typeof Russia_hmb_rating_resultsScalarFieldEnum)[keyof typeof Russia_hmb_rating_resultsScalarFieldEnum]
 
 
 export const Competition_blocksScalarFieldEnum = {

@@ -3,6 +3,7 @@ import type {
   BracketSlot,
   CompetitionBlock,
   CompetitionPlacement,
+  CompetitionRussiaHmbRating,
   FightData,
   Group,
   GroupFighter,
@@ -126,6 +127,17 @@ interface RawCompetitionPlacement {
   competitor: RawCompetitor
 }
 
+interface RawRussiaHmbRating {
+  id: number
+  tournament_nomination_id: number
+  tournament_id: number
+  nomination_id: number
+  event_year: number
+  coefficient: number
+  calculated_at: string
+  results: NonNullable<CompetitionRussiaHmbRating>['results']
+}
+
 export interface RawCompetitionState {
   tournamentNomination?: {
     is_open: boolean
@@ -137,6 +149,7 @@ export interface RawCompetitionState {
   blocks?: RawCompetitionBlock[]
   placements?: RawCompetitionPlacement[]
   activeBlockId?: number | null
+  russiaHmbRating?: RawRussiaHmbRating | null
   pendingTie?: PendingTie | null
   isFinished?: boolean
   activeWithdrawals?: RawWithdrawal[]
@@ -354,6 +367,20 @@ export const mapCompetitionState = (
   return {
     blocks,
     placements,
+    russiaHmbRating: payload.russiaHmbRating
+      ? {
+          calculation: {
+            id: payload.russiaHmbRating.id,
+            tournament_nomination_id: payload.russiaHmbRating.tournament_nomination_id,
+            tournament_id: payload.russiaHmbRating.tournament_id,
+            nomination_id: payload.russiaHmbRating.nomination_id,
+            event_year: payload.russiaHmbRating.event_year,
+            coefficient: payload.russiaHmbRating.coefficient,
+            calculated_at: payload.russiaHmbRating.calculated_at
+          },
+          results: payload.russiaHmbRating.results
+        }
+      : null,
     activeWithdrawals,
     activeBlockId: payload.activeBlockId ?? null,
     pendingTie: payload.pendingTie ?? null,

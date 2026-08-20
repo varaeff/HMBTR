@@ -1,4 +1,5 @@
 import type { Fighter } from '@/model/fighter'
+import type { RussiaHmbTournamentNominationRating } from '@/model/rating'
 import type { RoundScore } from '@shared/fightScoring'
 
 export interface ActiveWithdrawalSummary {
@@ -128,3 +129,5 @@ export interface PendingTie {
   competitorIds: number[]
   scope?: PendingTieScope
 }
+
+export type CompetitionRussiaHmbRating = RussiaHmbTournamentNominationRating | null

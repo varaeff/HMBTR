@@ -1,6 +1,6 @@
 # User Guide
 
-HMBTR is a tournament management system designed to manage fighters, judges, tournaments, nominations, fight results, disciplinary cards, prize placements, and fighter rankings based on the Elo rating system.
+HMBTR is a tournament management system designed to manage fighters, judges, tournaments, nominations, fight results, disciplinary cards, prize placements, Elo ratings, and Russia HMB ratings.
 
 ## 1. Logging Into the System
 
@@ -64,8 +64,10 @@ The fighter profile displays:
 - tournaments in which the fighter participated,
 - total number of fights and victories,
 - fights and victories by nomination,
-- nomination rating summary,
-- rating history chart,
+- HMB rating by completed tournaments and nominations,
+- Elo rating summary by nomination,
+- Elo rating history chart,
+- Russia HMB rating summary by year,
 - disciplinary cards (if any).
 
 Administrators can edit fighter data from the fighter profile.
@@ -144,7 +146,7 @@ In the group stage bracket:
 4. Enter the result of each fight.
 5. Use **Save Results**.
 
-Fight results must determine a winner. A 0:0 score means that the result has not yet been entered. Equal non-zero scores are blocked by the system because draws are not allowed.
+Fight results must determine a winner. A 0:0 score means that the result has not yet been entered. If the base rounds do not determine a winner, the system adds extra rounds until the first round where one fighter scores more points. The number of extra rounds is not limited.
 
 The group table displays victories and point difference after fight results are entered. Placements are determined by the following criteria:
 
@@ -177,30 +179,53 @@ The application automatically creates fights for the next bracket stages after s
 
 A nomination is completed automatically after both the final and the bronze medal fight are finished. After that, the page displays the top three winners.
 
-## 8. Fight Results and Disciplinary Cards
+## 8. Fight Results, Warnings, and Disciplinary Cards
 
 Authorized users can enter scores for unfinished fights. Scores are saved only after pressing the **Save Results** button for the corresponding competition bracket or round.
 
-To issue a disciplinary card, right-click on the fighter’s name in an unfinished fight. The issue dialog allows selecting:
+Each fight starts with the base rounds configured for the nomination. If the base rounds end without a winner, the fight card adds extra rounds. Extra rounds continue until the next extra round determines a winner. This rule applies both to total-score fights and to nominations with win by rounds enabled.
+
+The **Show round times** toggle displays a **Time:** field for each conducted round. The exact duration can be entered separately for every base and extra round. If the duration is not changed manually, the defaults from the nomination settings are used: main round time for base rounds and extra round time for extra rounds.
+
+Right-clicking a fighter name in an unfinished fight opens a context menu. From this menu, users can issue a disciplinary card, issue a warning, or record a fighter withdrawal when the action is available for the current fight state.
+
+### Fight Warnings
+
+A warning is part of the result of one specific fight. It is not a disciplinary card, does not appear on the fighter profile as a sanction, and does not carry over to other fights.
+
+To issue a warning, use **Issue warning** in the fighter context menu. The dialog requires selecting a round and entering a reason.
+
+Each warning adds **+3** points to the fighter's opponent in the selected round. A warning icon is displayed next to the fighter name; hovering over it shows the reason and, for multi-round fights, the round number.
+
+Three warnings for the same fighter cause a technical defeat. Warnings are saved together with fight results and are used in the final score, group standings, bracket progression, and reports. If result fixation is canceled, saved warnings become editable draft data again.
+
+### Disciplinary Cards
+
+To issue a disciplinary card, use **Issue a card** in the fighter context menu. The issue dialog allows selecting:
 
 - a yellow card,
 - a red card,
+- a judge,
 - a reason.
 
 The issue date is tied to the tournament date (if available).
 
-Disciplinary card tables are displayed on tournament and fighter pages. They show the card type, fighter or tournament, nomination, fight, reason, and expiration date.
+Disciplinary card tables are displayed on tournament and fighter pages. They show the card type, fighter or tournament, judge, nomination, fight, reason, active status, and expiration date.
 
-Authorized organizers and administrators can edit the reason for issued cards. In fighter card tables, the card expiration date can also be edited. Administrators can delete cards only while the related stage is still active and the nomination has not yet been completed.
+Inactive cards are hidden by default. If a fighter or tournament has inactive cards, the table shows a **Show inactive** toggle.
+
+Users with card-management access can edit the available card fields. For manual cards, the reason and judge can be changed; in fighter card tables, the expiration date can also be changed. Card type and active status can be changed only while they are not locked by fixed results. Deletion is available only while the related stage can still be rolled back and the nomination has not been completed.
 
 Expiration rules and principles for disciplinary cards:
 
 - Yellow cards expire at the end of the calendar year.
 - A red card expires after 90 days, or after 120 days if the fighter had active yellow cards at the moment of issue.
 - A red card is issued automatically when a fighter receives a second yellow card during the same tournament.
+- A red card can also be created automatically when a fighter has three active yellow cards across tournaments. This card is inactive at first and can be activated from the fighter card table by a user with card-management access.
+- Yellow cards consumed by an automatic red card remain in history but become inactive.
 - When a fighter receives a red card, they are removed from other tournament nominations where registration has not yet been closed.
 - A fighter with a red card automatically receives a technical defeat in all subsequent fights.
-- Technical defeats caused by red cards are not included in Elo rating calculations.
+- Technical defeats caused by red cards are not included in Elo rating calculations and do not award fight points to the losing fighter in the Russia HMB rating.
 
 ## 9. PDF Reports
 
@@ -208,7 +233,9 @@ When all tournament nominations are completed, organizers and administrators wil
 
 The first report request triggers report generation, which may take some time.
 
-## 10. Rating and Elo Principles
+## 10. Elo Rating
+
+The **Elo rating** menu item and the **Elo ratings** section on the fighter profile are available only to authenticated users who have at least one assigned role. Elo rating is separate from the Russia HMB rating.
 
 Fighter ratings are grouped by nominations. Select a nomination from the dropdown list to view the rating table for that nomination.
 
@@ -249,11 +276,36 @@ Only completed fights with a winner determined during the match are included. Fi
 
 The number of fights displayed in the rating table represents the number of fights included in rating calculations, not all scheduled fights or fights ended by technical defeat.
 
-### Fighter Rating History
+### Fighter Elo Rating History
 
-The fighter profile contains a **Ratings** section with summary information for specific nominations.
+The fighter profile contains an **Elo ratings** section with summary information for specific nominations.
 
 The rating chart starts at the initial value of 1000 and shows rating changes after nomination completion at tournaments. Each history point is linked to a specific tournament.
+
+## 11. Russia HMB Rating
+
+Russia HMB rating is a separate rating. It is not connected to Elo rating and does not use Elo data.
+
+After a nomination result is fixed, the **Calculate Russia HMB rating** button appears below the top-three winners. It is available to administrators and secretaries. Clicking it opens a modal window with the **Tournament coefficient** field. The coefficient can be **1**, **2**, or **4**; **1** is selected by default. Use **Calculate** to run the calculation.
+
+After calculation, the result is saved to the database. The modal shows the **Russia HMB rating** title, the **Nomination coefficient - K** line, and the nomination fighters sorted by rating points in descending order. After the result is saved, the nomination page button changes to **Russia HMB rating** and becomes visible to all users.
+
+Rating formula:
+
+`(Qc + Qn) * K - Qm`
+
+- **Qc** is fight points. A winner receives 2 points. A losing fighter receives 1 point only for a non-technical loss when the point difference is no more than 50%, or when the fighter won or drew at least one round. For round-win nominations, only the round condition is used.
+- Technical defeats caused by a red card, three warnings, or a fighter withdrawal do not award fight points to the losing fighter.
+- **Qn** is placement points: 6 for first place, 4 for second place, and 2 for third place.
+- **K** is the tournament coefficient selected during calculation.
+- **Qm** is penalties: 10 for an unexcused no-show, 10 for each yellow card including yellow cards consumed by a red card, and 30 for an active red card.
+- If a withdrawal has **Valid reason** selected, the Russia HMB no-show penalty is not applied.
+
+The **Russia HMB ratings** page opens from the **HMB rating** menu item and is available to all users. The page has year and nomination selectors. The year selector contains only years that have tournaments with calculated HMB ratings. The nomination selector contains only nominations with rating data for the selected year.
+
+By default, the current year is selected if it has calculated ratings. If the current year has no ratings, the latest available year is selected. The table shows rank, fighter, location, tournament count, and the fighter's total rating in the selected nomination and year.
+
+On the fighter profile, the **Completed tournaments** section contains an **HMB rating** column. It shows HMB rating points for each nomination; if the rating has not been calculated yet, a dash is displayed. After the **Fights / Wins** section, a public **HMB rating** section appears when the fighter has calculated ratings. It allows selecting a year and viewing total points by nomination for that year.
 
 ## 12. Recommended Tournament Workflow
 
