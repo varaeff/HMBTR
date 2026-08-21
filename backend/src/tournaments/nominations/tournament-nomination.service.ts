@@ -37,18 +37,7 @@ export class TournamentNominationService {
     if (!nomination) throw new NotFoundException('Nomination not found');
 
     if (nomination.is_open && !dto.is_open) {
-      const tournamentMarshal = await this.prisma.tournament_marshals.findFirst(
-        {
-          where: { tournament_id: dto.tournament_id },
-          select: { id: true },
-        },
-      );
-
-      if (!tournamentMarshal) {
-        throw new BadRequestException(
-          'Add marshals before closing registration',
-        );
-      }
+      await this.assertJudgingCorpsComplete(dto.tournament_id);
     }
 
     return this.prisma.tournament_nominations.update({
@@ -113,5 +102,43 @@ export class TournamentNominationService {
         stage: dto.stage,
       },
     });
+  }
+
+  private async assertJudgingCorpsComplete(tournamentId: number) {
+    const tournament = await this.prisma.tournaments.findUnique({
+      where: { id: tournamentId },
+      select: {
+        secretary_name: true,
+        marshals: {
+          select: {
+            id: true,
+            is_chief_judge: true,
+          },
+        },
+      },
+    });
+
+    if (!tournament) throw new NotFoundException('Tournament not found');
+
+    if (!tournament.marshals.length) {
+      throw new BadRequestException(
+        'Add marshals before closing registration',
+      );
+    }
+
+    const chiefJudges = tournament.marshals.filter(
+      (marshal) => marshal.is_chief_judge,
+    );
+    if (chiefJudges.length !== 1) {
+      throw new BadRequestException(
+        'Select a chief judge before closing registration',
+      );
+    }
+
+    if (!tournament.secretary_name?.trim()) {
+      throw new BadRequestException(
+        'Add tournament secretary before closing registration',
+      );
+    }
   }
 }

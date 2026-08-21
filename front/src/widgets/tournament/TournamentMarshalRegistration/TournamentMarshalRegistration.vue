@@ -6,10 +6,11 @@ defineProps<{
   tournament: Tournament | null
   showSelector: boolean
   canManage: boolean
+  canEdit: boolean
 }>()
 
 const emit = defineEmits<{
-  (e: 'finished'): void
+  (e: 'update-secretary', value: string): Promise<void> | void
 }>()
 </script>
 
@@ -17,8 +18,10 @@ const emit = defineEmits<{
   <TournamentMarshals
     v-if="tournament"
     :tournamentId="tournament.id"
+    :secretaryName="tournament.secretary_name ?? ''"
     :showSelector="showSelector"
     :canManage="canManage"
-    @finished="emit('finished')"
+    :canEdit="canEdit"
+    @update-secretary="(value) => emit('update-secretary', value)"
   />
 </template>

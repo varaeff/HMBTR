@@ -7,7 +7,7 @@ description: Maintain HMBTR marshal/judge list, profile, categories, secretary p
 
 ## Context
 
-Marshals and judges are the same domain entity. The app stores them in `marshals`, categorizes them through `marshals_categories`, and assigns them to whole tournaments through `tournament_marshals`.
+Marshals and judges are the same domain entity. The app stores them in `marshals`, categorizes them through `marshals_categories`, assigns them to whole tournaments through `tournament_marshals`, and stores the tournament secretary on `tournaments.secretary_name`.
 
 ## Problem Statement
 
@@ -23,16 +23,21 @@ Use marshal naming in code and URLs. Visible UI text may say judges where the wo
 2. Marshal create/update is limited to admin or secretary.
 3. Tournament marshal registration is limited to admin, organizer, or secretary.
 4. A marshal is assigned once to a whole tournament, not per nomination.
-5. Backend registration must reject when `tournaments.is_marshals_registration_closed` is true or no tournament nomination has `is_open = true`.
-6. `Finish adding marshals` permanently sets `is_marshals_registration_closed`
-   only after at least one marshal is assigned; there is no reopen flow for
-   non-empty registration.
+5. Backend marshal/secretary edits must reject when no tournament nomination has
+   `is_open = true`; reopening any nomination registration reopens judge and
+   secretary editability.
+6. Do not use a manual finish-registration flag or endpoint. There is no
+   `Finish adding marshals` flow.
 7. Marshal profile displays only identity/location/photo and all assigned tournaments; edit mode may include required category.
-8. Fighter nomination registration cannot be closed until at least one marshal
-   is registered for the tournament. Enforce this in `TournamentsService` and
-   show a disabled close-registration action with an "Add judges" hint in the
-   tournament UI.
-9. Marshal profile edit-mode lifecycle uses
+8. The first assigned tournament marshal becomes chief judge by default. Later
+   assignments are not chief automatically. Selecting a chief judge clears the
+   previous chief for the same tournament. Deleting a chief judge does not
+   auto-promote another judge.
+9. Fighter nomination registration cannot be closed until the judging corps is
+   complete: at least one marshal, exactly one chief judge, and non-empty
+   `secretary_name`. Enforce this on the backend and show disabled
+   close-registration actions with specific hints in the tournament UI.
+10. Marshal profile edit-mode lifecycle uses
    `front/src/composables/useEditableEntityForm.ts`; keep marshal-specific
    category handling and `MarshalDB` payload construction as page-level
    adapters.
@@ -44,19 +49,21 @@ Use marshal naming in code and URLs. Visible UI text may say judges where the wo
 - Category is required when creating or editing a marshal.
 - Duplicate marshal rule is `name + surname + country_id`.
 - Do not broaden `hasAccess`; use explicit marshal permission helpers.
+- Existing production data is repaired after `db push` by an idempotent startup
+  backfill that marks the lowest-id tournament marshal as chief only when a
+  tournament has judges and no chief.
 
 ## Edge Cases
 
 - Empty categories means marshal save remains disabled.
 - Assigned marshal list remains visible after marshal or fighter registration closes.
-- Removal is allowed only while marshal registration is still open by the backend rule.
-- If test data contains `is_marshals_registration_closed = true` with zero
-  assigned marshals, keep the add-marshal UI/API available so the tournament can
-  recover while fighter registration is still open. The first assigned marshal
-  in this recovery path should reset `is_marshals_registration_closed` to false.
-- During a started add-marshal session, keep the selector and finish action
-  visible after the first marshal is assigned. The UI should treat explicit
-  finish, not the first non-empty marshal list, as the end of the session.
+- Removal and chief/secretary edits are allowed only while at least one
+  nomination registration is open.
+- During a started add-marshal session, keep the selector visible after the
+  first marshal is assigned while at least one nomination registration remains
+  open.
+- Completed tournament views keep the judging corps visible but collapsed by
+  default unless local collapsible state overrides it.
 
 ## Related Files
 

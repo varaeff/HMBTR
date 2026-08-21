@@ -36,6 +36,17 @@ export const useTournamentMarshalsStore = defineStore({
       this.tournamentMarshals.push(tournamentMarshal)
     },
 
+    async setChiefMarshal(this: TournamentMarshalsState, tournamentMarshalId: number) {
+      const response = await http.patch(
+        API_ROUTES.TOURNAMENTS.TOURNAMENT_MARSHAL_CHIEF_BY_ID(tournamentMarshalId)
+      )
+      const chiefMarshal = await parseTournamentMarshal(response.data as TournamentMarshalDB)
+      this.tournamentMarshals = this.tournamentMarshals.map((item) => ({
+        ...item,
+        is_chief_judge: item.id === chiefMarshal.id
+      }))
+    },
+
     async deleteTournamentMarshal(this: TournamentMarshalsState, tournamentMarshalId: number) {
       await http.delete(API_ROUTES.TOURNAMENTS.TOURNAMENT_MARSHAL_BY_ID(tournamentMarshalId))
       this.tournamentMarshals = this.tournamentMarshals.filter(
@@ -43,8 +54,10 @@ export const useTournamentMarshalsStore = defineStore({
       )
     },
 
-    async finishMarshalRegistration(this: TournamentMarshalsState) {
-      await http.post(API_ROUTES.TOURNAMENTS.FINISH_MARSHALS(this.tournamentId))
+    async updateTournamentSecretary(this: TournamentMarshalsState, secretaryName: string) {
+      await http.patch(API_ROUTES.TOURNAMENTS.SECRETARY(this.tournamentId), {
+        secretary_name: secretaryName
+      })
     }
   }
 })

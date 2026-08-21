@@ -4,7 +4,12 @@ import I18NextVue from 'i18next-vue'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import SettingsPage from './SettingsPage.vue'
 import RoundTimeInput from '@/components/ui/round-time-input/RoundTimeInput.vue'
-import type { DisciplinaryCardSettings, Nomination, NominationPayload } from '@/model'
+import type {
+  DisciplinaryCardSettings,
+  MinsportReportSettings,
+  Nomination,
+  NominationPayload
+} from '@/model'
 
 const mocks = vi.hoisted(() => {
   const nominations: Nomination[] = [
@@ -12,6 +17,7 @@ const mocks = vi.hoisted(() => {
       id: 1,
       name_ru: 'Adults',
       name_en: 'Adults',
+      weapon: null,
       is_male: true,
       rounds: 1,
       round_win: false,
@@ -32,16 +38,25 @@ const mocks = vi.hoisted(() => {
     red_manual_with_two_or_more_yellows_days: 180,
     updated_at: ''
   }
+  const minsportSettings: MinsportReportSettings = {
+    id: 1,
+    organization_name: '',
+    organization_address: '',
+    updated_at: ''
+  }
 
   return {
     nominations,
     cardSettings,
+    minsportSettings,
     refreshNominations: vi.fn(),
     createNomination: vi.fn(),
     updateNomination: vi.fn(),
     deleteNomination: vi.fn(),
     loadDisciplinaryCardSettings: vi.fn(),
-    updateDisciplinaryCardSettings: vi.fn()
+    updateDisciplinaryCardSettings: vi.fn(),
+    loadMinsportReportSettings: vi.fn(),
+    updateMinsportReportSettings: vi.fn()
   }
 })
 
@@ -58,7 +73,9 @@ vi.mock('@/stores/commonData', () => ({
 vi.mock('@/stores/settings', () => ({
   useSettingsStore: () => ({
     loadDisciplinaryCardSettings: mocks.loadDisciplinaryCardSettings,
-    updateDisciplinaryCardSettings: mocks.updateDisciplinaryCardSettings
+    updateDisciplinaryCardSettings: mocks.updateDisciplinaryCardSettings,
+    loadMinsportReportSettings: mocks.loadMinsportReportSettings,
+    updateMinsportReportSettings: mocks.updateMinsportReportSettings
   })
 }))
 
@@ -74,6 +91,7 @@ const createI18n = async () => {
           settingsPageTitle: 'Settings',
           settingsCardsTab: 'Cards',
           settingsNominationsTab: 'Nominations',
+          settingsMinsportReportTab: 'Ministry report',
           settingsCardsTitle: 'Card settings',
           settingsCardsDescription: 'Card expiration settings',
           settingsYellowMode: 'Yellow',
@@ -89,6 +107,7 @@ const createI18n = async () => {
           settingsNominationsDescription: 'Reference data',
           settingsNominationNameRu: 'Name RU',
           settingsNominationNameEn: 'Name EN',
+          settingsNominationWeapon: 'Weapon',
           settingsNominationRounds: 'Rounds',
           settingsNominationRoundWin: 'Round win',
           settingsNominationMainRoundTime: 'Main round time',
@@ -105,6 +124,10 @@ const createI18n = async () => {
           disciplinaryCardsCancel: 'Cancel',
           tournamentPageConfirmBackwardAction: 'Confirm',
           settingsSaved: 'Saved',
+          settingsMinsportReportTitle: 'Ministry report',
+          settingsMinsportReportDescription: 'Organization data',
+          settingsMinsportOrganizationName: 'Organization name',
+          settingsMinsportOrganizationAddress: 'Organization address',
           settingsNominationCreated: 'Created',
           settingsNominationConfirmTitle: 'Confirmation',
           settingsNominationConfirmText: 'There are fights'
@@ -151,6 +174,7 @@ describe('SettingsPage', () => {
       id: 1,
       name_ru: 'Adults',
       name_en: 'Adults',
+      weapon: null,
       is_male: true,
       rounds: 1,
       round_win: false,
@@ -165,6 +189,9 @@ describe('SettingsPage', () => {
     mocks.deleteNomination.mockReset()
     mocks.loadDisciplinaryCardSettings.mockReset()
     mocks.updateDisciplinaryCardSettings.mockReset()
+    mocks.loadMinsportReportSettings.mockReset()
+    mocks.loadMinsportReportSettings.mockResolvedValue(mocks.minsportSettings)
+    mocks.updateMinsportReportSettings.mockReset()
   })
 
   it('allows round-win checkbox when nomination rounds are set to three', async () => {
@@ -274,5 +301,31 @@ describe('SettingsPage', () => {
       })
     )
     expect(wrapper.find('[data-testid="nomination-confirm"]').exists()).toBe(false)
+  })
+
+  it('saves minsport report settings as editable stored text', async () => {
+    mocks.refreshNominations.mockResolvedValue(mocks.nominations)
+    mocks.loadDisciplinaryCardSettings.mockResolvedValue(mocks.cardSettings)
+    mocks.updateMinsportReportSettings.mockResolvedValue({
+      ...mocks.minsportSettings,
+      organization_name: 'Club',
+      organization_address: 'Street 1'
+    })
+
+    const wrapper = await mountSettingsPage()
+
+    const textareas = wrapper.findAll('textarea')
+    await textareas[0].setValue('Club')
+    await textareas[1].setValue('Street 1')
+
+    const saveButtons = wrapper.findAll('button').filter((button) => button.text().includes(saveLabel))
+    await saveButtons[1].trigger('click')
+
+    expect(mocks.updateMinsportReportSettings).toHaveBeenCalledWith(
+      expect.objectContaining<Partial<MinsportReportSettings>>({
+        organization_name: 'Club',
+        organization_address: 'Street 1'
+      })
+    )
   })
 })

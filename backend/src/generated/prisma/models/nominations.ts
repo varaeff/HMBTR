@@ -44,6 +44,7 @@ export type NominationsMinAggregateOutputType = {
   id: number | null
   name_ru: string | null
   name_en: string | null
+  weapon: string | null
   is_male: boolean | null
   rounds: number | null
   round_win: boolean | null
@@ -55,6 +56,7 @@ export type NominationsMaxAggregateOutputType = {
   id: number | null
   name_ru: string | null
   name_en: string | null
+  weapon: string | null
   is_male: boolean | null
   rounds: number | null
   round_win: boolean | null
@@ -66,6 +68,7 @@ export type NominationsCountAggregateOutputType = {
   id: number
   name_ru: number
   name_en: number
+  weapon: number
   is_male: number
   rounds: number
   round_win: number
@@ -93,6 +96,7 @@ export type NominationsMinAggregateInputType = {
   id?: true
   name_ru?: true
   name_en?: true
+  weapon?: true
   is_male?: true
   rounds?: true
   round_win?: true
@@ -104,6 +108,7 @@ export type NominationsMaxAggregateInputType = {
   id?: true
   name_ru?: true
   name_en?: true
+  weapon?: true
   is_male?: true
   rounds?: true
   round_win?: true
@@ -115,6 +120,7 @@ export type NominationsCountAggregateInputType = {
   id?: true
   name_ru?: true
   name_en?: true
+  weapon?: true
   is_male?: true
   rounds?: true
   round_win?: true
@@ -213,6 +219,7 @@ export type NominationsGroupByOutputType = {
   id: number
   name_ru: string
   name_en: string
+  weapon: string | null
   is_male: boolean
   rounds: number
   round_win: boolean
@@ -247,6 +254,7 @@ export type nominationsWhereInput = {
   id?: Prisma.IntFilter<"nominations"> | number
   name_ru?: Prisma.StringFilter<"nominations"> | string
   name_en?: Prisma.StringFilter<"nominations"> | string
+  weapon?: Prisma.StringNullableFilter<"nominations"> | string | null
   is_male?: Prisma.BoolFilter<"nominations"> | boolean
   rounds?: Prisma.IntFilter<"nominations"> | number
   round_win?: Prisma.BoolFilter<"nominations"> | boolean
@@ -266,6 +274,7 @@ export type nominationsOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name_ru?: Prisma.SortOrder
   name_en?: Prisma.SortOrder
+  weapon?: Prisma.SortOrderInput | Prisma.SortOrder
   is_male?: Prisma.SortOrder
   rounds?: Prisma.SortOrder
   round_win?: Prisma.SortOrder
@@ -290,6 +299,7 @@ export type nominationsWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.nominationsWhereInput | Prisma.nominationsWhereInput[]
   name_ru?: Prisma.StringFilter<"nominations"> | string
   name_en?: Prisma.StringFilter<"nominations"> | string
+  weapon?: Prisma.StringNullableFilter<"nominations"> | string | null
   is_male?: Prisma.BoolFilter<"nominations"> | boolean
   rounds?: Prisma.IntFilter<"nominations"> | number
   round_win?: Prisma.BoolFilter<"nominations"> | boolean
@@ -309,6 +319,7 @@ export type nominationsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name_ru?: Prisma.SortOrder
   name_en?: Prisma.SortOrder
+  weapon?: Prisma.SortOrderInput | Prisma.SortOrder
   is_male?: Prisma.SortOrder
   rounds?: Prisma.SortOrder
   round_win?: Prisma.SortOrder
@@ -328,6 +339,7 @@ export type nominationsScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"nominations"> | number
   name_ru?: Prisma.StringWithAggregatesFilter<"nominations"> | string
   name_en?: Prisma.StringWithAggregatesFilter<"nominations"> | string
+  weapon?: Prisma.StringNullableWithAggregatesFilter<"nominations"> | string | null
   is_male?: Prisma.BoolWithAggregatesFilter<"nominations"> | boolean
   rounds?: Prisma.IntWithAggregatesFilter<"nominations"> | number
   round_win?: Prisma.BoolWithAggregatesFilter<"nominations"> | boolean
@@ -338,6 +350,7 @@ export type nominationsScalarWhereWithAggregatesInput = {
 export type nominationsCreateInput = {
   name_ru: string
   name_en: string
+  weapon?: string | null
   is_male?: boolean
   rounds?: number
   round_win?: boolean
@@ -357,6 +370,7 @@ export type nominationsUncheckedCreateInput = {
   id?: number
   name_ru: string
   name_en: string
+  weapon?: string | null
   is_male?: boolean
   rounds?: number
   round_win?: boolean
@@ -375,6 +389,7 @@ export type nominationsUncheckedCreateInput = {
 export type nominationsUpdateInput = {
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  weapon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -394,6 +409,7 @@ export type nominationsUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  weapon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -413,6 +429,7 @@ export type nominationsCreateManyInput = {
   id?: number
   name_ru: string
   name_en: string
+  weapon?: string | null
   is_male?: boolean
   rounds?: number
   round_win?: boolean
@@ -423,6 +440,7 @@ export type nominationsCreateManyInput = {
 export type nominationsUpdateManyMutationInput = {
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  weapon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -434,6 +452,7 @@ export type nominationsUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  weapon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -455,6 +474,7 @@ export type nominationsCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name_ru?: Prisma.SortOrder
   name_en?: Prisma.SortOrder
+  weapon?: Prisma.SortOrder
   is_male?: Prisma.SortOrder
   rounds?: Prisma.SortOrder
   round_win?: Prisma.SortOrder
@@ -473,6 +493,7 @@ export type nominationsMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name_ru?: Prisma.SortOrder
   name_en?: Prisma.SortOrder
+  weapon?: Prisma.SortOrder
   is_male?: Prisma.SortOrder
   rounds?: Prisma.SortOrder
   round_win?: Prisma.SortOrder
@@ -484,6 +505,7 @@ export type nominationsMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name_ru?: Prisma.SortOrder
   name_en?: Prisma.SortOrder
+  weapon?: Prisma.SortOrder
   is_male?: Prisma.SortOrder
   rounds?: Prisma.SortOrder
   round_win?: Prisma.SortOrder
@@ -618,6 +640,7 @@ export type nominationsUpdateOneRequiredWithoutRussia_hmb_rating_resultsNestedIn
 export type nominationsCreateWithoutTournamentsInput = {
   name_ru: string
   name_en: string
+  weapon?: string | null
   is_male?: boolean
   rounds?: number
   round_win?: boolean
@@ -636,6 +659,7 @@ export type nominationsUncheckedCreateWithoutTournamentsInput = {
   id?: number
   name_ru: string
   name_en: string
+  weapon?: string | null
   is_male?: boolean
   rounds?: number
   round_win?: boolean
@@ -669,6 +693,7 @@ export type nominationsUpdateToOneWithWhereWithoutTournamentsInput = {
 export type nominationsUpdateWithoutTournamentsInput = {
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  weapon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -687,6 +712,7 @@ export type nominationsUncheckedUpdateWithoutTournamentsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  weapon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -704,6 +730,7 @@ export type nominationsUncheckedUpdateWithoutTournamentsInput = {
 export type nominationsCreateWithoutCompetitorsInput = {
   name_ru: string
   name_en: string
+  weapon?: string | null
   is_male?: boolean
   rounds?: number
   round_win?: boolean
@@ -722,6 +749,7 @@ export type nominationsUncheckedCreateWithoutCompetitorsInput = {
   id?: number
   name_ru: string
   name_en: string
+  weapon?: string | null
   is_male?: boolean
   rounds?: number
   round_win?: boolean
@@ -755,6 +783,7 @@ export type nominationsUpdateToOneWithWhereWithoutCompetitorsInput = {
 export type nominationsUpdateWithoutCompetitorsInput = {
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  weapon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -773,6 +802,7 @@ export type nominationsUncheckedUpdateWithoutCompetitorsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  weapon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -790,6 +820,7 @@ export type nominationsUncheckedUpdateWithoutCompetitorsInput = {
 export type nominationsCreateWithoutGroupsInput = {
   name_ru: string
   name_en: string
+  weapon?: string | null
   is_male?: boolean
   rounds?: number
   round_win?: boolean
@@ -808,6 +839,7 @@ export type nominationsUncheckedCreateWithoutGroupsInput = {
   id?: number
   name_ru: string
   name_en: string
+  weapon?: string | null
   is_male?: boolean
   rounds?: number
   round_win?: boolean
@@ -841,6 +873,7 @@ export type nominationsUpdateToOneWithWhereWithoutGroupsInput = {
 export type nominationsUpdateWithoutGroupsInput = {
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  weapon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -859,6 +892,7 @@ export type nominationsUncheckedUpdateWithoutGroupsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  weapon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -876,6 +910,7 @@ export type nominationsUncheckedUpdateWithoutGroupsInput = {
 export type nominationsCreateWithoutFightsInput = {
   name_ru: string
   name_en: string
+  weapon?: string | null
   is_male?: boolean
   rounds?: number
   round_win?: boolean
@@ -894,6 +929,7 @@ export type nominationsUncheckedCreateWithoutFightsInput = {
   id?: number
   name_ru: string
   name_en: string
+  weapon?: string | null
   is_male?: boolean
   rounds?: number
   round_win?: boolean
@@ -927,6 +963,7 @@ export type nominationsUpdateToOneWithWhereWithoutFightsInput = {
 export type nominationsUpdateWithoutFightsInput = {
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  weapon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -945,6 +982,7 @@ export type nominationsUncheckedUpdateWithoutFightsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  weapon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -962,6 +1000,7 @@ export type nominationsUncheckedUpdateWithoutFightsInput = {
 export type nominationsCreateWithoutFighter_ratingsInput = {
   name_ru: string
   name_en: string
+  weapon?: string | null
   is_male?: boolean
   rounds?: number
   round_win?: boolean
@@ -980,6 +1019,7 @@ export type nominationsUncheckedCreateWithoutFighter_ratingsInput = {
   id?: number
   name_ru: string
   name_en: string
+  weapon?: string | null
   is_male?: boolean
   rounds?: number
   round_win?: boolean
@@ -1013,6 +1053,7 @@ export type nominationsUpdateToOneWithWhereWithoutFighter_ratingsInput = {
 export type nominationsUpdateWithoutFighter_ratingsInput = {
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  weapon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1031,6 +1072,7 @@ export type nominationsUncheckedUpdateWithoutFighter_ratingsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  weapon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1048,6 +1090,7 @@ export type nominationsUncheckedUpdateWithoutFighter_ratingsInput = {
 export type nominationsCreateWithoutFighter_rating_historyInput = {
   name_ru: string
   name_en: string
+  weapon?: string | null
   is_male?: boolean
   rounds?: number
   round_win?: boolean
@@ -1066,6 +1109,7 @@ export type nominationsUncheckedCreateWithoutFighter_rating_historyInput = {
   id?: number
   name_ru: string
   name_en: string
+  weapon?: string | null
   is_male?: boolean
   rounds?: number
   round_win?: boolean
@@ -1099,6 +1143,7 @@ export type nominationsUpdateToOneWithWhereWithoutFighter_rating_historyInput = 
 export type nominationsUpdateWithoutFighter_rating_historyInput = {
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  weapon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1117,6 +1162,7 @@ export type nominationsUncheckedUpdateWithoutFighter_rating_historyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  weapon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1134,6 +1180,7 @@ export type nominationsUncheckedUpdateWithoutFighter_rating_historyInput = {
 export type nominationsCreateWithoutRussia_hmb_rating_calculationsInput = {
   name_ru: string
   name_en: string
+  weapon?: string | null
   is_male?: boolean
   rounds?: number
   round_win?: boolean
@@ -1152,6 +1199,7 @@ export type nominationsUncheckedCreateWithoutRussia_hmb_rating_calculationsInput
   id?: number
   name_ru: string
   name_en: string
+  weapon?: string | null
   is_male?: boolean
   rounds?: number
   round_win?: boolean
@@ -1185,6 +1233,7 @@ export type nominationsUpdateToOneWithWhereWithoutRussia_hmb_rating_calculations
 export type nominationsUpdateWithoutRussia_hmb_rating_calculationsInput = {
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  weapon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1203,6 +1252,7 @@ export type nominationsUncheckedUpdateWithoutRussia_hmb_rating_calculationsInput
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  weapon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1220,6 +1270,7 @@ export type nominationsUncheckedUpdateWithoutRussia_hmb_rating_calculationsInput
 export type nominationsCreateWithoutRussia_hmb_rating_resultsInput = {
   name_ru: string
   name_en: string
+  weapon?: string | null
   is_male?: boolean
   rounds?: number
   round_win?: boolean
@@ -1238,6 +1289,7 @@ export type nominationsUncheckedCreateWithoutRussia_hmb_rating_resultsInput = {
   id?: number
   name_ru: string
   name_en: string
+  weapon?: string | null
   is_male?: boolean
   rounds?: number
   round_win?: boolean
@@ -1271,6 +1323,7 @@ export type nominationsUpdateToOneWithWhereWithoutRussia_hmb_rating_resultsInput
 export type nominationsUpdateWithoutRussia_hmb_rating_resultsInput = {
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  weapon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1289,6 +1342,7 @@ export type nominationsUncheckedUpdateWithoutRussia_hmb_rating_resultsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name_ru?: Prisma.StringFieldUpdateOperationsInput | string
   name_en?: Prisma.StringFieldUpdateOperationsInput | string
+  weapon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_male?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rounds?: Prisma.IntFieldUpdateOperationsInput | number
   round_win?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1401,6 +1455,7 @@ export type nominationsSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   id?: boolean
   name_ru?: boolean
   name_en?: boolean
+  weapon?: boolean
   is_male?: boolean
   rounds?: boolean
   round_win?: boolean
@@ -1421,6 +1476,7 @@ export type nominationsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   id?: boolean
   name_ru?: boolean
   name_en?: boolean
+  weapon?: boolean
   is_male?: boolean
   rounds?: boolean
   round_win?: boolean
@@ -1432,6 +1488,7 @@ export type nominationsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   id?: boolean
   name_ru?: boolean
   name_en?: boolean
+  weapon?: boolean
   is_male?: boolean
   rounds?: boolean
   round_win?: boolean
@@ -1443,6 +1500,7 @@ export type nominationsSelectScalar = {
   id?: boolean
   name_ru?: boolean
   name_en?: boolean
+  weapon?: boolean
   is_male?: boolean
   rounds?: boolean
   round_win?: boolean
@@ -1450,7 +1508,7 @@ export type nominationsSelectScalar = {
   additional_round_time?: boolean
 }
 
-export type nominationsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name_ru" | "name_en" | "is_male" | "rounds" | "round_win" | "main_round_time" | "additional_round_time", ExtArgs["result"]["nominations"]>
+export type nominationsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name_ru" | "name_en" | "weapon" | "is_male" | "rounds" | "round_win" | "main_round_time" | "additional_round_time", ExtArgs["result"]["nominations"]>
 export type nominationsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tournaments?: boolean | Prisma.nominations$tournamentsArgs<ExtArgs>
   competitors?: boolean | Prisma.nominations$competitorsArgs<ExtArgs>
@@ -1481,6 +1539,7 @@ export type $nominationsPayload<ExtArgs extends runtime.Types.Extensions.Interna
     id: number
     name_ru: string
     name_en: string
+    weapon: string | null
     is_male: boolean
     rounds: number
     round_win: boolean
@@ -1920,6 +1979,7 @@ export interface nominationsFieldRefs {
   readonly id: Prisma.FieldRef<"nominations", 'Int'>
   readonly name_ru: Prisma.FieldRef<"nominations", 'String'>
   readonly name_en: Prisma.FieldRef<"nominations", 'String'>
+  readonly weapon: Prisma.FieldRef<"nominations", 'String'>
   readonly is_male: Prisma.FieldRef<"nominations", 'Boolean'>
   readonly rounds: Prisma.FieldRef<"nominations", 'Int'>
   readonly round_win: Prisma.FieldRef<"nominations", 'Boolean'>

@@ -19,6 +19,7 @@ import { AddNominationDto } from './dto/add-nomination.dto';
 import { UpdateNominationDto } from './dto/update-nomination.dto';
 import { UpdateNominationStageDto } from './dto/update-nomination-stage.dto';
 import { AddTournamentMarshalDto } from './dto/add-tournament-marshal.dto';
+import { UpdateTournamentSecretaryDto } from './dto/update-tournament-secretary.dto';
 import { Public } from '../auth/decorators/public.decorator';
 import type { Request, Response } from 'express';
 
@@ -124,19 +125,29 @@ export class TournamentsController {
     return this.tournamentsService.deleteTournamentMarshal(id);
   }
 
-  @Post(':id/' + API_ROUTES.TOURNAMENTS.MARSHALS + '/finish')
-  finishTournamentMarshalRegistration(
+  @Patch(API_ROUTES.TOURNAMENTS.MARSHALS + '/:id/chief')
+  setChiefTournamentMarshal(
     @Param('id', ParseIntPipe) id: number,
     @Req() req: RequestWithUser,
   ) {
     assertCanManageTournamentMarshals(req);
-    return this.tournamentsService.finishTournamentMarshalRegistration(id);
+    return this.tournamentsService.setChiefTournamentMarshal(id);
   }
 
   @Public()
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.tournamentsService.findOne(id);
+  }
+
+  @Patch(':id/secretary')
+  updateTournamentSecretary(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateTournamentSecretaryDto,
+    @Req() req: RequestWithUser,
+  ) {
+    assertCanManageTournamentMarshals(req);
+    return this.tournamentsService.updateTournamentSecretary(id, dto);
   }
 
   @Post()

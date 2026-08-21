@@ -20,6 +20,7 @@ export const API_ROUTES = {
   SETTINGS: {
     ROOT: "settings",
     DISCIPLINARY_CARDS: "disciplinary-cards",
+    MINSPORT_REPORT: "minsport-report",
   },
   TOURNAMENTS: {
     ROOT: "tournaments",
@@ -34,10 +35,11 @@ export const API_ROUTES = {
       tournamentId: string | number,
       nominationId: string | number,
     ) => `/tournaments/nominations/${tournamentId}/${nominationId}`,
-    FINISH_MARSHALS: (id: string | number) =>
-      `/tournaments/${id}/marshals/finish`,
     TOURNAMENT_MARSHAL_BY_ID: (id: string | number) =>
       `/tournaments/marshals/${id}`,
+    TOURNAMENT_MARSHAL_CHIEF_BY_ID: (id: string | number) =>
+      `/tournaments/marshals/${id}/chief`,
+    SECRETARY: (id: string | number) => `/tournaments/${id}/secretary`,
   },
   COUNTRIES: {
     ROOT: "countries",

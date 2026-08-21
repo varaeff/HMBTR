@@ -72,8 +72,7 @@ export const useTournamentsListStore = defineStore({
           id: tournamentDB.id!,
           name: tournamentDB.name,
           event_date: new Date(tournamentDB.event_date),
-          is_marshals_registration_closed:
-            tournamentDB.is_marshals_registration_closed ?? false,
+          secretary_name: tournamentDB.secretary_name ?? null,
           country: await commonDataStore.fetchCountry(tournamentDB.country_id),
           city: await commonDataStore.fetchCity(tournamentDB.city_id),
           nominations: (
@@ -109,8 +108,7 @@ export const useTournamentsListStore = defineStore({
         id: newTournament.id,
         name: newTournament.name,
         event_date: new Date(newTournament.event_date),
-        is_marshals_registration_closed:
-          newTournament.is_marshals_registration_closed ?? false,
+        secretary_name: newTournament.secretary_name ?? null,
         country: await commonDataStore.fetchCountry(newTournament.country_id!),
         city: await commonDataStore.fetchCity(newTournament.city_id!),
         nominations: (

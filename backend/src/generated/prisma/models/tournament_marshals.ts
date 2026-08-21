@@ -42,6 +42,7 @@ export type Tournament_marshalsMinAggregateOutputType = {
   id: number | null
   tournament_id: number | null
   marshal_id: number | null
+  is_chief_judge: boolean | null
   created_at: Date | null
 }
 
@@ -49,6 +50,7 @@ export type Tournament_marshalsMaxAggregateOutputType = {
   id: number | null
   tournament_id: number | null
   marshal_id: number | null
+  is_chief_judge: boolean | null
   created_at: Date | null
 }
 
@@ -56,6 +58,7 @@ export type Tournament_marshalsCountAggregateOutputType = {
   id: number
   tournament_id: number
   marshal_id: number
+  is_chief_judge: number
   created_at: number
   _all: number
 }
@@ -77,6 +80,7 @@ export type Tournament_marshalsMinAggregateInputType = {
   id?: true
   tournament_id?: true
   marshal_id?: true
+  is_chief_judge?: true
   created_at?: true
 }
 
@@ -84,6 +88,7 @@ export type Tournament_marshalsMaxAggregateInputType = {
   id?: true
   tournament_id?: true
   marshal_id?: true
+  is_chief_judge?: true
   created_at?: true
 }
 
@@ -91,6 +96,7 @@ export type Tournament_marshalsCountAggregateInputType = {
   id?: true
   tournament_id?: true
   marshal_id?: true
+  is_chief_judge?: true
   created_at?: true
   _all?: true
 }
@@ -185,6 +191,7 @@ export type Tournament_marshalsGroupByOutputType = {
   id: number
   tournament_id: number
   marshal_id: number
+  is_chief_judge: boolean
   created_at: Date
   _count: Tournament_marshalsCountAggregateOutputType | null
   _avg: Tournament_marshalsAvgAggregateOutputType | null
@@ -215,6 +222,7 @@ export type tournament_marshalsWhereInput = {
   id?: Prisma.IntFilter<"tournament_marshals"> | number
   tournament_id?: Prisma.IntFilter<"tournament_marshals"> | number
   marshal_id?: Prisma.IntFilter<"tournament_marshals"> | number
+  is_chief_judge?: Prisma.BoolFilter<"tournament_marshals"> | boolean
   created_at?: Prisma.DateTimeFilter<"tournament_marshals"> | Date | string
   tournament?: Prisma.XOR<Prisma.TournamentsScalarRelationFilter, Prisma.tournamentsWhereInput>
   marshal?: Prisma.XOR<Prisma.MarshalsScalarRelationFilter, Prisma.marshalsWhereInput>
@@ -224,6 +232,7 @@ export type tournament_marshalsOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   marshal_id?: Prisma.SortOrder
+  is_chief_judge?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   tournament?: Prisma.tournamentsOrderByWithRelationInput
   marshal?: Prisma.marshalsOrderByWithRelationInput
@@ -237,6 +246,7 @@ export type tournament_marshalsWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.tournament_marshalsWhereInput | Prisma.tournament_marshalsWhereInput[]
   tournament_id?: Prisma.IntFilter<"tournament_marshals"> | number
   marshal_id?: Prisma.IntFilter<"tournament_marshals"> | number
+  is_chief_judge?: Prisma.BoolFilter<"tournament_marshals"> | boolean
   created_at?: Prisma.DateTimeFilter<"tournament_marshals"> | Date | string
   tournament?: Prisma.XOR<Prisma.TournamentsScalarRelationFilter, Prisma.tournamentsWhereInput>
   marshal?: Prisma.XOR<Prisma.MarshalsScalarRelationFilter, Prisma.marshalsWhereInput>
@@ -246,6 +256,7 @@ export type tournament_marshalsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   marshal_id?: Prisma.SortOrder
+  is_chief_judge?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   _count?: Prisma.tournament_marshalsCountOrderByAggregateInput
   _avg?: Prisma.tournament_marshalsAvgOrderByAggregateInput
@@ -261,10 +272,12 @@ export type tournament_marshalsScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"tournament_marshals"> | number
   tournament_id?: Prisma.IntWithAggregatesFilter<"tournament_marshals"> | number
   marshal_id?: Prisma.IntWithAggregatesFilter<"tournament_marshals"> | number
+  is_chief_judge?: Prisma.BoolWithAggregatesFilter<"tournament_marshals"> | boolean
   created_at?: Prisma.DateTimeWithAggregatesFilter<"tournament_marshals"> | Date | string
 }
 
 export type tournament_marshalsCreateInput = {
+  is_chief_judge?: boolean
   created_at?: Date | string
   tournament: Prisma.tournamentsCreateNestedOneWithoutMarshalsInput
   marshal: Prisma.marshalsCreateNestedOneWithoutTournamentsInput
@@ -274,10 +287,12 @@ export type tournament_marshalsUncheckedCreateInput = {
   id?: number
   tournament_id: number
   marshal_id: number
+  is_chief_judge?: boolean
   created_at?: Date | string
 }
 
 export type tournament_marshalsUpdateInput = {
+  is_chief_judge?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tournament?: Prisma.tournamentsUpdateOneRequiredWithoutMarshalsNestedInput
   marshal?: Prisma.marshalsUpdateOneRequiredWithoutTournamentsNestedInput
@@ -287,6 +302,7 @@ export type tournament_marshalsUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
   marshal_id?: Prisma.IntFieldUpdateOperationsInput | number
+  is_chief_judge?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -294,10 +310,12 @@ export type tournament_marshalsCreateManyInput = {
   id?: number
   tournament_id: number
   marshal_id: number
+  is_chief_judge?: boolean
   created_at?: Date | string
 }
 
 export type tournament_marshalsUpdateManyMutationInput = {
+  is_chief_judge?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -305,6 +323,7 @@ export type tournament_marshalsUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
   marshal_id?: Prisma.IntFieldUpdateOperationsInput | number
+  is_chief_judge?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -327,6 +346,7 @@ export type tournament_marshalsCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   marshal_id?: Prisma.SortOrder
+  is_chief_judge?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
 }
 
@@ -340,6 +360,7 @@ export type tournament_marshalsMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   marshal_id?: Prisma.SortOrder
+  is_chief_judge?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
 }
 
@@ -347,6 +368,7 @@ export type tournament_marshalsMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tournament_id?: Prisma.SortOrder
   marshal_id?: Prisma.SortOrder
+  is_chief_judge?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
 }
 
@@ -445,6 +467,7 @@ export type DateTimeFieldUpdateOperationsInput = {
 }
 
 export type tournament_marshalsCreateWithoutMarshalInput = {
+  is_chief_judge?: boolean
   created_at?: Date | string
   tournament: Prisma.tournamentsCreateNestedOneWithoutMarshalsInput
 }
@@ -452,6 +475,7 @@ export type tournament_marshalsCreateWithoutMarshalInput = {
 export type tournament_marshalsUncheckedCreateWithoutMarshalInput = {
   id?: number
   tournament_id: number
+  is_chief_judge?: boolean
   created_at?: Date | string
 }
 
@@ -488,10 +512,12 @@ export type tournament_marshalsScalarWhereInput = {
   id?: Prisma.IntFilter<"tournament_marshals"> | number
   tournament_id?: Prisma.IntFilter<"tournament_marshals"> | number
   marshal_id?: Prisma.IntFilter<"tournament_marshals"> | number
+  is_chief_judge?: Prisma.BoolFilter<"tournament_marshals"> | boolean
   created_at?: Prisma.DateTimeFilter<"tournament_marshals"> | Date | string
 }
 
 export type tournament_marshalsCreateWithoutTournamentInput = {
+  is_chief_judge?: boolean
   created_at?: Date | string
   marshal: Prisma.marshalsCreateNestedOneWithoutTournamentsInput
 }
@@ -499,6 +525,7 @@ export type tournament_marshalsCreateWithoutTournamentInput = {
 export type tournament_marshalsUncheckedCreateWithoutTournamentInput = {
   id?: number
   marshal_id: number
+  is_chief_judge?: boolean
   created_at?: Date | string
 }
 
@@ -531,10 +558,12 @@ export type tournament_marshalsUpdateManyWithWhereWithoutTournamentInput = {
 export type tournament_marshalsCreateManyMarshalInput = {
   id?: number
   tournament_id: number
+  is_chief_judge?: boolean
   created_at?: Date | string
 }
 
 export type tournament_marshalsUpdateWithoutMarshalInput = {
+  is_chief_judge?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tournament?: Prisma.tournamentsUpdateOneRequiredWithoutMarshalsNestedInput
 }
@@ -542,22 +571,26 @@ export type tournament_marshalsUpdateWithoutMarshalInput = {
 export type tournament_marshalsUncheckedUpdateWithoutMarshalInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  is_chief_judge?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type tournament_marshalsUncheckedUpdateManyWithoutMarshalInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tournament_id?: Prisma.IntFieldUpdateOperationsInput | number
+  is_chief_judge?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type tournament_marshalsCreateManyTournamentInput = {
   id?: number
   marshal_id: number
+  is_chief_judge?: boolean
   created_at?: Date | string
 }
 
 export type tournament_marshalsUpdateWithoutTournamentInput = {
+  is_chief_judge?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   marshal?: Prisma.marshalsUpdateOneRequiredWithoutTournamentsNestedInput
 }
@@ -565,12 +598,14 @@ export type tournament_marshalsUpdateWithoutTournamentInput = {
 export type tournament_marshalsUncheckedUpdateWithoutTournamentInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   marshal_id?: Prisma.IntFieldUpdateOperationsInput | number
+  is_chief_judge?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type tournament_marshalsUncheckedUpdateManyWithoutTournamentInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   marshal_id?: Prisma.IntFieldUpdateOperationsInput | number
+  is_chief_judge?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -580,6 +615,7 @@ export type tournament_marshalsSelect<ExtArgs extends runtime.Types.Extensions.I
   id?: boolean
   tournament_id?: boolean
   marshal_id?: boolean
+  is_chief_judge?: boolean
   created_at?: boolean
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   marshal?: boolean | Prisma.marshalsDefaultArgs<ExtArgs>
@@ -589,6 +625,7 @@ export type tournament_marshalsSelectCreateManyAndReturn<ExtArgs extends runtime
   id?: boolean
   tournament_id?: boolean
   marshal_id?: boolean
+  is_chief_judge?: boolean
   created_at?: boolean
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   marshal?: boolean | Prisma.marshalsDefaultArgs<ExtArgs>
@@ -598,6 +635,7 @@ export type tournament_marshalsSelectUpdateManyAndReturn<ExtArgs extends runtime
   id?: boolean
   tournament_id?: boolean
   marshal_id?: boolean
+  is_chief_judge?: boolean
   created_at?: boolean
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   marshal?: boolean | Prisma.marshalsDefaultArgs<ExtArgs>
@@ -607,10 +645,11 @@ export type tournament_marshalsSelectScalar = {
   id?: boolean
   tournament_id?: boolean
   marshal_id?: boolean
+  is_chief_judge?: boolean
   created_at?: boolean
 }
 
-export type tournament_marshalsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tournament_id" | "marshal_id" | "created_at", ExtArgs["result"]["tournament_marshals"]>
+export type tournament_marshalsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tournament_id" | "marshal_id" | "is_chief_judge" | "created_at", ExtArgs["result"]["tournament_marshals"]>
 export type tournament_marshalsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tournament?: boolean | Prisma.tournamentsDefaultArgs<ExtArgs>
   marshal?: boolean | Prisma.marshalsDefaultArgs<ExtArgs>
@@ -634,6 +673,7 @@ export type $tournament_marshalsPayload<ExtArgs extends runtime.Types.Extensions
     id: number
     tournament_id: number
     marshal_id: number
+    is_chief_judge: boolean
     created_at: Date
   }, ExtArgs["result"]["tournament_marshals"]>
   composites: {}
@@ -1063,6 +1103,7 @@ export interface tournament_marshalsFieldRefs {
   readonly id: Prisma.FieldRef<"tournament_marshals", 'Int'>
   readonly tournament_id: Prisma.FieldRef<"tournament_marshals", 'Int'>
   readonly marshal_id: Prisma.FieldRef<"tournament_marshals", 'Int'>
+  readonly is_chief_judge: Prisma.FieldRef<"tournament_marshals", 'Boolean'>
   readonly created_at: Prisma.FieldRef<"tournament_marshals", 'DateTime'>
 }
     

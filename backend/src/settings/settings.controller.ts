@@ -2,6 +2,7 @@ import { Body, Controller, ForbiddenException, Get, Patch, Req } from '@nestjs/c
 import { API_ROUTES } from '@shared/routes';
 import { SettingsService } from './settings.service';
 import { UpdateDisciplinaryCardSettingsDto } from './dto/update-disciplinary-card-settings.dto';
+import { UpdateMinsportReportSettingsDto } from './dto/update-minsport-report-settings.dto';
 
 interface RequestUser {
   is_admin?: boolean;
@@ -26,6 +27,23 @@ export class SettingsController {
     this.requireAdmin(req.user);
 
     return this.settingsService.updateDisciplinaryCardSettings(dto);
+  }
+
+  @Get(API_ROUTES.SETTINGS.MINSPORT_REPORT)
+  getMinsportReportSettings(@Req() req: { user?: RequestUser }) {
+    this.requireAdmin(req.user);
+
+    return this.settingsService.getMinsportReportSettings();
+  }
+
+  @Patch(API_ROUTES.SETTINGS.MINSPORT_REPORT)
+  updateMinsportReportSettings(
+    @Body() dto: UpdateMinsportReportSettingsDto,
+    @Req() req: { user?: RequestUser },
+  ) {
+    this.requireAdmin(req.user);
+
+    return this.settingsService.updateMinsportReportSettings(dto);
   }
 
   private requireAdmin(user?: RequestUser) {

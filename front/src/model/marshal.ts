@@ -35,6 +35,7 @@ export interface TournamentMarshalDB {
   tournament_id: number
   marshal_id: number
   created_at: string
+  is_chief_judge: boolean
   marshal: MarshalDB
 }
 
@@ -42,6 +43,7 @@ export interface TournamentMarshal {
   id: number
   tournament_id: number
   marshal_id: number
+  is_chief_judge: boolean
   marshal: Marshal
 }
 

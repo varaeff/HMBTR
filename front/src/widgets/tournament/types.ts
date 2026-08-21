@@ -132,6 +132,8 @@ export interface TournamentNominationTabsState {
   isCompetitorsListOpen: boolean
   isCurrentNominationOpen: boolean
   hasTournamentMarshals: boolean
+  canCloseRegistration: boolean
+  closeRegistrationHint: string
   blocks: CompetitionBlock[]
   activeBlock: CompetitionBlock | null
   pendingTie: PendingTie | null

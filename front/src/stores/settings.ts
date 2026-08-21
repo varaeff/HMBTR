@@ -1,15 +1,17 @@
 import { defineStore } from 'pinia'
 import http from '@/api/http'
-import type { DisciplinaryCardSettings } from '@/model'
+import type { DisciplinaryCardSettings, MinsportReportSettings } from '@/model'
 import { API_ROUTES } from '@shared/routes'
 
 interface SettingsState {
   disciplinaryCardSettings: DisciplinaryCardSettings | null
+  minsportReportSettings: MinsportReportSettings | null
 }
 
 export const useSettingsStore = defineStore('settings', {
   state: (): SettingsState => ({
-    disciplinaryCardSettings: null
+    disciplinaryCardSettings: null,
+    minsportReportSettings: null
   }),
 
   actions: {
@@ -37,6 +39,27 @@ export const useSettingsStore = defineStore('settings', {
         body
       )
       this.disciplinaryCardSettings = data
+      return data
+    },
+
+    async loadMinsportReportSettings() {
+      const { data } = await http.get<MinsportReportSettings>(
+        `${API_ROUTES.SETTINGS.ROOT}/${API_ROUTES.SETTINGS.MINSPORT_REPORT}`
+      )
+      this.minsportReportSettings = data
+      return data
+    },
+
+    async updateMinsportReportSettings(payload: MinsportReportSettings) {
+      const body = {
+        organization_name: payload.organization_name,
+        organization_address: payload.organization_address
+      }
+      const { data } = await http.patch<MinsportReportSettings>(
+        `${API_ROUTES.SETTINGS.ROOT}/${API_ROUTES.SETTINGS.MINSPORT_REPORT}`,
+        body
+      )
+      this.minsportReportSettings = data
       return data
     }
   }

@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 import {
   canShowAddJudgesButton,
   canShowTournamentMarshalSelector,
-  isTournamentMarshalRegistrationLocked,
   type TournamentMarshalRegistrationState
 } from './tournamentMarshalRegistration'
 
@@ -11,34 +10,37 @@ const createState = (
 ): TournamentMarshalRegistrationState => ({
   canManageTournamentMarshals: true,
   hasOpenFighterRegistration: true,
-  hasTournamentMarshals: false,
   isMarshalRegistrationOpen: false,
-  isMarshalsRegistrationClosed: false,
   ...overrides
 })
 
 describe('tournamentMarshalRegistration', () => {
-  it('keeps the marshal selector open after the first marshal is added during recovery', () => {
+  it('shows the marshal selector while a nomination registration is open', () => {
     const state = createState({
-      hasTournamentMarshals: true,
-      isMarshalRegistrationOpen: true,
-      isMarshalsRegistrationClosed: true
+      isMarshalRegistrationOpen: true
     })
 
-    expect(isTournamentMarshalRegistrationLocked(state)).toBe(false)
     expect(canShowTournamentMarshalSelector(state)).toBe(true)
     expect(canShowAddJudgesButton(state)).toBe(false)
   })
 
-  it('locks marshal changes after registration is explicitly finished with marshals', () => {
+  it('hides marshal controls when all nomination registrations are closed', () => {
     const state = createState({
-      hasTournamentMarshals: true,
-      isMarshalRegistrationOpen: false,
-      isMarshalsRegistrationClosed: true
+      hasOpenFighterRegistration: false,
+      isMarshalRegistrationOpen: true
     })
 
-    expect(isTournamentMarshalRegistrationLocked(state)).toBe(true)
     expect(canShowTournamentMarshalSelector(state)).toBe(false)
     expect(canShowAddJudgesButton(state)).toBe(false)
+  })
+
+  it('shows add button again after registration is reopened', () => {
+    const state = createState({
+      hasOpenFighterRegistration: true,
+      isMarshalRegistrationOpen: false
+    })
+
+    expect(canShowAddJudgesButton(state)).toBe(true)
+    expect(canShowTournamentMarshalSelector(state)).toBe(false)
   })
 })

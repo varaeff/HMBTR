@@ -64,6 +64,8 @@ describe('TournamentsService', () => {
         findFirst: jest.fn(),
         create: jest.fn(),
         findUnique: jest.fn(),
+        updateMany: jest.fn(),
+        update: jest.fn(),
         delete: jest.fn(),
       },
     };
@@ -121,7 +123,10 @@ describe('TournamentsService', () => {
       nomination_id: 5,
       is_open: false,
     });
-    prisma.tournament_marshals.findFirst.mockResolvedValue({ id: 7 });
+    prisma.tournaments.findUnique.mockResolvedValue({
+      secretary_name: 'Secretary',
+      marshals: [{ id: 7, is_chief_judge: true }],
+    });
 
     await expect(
       service.updateNomination({
@@ -140,7 +145,7 @@ describe('TournamentsService', () => {
     });
   });
 
-  it('rejects closing fighter registration before any marshal is registered', async () => {
+  it('rejects closing fighter registration before judging corps is complete', async () => {
     const { prisma, service } = createService();
     prisma.tournament_nominations.findFirst.mockResolvedValue({
       id: 42,
@@ -148,7 +153,58 @@ describe('TournamentsService', () => {
       nomination_id: 5,
       is_open: true,
     });
-    prisma.tournament_marshals.findFirst.mockResolvedValue(null);
+    prisma.tournaments.findUnique.mockResolvedValue({
+      secretary_name: 'Secretary',
+      marshals: [],
+    });
+
+    await expect(
+      service.updateNomination({
+        tournament_id: 31,
+        nomination_id: 5,
+        is_open: false,
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+
+    expect(prisma.tournament_nominations.update).not.toHaveBeenCalled();
+  });
+
+  it('rejects closing fighter registration without a chief judge', async () => {
+    const { prisma, service } = createService();
+    prisma.tournament_nominations.findFirst.mockResolvedValue({
+      id: 42,
+      tournament_id: 31,
+      nomination_id: 5,
+      is_open: true,
+    });
+    prisma.tournaments.findUnique.mockResolvedValue({
+      secretary_name: 'Secretary',
+      marshals: [{ id: 7, is_chief_judge: false }],
+    });
+
+    await expect(
+      service.updateNomination({
+        tournament_id: 31,
+        nomination_id: 5,
+        is_open: false,
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+
+    expect(prisma.tournament_nominations.update).not.toHaveBeenCalled();
+  });
+
+  it('rejects closing fighter registration without a secretary', async () => {
+    const { prisma, service } = createService();
+    prisma.tournament_nominations.findFirst.mockResolvedValue({
+      id: 42,
+      tournament_id: 31,
+      nomination_id: 5,
+      is_open: true,
+    });
+    prisma.tournaments.findUnique.mockResolvedValue({
+      secretary_name: ' ',
+      marshals: [{ id: 7, is_chief_judge: true }],
+    });
 
     await expect(
       service.updateNomination({
@@ -260,7 +316,7 @@ describe('TournamentsService', () => {
     const { prisma, service } = createService();
     prisma.tournaments.findUnique.mockResolvedValue({
       id: 31,
-      is_marshals_registration_closed: false,
+      secretary_name: null,
       nominations: [{ is_open: true }],
       marshals: [],
     });
@@ -270,32 +326,53 @@ describe('TournamentsService', () => {
       id: 4,
       tournament_id: 31,
       marshal_id: 9,
+      is_chief_judge: true,
     });
 
     await expect(
       service.addTournamentMarshal({ tournament_id: 31, marshal_id: 9 }),
-    ).resolves.toMatchObject({ id: 4, marshal_id: 9 });
+    ).resolves.toMatchObject({ id: 4, marshal_id: 9, is_chief_judge: true });
+
+    expect(prisma.tournament_marshals.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ is_chief_judge: true }),
+      }),
+    );
   });
 
-  it('rejects marshal registration after marshal registration is finished', async () => {
+  it('does not auto-promote later registered marshals to chief judge', async () => {
     const { prisma, service } = createService();
     prisma.tournaments.findUnique.mockResolvedValue({
       id: 31,
-      is_marshals_registration_closed: true,
+      secretary_name: null,
       nominations: [{ is_open: true }],
       marshals: [{ id: 4 }],
     });
+    prisma.marshals.findUnique.mockResolvedValue({ id: 9 });
+    prisma.tournament_marshals.findFirst.mockResolvedValue(null);
+    prisma.tournament_marshals.create.mockResolvedValue({
+      id: 5,
+      tournament_id: 31,
+      marshal_id: 9,
+      is_chief_judge: false,
+    });
 
     await expect(
       service.addTournamentMarshal({ tournament_id: 31, marshal_id: 9 }),
-    ).rejects.toBeInstanceOf(BadRequestException);
+    ).resolves.toMatchObject({ id: 5, is_chief_judge: false });
+
+    expect(prisma.tournament_marshals.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ is_chief_judge: false }),
+      }),
+    );
   });
 
-  it('allows marshal registration recovery when registration was finished with no marshals', async () => {
+  it('allows marshal registration again when fighter registration is open', async () => {
     const { prisma, service } = createService();
     prisma.tournaments.findUnique.mockResolvedValue({
       id: 31,
-      is_marshals_registration_closed: true,
+      secretary_name: null,
       nominations: [{ is_open: true }],
       marshals: [],
     });
@@ -305,23 +382,21 @@ describe('TournamentsService', () => {
       id: 4,
       tournament_id: 31,
       marshal_id: 9,
+      is_chief_judge: true,
     });
 
     await expect(
       service.addTournamentMarshal({ tournament_id: 31, marshal_id: 9 }),
     ).resolves.toMatchObject({ id: 4, marshal_id: 9 });
 
-    expect(prisma.tournaments.update).toHaveBeenCalledWith({
-      where: { id: 31 },
-      data: { is_marshals_registration_closed: false },
-    });
+    expect(prisma.tournaments.update).not.toHaveBeenCalled();
   });
 
   it('rejects marshal registration when no fighter nominations are open', async () => {
     const { prisma, service } = createService();
     prisma.tournaments.findUnique.mockResolvedValue({
       id: 31,
-      is_marshals_registration_closed: false,
+      secretary_name: null,
       nominations: [{ is_open: false }],
       marshals: [],
     });
@@ -331,35 +406,71 @@ describe('TournamentsService', () => {
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('finishes marshal registration permanently', async () => {
+  it('sets a tournament marshal as chief judge and clears previous chief', async () => {
     const { prisma, service } = createService();
-    prisma.tournaments.findUnique.mockResolvedValue({ id: 31 });
-    prisma.tournament_marshals.findFirst.mockResolvedValue({ id: 4 });
-    prisma.tournaments.update.mockResolvedValue({
+    prisma.tournament_marshals.findUnique.mockResolvedValue({
+      id: 8,
+      tournament_id: 31,
+    });
+    prisma.tournaments.findUnique.mockResolvedValue({
       id: 31,
-      is_marshals_registration_closed: true,
+      secretary_name: null,
+      nominations: [{ is_open: true }],
+      marshals: [{ id: 4 }, { id: 8 }],
+    });
+    prisma.tournament_marshals.updateMany.mockResolvedValue({ count: 2 });
+    prisma.tournament_marshals.update.mockResolvedValue({
+      id: 8,
+      tournament_id: 31,
+      is_chief_judge: true,
     });
 
     await expect(
-      service.finishTournamentMarshalRegistration(31),
-    ).resolves.toMatchObject({ is_marshals_registration_closed: true });
+      service.setChiefTournamentMarshal(8),
+    ).resolves.toMatchObject({ id: 8, is_chief_judge: true });
 
-    expect(prisma.tournaments.update).toHaveBeenCalledWith({
-      where: { id: 31 },
-      data: { is_marshals_registration_closed: true },
+    expect(prisma.tournament_marshals.updateMany).toHaveBeenCalledWith({
+      where: { tournament_id: 31 },
+      data: { is_chief_judge: false },
+    });
+    expect(prisma.tournament_marshals.update).toHaveBeenCalledWith({
+      where: { id: 8 },
+      data: { is_chief_judge: true },
+      include: {
+        marshal: {
+          include: {
+            category: true,
+            country: true,
+            city: true,
+          },
+        },
+      },
     });
   });
 
-  it('rejects finishing marshal registration without registered marshals', async () => {
+  it('updates tournament secretary while fighter registration is open', async () => {
     const { prisma, service } = createService();
-    prisma.tournaments.findUnique.mockResolvedValue({ id: 31 });
-    prisma.tournament_marshals.findFirst.mockResolvedValue(null);
+    prisma.tournaments.findUnique.mockResolvedValue({
+      id: 31,
+      secretary_name: null,
+      nominations: [{ is_open: true }],
+      marshals: [{ id: 4 }],
+    });
+    prisma.tournaments.update.mockResolvedValue({
+      id: 31,
+      secretary_name: 'Secretary Name',
+    });
 
     await expect(
-      service.finishTournamentMarshalRegistration(31),
-    ).rejects.toBeInstanceOf(BadRequestException);
+      service.updateTournamentSecretary(31, {
+        secretary_name: ' Secretary Name ',
+      }),
+    ).resolves.toMatchObject({ secretary_name: 'Secretary Name' });
 
-    expect(prisma.tournaments.update).not.toHaveBeenCalled();
+    expect(prisma.tournaments.update).toHaveBeenCalledWith({
+      where: { id: 31 },
+      data: { secretary_name: 'Secretary Name' },
+    });
   });
 
   it('includes marshals and disciplinary cards in generated tournament reports', async () => {

@@ -6,6 +6,7 @@ import { TournamentCompetitionWorkspace } from '@/widgets/tournament/TournamentC
 import { TournamentHeader } from '@/widgets/tournament/TournamentHeader'
 import { TournamentMarshalRegistration } from '@/widgets/tournament/TournamentMarshalRegistration'
 import { TournamentFighterRegistration } from '@/features/tournament-fighter-registration'
+import { CollapsibleSection } from '@/components/ui/collapsible-section'
 
 const props = defineProps<{
   id: string
@@ -34,12 +35,29 @@ const page = useTournamentPage(tournamentId)
     @download-report="page.actions.downloadTournamentReport"
   />
 
-  <TournamentMarshalRegistration
-    :tournament="page.tournament.data"
-    :showSelector="page.marshalRegistration.showTournamentMarshalSelector"
-    :canManage="page.permissions.canManageTournamentMarshals"
-    @finished="page.actions.finishMarshalRegistration"
-  />
+  <div
+    v-if="
+      page.tournament.data &&
+      (page.marshalRegistration.hasOpenFighterRegistration ||
+        page.marshalRegistration.hasTournamentMarshals ||
+        page.tournament.data.secretary_name)
+    "
+    class="mx-4"
+  >
+    <CollapsibleSection
+      :title="$t('tournamentPageJudgingCorpsTitle')"
+      :isOpen="page.marshalRegistration.isJudgingCorpsOpen"
+      @update:isOpen="page.actions.setJudgingCorpsOpen"
+    >
+      <TournamentMarshalRegistration
+        :tournament="page.tournament.data"
+        :showSelector="page.marshalRegistration.showTournamentMarshalSelector"
+        :canManage="page.permissions.canManageTournamentMarshals"
+        :canEdit="page.permissions.canManageTournamentMarshals && page.marshalRegistration.hasOpenFighterRegistration"
+        @update-secretary="page.actions.updateTournamentSecretary"
+      />
+    </CollapsibleSection>
+  </div>
 
   <TournamentFighterRegistration
     :tournament="page.tournament.data"

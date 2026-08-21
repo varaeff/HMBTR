@@ -16,7 +16,7 @@ export interface Tournament {
   country: string
   city: string
   nominations: TournamentNomination[]
-  is_marshals_registration_closed?: boolean
+  secretary_name?: string | null
 }
 
 export interface TournamentDB {
@@ -26,5 +26,5 @@ export interface TournamentDB {
   country_id: number
   city_id: number
   nominations_ids: number[]
-  is_marshals_registration_closed?: boolean
+  secretary_name?: string | null
 }

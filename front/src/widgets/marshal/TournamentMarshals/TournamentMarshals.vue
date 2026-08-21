@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useTranslation } from 'i18next-vue'
 import { CheckIcon, ChevronsUpDownIcon } from 'lucide-vue-next'
 import { useMarshalsListStore } from '@/stores/marshalsList'
 import { useTournamentMarshalsStore } from '@/stores/tournamentMarshals'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Command,
   CommandEmpty,
@@ -14,18 +15,29 @@ import {
   CommandItem,
   CommandList
 } from '@/components/ui/command'
+import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table'
 import { cn, tData } from '@/lib/utils'
 import type { Marshal } from '@/model'
 
 const props = defineProps<{
   tournamentId: number
+  secretaryName: string
   showSelector: boolean
   canManage: boolean
+  canEdit: boolean
 }>()
 
 const emit = defineEmits<{
-  (e: 'finished'): void
+  (e: 'update-secretary', value: string): Promise<void> | void
 }>()
 
 const marshalsListStore = useMarshalsListStore()
@@ -34,6 +46,7 @@ const router = useRouter()
 const { i18next } = useTranslation()
 const open = ref(false)
 const selectedMarshal = ref('')
+const secretaryDraft = ref(props.secretaryName)
 const isPending = ref(false)
 
 const currentLanguage = computed(() => (i18next.language === 'en' ? 'en' : 'ru'))
@@ -93,16 +106,34 @@ const removeTournamentMarshal = async (tournamentMarshalId: number) => {
   }
 }
 
-const finishMarshalRegistration = async () => {
+const setChiefMarshal = async (tournamentMarshalId: number, checked: boolean | 'indeterminate') => {
+  if (checked !== true) return
+
   try {
     isPending.value = true
-    await tournamentMarshalsStore.finishMarshalRegistration()
-    selectedMarshal.value = ''
-    emit('finished')
+    await tournamentMarshalsStore.setChiefMarshal(tournamentMarshalId)
   } finally {
     isPending.value = false
   }
 }
+
+const saveSecretary = async () => {
+  if (secretaryDraft.value === props.secretaryName) return
+
+  try {
+    isPending.value = true
+    await emit('update-secretary', secretaryDraft.value)
+  } finally {
+    isPending.value = false
+  }
+}
+
+watch(
+  () => props.secretaryName,
+  (value) => {
+    secretaryDraft.value = value
+  }
+)
 
 onMounted(async () => {
   marshalsListStore.clearSearchString()
@@ -117,38 +148,56 @@ onMounted(async () => {
 
 <template>
   <section
-    v-if="tournamentMarshalsStore.tournamentMarshals.length || showSelector"
-    class="mb-5 flex flex-col items-center gap-4"
+    v-if="tournamentMarshalsStore.tournamentMarshals.length || showSelector || canManage"
+    class="flex flex-col items-center gap-5"
   >
-    <div v-if="tournamentMarshalsStore.tournamentMarshals.length" class="max-w-full">
-      <h3 class="mb-4 text-center">{{ $t('tournamentPageMarshalsTitle') }}</h3>
-      <div class="inline-flex min-w-max max-w-full flex-col gap-2 overflow-x-auto">
-        <div
-          v-for="item in tournamentMarshalsStore.tournamentMarshals"
-          :key="item.id"
-          class="flex w-full items-center justify-between gap-4 rounded-md border p-2"
-        >
-          <div class="whitespace-nowrap">
-            {{ tData(item.marshal.surname, currentLanguage) }}
-            {{ tData(item.marshal.name, currentLanguage) }}
-            <span v-if="marshalCategoryName(item.marshal)">
-              ({{ tData(marshalCategoryName(item.marshal), currentLanguage) }})
-            </span>
-          </div>
-          <Button
-            v-if="showSelector && canManage"
-            :disabled="isPending"
-            variant="outline"
-            size="sm"
-            @click="removeTournamentMarshal(item.id)"
-          >
-            {{ $t('tournamentPageRemoveCompetitorButton') }}
-          </Button>
-        </div>
-      </div>
+    <div v-if="tournamentMarshalsStore.tournamentMarshals.length" class="w-full max-w-4xl">
+      <h3 class="mb-3 text-center text-base font-semibold">{{ $t('tournamentPageMarshalsTitle') }}</h3>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>{{ $t('tournamentPageMarshalFullName') }}</TableHead>
+            <TableHead>{{ $t('marshalCategoryLabel') }}</TableHead>
+            <TableHead class="w-32 text-center">{{ $t('tournamentPageChiefJudge') }}</TableHead>
+            <TableHead v-if="canEdit && canManage" class="w-24 text-right">
+              {{ $t('disciplinaryCardsActions') }}
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow v-for="item in tournamentMarshalsStore.tournamentMarshals" :key="item.id">
+            <TableCell>
+              {{ tData(item.marshal.surname, currentLanguage) }}
+              {{ tData(item.marshal.name, currentLanguage) }}
+              <span v-if="item.marshal.patronymic">
+                {{ tData(item.marshal.patronymic, currentLanguage) }}
+              </span>
+            </TableCell>
+            <TableCell>{{ tData(marshalCategoryName(item.marshal), currentLanguage) }}</TableCell>
+            <TableCell class="text-center">
+              <Checkbox
+                :model-value="item.is_chief_judge"
+                :disabled="!canEdit || !canManage || isPending"
+                :aria-label="$t('tournamentPageChiefJudge')"
+                @update:model-value="(value) => setChiefMarshal(item.id, value)"
+              />
+            </TableCell>
+            <TableCell v-if="canEdit && canManage" class="text-right">
+              <Button
+                :disabled="isPending"
+                variant="outline"
+                size="sm"
+                @click="removeTournamentMarshal(item.id)"
+              >
+                {{ $t('tournamentPageRemoveCompetitorButton') }}
+              </Button>
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
     </div>
 
-    <template v-if="showSelector && canManage">
+    <template v-if="showSelector && canManage && canEdit">
       <Popover v-model:open="open">
         <PopoverTrigger as-child>
           <Button
@@ -203,15 +252,19 @@ onMounted(async () => {
         >
           {{ $t('marshalsSelectRegister') }}
         </Button>
-        <Button
-          variant="destructive"
-          size="default"
-          :disabled="isPending"
-          @click="finishMarshalRegistration"
-        >
-          {{ $t('tournamentPageFinishMarshalsButton') }}
-        </Button>
       </div>
     </template>
+
+    <div class="flex w-full max-w-xl flex-col items-center gap-2 border-t pt-4">
+      <h3 class="text-center text-base font-semibold">{{ $t('tournamentPageSecretaryTitle') }}</h3>
+      <Input
+        v-model="secretaryDraft"
+        class="text-center"
+        :disabled="!canEdit || !canManage || isPending"
+        :placeholder="$t('tournamentPageSecretaryPlaceholder')"
+        @blur="saveSecretary"
+        @keyup.enter="saveSecretary"
+      />
+    </div>
   </section>
 </template>

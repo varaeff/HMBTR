@@ -4,6 +4,7 @@ import { AddTournamentMarshalDto } from './dto/add-tournament-marshal.dto';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { UpdateNominationStageDto } from './dto/update-nomination-stage.dto';
 import { UpdateNominationDto } from './dto/update-nomination.dto';
+import { UpdateTournamentSecretaryDto } from './dto/update-tournament-secretary.dto';
 import { TournamentCrudService } from './core/tournament-crud.service';
 import { TournamentMarshalService } from './marshals/tournament-marshal.service';
 import { TournamentNominationService } from './nominations/tournament-nomination.service';
@@ -66,8 +67,15 @@ export class TournamentsService {
     return this.marshals.deleteTournamentMarshal(id);
   }
 
-  async finishTournamentMarshalRegistration(tournamentId: number) {
-    return this.marshals.finishTournamentMarshalRegistration(tournamentId);
+  async setChiefTournamentMarshal(id: number) {
+    return this.marshals.setChiefTournamentMarshal(id);
+  }
+
+  async updateTournamentSecretary(
+    tournamentId: number,
+    dto: UpdateTournamentSecretaryDto,
+  ) {
+    return this.marshals.updateTournamentSecretary(tournamentId, dto);
   }
 
   async getTournamentReport(tournamentId: number, language = 'en') {

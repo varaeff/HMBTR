@@ -71,6 +71,7 @@ export const ModelName = {
   disciplinary_cards: 'disciplinary_cards',
   red_card_yellow_sources: 'red_card_yellow_sources',
   disciplinary_card_settings: 'disciplinary_card_settings',
+  minsport_report_settings: 'minsport_report_settings',
   fighter_nomination_ratings: 'fighter_nomination_ratings',
   fighter_nomination_rating_history: 'fighter_nomination_rating_history',
   russia_hmb_rating_calculations: 'russia_hmb_rating_calculations',
@@ -170,7 +171,7 @@ export const TournamentsScalarFieldEnum = {
   event_date: 'event_date',
   country_id: 'country_id',
   city_id: 'city_id',
-  is_marshals_registration_closed: 'is_marshals_registration_closed'
+  secretary_name: 'secretary_name'
 } as const
 
 export type TournamentsScalarFieldEnum = (typeof TournamentsScalarFieldEnum)[keyof typeof TournamentsScalarFieldEnum]
@@ -180,6 +181,7 @@ export const Tournament_marshalsScalarFieldEnum = {
   id: 'id',
   tournament_id: 'tournament_id',
   marshal_id: 'marshal_id',
+  is_chief_judge: 'is_chief_judge',
   created_at: 'created_at'
 } as const
 
@@ -190,6 +192,7 @@ export const NominationsScalarFieldEnum = {
   id: 'id',
   name_ru: 'name_ru',
   name_en: 'name_en',
+  weapon: 'weapon',
   is_male: 'is_male',
   rounds: 'rounds',
   round_win: 'round_win',
@@ -364,6 +367,16 @@ export const Disciplinary_card_settingsScalarFieldEnum = {
 } as const
 
 export type Disciplinary_card_settingsScalarFieldEnum = (typeof Disciplinary_card_settingsScalarFieldEnum)[keyof typeof Disciplinary_card_settingsScalarFieldEnum]
+
+
+export const Minsport_report_settingsScalarFieldEnum = {
+  id: 'id',
+  organization_name: 'organization_name',
+  organization_address: 'organization_address',
+  updated_at: 'updated_at'
+} as const
+
+export type Minsport_report_settingsScalarFieldEnum = (typeof Minsport_report_settingsScalarFieldEnum)[keyof typeof Minsport_report_settingsScalarFieldEnum]
 
 
 export const Fighter_nomination_ratingsScalarFieldEnum = {

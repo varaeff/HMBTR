@@ -42,7 +42,6 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
   const canEdit = hasAccess()
   const canDeleteCards = Boolean(hasTournamentMarshalAccess())
   const isNominationLoading = ref(false)
-  const isCardsOpen = ref(true)
   const isMarshalRegistrationOpen = ref(false)
   const {
     confirmation: backwardConfirmation,
@@ -99,11 +98,6 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
     }
   }
 
-  const isCompetitorsListOpen = useCollapsiblePersist(
-    'competitors',
-    computed(() => `${tournamentId.value}-${activeTab.value}`)
-  )
-
   const tournamentNominations = computed(() => {
     const tNoms = tournament.value?.nominations
     if (!tNoms || !commonDataStore.nominations.length) return { all: [], open: [] }
@@ -119,6 +113,12 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
 
   const currentTournamentNomination = computed(() =>
     tournament.value?.nominations.find((n) => n.nomination_id === activeTab.value)
+  )
+
+  const isCompetitorsListOpen = useCollapsiblePersist(
+    'competitors',
+    computed(() => `${tournamentId.value}-${activeTab.value}`),
+    computed(() => !Boolean(currentTournamentNomination.value?.is_finished))
   )
 
   const isCurrentNominationOpen = computed(() =>
@@ -149,6 +149,16 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
   const tournamentCards = computed(() => cardsStore.tournamentCards)
   const tournamentActiveCards = computed(() => cardsStore.tournamentActiveCards)
   const tournamentMarshals = computed(() => tournamentMarshalsStore.tournamentMarshals)
+  const isCardsOpen = useCollapsiblePersist(
+    'cards',
+    computed(() => tournamentId.value),
+    computed(() => !allTournamentNominationsFinished.value)
+  )
+  const isJudgingCorpsOpen = useCollapsiblePersist(
+    'judging-corps',
+    computed(() => tournamentId.value),
+    computed(() => !allTournamentNominationsFinished.value)
+  )
   const {
     cardIssueDate,
     activeCardTypes,
@@ -171,12 +181,23 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
   const canManageTournamentMarshals = computed(() => hasTournamentMarshalAccess())
   const hasOpenFighterRegistration = computed(() => tournamentNominations.value.open.length > 0)
   const hasTournamentMarshals = computed(() => tournamentMarshalsStore.tournamentMarshals.length > 0)
+  const hasChiefJudge = computed(() =>
+    tournamentMarshalsStore.tournamentMarshals.some((marshal) => marshal.is_chief_judge)
+  )
+  const hasTournamentSecretary = computed(() => Boolean(tournament.value?.secretary_name?.trim()))
+  const canCloseRegistration = computed(
+    () => hasTournamentMarshals.value && hasChiefJudge.value && hasTournamentSecretary.value
+  )
+  const closeRegistrationHint = computed(() => {
+    if (!hasTournamentMarshals.value) return i18next.t('tournamentPageAddJudgesHint')
+    if (!hasChiefJudge.value) return i18next.t('tournamentPageSelectChiefJudgeHint')
+    if (!hasTournamentSecretary.value) return i18next.t('tournamentPageAddSecretaryHint')
+    return ''
+  })
   const marshalRegistrationState = computed(() => ({
     canManageTournamentMarshals: canManageTournamentMarshals.value,
     hasOpenFighterRegistration: hasOpenFighterRegistration.value,
-    hasTournamentMarshals: hasTournamentMarshals.value,
-    isMarshalRegistrationOpen: isMarshalRegistrationOpen.value,
-    isMarshalsRegistrationClosed: Boolean(tournament.value?.is_marshals_registration_closed)
+    isMarshalRegistrationOpen: isMarshalRegistrationOpen.value
   }))
   const canShowAddJudgesButton = computed(() =>
     getCanShowAddJudgesButton(marshalRegistrationState.value)
@@ -197,13 +218,30 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
     isCardsOpen.value = value
   }
 
+  const setJudgingCorpsOpen = (value: boolean) => {
+    isJudgingCorpsOpen.value = value
+  }
+
+  const collapseCurrentNominationSections = () => {
+    setCompetitorsListOpen(false)
+    blocks.value.forEach((block) => {
+      setBlockIsOpen(block, false)
+    })
+  }
+
+  const collapseTournamentSections = () => {
+    setCardsOpen(false)
+    setJudgingCorpsOpen(false)
+  }
+
   const competitionActions = useTournamentCompetitionActions({
     tournamentId,
     tournament,
     activeTab,
     blocks,
     currentLanguage,
-    hasTournamentMarshals,
+    canCloseRegistration,
+    closeRegistrationHint,
     tournamentsListStore,
     competitionStore,
     apiUiStore,
@@ -212,18 +250,22 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
     requestBackwardConfirmation,
     getReportErrorMessage,
     getBlockDeletionCounts,
-    getOlympicRoundDeletionCounts
+    getOlympicRoundDeletionCounts,
+    onNominationFinished: collapseCurrentNominationSections,
+    onTournamentFinished: collapseTournamentSections
   })
 
   const startMarshalRegistration = () => {
     isMarshalRegistrationOpen.value = true
   }
 
-  const finishMarshalRegistration = () => {
+  const updateTournamentSecretary = async (secretaryName: string) => {
+    await tournamentMarshalsStore.updateTournamentSecretary(secretaryName)
+
     if (tournament.value) {
-      tournament.value.is_marshals_registration_closed = true
+      const normalizedName = secretaryName.trim()
+      tournament.value.secretary_name = normalizedName || null
     }
-    isMarshalRegistrationOpen.value = false
   }
 
   onMounted(async () => {
@@ -321,10 +363,16 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
       canManageTournamentMarshals
     }),
     marshalRegistration: reactive({
+      hasOpenFighterRegistration,
       hasTournamentMarshals,
+      hasChiefJudge,
+      hasTournamentSecretary,
+      canCloseRegistration,
+      closeRegistrationHint,
       canShowAddJudgesButton,
       showTournamentMarshalSelector,
-      tournamentMarshals
+      tournamentMarshals,
+      isJudgingCorpsOpen
     }),
     cards: reactive({
       tournamentCards,
@@ -357,7 +405,8 @@ export const useTournamentPage = (tournamentId: Ref<number>) => {
       closeBackwardConfirmation,
       runConfirmedBackwardAction,
       startMarshalRegistration,
-      finishMarshalRegistration,
+      updateTournamentSecretary,
+      setJudgingCorpsOpen,
       setActiveTab,
       setCompetitorsListOpen,
       setCardsOpen,

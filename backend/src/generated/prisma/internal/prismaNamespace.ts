@@ -404,6 +404,7 @@ export const ModelName = {
   disciplinary_cards: 'disciplinary_cards',
   red_card_yellow_sources: 'red_card_yellow_sources',
   disciplinary_card_settings: 'disciplinary_card_settings',
+  minsport_report_settings: 'minsport_report_settings',
   fighter_nomination_ratings: 'fighter_nomination_ratings',
   fighter_nomination_rating_history: 'fighter_nomination_rating_history',
   russia_hmb_rating_calculations: 'russia_hmb_rating_calculations',
@@ -429,7 +430,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "countries" | "cities" | "clubs" | "fighters" | "marshals" | "marshals_categories" | "tournaments" | "tournament_marshals" | "nominations" | "tournament_nominations" | "competitors" | "groups" | "group_competitors" | "fights" | "fighter_withdrawals" | "fight_round_scores" | "fight_warnings" | "disciplinary_cards" | "red_card_yellow_sources" | "disciplinary_card_settings" | "fighter_nomination_ratings" | "fighter_nomination_rating_history" | "russia_hmb_rating_calculations" | "russia_hmb_rating_results" | "competition_blocks" | "competition_round_states" | "bracket_slots" | "competition_placements" | "tournament_reports" | "users"
+    modelProps: "countries" | "cities" | "clubs" | "fighters" | "marshals" | "marshals_categories" | "tournaments" | "tournament_marshals" | "nominations" | "tournament_nominations" | "competitors" | "groups" | "group_competitors" | "fights" | "fighter_withdrawals" | "fight_round_scores" | "fight_warnings" | "disciplinary_cards" | "red_card_yellow_sources" | "disciplinary_card_settings" | "minsport_report_settings" | "fighter_nomination_ratings" | "fighter_nomination_rating_history" | "russia_hmb_rating_calculations" | "russia_hmb_rating_results" | "competition_blocks" | "competition_round_states" | "bracket_slots" | "competition_placements" | "tournament_reports" | "users"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1913,6 +1914,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    minsport_report_settings: {
+      payload: Prisma.$minsport_report_settingsPayload<ExtArgs>
+      fields: Prisma.minsport_report_settingsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.minsport_report_settingsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$minsport_report_settingsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.minsport_report_settingsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$minsport_report_settingsPayload>
+        }
+        findFirst: {
+          args: Prisma.minsport_report_settingsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$minsport_report_settingsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.minsport_report_settingsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$minsport_report_settingsPayload>
+        }
+        findMany: {
+          args: Prisma.minsport_report_settingsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$minsport_report_settingsPayload>[]
+        }
+        create: {
+          args: Prisma.minsport_report_settingsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$minsport_report_settingsPayload>
+        }
+        createMany: {
+          args: Prisma.minsport_report_settingsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.minsport_report_settingsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$minsport_report_settingsPayload>[]
+        }
+        delete: {
+          args: Prisma.minsport_report_settingsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$minsport_report_settingsPayload>
+        }
+        update: {
+          args: Prisma.minsport_report_settingsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$minsport_report_settingsPayload>
+        }
+        deleteMany: {
+          args: Prisma.minsport_report_settingsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.minsport_report_settingsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.minsport_report_settingsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$minsport_report_settingsPayload>[]
+        }
+        upsert: {
+          args: Prisma.minsport_report_settingsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$minsport_report_settingsPayload>
+        }
+        aggregate: {
+          args: Prisma.Minsport_report_settingsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMinsport_report_settings>
+        }
+        groupBy: {
+          args: Prisma.minsport_report_settingsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Minsport_report_settingsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.minsport_report_settingsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Minsport_report_settingsCountAggregateOutputType> | number
+        }
+      }
+    }
     fighter_nomination_ratings: {
       payload: Prisma.$fighter_nomination_ratingsPayload<ExtArgs>
       fields: Prisma.fighter_nomination_ratingsFieldRefs
@@ -2763,7 +2838,7 @@ export const TournamentsScalarFieldEnum = {
   event_date: 'event_date',
   country_id: 'country_id',
   city_id: 'city_id',
-  is_marshals_registration_closed: 'is_marshals_registration_closed'
+  secretary_name: 'secretary_name'
 } as const
 
 export type TournamentsScalarFieldEnum = (typeof TournamentsScalarFieldEnum)[keyof typeof TournamentsScalarFieldEnum]
@@ -2773,6 +2848,7 @@ export const Tournament_marshalsScalarFieldEnum = {
   id: 'id',
   tournament_id: 'tournament_id',
   marshal_id: 'marshal_id',
+  is_chief_judge: 'is_chief_judge',
   created_at: 'created_at'
 } as const
 
@@ -2783,6 +2859,7 @@ export const NominationsScalarFieldEnum = {
   id: 'id',
   name_ru: 'name_ru',
   name_en: 'name_en',
+  weapon: 'weapon',
   is_male: 'is_male',
   rounds: 'rounds',
   round_win: 'round_win',
@@ -2957,6 +3034,16 @@ export const Disciplinary_card_settingsScalarFieldEnum = {
 } as const
 
 export type Disciplinary_card_settingsScalarFieldEnum = (typeof Disciplinary_card_settingsScalarFieldEnum)[keyof typeof Disciplinary_card_settingsScalarFieldEnum]
+
+
+export const Minsport_report_settingsScalarFieldEnum = {
+  id: 'id',
+  organization_name: 'organization_name',
+  organization_address: 'organization_address',
+  updated_at: 'updated_at'
+} as const
+
+export type Minsport_report_settingsScalarFieldEnum = (typeof Minsport_report_settingsScalarFieldEnum)[keyof typeof Minsport_report_settingsScalarFieldEnum]
 
 
 export const Fighter_nomination_ratingsScalarFieldEnum = {
@@ -3321,6 +3408,7 @@ export type GlobalOmitConfig = {
   disciplinary_cards?: Prisma.disciplinary_cardsOmit
   red_card_yellow_sources?: Prisma.red_card_yellow_sourcesOmit
   disciplinary_card_settings?: Prisma.disciplinary_card_settingsOmit
+  minsport_report_settings?: Prisma.minsport_report_settingsOmit
   fighter_nomination_ratings?: Prisma.fighter_nomination_ratingsOmit
   fighter_nomination_rating_history?: Prisma.fighter_nomination_rating_historyOmit
   russia_hmb_rating_calculations?: Prisma.russia_hmb_rating_calculationsOmit

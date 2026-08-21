@@ -6,6 +6,7 @@ const nomination = {
   id: 1,
   name_ru: 'Adults',
   name_en: 'Adults',
+  weapon: null,
   is_male: true,
   rounds: 3,
   round_win: true,
@@ -35,6 +36,19 @@ describe('NominationsService', () => {
     expect(prisma.nominations.update).toHaveBeenCalledWith({
       where: { id: 1 },
       data: { main_round_time: 90 },
+    });
+  });
+
+  it('updates weapon without existing-fight confirmation', async () => {
+    const prisma = createPrismaMock();
+    const service = new NominationsService(prisma as unknown as PrismaService);
+
+    await service.update(1, { weapon: 'Longsword' });
+
+    expect(prisma.fights.count).not.toHaveBeenCalled();
+    expect(prisma.nominations.update).toHaveBeenCalledWith({
+      where: { id: 1 },
+      data: { weapon: 'Longsword' },
     });
   });
 

@@ -95,7 +95,8 @@ interface TournamentCompetitionActionsParams {
   activeTab: Ref<number>
   blocks: ComputedRef<CompetitionBlock[]>
   currentLanguage: ComputedRef<string>
-  hasTournamentMarshals: ComputedRef<boolean>
+  canCloseRegistration: ComputedRef<boolean>
+  closeRegistrationHint: ComputedRef<string>
   tournamentsListStore: TournamentNominationStore
   competitionStore: CompetitionWorkflowStore
   apiUiStore: ApiUiErrorStore
@@ -105,6 +106,8 @@ interface TournamentCompetitionActionsParams {
   getReportErrorMessage(error: unknown): Promise<string>
   getBlockDeletionCounts(blockId: number): Record<string, number>
   getOlympicRoundDeletionCounts(blockId: number, round: number): Record<string, number>
+  onNominationFinished(): void
+  onTournamentFinished(): void
 }
 
 export const useTournamentCompetitionActions = ({
@@ -113,7 +116,8 @@ export const useTournamentCompetitionActions = ({
   activeTab,
   blocks,
   currentLanguage,
-  hasTournamentMarshals,
+  canCloseRegistration,
+  closeRegistrationHint,
   tournamentsListStore,
   competitionStore,
   apiUiStore,
@@ -122,7 +126,9 @@ export const useTournamentCompetitionActions = ({
   requestBackwardConfirmation,
   getReportErrorMessage,
   getBlockDeletionCounts,
-  getOlympicRoundDeletionCounts
+  getOlympicRoundDeletionCounts,
+  onNominationFinished,
+  onTournamentFinished
 }: TournamentCompetitionActionsParams) => {
   const olympicPairsFixingByBlockId = reactive<Record<number, boolean>>({})
 
@@ -148,8 +154,8 @@ export const useTournamentCompetitionActions = ({
   }
 
   const closeRegistration = async () => {
-    if (!hasTournamentMarshals.value) {
-      apiUiStore.setError(translate('tournamentPageAddJudgesHint'))
+    if (!canCloseRegistration.value) {
+      apiUiStore.setError(closeRegistrationHint.value)
       return
     }
 
@@ -428,6 +434,10 @@ export const useTournamentCompetitionActions = ({
       if (targetNom) {
         targetNom.is_finished = true
         targetNom.is_open = false
+      }
+      onNominationFinished()
+      if (tournament.value?.nominations.every((nomination) => nomination.is_finished)) {
+        onTournamentFinished()
       }
     } finally {
       await refreshCardsAndCompetition()

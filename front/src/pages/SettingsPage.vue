@@ -28,16 +28,18 @@ import { useCommonDataStore } from '@/stores/commonData'
 import { useSettingsStore } from '@/stores/settings'
 import type {
   DisciplinaryCardSettings,
+  MinsportReportSettings,
   Nomination,
   NominationPayload,
   YellowExpirationMode
 } from '@/model'
 
-type SettingsTab = 'cards' | 'nominations'
+type SettingsTab = 'cards' | 'nominations' | 'minsport-report'
 
 interface NominationDraft {
   name_ru: string
   name_en: string
+  weapon: string
   is_male: boolean
   rounds: 1 | 2 | 3
   round_win: boolean
@@ -77,11 +79,19 @@ const defaultCardSettings = (): DisciplinaryCardSettings => ({
 const defaultNominationDraft = (): NominationDraft => ({
   name_ru: '',
   name_en: '',
+  weapon: '',
   is_male: true,
   rounds: 1,
   round_win: false,
   main_round_time: 0,
   additional_round_time: 0
+})
+
+const defaultMinsportReportSettings = (): MinsportReportSettings => ({
+  id: 1,
+  organization_name: '',
+  organization_address: '',
+  updated_at: ''
 })
 
 const commonDataStore = useCommonDataStore()
@@ -90,6 +100,7 @@ const { i18next } = useTranslation()
 
 const activeTab = ref<SettingsTab>('cards')
 const cardSettings = reactive<DisciplinaryCardSettings>(defaultCardSettings())
+const minsportReportSettings = reactive<MinsportReportSettings>(defaultMinsportReportSettings())
 const nominationDrafts = reactive<Record<number, NominationDraft>>({})
 const newNomination = reactive<NominationDraft>(defaultNominationDraft())
 const isLoading = ref(false)
@@ -118,11 +129,16 @@ const setCardSettings = (settings: DisciplinaryCardSettings) => {
   Object.assign(cardSettings, settings)
 }
 
+const setMinsportReportSettings = (settings: MinsportReportSettings) => {
+  Object.assign(minsportReportSettings, settings)
+}
+
 const setNominationDrafts = () => {
   for (const nomination of nominations.value) {
     nominationDrafts[nomination.id] = {
       name_ru: nomination.name_ru,
       name_en: nomination.name_en,
+      weapon: nomination.weapon ?? '',
       is_male: nomination.is_male,
       rounds: nomination.rounds,
       round_win: nomination.round_win,
@@ -135,6 +151,7 @@ const setNominationDrafts = () => {
 const payloadFromDraft = (draft: NominationDraft): NominationPayload => ({
   name_ru: draft.name_ru.trim(),
   name_en: draft.name_en.trim(),
+  weapon: draft.weapon.trim() || null,
   is_male: draft.is_male,
   rounds: draft.rounds,
   round_win: draft.rounds === 3 ? draft.round_win : false,
@@ -145,6 +162,7 @@ const payloadFromDraft = (draft: NominationDraft): NominationPayload => ({
 const nominationPayloadMatches = (nomination: Nomination, payload: NominationPayload) =>
   payload.name_ru === nomination.name_ru &&
   payload.name_en === nomination.name_en &&
+  (payload.weapon ?? '') === (nomination.weapon ?? '') &&
   payload.is_male === nomination.is_male &&
   payload.rounds === nomination.rounds &&
   payload.round_win === nomination.round_win &&
@@ -198,11 +216,13 @@ const isNominationSaveConflict = (error: unknown) =>
 const loadSettings = async () => {
   isLoading.value = true
   try {
-    const [settings] = await Promise.all([
+    const [settings, minsportSettings] = await Promise.all([
       settingsStore.loadDisciplinaryCardSettings(),
+      settingsStore.loadMinsportReportSettings(),
       commonDataStore.refreshNominations()
     ])
     setCardSettings(settings)
+    setMinsportReportSettings(minsportSettings)
     setNominationDrafts()
   } catch (error: unknown) {
     setError(errorText(error))
@@ -214,6 +234,17 @@ const loadSettings = async () => {
 const saveCardSettings = async () => {
   try {
     setCardSettings(await settingsStore.updateDisciplinaryCardSettings(cardSettings))
+    setSuccess(i18next.t('settingsSaved'))
+  } catch (error: unknown) {
+    setError(errorText(error))
+  }
+}
+
+const saveMinsportReportSettings = async () => {
+  try {
+    setMinsportReportSettings(
+      await settingsStore.updateMinsportReportSettings(minsportReportSettings)
+    )
     setSuccess(i18next.t('settingsSaved'))
   } catch (error: unknown) {
     setError(errorText(error))
@@ -259,6 +290,7 @@ const confirmNominationSave = async () => {
     await commonDataStore.updateNomination(pending.id, {
       name_ru: pending.name_ru,
       name_en: pending.name_en,
+      weapon: pending.weapon,
       is_male: pending.is_male,
       rounds: pending.rounds,
       round_win: pending.round_win,
@@ -337,9 +369,10 @@ onMounted(() => {
     </header>
 
     <Tabs v-model="activeTab" class="w-full">
-      <TabsList class="grid w-full grid-cols-2 md:w-96">
+      <TabsList class="grid w-full grid-cols-3 md:w-[36rem]">
         <TabsTrigger value="cards">{{ $t('settingsCardsTab') }}</TabsTrigger>
         <TabsTrigger value="nominations">{{ $t('settingsNominationsTab') }}</TabsTrigger>
+        <TabsTrigger value="minsport-report">{{ $t('settingsMinsportReportTab') }}</TabsTrigger>
       </TabsList>
 
       <TabsContent value="cards" class="mt-4">
@@ -429,6 +462,39 @@ onMounted(() => {
         </Card>
       </TabsContent>
 
+      <TabsContent value="minsport-report" class="mt-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>{{ $t('settingsMinsportReportTitle') }}</CardTitle>
+            <CardDescription>{{ $t('settingsMinsportReportDescription') }}</CardDescription>
+          </CardHeader>
+          <CardContent class="flex flex-col gap-4">
+            <label class="flex flex-col gap-1 text-sm font-medium">
+              {{ $t('settingsMinsportOrganizationName') }}
+              <textarea
+                v-model="minsportReportSettings.organization_name"
+                class="min-h-32 rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                maxlength="2000"
+              />
+            </label>
+            <label class="flex flex-col gap-1 text-sm font-medium">
+              {{ $t('settingsMinsportOrganizationAddress') }}
+              <textarea
+                v-model="minsportReportSettings.organization_address"
+                class="min-h-32 rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                maxlength="2000"
+              />
+            </label>
+            <div class="flex justify-end">
+              <Button :disabled="isLoading" @click="saveMinsportReportSettings">
+                <Save data-icon="inline-start" />
+                {{ $t('disciplinaryCardsSave') }}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </TabsContent>
+
       <TabsContent value="nominations" class="mt-4">
         <Card>
           <CardHeader>
@@ -441,20 +507,22 @@ onMounted(() => {
                 class="w-full table-fixed text-xs [&_td]:border-r [&_td]:border-border [&_td]:px-1.5 [&_td]:whitespace-normal [&_th]:border-r [&_th]:border-border [&_th]:px-1.5 [&_th]:text-xs [&_th]:whitespace-normal [&_tr>*:last-child]:border-r-0"
               >
                 <colgroup>
-                  <col class="w-[18%]" />
-                  <col class="w-[18%]" />
-                  <col class="w-[12%]" />
-                  <col class="w-[8%]" />
+                  <col class="w-[16%]" />
+                  <col class="w-[16%]" />
+                  <col class="w-[13%]" />
+                  <col class="w-[7%]" />
+                  <col class="w-[7%]" />
                   <col class="w-[9%]" />
                   <col class="w-[10%]" />
                   <col class="w-[10%]" />
-                  <col class="w-[6%]" />
-                  <col class="w-[9%]" />
+                  <col class="w-[5%]" />
+                  <col class="w-[7%]" />
                 </colgroup>
                 <TableHeader>
                   <TableRow>
                     <TableHead>{{ $t('settingsNominationNameRu') }}</TableHead>
                     <TableHead>{{ $t('settingsNominationNameEn') }}</TableHead>
+                    <TableHead>{{ $t('settingsNominationWeapon') }}</TableHead>
                     <TableHead>{{ $t('addFighterGenderLabel') }}</TableHead>
                     <TableHead class="whitespace-normal leading-tight">
                       {{ $t('settingsNominationRounds') }}
@@ -480,6 +548,9 @@ onMounted(() => {
                       </TableCell>
                       <TableCell>
                         <Input v-model="nominationDrafts[nomination.id].name_en" />
+                      </TableCell>
+                      <TableCell>
+                        <Input v-model="nominationDrafts[nomination.id].weapon" />
                       </TableCell>
                       <TableCell>
                         <NativeSelect
@@ -567,7 +638,7 @@ onMounted(() => {
               </Table>
             </div>
 
-            <div class="grid grid-cols-1 gap-4 border-t pt-5 md:grid-cols-8 md:items-end">
+            <div class="grid grid-cols-1 gap-4 border-t pt-5 md:grid-cols-10 md:items-end">
               <label class="flex flex-col gap-1 text-sm font-medium md:col-span-2">
                 {{ $t('settingsNominationNameRu') }}
                 <Input v-model="newNomination.name_ru" />
@@ -575,6 +646,10 @@ onMounted(() => {
               <label class="flex flex-col gap-1 text-sm font-medium md:col-span-2">
                 {{ $t('settingsNominationNameEn') }}
                 <Input v-model="newNomination.name_en" />
+              </label>
+              <label class="flex flex-col gap-1 text-sm font-medium md:col-span-2">
+                {{ $t('settingsNominationWeapon') }}
+                <Input v-model="newNomination.weapon" />
               </label>
               <label class="flex flex-col gap-1 text-sm font-medium">
                 {{ $t('addFighterGenderLabel') }}
@@ -603,7 +678,7 @@ onMounted(() => {
                   <NativeSelectOption value="3">3</NativeSelectOption>
                 </NativeSelect>
               </label>
-              <label class="flex items-center gap-2 text-sm font-medium md:col-span-2">
+              <label class="flex items-center gap-2 text-sm font-medium">
                 <Checkbox
                   :model-value="newNomination.round_win"
                   :disabled="newNomination.rounds !== 3"
@@ -621,7 +696,7 @@ onMounted(() => {
                 {{ $t('settingsNominationAdditionalRoundTime') }}
                 <RoundTimeInput v-model="newNomination.additional_round_time" />
               </label>
-              <div class="flex items-end md:col-span-4 md:justify-end">
+              <div class="flex items-end md:col-span-2 md:justify-end">
                 <Button class="w-full md:w-auto" @click="createNomination">
                   {{ $t('settingsNominationAdd') }}
                 </Button>

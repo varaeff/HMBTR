@@ -50,6 +50,7 @@ export const parseTournamentMarshal = async (
   id: tournamentMarshalDB.id,
   tournament_id: tournamentMarshalDB.tournament_id,
   marshal_id: tournamentMarshalDB.marshal_id,
+  is_chief_judge: tournamentMarshalDB.is_chief_judge,
   marshal: await parseMarshal(tournamentMarshalDB.marshal)
 })
 

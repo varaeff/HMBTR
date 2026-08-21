@@ -42,6 +42,7 @@ const tournamentMarshal: TournamentMarshal = {
   id: 1,
   tournament_id: 1,
   marshal_id: 11,
+  is_chief_judge: true,
   marshal: {
     id: 11,
     name: 'Judge',

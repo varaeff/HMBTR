@@ -26,6 +26,8 @@ const nominationTabsState = computed<TournamentNominationTabsState>(() => ({
   isCompetitorsListOpen: props.page.nomination.isCompetitorsListOpen,
   isCurrentNominationOpen: props.page.nomination.isCurrentNominationOpen,
   hasTournamentMarshals: props.page.marshalRegistration.hasTournamentMarshals,
+  canCloseRegistration: props.page.marshalRegistration.canCloseRegistration,
+  closeRegistrationHint: props.page.marshalRegistration.closeRegistrationHint,
   blocks: props.page.competition.blocks,
   activeBlock: props.page.competition.activeBlock,
   pendingTie: props.page.competition.pendingTie,

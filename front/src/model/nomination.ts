@@ -2,6 +2,7 @@ export interface Nomination {
   id: number
   name_ru: string
   name_en: string
+  weapon?: string | null
   is_male: boolean
   rounds: 1 | 2 | 3
   round_win: boolean
@@ -14,6 +15,7 @@ export interface Nomination {
 export interface NominationPayload {
   name_ru: string
   name_en: string
+  weapon?: string | null
   is_male: boolean
   rounds: 1 | 2 | 3
   round_win: boolean

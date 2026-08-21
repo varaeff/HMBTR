@@ -843,6 +843,7 @@ Do not refactor only because a file is moderately long. A cohesive long file is 
 
 - `PrismaModule` is global to simplify DI.
 - Some compatibility checks use raw SQL because card/report storage requires table-existence checks.
+- Production schema sync currently uses `prisma db push`; application-owned startup backfills are acceptable for idempotent data repairs that `db push` cannot express.
 - Integration tests use `prisma db push --force-reset` because the disposable test DB should reflect the current Prisma schema.
 - `competition.logic.ts` remains a compatibility barrel for existing imports.
 - Some role checks are local in controllers/services instead of a generalized policy layer; this is acceptable while authorization rules remain limited.

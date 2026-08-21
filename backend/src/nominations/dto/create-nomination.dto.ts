@@ -23,6 +23,11 @@ export class CreateNominationDto {
   @MaxLength(255)
   name_en: string;
 
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  weapon?: string | null;
+
   @IsBoolean()
   is_male: boolean;
 

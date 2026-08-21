@@ -24,6 +24,7 @@ import { UsersModule } from '../users/users.module';
 import { SettingsModule } from '../settings/settings.module';
 import { JwtAuthGuardGlobal } from '../auth/guards/jwt-auth-global.guard';
 import { EmailService } from '../common/services/email.service';
+import { StartupDataRepairService } from './startup-data-repair.service';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { EmailService } from '../common/services/email.service';
   providers: [
     AppService,
     EmailService,
+    StartupDataRepairService,
     { provide: APP_GUARD, useClass: JwtAuthGuardGlobal },
     { provide: APP_FILTER, useClass: AllExceptionsFilter },
     {

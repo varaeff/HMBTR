@@ -28,6 +28,7 @@ export class NominationsService {
       id: nomination.id,
       name_ru: nomination.name_ru,
       name_en: nomination.name_en,
+      weapon: nomination.weapon,
       is_male: nomination.is_male,
       rounds: nomination.rounds,
       round_win: nomination.round_win,
@@ -84,6 +85,7 @@ export class NominationsService {
       data: {
         ...(dto.name_ru !== undefined ? { name_ru: dto.name_ru } : {}),
         ...(dto.name_en !== undefined ? { name_en: dto.name_en } : {}),
+        ...(dto.weapon !== undefined ? { weapon: dto.weapon } : {}),
         ...(dto.is_male !== undefined ? { is_male: dto.is_male } : {}),
         ...(dto.rounds !== undefined ? { rounds: dto.rounds } : {}),
         ...(dto.round_win !== undefined ? { round_win: dto.round_win } : {}),

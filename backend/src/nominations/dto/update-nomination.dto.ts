@@ -26,6 +26,11 @@ export class UpdateNominationDto {
   name_en?: string;
 
   @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  weapon?: string | null;
+
+  @IsOptional()
   @IsBoolean()
   is_male?: boolean;
 

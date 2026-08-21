@@ -138,6 +138,7 @@ const tournamentMarshals: TournamentMarshal[] = [
     id: 1,
     tournament_id: 1,
     marshal_id: 10,
+    is_chief_judge: true,
     marshal: {
       id: 10,
       name: '\u0421\u0435\u0440\u0433\u0435\u0439',
@@ -154,6 +155,7 @@ const tournamentMarshals: TournamentMarshal[] = [
     id: 2,
     tournament_id: 1,
     marshal_id: 11,
+    is_chief_judge: false,
     marshal: {
       id: 11,
       name: '\u0410\u043d\u0434\u0440\u0435\u0439',
